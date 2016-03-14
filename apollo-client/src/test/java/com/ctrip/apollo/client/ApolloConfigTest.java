@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -39,6 +40,12 @@ public class ApolloConfigTest {
 
         apolloConfig.setApplicationContext(applicationContext);
         ReflectionTestUtils.setField(apolloConfig, "configLoader", configLoader);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testInvalidApplicationContext() {
+        ApplicationContext someInvalidApplication = mock(ApplicationContext.class);
+        apolloConfig.setApplicationContext(someInvalidApplication);
     }
 
     @Test
