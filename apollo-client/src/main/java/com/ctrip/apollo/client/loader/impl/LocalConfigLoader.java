@@ -1,6 +1,6 @@
-package com.ctrip.apollo.client.impl;
+package com.ctrip.apollo.client.loader.impl;
 
-import com.ctrip.apollo.client.ConfigLoader;
+import com.ctrip.apollo.client.loader.ConfigLoader;
 import org.springframework.core.env.CompositePropertySource;
 
 /**

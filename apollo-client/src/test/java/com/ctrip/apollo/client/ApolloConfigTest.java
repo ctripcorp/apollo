@@ -1,5 +1,6 @@
 package com.ctrip.apollo.client;
 
+import com.ctrip.apollo.client.loader.ConfigLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

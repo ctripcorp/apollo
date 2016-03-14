@@ -1,4 +1,4 @@
-package com.ctrip.apollo.client;
+package com.ctrip.apollo.client.loader;
 
 import org.springframework.core.env.CompositePropertySource;
 
