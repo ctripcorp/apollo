@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by jason on 3/8/16.
+ * @author Jason Song(song_s@ctrip.com)
  */
 @RestController
 @RequestMapping("/demo")
 public class DemoController {
     @Autowired
     private Environment env;
+
+    @Value("${apollo.foo}")
+    private String foo;
 
     @RequestMapping(value = "/config/{configName:.*}", method = RequestMethod.GET)
     public String queryConfig(@PathVariable String configName) {
