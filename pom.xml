@@ -70,6 +70,7 @@
 		<module>apollo-configserver</module>
 		<module>apollo-portal</module>
 		<module>apollo-assembly</module>
+		<module>apollo-demo</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -97,9 +98,9 @@
 			</dependency>
 			<!-- declare Spring BOMs in order -->
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-parent</artifactId>
-				<version>1.3.3.RELEASE</version>
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>2.0.3.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
