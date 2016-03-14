@@ -8,7 +8,7 @@ import org.springframework.core.env.CompositePropertySource;
 public interface ConfigLoader {
     /**
      * Load property source for client use
-     * @return
+     * @return property source
      */
     CompositePropertySource loadPropertySource();
 }

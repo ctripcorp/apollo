@@ -67,6 +67,6 @@ public class ApolloConfig implements BeanDefinitionRegistryPostProcessor, Priori
 
         CompositePropertySource composite = new CompositePropertySource(APOLLO_PROPERTY_SOURCE_NAME);
         composite.addPropertySource(configLoader.loadPropertySource());
-        applicationContext.getEnvironment().getPropertySources().addFirst(composite);
+        currentPropertySources.addFirst(composite);
     }
 }
