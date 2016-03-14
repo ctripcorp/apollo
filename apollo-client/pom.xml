@@ -11,9 +11,30 @@
 	<artifactId>apollo-client</artifactId>
 	<name>Apollo Client</name>
 	<dependencies>
+		<!-- apollo -->
 		<dependency>
 			<groupId>com.ctrip.apollo</groupId>
 			<artifactId>apollo-core</artifactId>
 		</dependency>
+		<!-- end of apollo -->
+		<!-- spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<!-- end of spring -->
+		<!-- util -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<!-- end of util -->
+        <!-- test -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- end of test -->
 	</dependencies>
 </project>
