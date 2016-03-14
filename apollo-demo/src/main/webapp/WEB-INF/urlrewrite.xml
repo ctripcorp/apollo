@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN" "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+<urlrewrite default-match-type="wildcard">
+    <rule>
+        <from>/favicon.ico</from>
+        <to>/s/favicon.ico</to>
+    </rule>
+    <rule>
+        <from>/images/**</from>
+        <to>/s/images/$1</to>
+    </rule>
+    <rule>
+        <from>/scripts/**</from>
+        <to>/s/scripts/$1</to>
+    </rule>
+    <rule>
+        <from>/styles/**</from>
+        <to>/s/styles/$1</to>
+    </rule>
+    <rule>
+        <from>/templates/**</from>
+        <to>/s/templates/$1</to>
+    </rule>
+    <rule match-type="regex">
+        <from>^\/(index\..*)?</from>
+        <to>/app/</to>
+    </rule>
+    <rule>
+        <from>/**</from>
+        <to>/app/$1</to>
+    </rule>
+    <outbound-rule>
+        <from>/app/**</from>
+        <to>/$1</to>
+    </outbound-rule>
+</urlrewrite>

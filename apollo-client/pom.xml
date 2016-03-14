@@ -1,19 +1,40 @@
 <?xml version="1.0"  encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>com.ctrip.apollo</groupId>
-		<artifactId>apollo</artifactId>
-		<version>0.0.1</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>apollo-client</artifactId>
-	<name>Apollo Client</name>
-	<dependencies>
-		<dependency>
-			<groupId>com.ctrip.apollo</groupId>
-			<artifactId>apollo-core</artifactId>
-		</dependency>
-	</dependencies>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.ctrip.apollo</groupId>
+        <artifactId>apollo</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>apollo-client</artifactId>
+    <name>Apollo Client</name>
+    <dependencies>
+        <!-- apollo -->
+        <dependency>
+            <groupId>com.ctrip.apollo</groupId>
+            <artifactId>apollo-core</artifactId>
+        </dependency>
+        <!-- end of apollo -->
+        <!-- spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- end of spring -->
+        <!-- util -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <!-- end of util -->
+        <!-- test -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- end of test -->
+    </dependencies>
 </project>
