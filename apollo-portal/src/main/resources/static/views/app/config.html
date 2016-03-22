@@ -1,0 +1,371 @@
+<!--配置信息-->
+<div class="tab-pane active" id="config-info" style="min-height: 500px;">
+    <!--环境nav-->
+    <ul class="nav nav-pills nav-justified">
+        <li role="presentation" ng-class="{active:env.fat}" ng-click="switchEnv('fat')"><a href="#">FAT</a>
+        </li>
+        <li role="presentation" ng-class="{active:env.uat}" ng-click="switchEnv('uat')"><a href="#">UAT</a>
+        </li>
+        <li role="presentation" ng-class="{active:env.product}"
+            ng-click="switchEnv('product')"><a href="#">PRODUCT</a></li>
+    </ul>
+
+    <!--具体配置信息-->
+    <div class="row config-info-container">
+        <!--tag导航-->
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="dropdown-header">未发布</li>
+                <li role="presentation" class="active"><a href="#">latest</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">已发布</li>
+                <li role="presentation"><a href="#">v1.0</a></li>
+                <li role="presentation"><a href="#">v2.0</a></li>
+            </ul>
+        </div>
+
+        <div class="col-md-10">
+            <div class="panel">
+                <header class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-6">项目的基本配置</div>
+                        <div class="col-md-6">
+                            <p class="text-right">
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="下载配置">
+                                                    <span class="glyphicon glyphicon-save"
+                                                          aria-hidden="true"></span>
+                                </a>
+                                &nbsp;
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="添加配置">
+                                                    <span class="glyphicon glyphicon-plus"
+                                                          aria-hidden="true"></span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </header>
+
+                <!--配置列表-->
+                <div class="panel-body">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr>
+                            <th>
+                                Key
+                            </th>
+                            <th>
+                                value
+                            </th>
+                            <th>
+                                最后更新时间
+                            </th>
+                            <th>
+                                操作
+                            </th>
+
+                        </tr>
+                        </thead>
+                        <tbody ng-repeat="config in config.baseConfigs">
+
+                        <tr>
+                            <td>
+                                {{config.key}}
+                            </td>
+                            <td>
+                                {{config.value}}
+                            </td>
+                            <td>
+                                {{config.lastUpdateTime}}
+                            </td>
+
+                            <td>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="修改">
+                                                    <span class="glyphicon glyphicon-edit"
+                                                          aria-hidden="true"></span>
+                                </a>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="删除">
+                                                    <span class="glyphicon glyphicon-remove"
+                                                          aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <nav class="text-right">
+                        <ul class="pagination">
+                            <li>
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">5</a></li>
+                            <li>
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div ng-repeat="overrideConfig in config.overrideConfigs">
+                        <div class="panel sec-panel">
+                            <header class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6">重写<a
+                                            href="#">{{overrideConfig.project}}</a>的配置
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="text-right">
+                                            <a href="#" data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="下载配置">
+                                                            <span class="glyphicon glyphicon-save"
+                                                                  aria-hidden="true"></span>
+                                            </a>
+                                            &nbsp;
+                                            <a href="#" data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="添加配置">
+                                                            <span class="glyphicon glyphicon-plus"
+                                                                  aria-hidden="true"></span>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </header>
+
+                            <!--配置列表-->
+                            <div class="panel-body">
+                                <table class="table table-bordered text-center">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            Key
+                                        </th>
+                                        <th>
+                                            value
+                                        </th>
+                                        <th>
+                                            最后更新时间
+                                        </th>
+                                        <th>
+                                            操作
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody ng-repeat="config in overrideConfig.configs">
+                                    <tr>
+                                        <td>
+                                            {{config.key}}
+                                        </td>
+                                        <td>
+                                            {{config.value}}
+                                        </td>
+                                        <td>
+                                            {{config.lastUpdateTime}}
+                                        </td>
+
+                                        <td>
+                                            <a href="#" data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="修改">
+                                                                    <span class="glyphicon glyphicon-edit"
+                                                                          aria-hidden="true"></span>
+                                            </a>
+                                            <a href="#" data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="删除">
+                                                                    <span class="glyphicon glyphicon-remove"
+                                                                          aria-hidden="true"></span>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="panel">
+                <header class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-3">
+                            集群特有的配置
+                        </div>
+                        <div class="col-md-3">
+
+                            <select class="form-control">
+                                <option>欧阳</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-right">
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="下载配置">
+                                                    <span class="glyphicon glyphicon-save"
+                                                          aria-hidden="true"></span>
+                                </a>
+                                &nbsp;
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top" title="添加配置">
+                                                    <span class="glyphicon glyphicon-plus"
+                                                          aria-hidden="true"></span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </header>
+
+                <!--配置列表-->
+                <div class="panel-body">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr>
+                            <th>
+                                Key
+                            </th>
+                            <th>
+                                value
+                            </th>
+                            <th>
+                                最后更新时间
+                            </th>
+                            <th>
+                                操作
+                            </th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                pagesize
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td>
+                                2016-01-14
+                            </td>
+
+                            <td>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="修改">
+                                                            <span class="glyphicon glyphicon-edit"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="删除">
+                                                            <span class="glyphicon glyphicon-remove"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                pagesize
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td>
+                                2016-01-14
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="修改">
+                                                            <span class="glyphicon glyphicon-edit"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="删除">
+                                                            <span class="glyphicon glyphicon-remove"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                pagesize
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td>
+                                2016-01-14
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="修改">
+                                                            <span class="glyphicon glyphicon-edit"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="删除">
+                                                            <span class="glyphicon glyphicon-remove"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                pagesize
+                            </td>
+                            <td>
+                                10
+                            </td>
+                            <td>
+                                2016-01-14
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="修改">
+                                                            <span class="glyphicon glyphicon-edit"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                                <a href="#" data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="删除">
+                                                            <span class="glyphicon glyphicon-remove"
+                                                                  aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
