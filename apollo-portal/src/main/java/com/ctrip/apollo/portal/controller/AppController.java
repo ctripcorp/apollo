@@ -28,8 +28,8 @@ public class AppController {
   }
 
   @RequestMapping("/{appid}")
-  public App detail(@PathVariable String appId) {
-    App app = appService.detail(appId);
+  public App detail(@PathVariable String appid) {
+    App app = appService.detail(appid);
     if (app == null) {
       throw new NotFoundException();
     }
@@ -44,5 +44,4 @@ public class AppController {
     }
     return page.getContent();
   }
-
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html data-ng-app="application">
+
+<head>
+    <meta charset="UTF-8">
+    <title>apollo</title>
+    <link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../styles/common-style.css">
+</head>
+
+<body>
+
+<div ng-include="'../common/nav.html'"></div>
+<div class="container">
+    <div class="container-fluid">
+        <div class="app">
+            <ol class="breadcrumb">
+                <li>10024-hotel.service</li>
+                <!--<li>1.0</li>-->
+                <!--<li>default</li>-->
+            </ol>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs">
+                <li role="presentation" ui-sref="config"><a href="#">配置</a></li>
+                <li role="presentation" ui-sref="info"><a href="#">应用信息</a></li>
+                <li role="presentation" ui-sref="setting"><a href="#">设置</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <ui-view>
+
+                </ui-view>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div ng-include="'../common/footer.html'"></div>
+
+<script src="../../vendor/angular/angular.min.js"></script>
+<script src="../../vendor/angular/angular-ui-router.min.js"></script>
+<script src="../../vendor/angular/angular-resource.min.js"></script>
+<script type="application/javascript" src="../../scripts/app.js"></script>
+<script type="application/javascript"
+        src="../../scripts/services/AppService.js"></script>
+<script type="application/javascript"
+        src="../../scripts/controller/app/AppConfigController.js"></script>
+<script type="application/javascript"
+        src="../../scripts/controller/app/AppInfoController.js"></script>
+
+</body>
+</html>
