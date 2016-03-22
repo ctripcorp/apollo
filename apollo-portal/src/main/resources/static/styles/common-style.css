@@ -8,15 +8,12 @@ body {
 }
 
 .container {
-    position: relative;
     width: 100%;
     min-height: 550px;
 }
 
 .footer {
     height: 50px;
-    position: absolute;
-    bottom: 0px;
     width: 100%;
     background: #F6F6F6;
     padding-top: 10px;
