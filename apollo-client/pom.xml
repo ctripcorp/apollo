@@ -39,13 +39,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <!-- end of util -->
-        <!-- log -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- end of log -->
         <!-- test -->
         <dependency>
             <groupId>commons-logging</groupId>

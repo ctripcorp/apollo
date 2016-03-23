@@ -1,8 +1,10 @@
 package com.ctrip.apollo.client.loader.impl;
 
+import com.ctrip.apollo.client.loader.ConfigServiceLocater;
 import com.ctrip.apollo.client.model.ApolloRegistry;
 import com.ctrip.apollo.client.util.ConfigUtil;
 import com.ctrip.apollo.core.dto.ApolloConfig;
+import com.ctrip.apollo.core.serivce.ApolloService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Before;
@@ -14,6 +16,7 @@ import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -29,11 +32,13 @@ public class RemoteConfigLoaderTest {
     @Mock
     private RestTemplate restTemplate;
     private ConfigUtil configUtil;
+    @Mock
+    private ConfigServiceLocater serviceLocater;
 
     @Before
     public void setUp() {
         configUtil = spy(ConfigUtil.getInstance());
-        remoteConfigLoader = spy(new RemoteConfigLoader(restTemplate, configUtil));
+        remoteConfigLoader = spy(new RemoteConfigLoader(restTemplate, configUtil,serviceLocater));
     }
 
     @Test
@@ -80,11 +85,14 @@ public class RemoteConfigLoaderTest {
     public void testLoadSingleApolloConfig() throws Exception {
         ApolloConfig someApolloConfig = mock(ApolloConfig.class);
         Map<String, Object> someMap = Maps.newHashMap();
-
+        List<ApolloService> someService = Lists.newArrayList();
+        someService.add(new ApolloService());
+        
         when(someApolloConfig.getConfigurations()).thenReturn(someMap);
         doReturn(someApolloConfig).when(remoteConfigLoader).getRemoteConfig(any(RestTemplate.class), anyString(), anyLong(), anyString(), anyString());
 
         long someAppId = 100;
+        when(serviceLocater.getConfigServices()).thenReturn(someService);
         MapPropertySource result = remoteConfigLoader.loadSingleApolloConfig(someAppId, "someVersion");
 
         assertEquals(someMap, result.getSource());

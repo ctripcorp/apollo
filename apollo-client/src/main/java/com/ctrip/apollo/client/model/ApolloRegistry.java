@@ -22,4 +22,5 @@ public class ApolloRegistry {
     public void setVersion(String version) {
         this.version = version;
     }
+
 }

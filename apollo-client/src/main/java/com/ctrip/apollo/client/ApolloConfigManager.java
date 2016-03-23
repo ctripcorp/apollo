@@ -39,7 +39,7 @@ public class ApolloConfigManager implements BeanDefinitionRegistryPostProcessor,
         if(!singletonProtector.compareAndSet(null, this)) {
            throw new IllegalStateException("There should be only one ApolloConfigManager instance!");
         }
-        this.configLoader = ConfigLoaderFactory.getInstance().getRemoteConfigLoader();
+        this.configLoader = ConfigLoaderFactory.getInstance().getConfigLoader();
     }
 
     @Override

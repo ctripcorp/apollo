@@ -1,9 +1,11 @@
 package com.ctrip.apollo.client.loader.impl;
 
 import com.ctrip.apollo.client.loader.ConfigLoader;
+import com.ctrip.apollo.client.loader.ConfigServiceLocater;
 import com.ctrip.apollo.client.model.ApolloRegistry;
 import com.ctrip.apollo.client.util.ConfigUtil;
 import com.ctrip.apollo.core.dto.ApolloConfig;
+import com.ctrip.apollo.core.serivce.ApolloService;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +35,17 @@ public class RemoteConfigLoader implements ConfigLoader {
     private final ConfigUtil configUtil;
     private final ExecutorService executorService;
     private final AtomicLong counter;
-
+    private final ConfigServiceLocater serviceLocater;
+    
     public RemoteConfigLoader() {
-        this(new RestTemplate(), ConfigUtil.getInstance());
+        this(new RestTemplate(), ConfigUtil.getInstance(), new ConfigServiceLocater());
     }
 
-    public RemoteConfigLoader(RestTemplate restTemplate, ConfigUtil configUtil) {
+    public RemoteConfigLoader(RestTemplate restTemplate, ConfigUtil configUtil, ConfigServiceLocater serviceLocater) {
         this.restTemplate = restTemplate;
         this.configUtil = configUtil;
         this.counter = new AtomicLong();
+        this.serviceLocater = serviceLocater;
         this.executorService = Executors.newFixedThreadPool(5, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -98,8 +102,13 @@ public class RemoteConfigLoader implements ConfigLoader {
     }
 
     MapPropertySource loadSingleApolloConfig(long appId, String version) {
+        List<ApolloService> services = serviceLocater.getConfigServices();
+        if(services.size()==0){
+          throw new RuntimeException("Could not find availble config services");
+        }
+        ApolloService service = services.get(0);
         ApolloConfig result =
-            this.getRemoteConfig(restTemplate, configUtil.getConfigServerUrl(), appId, configUtil.getCluster(), version);
+            this.getRemoteConfig(restTemplate, service.getHomepageUrl(), appId, configUtil.getCluster(), version);
         if (result == null) {
             logger.error("Loaded config null...");
             return null;
