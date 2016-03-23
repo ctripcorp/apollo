@@ -31,11 +31,6 @@ public class ConfigUtil {
         return configUtil;
     }
 
-    public String getConfigServerUrl() {
-        // TODO return the meta server url based on different environments
-        return "http://localhost";
-    }
-
     public String getCluster() {
         // TODO return the actual cluster
         return "default";
