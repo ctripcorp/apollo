@@ -1,8 +1,10 @@
 package com.ctrip.apollo.client.loader.impl;
 
+import com.ctrip.apollo.client.loader.ConfigServiceLocater;
 import com.ctrip.apollo.client.model.ApolloRegistry;
 import com.ctrip.apollo.client.util.ConfigUtil;
 import com.ctrip.apollo.core.dto.ApolloConfig;
+import com.ctrip.apollo.core.serivce.ApolloService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.Before;
@@ -18,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -36,11 +40,13 @@ public class RemoteConfigLoaderTest {
     private ConfigUtil configUtil;
     @Mock
     private ResponseEntity<ApolloConfig> someResponse;
+    @Mock
+    private ConfigServiceLocater serviceLocater;
 
     @Before
     public void setUp() {
         configUtil = spy(ConfigUtil.getInstance());
-        remoteConfigLoader = spy(new RemoteConfigLoader(restTemplate, configUtil));
+        remoteConfigLoader = spy(new RemoteConfigLoader(restTemplate, configUtil, serviceLocater));
     }
 
     @Test
@@ -52,7 +58,11 @@ public class RemoteConfigLoaderTest {
         ApolloRegistry apolloRegistry = assembleSomeApolloRegistry(someAppId, "someVersion");
         ApolloConfig previousConfig = null;
 
-        when(configUtil.getConfigServerUrl()).thenReturn(someServerUrl);
+        ApolloService someService = new ApolloService();
+        someService.setHomepageUrl(someServerUrl);
+        List<ApolloService> someServices = new ArrayList<>();
+        someServices.add(someService);
+        when(serviceLocater.getConfigServices()).thenReturn(someServices);
         when(configUtil.getCluster()).thenReturn(someCluster);
         doReturn(apolloConfig).when(remoteConfigLoader)
             .getRemoteConfig(restTemplate, someServerUrl, someCluster, apolloRegistry, previousConfig);
@@ -115,7 +125,6 @@ public class RemoteConfigLoaderTest {
         ApolloConfig result = remoteConfigLoader.getRemoteConfig(restTemplate, someServerUrl, someClusterName, apolloRegistry, previousConfig);
 
         assertNull(result);
-
     }
 
     private ApolloRegistry assembleSomeApolloRegistry(long someAppId, String someVersion) {

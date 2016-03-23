@@ -1,8 +1,10 @@
 package com.ctrip.apollo.client.loader.impl;
 
+import com.ctrip.apollo.client.loader.ConfigServiceLocater;
 import com.ctrip.apollo.client.model.ApolloRegistry;
 import com.ctrip.apollo.client.util.ConfigUtil;
 import com.ctrip.apollo.core.dto.ApolloConfig;
+import com.ctrip.apollo.core.serivce.ApolloService;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,10 +27,12 @@ public class RemoteConfigLoader extends AbstractConfigLoader {
     private static final Logger logger = LoggerFactory.getLogger(RemoteConfigLoader.class);
     private final RestTemplate restTemplate;
     private final ConfigUtil configUtil;
+    private final ConfigServiceLocater serviceLocater;
 
-    public RemoteConfigLoader(RestTemplate restTemplate, ConfigUtil configUtil) {
+    public RemoteConfigLoader(RestTemplate restTemplate, ConfigUtil configUtil, ConfigServiceLocater serviceLocater) {
         this.restTemplate = restTemplate;
         this.configUtil = configUtil;
+        this.serviceLocater = serviceLocater;
     }
 
     ApolloConfig getRemoteConfig(RestTemplate restTemplate, String uri, String cluster, ApolloRegistry apolloRegistry, ApolloConfig previousConfig) {
@@ -77,8 +82,13 @@ public class RemoteConfigLoader extends AbstractConfigLoader {
 
     @Override
     protected ApolloConfig doLoadApolloConfig(ApolloRegistry apolloRegistry, ApolloConfig previous) {
-        ApolloConfig result = this.getRemoteConfig(restTemplate,
-                                        configUtil.getConfigServerUrl(), configUtil.getCluster(),
+      List<ApolloService> services = serviceLocater.getConfigServices();
+      if (services.size() == 0) {
+        throw new RuntimeException("Could not find availble config services");
+      }
+      ApolloService service = services.get(0);
+      ApolloConfig result = this.getRemoteConfig(restTemplate,
+                                        service.getHomepageUrl(), configUtil.getCluster(),
                                         apolloRegistry, previous);
         //When remote server return 304, we need to return the previous result
         return result == null ? previous : result;

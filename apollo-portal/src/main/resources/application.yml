@@ -9,3 +9,5 @@ spring:
     username: sa
     password: sa
 
+ctrip:
+  appid: 100003173

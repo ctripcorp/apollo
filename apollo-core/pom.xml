@@ -29,5 +29,11 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<!-- end of util -->
+		<!-- log -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <!-- end of log -->
 	</dependencies>
 </project>

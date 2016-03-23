@@ -1,6 +1,6 @@
 package com.ctrip.apollo.core;
 
-public class ServiceIdConsts {
+public class ServiceNameConsts {
 
   public static final String APOLLO_METASERVICE = "apollo-metaservice";
 
