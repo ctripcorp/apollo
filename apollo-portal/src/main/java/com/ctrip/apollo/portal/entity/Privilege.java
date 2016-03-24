@@ -26,7 +26,7 @@ public class Privilege implements Serializable {
   private String privilType;
 
   @Column
-  private String appId;
+  private long appId;
 
   public long getId() {
     return id;
@@ -52,11 +52,11 @@ public class Privilege implements Serializable {
     this.privilType = privilType;
   }
 
-  public String getAppId() {
+  public long getAppId() {
     return appId;
   }
 
-  public void setAppId(String appId) {
+  public void setAppId(long appId) {
     this.appId = appId;
   }
 }

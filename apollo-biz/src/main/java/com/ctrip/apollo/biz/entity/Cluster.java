@@ -3,6 +3,7 @@ package com.ctrip.apollo.biz.entity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,8 +19,12 @@ public class Cluster {
     @GeneratedValue
     private long id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private long appId;
+
     private boolean isDeleted;
 
     public Cluster() {

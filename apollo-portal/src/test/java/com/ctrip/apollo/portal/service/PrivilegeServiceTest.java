@@ -21,7 +21,7 @@ public class PrivilegeServiceTest extends AbstractPortalTest {
   @Test
   public void testAddAndRemovePrivilege() {
     App newApp = new App();
-    newApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    newApp.setAppId((System.currentTimeMillis()));
     newApp.setName("new app " + System.currentTimeMillis());
     newApp.setOwner("owner " + System.currentTimeMillis());
     appService.save(newApp);
@@ -42,7 +42,7 @@ public class PrivilegeServiceTest extends AbstractPortalTest {
   @Test
   public void testCheckPrivilege() {
     App newApp = new App();
-    newApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    newApp.setAppId((System.currentTimeMillis()));
     newApp.setName("new app " + System.currentTimeMillis());
     newApp.setOwner("owner " + System.currentTimeMillis());
     appService.save(newApp);

@@ -100,6 +100,11 @@
                 <artifactId>guava</artifactId>
                 <version>19.0</version>
             </dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.5</version>
+			</dependency>
 			<!--for test -->
 			<dependency>
 				<groupId>com.h2database</groupId>

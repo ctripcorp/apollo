@@ -1,8 +1,10 @@
 package com.ctrip.apollo.biz.entity;
 
+import com.ctrip.apollo.core.dto.VersionDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,12 +20,15 @@ public class Version {
     @GeneratedValue
     private long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private long appId;
+
+    @Column(nullable = false)
     private long releaseId;
-    //parent version could be null
-    private Long parentVersion;
+    private long parentVersion;
     private boolean isDeleted;
 
     public Version() {
@@ -75,5 +80,15 @@ public class Version {
 
     public void setParentVersion(Long parentVersion) {
         this.parentVersion = parentVersion;
+    }
+
+    public VersionDTO toDTO() {
+        VersionDTO dto = new VersionDTO();
+        dto.setAppId(this.appId);
+        dto.setId(this.id);
+        dto.setName(this.name);
+        dto.setParentVersion(this.parentVersion);
+        dto.setReleaseId(this.releaseId);
+        return dto;
     }
 }

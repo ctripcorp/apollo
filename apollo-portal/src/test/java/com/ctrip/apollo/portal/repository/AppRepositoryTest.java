@@ -18,7 +18,7 @@ public class AppRepositoryTest extends AbstractPortalTest{
     Assert.assertEquals(0, repository.count());
 
     App ramdomApp = new App();
-    ramdomApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    ramdomApp.setAppId(System.currentTimeMillis());
     ramdomApp.setName("new app " + System.currentTimeMillis());
     ramdomApp.setOwner("owner " + System.currentTimeMillis());
     repository.save(ramdomApp);

@@ -1,95 +1,74 @@
+application_module.controller("AppConfigController",
+    ['$scope', '$rootScope', '$state', '$location', 'toastr',
+        'AppService', 'ConfigService', 'VersionService',
+        function ($scope, $rootScope, $state, $location, toastr, AppService, ConfigService, VersionService) {
 
-application_module.controller("AppConfigController", ["$scope", '$state', '$location', 'AppService',
-    function ($scope, $state, $location, AppService) {
+            var configLocation = {
+                appId: $rootScope.appId,
+                env: 'uat',
+                versionId: -1
+            };
 
-        //model定义
-        $scope.env = {
-            fat: false,
-            uat: true,
-            product: false
+            $rootScope.breadcrumb.nav = '配置';
+            $rootScope.breadcrumb.env = configLocation.env;
 
-        };
+            $scope.configLocation = configLocation;
 
-        //mock data
-        $scope.config = {
-            baseConfigs: [
-                {
-                    key: 'pageSize',
-                    value: 10,
-                    lastUpdateTime: '2016-01-14'
-                },
-                {
-                    key: 'pageCount',
-                    value: 20,
-                    lastUpdateTime: '2016-01-14'
-                }
-            ],
-            overrideConfigs: [
-                {
-                    project: 'cat',
-                    configs: [
-                        {
-                            key: 'pageSize',
-                            value: 10,
-                            lastUpdateTime: '2016-01-14'
-                        },
-                        {
-                            key: 'pageCount',
-                            value: 20,
-                            lastUpdateTime: '2016-01-14'
-                        }
-                    ]
-                },
-                {
-                    project: 'hermas',
-                    configs: [
-                        {
-                            key: 'pageSize',
-                            value: 20,
-                            lastUpdateTime: '2016-01-14'
-                        },
-                        {
-                            key: 'pageCount',
-                            value: 30,
-                            lastUpdateTime: '2016-01-14'
-                        }
-                    ]
-                }
-            ]
-        };
+            /**env*/
+            $scope.envs = ['dev', 'fws', 'fat', 'uat', 'lpt', 'prod', 'tools'];
 
-        $scope.switchEnv = function (env) {
-            clearEnvNav();
-            if ('fat' == env) {
-                switchToFat();
-            } else if ('uat' == env) {
-                switchToUat();
-            } else if ('product' == env) {
-                switchToProduct();
-            }
-
-        };
-
-        function switchToFat() {
-            $scope.env.fat = true;
-        }
-
-        function switchToUat() {
-            $scope.env.uat = true;
-        }
-
-        function switchToProduct() {
-            $scope.env.product = true;
-        }
-
-        function clearEnvNav() {
-            $scope.env = {
-                fat: false,
-                uat: false,
-                product: false
+            $scope.switchEnv = function (selectedEnv) {
+                configLocation.env = selectedEnv;
+                $rootScope.breadcrumb.env = configLocation.env;
+                refreshConfigs();
 
             };
-        }
 
+            /**version*/
+            $scope.releaseVersions = [];
+            $scope.currentVersionIsRelease = false;
 
-    }]);
+            VersionService.load(configLocation.appId, configLocation.env).then(function (result) {
+                $scope.releaseVersions = result;
+            }, function (result) {
+                toastr.error("获取版本失败", result);
+            });
+
+            $scope.switchVersion = function (versionId) {
+                configLocation.versionId = versionId;
+                $scope.currentVersionIsRelease = configLocation.versionId > 0;
+                refreshConfigs();
+            };
+
+            /**config*/
+            refreshConfigs();
+            //refresh app config infomations
+            function refreshConfigs() {
+                ConfigService.load(configLocation.appId, configLocation.env, configLocation.versionId).then(function (result) {
+                    $scope.config = result;
+
+                    $scope.showClusterConfigs = false;
+                    if (result.overrideClusterConfigs && result.overrideClusterConfigs[0]) {
+                        $scope.showClusterConfigs = true;
+
+                        //default selected
+                        $scope.config.selectedCluster = result.overrideClusterConfigs[0];
+                        $scope.config.selectedClusterKVs = result.overrideClusterConfigs[0].configs;
+
+                        //build map clusterName -> configs for switch cluster
+                        $scope.config.overrideClusters = {};
+                        $.each(result.overrideClusterConfigs, function (index, value) {
+                            $scope.config.overrideClusters[value.clusterName] = value.configs;
+                        });
+                    }
+                }, function (result) {
+                    toastr.error("加载配置出错", result);
+                });
+            }
+
+            //switch cluster
+            $scope.selectCluster = function () {
+                $scope.config.selectedClusterKVs = $scope.config.overrideClusters[$scope.config.selectedCluster.clusterName];
+            };
+
+        }]);
