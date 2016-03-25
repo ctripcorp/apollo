@@ -16,8 +16,8 @@ public class AppService {
   @Autowired
   private AppRepository appRepository;
 
-  public App detail(String appId) {
-    return appRepository.findOne(appId);
+  public App detail(long appId) {
+    return appRepository.findByAppId(appId);
   }
 
   public Page<App> list(Pageable pageable) {

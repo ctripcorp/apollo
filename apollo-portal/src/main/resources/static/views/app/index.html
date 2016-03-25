@@ -15,9 +15,11 @@
 <div ng-include="'../common/nav.html'"></div>
 <div class="container">
     <div class="container-fluid">
-        <div class="app">
+        <div class="app" ng-controller="AppPageController">
             <ol class="breadcrumb">
-                <li>10024-hotel.service</li>
+                <li >{{breadcrumb.project}}</li>
+                <li>{{breadcrumb.nav}}</li>
+                <li ng-show="breadcrumb.env">{{breadcrumb.env}}</li>
                 <!--<li>1.0</li>-->
                 <!--<li>default</li>-->
             </ol>
@@ -57,12 +59,12 @@
 
 <!--biz script-->
 <script type="application/javascript" src="../../scripts/app.js"></script>
-<script type="application/javascript"
-        src="../../scripts/services/AppService.js"></script>
-<script type="application/javascript"
-        src="../../scripts/controller/app/AppConfigController.js"></script>
-<script type="application/javascript"
-        src="../../scripts/controller/app/AppInfoController.js"></script>
+<script type="application/javascript" src="../../scripts/services/AppService.js"></script>
+<script type="application/javascript" src="../../scripts/services/ConfigService.js"></script>
+<script type="application/javascript" src="../../scripts/services/VersionService.js"></script>
+<script type="application/javascript" src="../../scripts/controller/app/AppConfigController.js"></script>
+<script type="application/javascript" src="../../scripts/controller/app/AppInfoController.js"></script>
+<script type="application/javascript" src="../../scripts/controller/app/AppPageController.js"></script>
 
 </body>
 </html>

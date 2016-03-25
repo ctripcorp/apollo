@@ -6,6 +6,9 @@ spring:
     name: apollo-portal
   datasource:
     url: jdbc:h2:mem:~/fxapolloportaldb
+  jpa:
+    hibernate:
+      naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
 
 logging:
   level:
