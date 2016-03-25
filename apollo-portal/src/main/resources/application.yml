@@ -8,6 +8,9 @@ spring:
     url: jdbc:h2:mem:~/fxapolloportaldb
     username: sa
     password: sa
+  jpa:
+    hibernate:
+      naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
 
 logging:
   level:

@@ -19,7 +19,7 @@ public class PrivilegeService {
   @Autowired
   private PrivilegeRepository privilRepo;
 
-  public Privilege addPrivilege(String appId, String name, PrivilType privilType) {
+  public Privilege addPrivilege(long appId, String name, PrivilType privilType) {
     Privilege privil = privilRepo.findByAppIdAndNameAndPrivilType(appId, name, privilType.name());
     if (privil == null) {
       privil = new Privilege();
@@ -31,16 +31,16 @@ public class PrivilegeService {
     return privil;
   }
 
-  public boolean hasPrivilege(String appId, String name, PrivilType privilType) {
+  public boolean hasPrivilege(long appId, String name, PrivilType privilType) {
     Privilege privil = privilRepo.findByAppIdAndNameAndPrivilType(appId, name, privilType.name());
     return (privil != null) ? true : false;
   }
 
-  public List<Privilege> listPrivileges(String appId) {
+  public List<Privilege> listPrivileges(long appId) {
     return privilRepo.findByAppId(appId);
   }
 
-  public void removePrivilege(String appId, String name, PrivilType privilType) {
+  public void removePrivilege(long appId, String name, PrivilType privilType) {
     Privilege privil = privilRepo.findByAppIdAndNameAndPrivilType(appId, name, privilType.name());
     if (privil == null) {
       throw new NotFoundException();

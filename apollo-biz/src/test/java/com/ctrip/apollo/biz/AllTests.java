@@ -7,8 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-ConfigServiceImplTest.class
-})
+ConfigServiceImplTest.class})
 public class AllTests {
 
 }

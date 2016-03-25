@@ -28,7 +28,7 @@ public class AppController {
   }
 
   @RequestMapping("/{appid}")
-  public App detail(@PathVariable String appid) {
+  public App detail(@PathVariable long appid) {
     App app = appService.detail(appid);
     if (app == null) {
       throw new NotFoundException();

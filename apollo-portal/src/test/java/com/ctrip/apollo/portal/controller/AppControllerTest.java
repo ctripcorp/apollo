@@ -32,7 +32,7 @@ public class AppControllerTest extends AbstractPortalTest {
   @Test
   public void testCreate() throws URISyntaxException {
     App newApp = new App();
-    newApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    newApp.setAppId(System.currentTimeMillis());
     newApp.setName("new app " + System.currentTimeMillis());
     newApp.setOwner("owner " + System.currentTimeMillis());
 
@@ -43,7 +43,7 @@ public class AppControllerTest extends AbstractPortalTest {
     Assert.assertNull(newApp.getCreateTimestamp());
     Assert.assertNotNull(createdApp.getCreateTimestamp());
 
-    App foundApp = appRepository.findOne(newApp.getAppId());
+    App foundApp = appRepository.findByAppId(newApp.getAppId());
 
     Assert.assertEquals(newApp.getAppId(), foundApp.getAppId());
   }
@@ -51,7 +51,7 @@ public class AppControllerTest extends AbstractPortalTest {
   @Test
   public void testList() throws URISyntaxException {
     App newApp = new App();
-    newApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    newApp.setAppId(System.currentTimeMillis());
     newApp.setName("new app " + System.currentTimeMillis());
     newApp.setOwner("owner " + System.currentTimeMillis());
     appRepository.save(newApp);
@@ -66,7 +66,7 @@ public class AppControllerTest extends AbstractPortalTest {
   @Test
   public void testListOutOfRange() throws URISyntaxException {
     App newApp = new App();
-    newApp.setAppId(String.valueOf(System.currentTimeMillis()));
+    newApp.setAppId(System.currentTimeMillis());
     newApp.setName("new app " + System.currentTimeMillis());
     newApp.setOwner("owner " + System.currentTimeMillis());
     appRepository.save(newApp);

@@ -1,8 +1,10 @@
 package com.ctrip.apollo.biz.entity;
 
+import com.ctrip.apollo.core.dto.ReleaseSnapshotDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,10 +20,15 @@ public class ReleaseSnapShot {
     @GeneratedValue
     private long id;
 
+    @Column(nullable = false)
     private long releaseId;
 
+    @Column(nullable = false)
     private String clusterName;
+
+    @Column(nullable = false)
     private String configurations;
+
     private boolean isDeleted;
 
     public ReleaseSnapShot() {
@@ -65,5 +72,14 @@ public class ReleaseSnapShot {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public ReleaseSnapshotDTO toDTO(){
+        ReleaseSnapshotDTO dto = new ReleaseSnapshotDTO();
+        dto.setId(id);
+        dto.setClusterName(clusterName);
+        dto.setConfigurations(configurations);
+        dto.setReleaseId(releaseId);
+        return dto;
     }
 }
