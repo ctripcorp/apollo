@@ -1,8 +1,15 @@
 language: java
 jdk:
   - oraclejdk8
+  
+before_install:
+  - pip install --user codecov
+
 after_success:
   - mvn clean cobertura:cobertura coveralls:report
+  - mvn clean site -X
+  - codecov
+
 branches:
   only:
     - master

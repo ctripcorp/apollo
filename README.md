@@ -8,3 +8,4 @@
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/8244.svg"/>
 </a>
+[![codecov.io](https://codecov.io/github/ctripcorp/apollo/coverage.svg?branch=master)](https://codecov.io/github/ctripcorp/apollo?branch=master)
