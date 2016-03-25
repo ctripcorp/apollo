@@ -1,6 +1,6 @@
 package com.ctrip.apollo.portal.service;
 
-import com.ctrip.apollo.core.dto.Config4PortalDTO;
+import com.ctrip.apollo.portal.entity.AppConfigVO;
 
 public interface ConfigService {
 
@@ -10,14 +10,14 @@ public interface ConfigService {
      * @param versionId
      * @return
      */
-    Config4PortalDTO loadReleaseConfig(long appId, long versionId);
+    AppConfigVO loadReleaseConfig(long appId, long versionId);
 
     /**
      *
      * @param appId
      * @return
      */
-    Config4PortalDTO loadLatestConfig(long appId);
+    AppConfigVO loadLatestConfig(long appId);
 
 
 }

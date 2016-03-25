@@ -3,6 +3,7 @@ package com.ctrip.apollo.portal.service.impl;
 import com.ctrip.apollo.core.Constants;
 import com.ctrip.apollo.core.dto.*;
 import com.ctrip.apollo.portal.RestUtils;
+import com.ctrip.apollo.portal.entity.AppConfigVO;
 import com.ctrip.apollo.portal.service.ConfigService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -17,7 +18,7 @@ public class ConfigServiceImpl implements ConfigService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Config4PortalDTO loadReleaseConfig(long appId, long versionId) {
+    public AppConfigVO loadReleaseConfig(long appId, long versionId) {
 
         if (appId <= 0 || versionId <= 0) {
             return null;
@@ -31,19 +32,19 @@ public class ConfigServiceImpl implements ConfigService {
             return null;
         }
 
-        Config4PortalDTO config4PortalDTO = Config4PortalDTO.newInstance(appId, versionId);
+        AppConfigVO appConfigVO = AppConfigVO.newInstance(appId, versionId);
 
         for (ReleaseSnapshotDTO snapShot : releaseSnapShots) {
             //default cluster
             if (Constants.DEFAULT_CLUSTER_NAME.equals(snapShot.getClusterName())) {
 
-                collectDefaultClusterConfigs(appId, snapShot, config4PortalDTO);
+                collectDefaultClusterConfigs(appId, snapShot, appConfigVO);
 
             } else {//cluster special configs
-                collectSpecialClusterConfigs(appId, snapShot, config4PortalDTO);
+                collectSpecialClusterConfigs(appId, snapShot, appConfigVO);
             }
         }
-        return config4PortalDTO;
+        return appConfigVO;
     }
 
     private long getReleaseIdFromVersionId(long versionId) {
@@ -55,24 +56,24 @@ public class ConfigServiceImpl implements ConfigService {
         return version.getReleaseId();
     }
 
-    private void collectDefaultClusterConfigs(long appId, ReleaseSnapshotDTO snapShot, Config4PortalDTO config4PortalDTO) {
+    private void collectDefaultClusterConfigs(long appId, ReleaseSnapshotDTO snapShot, AppConfigVO appConfigVO) {
 
         Map<Long, List<ConfigItemDTO>> groupedConfigs =
             groupConfigsByApp(snapShot.getConfigurations());
 
-        List<Config4PortalDTO.OverrideAppConfig> overrideAppConfigs =
-            config4PortalDTO.getOverrideAppConfigs();
+        List<AppConfigVO.OverrideAppConfig> overrideAppConfigs =
+            appConfigVO.getOverrideAppConfigs();
 
         for (Map.Entry<Long, List<ConfigItemDTO>> entry : groupedConfigs.entrySet()) {
             long configAppId = entry.getKey();
             List<ConfigItemDTO> kvs = entry.getValue();
 
             if (configAppId == appId) {
-                config4PortalDTO.setDefaultClusterConfigs(kvs);
+                appConfigVO.setDefaultClusterConfigs(kvs);
             } else {
 
-                Config4PortalDTO.OverrideAppConfig overrideAppConfig =
-                    new Config4PortalDTO.OverrideAppConfig();
+                AppConfigVO.OverrideAppConfig overrideAppConfig =
+                    new AppConfigVO.OverrideAppConfig();
                 overrideAppConfig.setAppId(configAppId);
                 overrideAppConfig.setConfigs(kvs);
                 overrideAppConfigs.add(overrideAppConfig);
@@ -120,11 +121,11 @@ public class ConfigServiceImpl implements ConfigService {
         return Long.valueOf(key.substring(0, key.indexOf(".")));
     }
 
-    private void collectSpecialClusterConfigs(long appId, ReleaseSnapshotDTO snapShot, Config4PortalDTO config4PortalDTO) {
-        List<Config4PortalDTO.OverrideClusterConfig> overrideClusterConfigs =
-            config4PortalDTO.getOverrideClusterConfigs();
-        Config4PortalDTO.OverrideClusterConfig overrideClusterConfig =
-            new Config4PortalDTO.OverrideClusterConfig();
+    private void collectSpecialClusterConfigs(long appId, ReleaseSnapshotDTO snapShot, AppConfigVO appConfigVO) {
+        List<AppConfigVO.OverrideClusterConfig> overrideClusterConfigs =
+            appConfigVO.getOverrideClusterConfigs();
+        AppConfigVO.OverrideClusterConfig overrideClusterConfig =
+            new AppConfigVO.OverrideClusterConfig();
         overrideClusterConfig.setClusterName(snapShot.getClusterName());
         //todo step1: cluster special config can't override other app config
         overrideClusterConfig.setConfigs(groupConfigsByApp(snapShot.getConfigurations()).get(appId));
@@ -132,7 +133,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Config4PortalDTO loadLatestConfig(long appId) {
+    public AppConfigVO loadLatestConfig(long appId) {
         if (appId <= 0) {
             return null;
         }
@@ -152,22 +153,22 @@ public class ConfigServiceImpl implements ConfigService {
             ADMIN_SERVICE_HOST + "/configs/latest?clusterIds=" + sb.substring(0,
                 sb.length() - 1), ConfigItemDTO[].class);
 
-        return buildConfig4PortalDTOFromConfigs(appId, Arrays.asList(configItems));
+        return buildAPPConfigVO(appId, Arrays.asList(configItems));
     }
 
-    private Config4PortalDTO buildConfig4PortalDTOFromConfigs(long appId, List<ConfigItemDTO> configItems) {
+    private AppConfigVO buildAPPConfigVO(long appId, List<ConfigItemDTO> configItems) {
         if (configItems == null || configItems.size() == 0) {
             return null;
         }
 
         Map<String, List<ConfigItemDTO>> groupedClusterConfigs = groupConfigByCluster(configItems);
 
-        Config4PortalDTO config4PortalDTO =
-            Config4PortalDTO.newInstance(appId, Constants.LASTEST_VERSION_ID);
+        AppConfigVO appConfigVO =
+            AppConfigVO.newInstance(appId, Constants.LASTEST_VERSION_ID);
 
-        groupConfigByAppAndEnrichDTO(groupedClusterConfigs, config4PortalDTO);
+        groupConfigByAppAndEnrichDTO(groupedClusterConfigs, appConfigVO);
 
-        return config4PortalDTO;
+        return appConfigVO;
 
     }
 
@@ -187,16 +188,16 @@ public class ConfigServiceImpl implements ConfigService {
         return groupedClusterConfigs;
     }
 
-    private void groupConfigByAppAndEnrichDTO(Map<String, List<ConfigItemDTO>> groupedClusterConfigs, Config4PortalDTO config4PortalDTO) {
-        long appId = config4PortalDTO.getAppId();
+    private void groupConfigByAppAndEnrichDTO(Map<String, List<ConfigItemDTO>> groupedClusterConfigs, AppConfigVO appConfigVO) {
+        long appId = appConfigVO.getAppId();
 
-        List<ConfigItemDTO> defaultClusterConfigs = config4PortalDTO.getDefaultClusterConfigs();
+        List<ConfigItemDTO> defaultClusterConfigs = appConfigVO.getDefaultClusterConfigs();
 
-        List<Config4PortalDTO.OverrideAppConfig> overrideAppConfigs =
-            config4PortalDTO.getOverrideAppConfigs();
+        List<AppConfigVO.OverrideAppConfig> overrideAppConfigs =
+            appConfigVO.getOverrideAppConfigs();
 
-        List<Config4PortalDTO.OverrideClusterConfig> overrideClusterConfigs =
-            config4PortalDTO.getOverrideClusterConfigs();
+        List<AppConfigVO.OverrideClusterConfig> overrideClusterConfigs =
+            appConfigVO.getOverrideClusterConfigs();
 
         String clusterName;
         List<ConfigItemDTO> clusterConfigs;
@@ -214,9 +215,9 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    private void collectDefaultClusterConfigs(long appId, List<ConfigItemDTO> clusterConfigs, List<ConfigItemDTO> defaultClusterConfigs, List<Config4PortalDTO.OverrideAppConfig> overrideAppConfigs) {
+    private void collectDefaultClusterConfigs(long appId, List<ConfigItemDTO> clusterConfigs, List<ConfigItemDTO> defaultClusterConfigs, List<AppConfigVO.OverrideAppConfig> overrideAppConfigs) {
 
-        Map<Long, Config4PortalDTO.OverrideAppConfig> appIdMapOverrideAppConfig = null;
+        Map<Long, AppConfigVO.OverrideAppConfig> appIdMapOverrideAppConfig = null;
 
         for (ConfigItemDTO config : clusterConfigs) {
             long targetAppId = config.getAppId();
@@ -227,11 +228,11 @@ public class ConfigServiceImpl implements ConfigService {
                     appIdMapOverrideAppConfig = new HashMap<>();
                 }
 
-                Config4PortalDTO.OverrideAppConfig overrideAppConfig =
+                AppConfigVO.OverrideAppConfig overrideAppConfig =
                     appIdMapOverrideAppConfig.get(targetAppId);
 
                 if (overrideAppConfig == null) {
-                    overrideAppConfig = new Config4PortalDTO.OverrideAppConfig();
+                    overrideAppConfig = new AppConfigVO.OverrideAppConfig();
                     appIdMapOverrideAppConfig.put(targetAppId, overrideAppConfig);
                     overrideAppConfigs.add(overrideAppConfig);
                 }
@@ -242,9 +243,9 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    private void collectSpecialClusterConfigs(String clusterName, List<ConfigItemDTO> clusterConfigs, List<Config4PortalDTO.OverrideClusterConfig> overrideClusterConfigs) {
-        Config4PortalDTO.OverrideClusterConfig overrideClusterConfig =
-            new Config4PortalDTO.OverrideClusterConfig();
+    private void collectSpecialClusterConfigs(String clusterName, List<ConfigItemDTO> clusterConfigs, List<AppConfigVO.OverrideClusterConfig> overrideClusterConfigs) {
+        AppConfigVO.OverrideClusterConfig overrideClusterConfig =
+            new AppConfigVO.OverrideClusterConfig();
         overrideClusterConfig.setClusterName(clusterName);
         overrideClusterConfig.setConfigs(clusterConfigs);
         overrideClusterConfigs.add(overrideClusterConfig);

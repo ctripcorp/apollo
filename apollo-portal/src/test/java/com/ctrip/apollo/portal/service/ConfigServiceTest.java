@@ -3,6 +3,7 @@ package com.ctrip.apollo.portal.service;
 import com.ctrip.apollo.core.Constants;
 import com.ctrip.apollo.core.dto.*;
 import com.ctrip.apollo.portal.RestUtils;
+import com.ctrip.apollo.portal.entity.AppConfigVO;
 import com.ctrip.apollo.portal.service.impl.ConfigServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,13 +58,13 @@ public class ConfigServiceTest {
         restInvoke(ConfigServiceImpl.ADMIN_SERVICE_HOST + "/version/"
             + versionId, VersionDTO.class, someVersion, versionResponse);
 
-        Config4PortalDTO config4PortalDTO = configService.loadReleaseConfig(appId, versionId);
+        AppConfigVO appConfigVO = configService.loadReleaseConfig(appId, versionId);
 
-        assertEquals(config4PortalDTO.getAppId(), appId);
-        assertEquals(config4PortalDTO.getVersionId(), versionId);
-        assertEquals(config4PortalDTO.getDefaultClusterConfigs().size(), 2);
-        assertEquals(config4PortalDTO.getOverrideAppConfigs().size(), 2);
-        assertEquals(config4PortalDTO.getOverrideClusterConfigs().size(), 2);
+        assertEquals(appConfigVO.getAppId(), appId);
+        assertEquals(appConfigVO.getVersionId(), versionId);
+        assertEquals(appConfigVO.getDefaultClusterConfigs().size(), 2);
+        assertEquals(appConfigVO.getOverrideAppConfigs().size(), 2);
+        assertEquals(appConfigVO.getOverrideClusterConfigs().size(), 2);
     }
 
     @Test
@@ -83,13 +84,13 @@ public class ConfigServiceTest {
         restInvoke(ConfigServiceImpl.ADMIN_SERVICE_HOST + "/version/"
             + versionId, VersionDTO.class, someVersion, versionResponse);
 
-        Config4PortalDTO config4PortalDTO = configService.loadReleaseConfig(appId, versionId);
+        AppConfigVO appConfigVO = configService.loadReleaseConfig(appId, versionId);
 
-        assertEquals(config4PortalDTO.getAppId(), appId);
-        assertEquals(config4PortalDTO.getVersionId(), versionId);
-        assertEquals(config4PortalDTO.getDefaultClusterConfigs().size(), 2);
-        assertEquals(config4PortalDTO.getOverrideAppConfigs().size(), 0);
-        assertEquals(config4PortalDTO.getOverrideClusterConfigs().size(), 0);
+        assertEquals(appConfigVO.getAppId(), appId);
+        assertEquals(appConfigVO.getVersionId(), versionId);
+        assertEquals(appConfigVO.getDefaultClusterConfigs().size(), 2);
+        assertEquals(appConfigVO.getOverrideAppConfigs().size(), 0);
+        assertEquals(appConfigVO.getOverrideClusterConfigs().size(), 0);
     }
 
     @Test
@@ -109,14 +110,14 @@ public class ConfigServiceTest {
             + versionId, VersionDTO.class, someVersion, versionResponse);
 
 
-        Config4PortalDTO config4PortalDTO = configService.loadReleaseConfig(appId, versionId);
+        AppConfigVO appConfigVO = configService.loadReleaseConfig(appId, versionId);
 
 
-        assertEquals(config4PortalDTO.getAppId(), appId);
-        assertEquals(config4PortalDTO.getVersionId(), versionId);
-        assertEquals(config4PortalDTO.getDefaultClusterConfigs().size(), 2);
-        assertEquals(2, config4PortalDTO.getOverrideAppConfigs().size());
-        assertEquals(config4PortalDTO.getOverrideClusterConfigs().size(), 0);
+        assertEquals(appConfigVO.getAppId(), appId);
+        assertEquals(appConfigVO.getVersionId(), versionId);
+        assertEquals(appConfigVO.getDefaultClusterConfigs().size(), 2);
+        assertEquals(2, appConfigVO.getOverrideAppConfigs().size());
+        assertEquals(appConfigVO.getOverrideClusterConfigs().size(), 0);
     }
 
     @Test
@@ -137,13 +138,13 @@ public class ConfigServiceTest {
         restInvoke(ConfigServiceImpl.ADMIN_SERVICE_HOST + "/version/"
             + versionId, VersionDTO.class, someVersion, versionResponse);
 
-        Config4PortalDTO config4PortalDTO = configService.loadReleaseConfig(appId, versionId);
+        AppConfigVO appConfigVO = configService.loadReleaseConfig(appId, versionId);
 
-        assertEquals(config4PortalDTO.getAppId(), appId);
-        assertEquals(config4PortalDTO.getVersionId(), versionId);
-        assertEquals(config4PortalDTO.getDefaultClusterConfigs().size(), 2);
-        assertEquals(0, config4PortalDTO.getOverrideAppConfigs().size());
-        assertEquals(1, config4PortalDTO.getOverrideClusterConfigs().size());
+        assertEquals(appConfigVO.getAppId(), appId);
+        assertEquals(appConfigVO.getVersionId(), versionId);
+        assertEquals(appConfigVO.getDefaultClusterConfigs().size(), 2);
+        assertEquals(0, appConfigVO.getOverrideAppConfigs().size());
+        assertEquals(1, appConfigVO.getOverrideClusterConfigs().size());
     }
 
     @Test
@@ -158,13 +159,13 @@ public class ConfigServiceTest {
         restInvoke(ConfigServiceImpl.ADMIN_SERVICE_HOST
             + "/configs/latest?clusterIds=100,101", ConfigItemDTO[].class, someConfigItem, configItemResponse);
 
-        Config4PortalDTO config4PortalDTO = configService.loadLatestConfig(appId);
+        AppConfigVO appConfigVO = configService.loadLatestConfig(appId);
 
-        assertEquals(config4PortalDTO.getAppId(), 6666);
-        assertEquals(config4PortalDTO.getVersionId(), Constants.LASTEST_VERSION_ID);
-        assertEquals(config4PortalDTO.getDefaultClusterConfigs().size(), 3);
-        assertEquals(config4PortalDTO.getOverrideAppConfigs().size(), 1);
-        assertEquals(config4PortalDTO.getOverrideClusterConfigs().size(), 1);
+        assertEquals(appConfigVO.getAppId(), 6666);
+        assertEquals(appConfigVO.getVersionId(), Constants.LASTEST_VERSION_ID);
+        assertEquals(appConfigVO.getDefaultClusterConfigs().size(), 3);
+        assertEquals(appConfigVO.getOverrideAppConfigs().size(), 1);
+        assertEquals(appConfigVO.getOverrideClusterConfigs().size(), 1);
     }
 
     private <T> void restInvoke(String url, Class<T> responseType, T result, ResponseEntity someResponse) {

@@ -1,7 +1,7 @@
 package com.ctrip.apollo.portal.controller;
 
 import com.ctrip.apollo.core.Constants;
-import com.ctrip.apollo.core.dto.Config4PortalDTO;
+import com.ctrip.apollo.portal.entity.AppConfigVO;
 import com.ctrip.apollo.portal.exception.NotFoundException;
 import com.ctrip.apollo.portal.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class ConfigController {
     private ConfigService configService;
 
     @RequestMapping("/{appId}/{env}/{versionId}")
-    public Config4PortalDTO detail(@PathVariable long appId, @PathVariable String env, @PathVariable long versionId) {
+    public AppConfigVO detail(@PathVariable long appId, @PathVariable String env, @PathVariable long versionId) {
 
         if (appId <= 0) {
             throw new NotFoundException();
