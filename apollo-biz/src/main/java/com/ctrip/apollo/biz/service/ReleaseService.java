@@ -46,7 +46,7 @@ public class ReleaseService {
       throw new NotFoundException(String.format("Could not find namespace for %s %s %s", appId,
           clusterName, namespaceName));
     }
-    List<Item> items = itemRepository.findByNamespaceId(namespace.getId());
+    List<Item> items = itemRepository.findByNamespaceIdOrderByLineNumDesc(namespace.getId());
     Map<String, String> configurations = new HashMap<String, String>();
     for (Item item : items) {
       configurations.put(item.getKey(), item.getValue());

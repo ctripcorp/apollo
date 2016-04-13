@@ -39,17 +39,18 @@ public class HttpUtil {
 
       conn.setRequestMethod("GET");
 
-      if (httpRequest.getConnectTimeout() < 0) {
-        conn.setConnectTimeout(m_configUtil.getConnectTimeout());
-      } else {
-        conn.setConnectTimeout(httpRequest.getConnectTimeout());
+      int connectTimeout = httpRequest.getConnectTimeout();
+      if (connectTimeout < 0) {
+        connectTimeout = m_configUtil.getConnectTimeout();
       }
 
-      if (httpRequest.getReadTimeout() < 0) {
-        conn.setReadTimeout(m_configUtil.getReadTimeout());
-      } else {
-        conn.setReadTimeout(httpRequest.getReadTimeout());
+      int readTimeout = httpRequest.getReadTimeout();
+      if (readTimeout < 0) {
+        readTimeout = m_configUtil.getReadTimeout();
       }
+
+      conn.setConnectTimeout(connectTimeout);
+      conn.setReadTimeout(readTimeout);
 
       conn.connect();
 
@@ -66,7 +67,7 @@ public class HttpUtil {
       }
 
       throw new RuntimeException(
-          String.format("Get operation failed, status code - %d", statusCode));
+          String.format("Get operation failed for %s, status code - %d", httpRequest.getUrl(), statusCode));
 
     } catch (Throwable ex) {
       throw new RuntimeException("Could not complete get operation", ex);

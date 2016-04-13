@@ -50,9 +50,11 @@ public class ReleaseController {
       @PathVariable("clusterName") String clusterName,
       @PathVariable("namespaceName") String namespaceName) {
     Release release = configService.findRelease(appId, clusterName, namespaceName);
-    if (release == null) throw new NotFoundException(
-        String.format("latest release not found for %s %s %s", appId, clusterName, namespaceName));
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    if (release == null) {
+      return null;
+    } else {
+      return BeanUtils.transfrom(ReleaseDTO.class, release);
+    }
   }
 
   @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)

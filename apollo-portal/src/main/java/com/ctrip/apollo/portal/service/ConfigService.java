@@ -50,19 +50,51 @@ public class ConfigService {
 
     List<NamespaceVO> namespaceVOs = new LinkedList<>();
     for (NamespaceDTO namespace : namespaces) {
-      namespaceVOs.add(parseNamespace(appId, env, clusterName, namespace));
+
+      NamespaceVO namespaceVO = null;
+      try {
+        namespaceVO = parseNamespace(appId, env, clusterName, namespace);
+        namespaceVOs.add(namespaceVO);
+      } catch (Exception e) {
+        logger.error("parse namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env, clusterName,
+                     namespace.getNamespaceName(), e);
+        return namespaceVOs;
+      }
     }
 
     return namespaceVOs;
   }
 
   public TextResolverResult resolve(String appId, Apollo.Env env, String clusterName, String namespaceName,
-                                         String configText) {
-    TextResolverResult result = resolver.resolve(configText, itemAPI.findItems(appId, env, clusterName, namespaceName));
-    if (result.getCode() == TextResolverResult.Code.OK) {
-      ItemChangeSets changeSets = result.getChangeSets();
-      //invoke admin service
+                                    String configText) {
+    TextResolverResult result = new TextResolverResult();
+    try {
+      result = resolver.resolve(configText, itemAPI.findItems(appId, env, clusterName, namespaceName));
+    } catch (Exception e) {
+      logger
+          .error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env, clusterName,
+                 namespaceName, e);
+      result.setResolveSuccess(false);
+      result.setMsg("oops! server resolve config text error.");
+      return result;
     }
+    if (result.isResolveSuccess()) {
+      try {
+        // TODO: 16/4/13
+        result.getChangeSets().setModifyBy("lepdou");
+        itemAPI.updateItems(appId, env, clusterName, namespaceName, result.getChangeSets());
+      } catch (Exception e) {
+        logger.error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env,
+                   clusterName, namespaceName, e);
+        result.setResolveSuccess(false);
+        result.setMsg("oops! server update config error.");
+        return result;
+      }
+    } else {
+      logger.warn("resolve config text error by format error. app id:{}, env:{}, clusterName:{}, namespace:{},cause:{}",
+                  appId,env, clusterName, namespaceName, result.getMsg());
+    }
+
     return result;
   }
 
@@ -72,6 +104,7 @@ public class ConfigService {
     namespaceVO.setNamespace(namespace);
 
     List<NamespaceVO.ItemVO> itemVos = new LinkedList<>();
+    namespaceVO.setItems(itemVos);
 
     String namespaceName = namespace.getNamespaceName();
 
@@ -84,6 +117,7 @@ public class ConfigService {
       } catch (IOException e) {
         logger.error("parse release json error. appId:{},env:{},clusterName:{},namespace:{}", appId,
                      env, clusterName, namespaceName);
+        return namespaceVO;
       }
     }
 
@@ -101,7 +135,7 @@ public class ConfigService {
       itemVos.add(itemVO);
     }
     namespaceVO.setItemModifiedCnt(modifiedItemCnt);
-    namespaceVO.setItems(itemVos);
+    Collections.sort(itemVos);
 
     return namespaceVO;
   }

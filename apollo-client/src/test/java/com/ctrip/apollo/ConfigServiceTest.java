@@ -71,6 +71,11 @@ public class ConfigServiceTest extends ComponentTestCase {
 
       return m_namespace + ":" + key;
     }
+
+    @Override
+    public void addChangeListener(ConfigChangeListener listener) {
+
+    }
   }
 
   public static class MockConfigFactory implements ConfigFactory {

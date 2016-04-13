@@ -30,7 +30,7 @@ public class ConfigService {
   private Type configurationTypeReference = new TypeToken<Map<String, String>>(){}.getType();
 
   public Release findRelease(String appId, String clusterName, String namespaceName) {
-    Release release = releaseRepository.findLatest(appId, clusterName, namespaceName);
+    Release release = releaseRepository.findFirstByAppIdAndClusterNameAndNamespaceNameOrderByIdDesc(appId, clusterName, namespaceName);
     return release;
   }
 

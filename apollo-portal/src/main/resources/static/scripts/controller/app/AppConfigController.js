@@ -2,11 +2,18 @@ application_module.controller("AppConfigController",
                               ['$scope', '$location', 'toastr', 'AppService', 'ConfigService',
                                function ($scope, $location, toastr, AppService, ConfigService) {
 
-                                   $scope.appId = $location.$$url.split("=")[1];
+                                   var appId = $location.$$url.split("=")[1];
 
+                                   var pageEnv = {
+                                       appId: appId,
+                                       env: 'LOCAL',
+                                       clusterName: 'default'
+                                   };
+
+                                   $scope.pageEnv = pageEnv;
                                    /////////////
 
-                                   AppService.load_nav_tree($scope.appId).then(function (result) {
+                                   AppService.load_nav_tree($scope.pageEnv.appId).then(function (result) {
                                        var navTree = [];
                                        var nodes = result.nodes;
                                        nodes.forEach(function (item) {
@@ -37,9 +44,8 @@ application_module.controller("AppConfigController",
 
                                    ///////////
 
-                                   $scope.env = 'LOCAL';
-                                   $scope.clusterName = 'default';
-                                   ConfigService.load_all_namespaces($scope.appId, $scope.env, $scope.clusterName).then(
+                                   ConfigService.load_all_namespaces($scope.pageEnv.appId, $scope.pageEnv.env,
+                                                                     $scope.pageEnv.clusterName).then(
                                        function (result) {
                                            $scope.namespaces = result;
 
@@ -48,30 +54,49 @@ application_module.controller("AppConfigController",
                                                $scope.namespaces.forEach(function (item) {
                                                    item.isModify = false;
                                                    item.viewType = 'table';
+                                                   item.isTextEditing = false;
                                                })
                                            }
 
                                        }, function (result) {
-                                           toastr.error("加载配置信息出错:" + result);
+                                           toastr.error("加载配置信息出错");
                                        });
 
+                                   
+                                   $scope.draft = {};
+                                   //保存草稿
+                                   $scope.saveDraft = function (namespace) {
+                                       $scope.draft = namespace;
+                                   };
+
                                    //更新配置
-                                   $scope.modifyItems = function (namespace) {
-                                       ConfigService.modify_items($scope.appId, $scope.env, $scope.clusterName,
-                                                                  namespace.namespace.namespaceName, namespace.text).then(
+                                   $scope.commitChange = function () {
+                                       ConfigService.modify_items($scope.pageEnv.appId, $scope.pageEnv.env, $scope.pageEnv.clusterName,
+                                                                  $scope.draft.namespace.namespaceName, $scope.draft.text).then(
                                            function (result) {
-                                               if (result.code == 200){
-                                                   toastr.success("更新成功");
-                                               }else {
-                                                   toastr.error("更新失败. code:" + result.code + " msg:" + result.msg);
-                                               }
-                                           },function (result) {
+                                               toastr.success("更新成功");
+                                               $scope.draft.backupText = '';//清空备份文本
+                                               $scope.toggleTextEditStatus($scope.draft);
+                                           }, function (result) {
+                                               toastr.error(result.data.msg, "更新失败");
 
                                            }
                                        );
                                    };
 
                                    /////////
+                                   //文本编辑框状态切换
+                                   $scope.toggleTextEditStatus = function (namespace) {
+                                       namespace.isTextEditing = !namespace.isTextEditing;
+                                       if (namespace.isTextEditing){//切换为编辑状态,保存一下原来值
+                                           $scope.draft.backupText = namespace.text;
+                                       }else {
+                                           if ($scope.draft.backupText){//取消编辑,则复原
+                                               namespace.text = $scope.draft.backupText;
+                                           }
+                                       }
+                                   };
+                                   
                                    $scope.queryOldValue = function (key, oldValue) {
                                        $scope.queryKey = key;
                                        if (oldValue == '') {
@@ -101,8 +126,13 @@ application_module.controller("AppConfigController",
                                            // if (item.modified) {
                                            //     result += "**";
                                            // }
-                                           result +=
-                                               item.item.key + ":" + item.item.value + " ##" + item.item.comment + "\n";
+                                           if (item.item.key) {
+                                               result +=
+                                                   item.item.key + " = " + item.item.value + "\n";
+                                           } else {
+                                               result += item.item.comment + "\n";
+                                           }
+
                                        });
 
                                        return result;

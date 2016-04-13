@@ -23,6 +23,9 @@ public class Item extends BaseEntity {
   @Column
   private String comment;
 
+  @Column
+  private int lineNum;
+
   public String getComment() {
     return comment;
   }
@@ -55,4 +58,11 @@ public class Item extends BaseEntity {
     this.value = value;
   }
 
+  public int getLineNum() {
+    return lineNum;
+  }
+
+  public void setLineNum(int lineNum) {
+    this.lineNum = lineNum;
+  }
 }

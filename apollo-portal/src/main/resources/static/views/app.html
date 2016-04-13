@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>apollo</title>
-    <link rel="stylesheet" type="text/css" href="../../vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../../vendor/angular/angular-toastr-1.4.1.min.css">
-    <link rel="stylesheet" type="text/css" media='all' href="../../vendor/angular/loading-bar.min.css">
-    <link rel="stylesheet" type="text/css" href="../../styles/common-style.css">
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../vendor/angular/angular-toastr-1.4.1.min.css">
+    <link rel="stylesheet" type="text/css" media='all' href="../vendor/angular/loading-bar.min.css">
+    <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
 </head>
 
 <body>
 
-<div ng-include="'../common/nav.html'"></div>
+<div ng-include="'common/nav.html'"></div>
 
 <div class="container-fluid">
     <div class="app" ng-controller="AppConfigController as appConfig">
@@ -81,25 +81,33 @@
                                     </div>
 
                                     <div class="col-md-1 text-right">
-                                        &nbsp;
-                                        <a data-toggle="tooltip" data-placement="top" title="修改配置" ng-click="modifyItems(namespace)">
+                                        <a data-toggle="tooltip" data-placement="top" title="取消修改"
+                                           ng-show="namespace.isTextEditing" ng-click="toggleTextEditStatus(namespace)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </a>
+                                        <a data-toggle="tooltip" data-placement="top" title="修改配置"
+                                           ng-show="!namespace.isTextEditing"
+                                           ng-click="toggleTextEditStatus(namespace)">
                                             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                        </a>
+                                        &nbsp;
+                                        <a data-toggle="modal" data-target="#commitModal"
+                                           ng-show="namespace.isTextEditing" ng-click="saveDraft(namespace)">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                                         </a>
                                     </div>
                                 </div>
                             </header>
 
                             <div ng-show="namespace.viewType == 'textarea'">
-                                <textarea class="form-control" rows="3" disabled>
-书写格式：key:value##comment
-说明：key和value之间‘:’隔开，每个key的备注在value后面，且两个‘#’号隔开。
-                                </textarea>
-                                <textarea class="form-control" rows="20" ng-model="namespace.text">
+                                <textarea class="form-control" rows="20" ng-model="namespace.text"
+                                          ng-disabled="!namespace.isTextEditing">
 {{namespace.text}}
                                 </textarea>
                             </div>
 
-                            <table class="table table-bordered text-center table-hover" ng-show="namespace.viewType == 'table'">
+                            <table class="table table-bordered text-center table-hover"
+                                   ng-show="namespace.viewType == 'table'">
                                 <thead>
                                 <tr>
                                     <th>
@@ -121,14 +129,14 @@
                                 </thead>
                                 <tbody ng-repeat="config in namespace.items">
 
-                                <tr ng-class="{warning:config.modified}">
+                                <tr ng-class="{warning:config.modified}" ng-if="config.item.key">
                                     <td>
                                         {{config.item.key}}
                                     </td>
                                     <td>
                                         <button data-placement="top" title="查看旧值"
                                                 class="glyphicon glyphicon-eye-open"
-                                                aria-hidden="true" data-toggle="modal" data-target="#oldValue"
+                                                aria-hidden="true" data-toggle="modal" data-target="#oldValueModal"
                                                 ng-show="config.modified"
                                                 ng-click="queryOldValue(config.item.key, config.oldValue)"></button>
                                         {{config.item.value}}
@@ -153,7 +161,7 @@
                                 <div class="row">
                                     <div class="col-md-11 col-md-offset-1 list" style="">
                                         <div class="media">
-                                            <img src="../../img/history.png"/>
+                                            <img src="../img/history.png"/>
 
                                             <div class="row">
                                                 <div class="col-md-10"><h5 class="media-heading">2016-02-23
@@ -171,7 +179,7 @@
                                             <hr>
                                         </div>
                                         <div class="media">
-                                            <img src="../../img/history.png"/>
+                                            <img src="../img/history.png"/>
 
                                             <div class="row">
                                                 <div class="col-md-10"><h5 class="media-heading">2016-02-23
@@ -201,7 +209,7 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade " id="oldValue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade " id="oldValueModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header panel-primary">
@@ -218,44 +226,62 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- commint modify config -->
+        <div class="modal fade" id="commitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header panel-primary">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel2">Commit changes</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="4" style="width:570px;" placeholder="input change log...."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="commitChange()">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
 
 
-<div ng-include="'../common/footer.html'"></div>
+<div ng-include="'common/footer.html'"></div>
 
 
 <!-- jquery.js -->
-<script src="../../vendor/jquery.js" type="text/javascript"></script>
+<script src="../vendor/jquery.js" type="text/javascript"></script>
 
 <!--lodash.js-->
-<script src="../../vendor/lodash.min.js" type="text/javascript"></script>
+<script src="../vendor/lodash.min.js" type="text/javascript"></script>
 
 <!--angular-->
-<script src="../../vendor/angular/angular.min.js"></script>
-<script src="../../vendor/angular/angular-ui-router.min.js"></script>
-<script src="../../vendor/angular/angular-resource.min.js"></script>
-<script src="../../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
-<script src="../../vendor/angular/loading-bar.min.js"></script>
+<script src="../vendor/angular/angular.min.js"></script>
+<script src="../vendor/angular/angular-ui-router.min.js"></script>
+<script src="../vendor/angular/angular-resource.min.js"></script>
+<script src="../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
+<script src="../vendor/angular/loading-bar.min.js"></script>
 
 <!-- bootstrap.js -->
-<script src="../../vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="../../vendor/bootstrap/js/bootstrap-treeview.min.js" type="text/javascript"></script>
+<script src="../vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../vendor/bootstrap/js/bootstrap-treeview.min.js" type="text/javascript"></script>
 
 <!--biz script-->
-<script type="application/javascript" src="../../scripts/app.js"></script>
+<script type="application/javascript" src="../scripts/app.js"></script>
 
 <!--directive-->
 
 <!--service-->
-<script type="application/javascript" src="../../scripts/services/AppService.js"></script>
-<script type="application/javascript" src="../../scripts/services/EnvService.js"></script>
-<script type="application/javascript" src="../../scripts/services/ConfigService.js"></script>
-<script type="application/javascript" src="../../scripts/services/VersionService.js"></script>
+<script type="application/javascript" src="../scripts/services/AppService.js"></script>
+<script type="application/javascript" src="../scripts/services/ConfigService.js"></script>
 
 <!--controller-->
-<script type="application/javascript" src="../../scripts/controller/app/AppConfigController.js"></script>
+<script type="application/javascript" src="../scripts/controller/app/AppConfigController.js"></script>
 
 
 <script type="application/javascript">

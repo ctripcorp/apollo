@@ -4,6 +4,7 @@ package com.ctrip.apollo.portal.api;
 import com.ctrip.apollo.Apollo;
 import com.ctrip.apollo.core.dto.AppDTO;
 import com.ctrip.apollo.core.dto.ClusterDTO;
+import com.ctrip.apollo.core.dto.ItemChangeSets;
 import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.dto.NamespaceDTO;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
@@ -33,7 +34,7 @@ public class AdminServiceAPI {
   public static class NamespaceAPI extends API {
 
     public List<NamespaceDTO> findGroupsByAppAndCluster(String appId, Apollo.Env env,
-                                                    String clusterName) {
+                                                        String clusterName) {
       if (StringUtils.isContainEmpty(appId, clusterName)) {
         return null;
       }
@@ -48,52 +49,63 @@ public class AdminServiceAPI {
       if (StringUtils.isContainEmpty(appId, clusterName, namespaceName)) {
         return null;
       }
-        return restTemplate.getForObject(getAdminServiceHost(env) +
-                                         String.format("apps/%s/clusters/%s/namespaces/%s", appId, clusterName,
-                                                       namespaceName), NamespaceDTO.class);
-      }
+      return restTemplate.getForObject(getAdminServiceHost(env) +
+                                       String.format("apps/%s/clusters/%s/namespaces/%s", appId, clusterName,
+                                                     namespaceName), NamespaceDTO.class);
     }
+  }
 
-    @Service
-    public static class ItemAPI extends API {
+  @Service
+  public static class ItemAPI extends API {
 
-      public List<ItemDTO> findItems(String appId, Apollo.Env env, String clusterName, String namespace) {
-        if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
-          return null;
-        }
-
-        return Arrays.asList(restTemplate.getForObject(getAdminServiceHost(env) + String
-                                             .format("apps/%s/clusters/%s/namespaces/%s/items", appId,
-                                                     clusterName, namespace),
-                                         ItemDTO[].class));
+    public List<ItemDTO> findItems(String appId, Apollo.Env env, String clusterName, String namespace) {
+      if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
+        return null;
       }
 
+      return Arrays.asList(restTemplate.getForObject(getAdminServiceHost(env) + String
+                                                         .format("apps/%s/clusters/%s/namespaces/%s/items", appId,
+                                                                 clusterName, namespace),
+                                                     ItemDTO[].class));
     }
 
-    @Service
-    public static class ClusterAPI extends API {
-
-      public List<ClusterDTO> findClustersByApp(String appId, Apollo.Env env) {
-        if (StringUtils.isContainEmpty(appId)) {
-          return null;
-        }
-
-        return Arrays.asList(restTemplate.getForObject(getAdminServiceHost(env) + String.format("apps/%s/clusters", appId),
-                                                ClusterDTO[].class));
+    public void updateItems(String appId, Apollo.Env env, String clusterName, String namespace,
+                            ItemChangeSets changeSets) {
+      if (StringUtils.isContainEmpty(appId, clusterName, namespace)){
+        return;
       }
+      restTemplate.postForEntity(getAdminServiceHost(env) + String.format("apps/%s/clusters/%s/namespaces/%s/itemset",
+                                                                          appId,clusterName, namespace), changeSets, Void.class);
     }
 
-    @Service
-    public static class ReleaseAPI extends API {
-
-      public ReleaseDTO loadLatestRelease(String appId, Apollo.Env env, String clusterName, String namespace) {
-        if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
-          return null;
-        }
-        return restTemplate.getForObject(getAdminServiceHost(env) + String
-            .format("apps/%s/clusters/%s/namespaces/%s/releases/latest", appId,
-                    clusterName, namespace), ReleaseDTO.class);
-      }
-    }
 
   }
+
+  @Service
+  public static class ClusterAPI extends API {
+
+    public List<ClusterDTO> findClustersByApp(String appId, Apollo.Env env) {
+      if (StringUtils.isContainEmpty(appId)) {
+        return null;
+      }
+
+      return Arrays
+          .asList(restTemplate.getForObject(getAdminServiceHost(env) + String.format("apps/%s/clusters", appId),
+                                            ClusterDTO[].class));
+    }
+  }
+
+  @Service
+  public static class ReleaseAPI extends API {
+
+    public ReleaseDTO loadLatestRelease(String appId, Apollo.Env env, String clusterName, String namespace) {
+      if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
+        return null;
+      }
+      return restTemplate.getForObject(getAdminServiceHost(env) + String
+          .format("apps/%s/clusters/%s/namespaces/%s/releases/latest", appId,
+                  clusterName, namespace), ReleaseDTO.class);
+    }
+  }
+
+}

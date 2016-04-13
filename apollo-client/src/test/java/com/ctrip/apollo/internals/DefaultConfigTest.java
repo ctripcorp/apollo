@@ -1,19 +1,27 @@
 package com.ctrip.apollo.internals;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
+import com.ctrip.apollo.ConfigChangeListener;
 import com.ctrip.apollo.core.utils.ClassLoaderUtil;
+import com.ctrip.apollo.enums.PropertyChangeType;
+import com.ctrip.apollo.model.ConfigChange;
+import com.ctrip.apollo.model.ConfigChangeEvent;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,7 +77,7 @@ public class DefaultConfigTest {
     someProperties = new Properties();
     someProperties.setProperty(someKey, someLocalFileValue);
     someProperties.setProperty(anotherKey, someLocalFileValue);
-    when(configRepository.loadConfig()).thenReturn(someProperties);
+    when(configRepository.getConfig()).thenReturn(someProperties);
 
     //set up resource file
     File resourceFile = new File(someResourceDir, someNamespace + ".properties");
@@ -79,9 +87,8 @@ public class DefaultConfigTest {
     Files.append(System.getProperty("line.separator"), resourceFile, Charsets.UTF_8);
     Files.append(lastKey + "=" + someResourceValue, resourceFile, Charsets.UTF_8);
 
-    DefaultConfig
-            defaultConfig =
-            new DefaultConfig(someNamespace, configRepository);
+    DefaultConfig defaultConfig =
+        new DefaultConfig(someNamespace, configRepository);
 
     String someKeyValue = defaultConfig.getProperty(someKey, null);
     String anotherKeyValue = defaultConfig.getProperty(anotherKey, null);
@@ -94,5 +101,81 @@ public class DefaultConfigTest {
     assertEquals(someLocalFileValue, anotherKeyValue);
     assertEquals(someResourceValue, lastKeyValue);
 
+  }
+
+  @Test
+  public void testOnRepositoryChange() throws Exception {
+    String someKey = "someKey";
+    String someSystemPropertyValue = "system-property-value";
+
+    String anotherKey = "anotherKey";
+    String someLocalFileValue = "local-file-value";
+
+    String keyToBeDeleted = "keyToBeDeleted";
+    String keyToBeDeletedValue = "keyToBeDeletedValue";
+
+    String yetAnotherKey = "yetAnotherKey";
+    String yetAnotherValue = "yetAnotherValue";
+
+    String yetAnotherResourceValue = "yetAnotherResourceValue";
+    //set up system property
+    System.setProperty(someKey, someSystemPropertyValue);
+
+    //set up config repo
+    someProperties = new Properties();
+    someProperties.putAll(ImmutableMap
+        .of(someKey, someLocalFileValue, anotherKey, someLocalFileValue, keyToBeDeleted,
+            keyToBeDeletedValue, yetAnotherKey, yetAnotherValue));
+    when(configRepository.getConfig()).thenReturn(someProperties);
+
+    //set up resource file
+    File resourceFile = new File(someResourceDir, someNamespace + ".properties");
+    Files.append(yetAnotherKey + "=" + yetAnotherResourceValue, resourceFile, Charsets.UTF_8);
+
+    DefaultConfig defaultConfig =
+        new DefaultConfig(someNamespace, configRepository);
+
+    ConfigChangeListener someListener = mock(ConfigChangeListener.class);
+    defaultConfig.addChangeListener(someListener);
+
+    Properties newProperties = new Properties();
+    String someKeyNewValue = "new-some-value";
+    String anotherKeyNewValue = "another-new-value";
+    String newKey = "newKey";
+    String newValue = "newValue";
+    newProperties.putAll(ImmutableMap
+        .of(someKey, someKeyNewValue, anotherKey, anotherKeyNewValue, newKey, newValue));
+
+    final ArgumentCaptor<ConfigChangeEvent> captor =
+        ArgumentCaptor.forClass(ConfigChangeEvent.class);
+
+    defaultConfig.onRepositoryChange(someNamespace, newProperties);
+
+    verify(someListener, times(1)).onChange(captor.capture());
+
+    ConfigChangeEvent changeEvent = captor.getValue();
+
+    assertEquals(someNamespace, changeEvent.getNamespace());
+    assertEquals(4, changeEvent.getChanges().size());
+
+    ConfigChange anotherKeyChange = changeEvent.getChange(anotherKey);
+    assertEquals(someLocalFileValue, anotherKeyChange.getOldValue());
+    assertEquals(anotherKeyNewValue, anotherKeyChange.getNewValue());
+    assertEquals(PropertyChangeType.MODIFIED, anotherKeyChange.getChangeType());
+
+    ConfigChange yetAnotherKeyChange = changeEvent.getChange(yetAnotherKey);
+    assertEquals(yetAnotherValue, yetAnotherKeyChange.getOldValue());
+    assertEquals(yetAnotherResourceValue, yetAnotherKeyChange.getNewValue());
+    assertEquals(PropertyChangeType.MODIFIED, yetAnotherKeyChange.getChangeType());
+
+    ConfigChange keyToBeDeletedChange = changeEvent.getChange(keyToBeDeleted);
+    assertEquals(keyToBeDeletedValue, keyToBeDeletedChange.getOldValue());
+    assertEquals(null, keyToBeDeletedChange.getNewValue());
+    assertEquals(PropertyChangeType.DELETED, keyToBeDeletedChange.getChangeType());
+
+    ConfigChange newKeyChange = changeEvent.getChange(newKey);
+    assertEquals(null, newKeyChange.getOldValue());
+    assertEquals(newValue, newKeyChange.getNewValue());
+    assertEquals(PropertyChangeType.NEW, newKeyChange.getChangeType());
   }
 }

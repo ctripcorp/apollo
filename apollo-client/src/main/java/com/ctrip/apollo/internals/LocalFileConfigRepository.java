@@ -22,14 +22,15 @@ import java.util.Properties;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class LocalFileConfigRepository implements ConfigRepository {
+public class LocalFileConfigRepository extends AbstractConfigRepository
+    implements RepositoryChangeListener {
   private static final Logger logger = LoggerFactory.getLogger(LocalFileConfigRepository.class);
-  private PlexusContainer m_container;
+  private final PlexusContainer m_container;
   private final String m_namespace;
   private final File m_baseDir;
   private final ConfigUtil m_configUtil;
-  private Properties m_fileProperties;
-  private ConfigRepository m_fallback;
+  private volatile Properties m_fileProperties;
+  private volatile ConfigRepository m_fallback;
 
   public LocalFileConfigRepository(File baseDir, String namespace) {
     m_baseDir = baseDir;
@@ -43,7 +44,7 @@ public class LocalFileConfigRepository implements ConfigRepository {
   }
 
   @Override
-  public Properties loadConfig() {
+  public Properties getConfig() {
     if (m_fileProperties == null) {
       initLocalConfig();
     }
@@ -54,26 +55,51 @@ public class LocalFileConfigRepository implements ConfigRepository {
 
   @Override
   public void setFallback(ConfigRepository fallbackConfigRepository) {
+    //clear previous listener
+    if (m_fallback != null) {
+      m_fallback.removeChangeListener(this);
+    }
     m_fallback = fallbackConfigRepository;
+    fallbackConfigRepository.addChangeListener(this);
+  }
+
+  @Override
+  public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
+    if (newProperties.equals(m_fileProperties)) {
+      return;
+    }
+    Properties newFileProperties = new Properties();
+    newFileProperties.putAll(newProperties);
+    this.m_fileProperties = newFileProperties;
+    persistLocalCacheFile(m_baseDir, m_namespace);
+    this.fireRepositoryChange(namespace, newProperties);
   }
 
   void initLocalConfig() {
-    if (m_fallback != null) {
-      try {
-        m_fileProperties = m_fallback.loadConfig();
-        //TODO register change listener
-        persistLocalCacheFile(m_baseDir, m_namespace);
-        return;
-      } catch (Throwable ex) {
-        logger.error("Load config from fallback loader failed", ex);
-        Cat.logError(ex);
-      }
+    try {
+      m_fileProperties = this.loadFromLocalCacheFile(m_baseDir, m_namespace);
+    } catch (Throwable ex) {
+      logger.error("Load config from local config cache file failed", ex);
+    }
+
+    //TODO check whether properties is expired or should we return after it's synced with fallback?
+    if (m_fileProperties != null) {
+      return;
+    }
+
+    if (m_fallback == null) {
+      throw new RuntimeException(
+          "Load config from local config cache failed and there is no fallback repository!");
     }
 
     try {
-      m_fileProperties = this.loadFromLocalCacheFile(m_baseDir, m_namespace);
-    } catch (IOException ex) {
-      throw new RuntimeException("Loading config from local cache file failed", ex);
+      m_fileProperties = m_fallback.getConfig();
+      persistLocalCacheFile(m_baseDir, m_namespace);
+    } catch (Throwable ex) {
+      String message =
+          String.format("Load config from fallback repository %s failed", m_fallback.getClass());
+      logger.error(message, ex);
+      throw new RuntimeException(message, ex);
     }
   }
 

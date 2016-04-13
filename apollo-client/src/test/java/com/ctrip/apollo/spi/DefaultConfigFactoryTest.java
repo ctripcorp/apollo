@@ -40,7 +40,7 @@ public class DefaultConfigFactoryTest extends ComponentTestCase {
     someProperties.setProperty(someKey, someValue);
 
     LocalFileConfigRepository someLocalConfigRepo = mock(LocalFileConfigRepository.class);
-    when(someLocalConfigRepo.loadConfig()).thenReturn(someProperties);
+    when(someLocalConfigRepo.getConfig()).thenReturn(someProperties);
 
     doReturn(someLocalConfigRepo).when(defaultConfigFactory).createLocalConfigRepository(someNamespace);
 

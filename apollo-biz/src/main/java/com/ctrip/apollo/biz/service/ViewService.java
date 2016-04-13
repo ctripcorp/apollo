@@ -65,7 +65,7 @@ public class ViewService {
   }
 
   public List<Item> findItems(Long namespaceId) {
-    List<Item> items = itemRepository.findByNamespaceId(namespaceId);
+    List<Item> items = itemRepository.findByNamespaceIdOrderByLineNumDesc(namespaceId);
     if (items == null) {
       return Collections.EMPTY_LIST;
     }

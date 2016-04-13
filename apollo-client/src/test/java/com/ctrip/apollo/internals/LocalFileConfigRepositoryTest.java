@@ -8,6 +8,7 @@ import com.ctrip.apollo.util.ConfigUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.unidal.lookup.ComponentTestCase;
 
 import java.io.File;
@@ -16,7 +17,11 @@ import java.util.Properties;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,7 +45,7 @@ public class LocalFileConfigRepositoryTest extends ComponentTestCase {
     someProperties = new Properties();
     someProperties.setProperty("defaultKey", "defaultValue");
     fallbackRepo = mock(ConfigRepository.class);
-    when(fallbackRepo.loadConfig()).thenReturn(someProperties);
+    when(fallbackRepo.getConfig()).thenReturn(someProperties);
 
     defineComponent(ConfigUtil.class, MockConfigUtil.class);
   }
@@ -83,7 +88,7 @@ public class LocalFileConfigRepositoryTest extends ComponentTestCase {
     Files.write(someKey + "=" + someValue, file, Charsets.UTF_8);
 
     LocalFileConfigRepository localRepo = new LocalFileConfigRepository(someBaseDir, someNamespace);
-    Properties properties = localRepo.loadConfig();
+    Properties properties = localRepo.getConfig();
 
     assertEquals(someValue, properties.getProperty(someKey));
 
@@ -97,7 +102,7 @@ public class LocalFileConfigRepositoryTest extends ComponentTestCase {
 
     localFileConfigRepository.setFallback(fallbackRepo);
 
-    Properties result = localFileConfigRepository.loadConfig();
+    Properties result = localFileConfigRepository.getConfig();
 
     assertThat(
         "LocalFileConfigRepository's properties should be the same as fallback repo's when there is no local cache",
@@ -111,17 +116,41 @@ public class LocalFileConfigRepositoryTest extends ComponentTestCase {
 
     localRepo.setFallback(fallbackRepo);
 
-    Properties someProperties = localRepo.loadConfig();
+    Properties someProperties = localRepo.getConfig();
 
     LocalFileConfigRepository
         anotherLocalRepoWithNoFallback =
         new LocalFileConfigRepository(someBaseDir, someNamespace);
 
-    Properties anotherProperties = anotherLocalRepoWithNoFallback.loadConfig();
+    Properties anotherProperties = anotherLocalRepoWithNoFallback.getConfig();
 
     assertThat(
         "LocalFileConfigRepository should persist local cache files and return that afterwards",
             someProperties.entrySet(), equalTo(anotherProperties.entrySet()));
+
+  }
+
+  @Test
+  public void testOnRepositoryChange() throws Exception {
+    RepositoryChangeListener someListener = mock(RepositoryChangeListener.class);
+
+    LocalFileConfigRepository localFileConfigRepository =
+        new LocalFileConfigRepository(someBaseDir, someNamespace);
+    localFileConfigRepository.setFallback(fallbackRepo);
+    localFileConfigRepository.addChangeListener(someListener);
+
+    localFileConfigRepository.getConfig();
+
+    Properties anotherProperties = new Properties();
+    anotherProperties.put("anotherKey", "anotherValue");
+
+    localFileConfigRepository.onRepositoryChange(someNamespace, anotherProperties);
+
+    final ArgumentCaptor<Properties> captor = ArgumentCaptor.forClass(Properties.class);
+
+    verify(someListener, times(1)).onRepositoryChange(eq(someNamespace), captor.capture());
+
+    assertEquals(anotherProperties, captor.getValue());
 
   }
 

@@ -1,6 +1,7 @@
 package com.ctrip.apollo.internals;
 
 import com.ctrip.apollo.Config;
+import com.ctrip.apollo.ConfigChangeListener;
 import com.ctrip.apollo.spi.ConfigFactory;
 import com.ctrip.apollo.spi.ConfigFactoryManager;
 
@@ -60,6 +61,12 @@ public class DefaultConfigManagerTest extends ComponentTestCase {
             public String getProperty(String key, String defaultValue) {
               return namespace + ":" + key;
             }
+
+            @Override
+            public void addChangeListener(ConfigChangeListener listener) {
+
+            }
+
           };
         }
       };

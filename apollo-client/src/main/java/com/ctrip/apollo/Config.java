@@ -12,4 +12,6 @@ public interface Config {
    * @return the property value
    */
   public String getProperty(String key, String defaultValue);
+
+  public void addChangeListener(ConfigChangeListener listener);
 }

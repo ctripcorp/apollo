@@ -14,7 +14,7 @@ create_app_module.controller('CreateAppController', ['$scope', '$window', 'toast
             AppService.add($scope.app).then(function (result) {
                 toastr.success('添加成功!');
                 setInterval(function () {
-                    $window.location.href = '/views/app/index.html?#appid=' + result.appId;
+                    $window.location.href = '/views/app.html?#appid=' + result.appId;
                 }, 1000);
             }, function (result) {
                 toastr.error('添加失败!');

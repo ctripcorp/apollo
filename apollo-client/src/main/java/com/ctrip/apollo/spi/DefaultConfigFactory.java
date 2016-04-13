@@ -33,8 +33,7 @@ public class DefaultConfigFactory implements ConfigFactory {
   }
 
   LocalFileConfigRepository createLocalConfigRepository(String namespace) {
-    LocalFileConfigRepository
-        localFileConfigLoader =
+    LocalFileConfigRepository localFileConfigLoader =
         new LocalFileConfigRepository(m_baseDir, namespace);
     localFileConfigLoader.setFallback(createRemoteConfigRepository(namespace));
     return localFileConfigLoader;

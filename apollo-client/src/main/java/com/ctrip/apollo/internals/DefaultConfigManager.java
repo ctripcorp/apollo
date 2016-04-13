@@ -19,7 +19,7 @@ public class DefaultConfigManager implements ConfigManager {
   @Inject
   private ConfigFactoryManager m_factoryManager;
 
-  private Map<String, Config> m_configs = Maps.newHashMap();
+  private Map<String, Config> m_configs = Maps.newConcurrentMap();
 
   @Override
   public Config getConfig(String namespace) {

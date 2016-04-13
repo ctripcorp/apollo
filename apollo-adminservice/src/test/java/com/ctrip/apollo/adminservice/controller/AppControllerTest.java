@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.boot.test.WebIntegrationTest;
@@ -20,7 +21,7 @@ import com.ctrip.apollo.core.dto.AppDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AdminServiceTestConfiguration.class)
-@WebIntegrationTest
+@WebIntegrationTest(randomPort = true)
 public class AppControllerTest {
 
   RestTemplate restTemplate = new TestRestTemplate();
@@ -28,11 +29,18 @@ public class AppControllerTest {
   @Autowired
   AppRepository appRepository;
 
+  @Value("${local.server.port}")
+  private int port;
+  
+  private String getBaseAppUrl(){
+    return "http://localhost:"+port+"/apps/";
+  }
+  
   @Test
   public void testCreate() {
     AppDTO dto = generateSampleDTOData();
     ResponseEntity<AppDTO> response =
-        restTemplate.postForEntity("http://localhost:8090/apps/", dto, AppDTO.class);
+        restTemplate.postForEntity(getBaseAppUrl(), dto, AppDTO.class);
     AppDTO result = response.getBody();
     Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     Assert.assertEquals(dto.getAppId(), result.getAppId());
@@ -52,7 +60,7 @@ public class AppControllerTest {
     app = appRepository.save(app);
 
     AppDTO result =
-        restTemplate.getForObject("http://localhost:8090/apps/" + dto.getAppId(), AppDTO.class);
+        restTemplate.getForObject(getBaseAppUrl() + dto.getAppId(), AppDTO.class);
     Assert.assertEquals(dto.getAppId(), result.getAppId());
     Assert.assertEquals(dto.getName(), result.getName());
 
@@ -62,7 +70,7 @@ public class AppControllerTest {
   @Test
   public void testFindNotExist() {
     ResponseEntity<AppDTO> result =
-        restTemplate.getForEntity("http://localhost:8090/apps/" + "notExists", AppDTO.class);
+        restTemplate.getForEntity(getBaseAppUrl() + "notExists", AppDTO.class);
     Assert.assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
   }
 
@@ -72,7 +80,7 @@ public class AppControllerTest {
     App app = BeanUtils.transfrom(App.class, dto);
     app = appRepository.save(app);
 
-    restTemplate.delete("http://localhost:8090/apps/" + dto.getAppId());
+    restTemplate.delete(getBaseAppUrl() + dto.getAppId());
 
     App deletedApp = appRepository.findOne(app.getId());
     Assert.assertNull(deletedApp);
@@ -85,7 +93,7 @@ public class AppControllerTest {
     app = appRepository.save(app);
 
     dto.setName("newName");
-    restTemplate.put("http://localhost:8090/apps/" + dto.getAppId(), dto);
+    restTemplate.put(getBaseAppUrl() + dto.getAppId(), dto);
 
     App updatedApp = appRepository.findOne(app.getId());
     Assert.assertEquals(dto.getName(), updatedApp.getName());

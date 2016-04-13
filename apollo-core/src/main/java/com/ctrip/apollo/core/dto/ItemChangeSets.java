@@ -9,28 +9,19 @@ import java.util.List;
 public class ItemChangeSets {
 
   private String modifyBy;
-  private List<ItemDTO> createItems;
-  private List<ItemDTO> updateItems;
-  private List<ItemDTO> deletedItems;
+  private List<ItemDTO> createItems = new LinkedList<>();
+  private List<ItemDTO> updateItems = new LinkedList<>();
+  private List<ItemDTO> deletedItems = new LinkedList<>();
 
   public void addCreatedItem(ItemDTO item) {
-    if (createItems == null) {
-      createItems = new LinkedList<>();
-    }
     createItems.add(item);
   }
 
-  public void addupdateItem(ItemDTO item) {
-    if (updateItems == null) {
-      updateItems = new LinkedList<>();
-    }
+  public void addUpdateItem(ItemDTO item) {
     updateItems.add(item);
   }
 
   public void addDeletedItem(ItemDTO item) {
-    if (deletedItems == null) {
-      deletedItems = new LinkedList<>();
-    }
     deletedItems.add(item);
   }
 

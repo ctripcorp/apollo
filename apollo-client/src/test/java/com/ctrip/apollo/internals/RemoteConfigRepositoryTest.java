@@ -1,5 +1,6 @@
 package com.ctrip.apollo.internals;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -13,6 +14,7 @@ import com.ctrip.apollo.util.http.HttpUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.unidal.lookup.ComponentTestCase;
@@ -22,7 +24,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -60,7 +65,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     when(someResponse.getBody()).thenReturn(someApolloConfig);
 
     RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
-    Properties config = remoteConfigRepository.loadConfig();
+    Properties config = remoteConfigRepository.getConfig();
 
     assertEquals(configurations, config);
   }
@@ -71,7 +76,27 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     when(someResponse.getStatusCode()).thenReturn(500);
 
     RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
-    remoteConfigRepository.loadConfig();
+    remoteConfigRepository.getConfig();
+  }
+
+  @Test
+  public void testRepositoryChangeListener() throws Exception {
+    Map<String, String> configurations = ImmutableMap.of("someKey", "someValue");
+    ApolloConfig someApolloConfig = assembleApolloConfig(configurations);
+
+    when(someResponse.getStatusCode()).thenReturn(200);
+    when(someResponse.getBody()).thenReturn(someApolloConfig);
+
+    RepositoryChangeListener someListener = mock(RepositoryChangeListener.class);
+    RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
+    remoteConfigRepository.addChangeListener(someListener);
+    final ArgumentCaptor<Properties> captor = ArgumentCaptor.forClass(Properties.class);
+
+    remoteConfigRepository.loadRemoteConfig();
+
+    verify(someListener, times(1)).onRepositoryChange(eq(someNamespace), captor.capture());
+
+    assertEquals(configurations, captor.getValue());
   }
 
   private ApolloConfig assembleApolloConfig(Map<String, String> configurations) {
