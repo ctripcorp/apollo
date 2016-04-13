@@ -4,13 +4,13 @@ application_module.controller("AppConfigController",
 
                                    var appId = $location.$$url.split("=")[1];
 
-                                   var pageEnv = {
+                                   var pageContext = {
                                        appId: appId,
                                        env: 'LOCAL',
                                        clusterName: 'default'
                                    };
 
-                                   $scope.pageEnv = pageEnv;
+                                   $scope.pageEnv = pageContext;
                                    /////////////
 
                                    AppService.load_nav_tree($scope.pageEnv.appId).then(function (result) {

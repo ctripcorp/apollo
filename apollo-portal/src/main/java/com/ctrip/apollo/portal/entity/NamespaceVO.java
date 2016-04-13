@@ -34,7 +34,7 @@ public class NamespaceVO {
     this.items = items;
   }
 
-  public static class ItemVO implements Comparable<ItemVO>{
+  public static class ItemVO{
     private ItemDTO item;
     private boolean isModified;
     private String oldValue;
@@ -72,10 +72,6 @@ public class NamespaceVO {
       this.newValue = newValue;
     }
 
-    @Override
-    public int compareTo(ItemVO o) {
-      return this.item.getLineNum() - o.item.getLineNum();
-    }
   }
 
 }

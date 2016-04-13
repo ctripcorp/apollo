@@ -135,7 +135,6 @@ public class ConfigService {
       itemVos.add(itemVO);
     }
     namespaceVO.setItemModifiedCnt(modifiedItemCnt);
-    Collections.sort(itemVos);
 
     return namespaceVO;
   }
