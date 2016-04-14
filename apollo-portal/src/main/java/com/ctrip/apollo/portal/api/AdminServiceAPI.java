@@ -12,7 +12,12 @@ import com.ctrip.apollo.core.utils.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
@@ -121,6 +126,24 @@ public class AdminServiceAPI {
         logger.warn(
             " call [ReleaseAPI.loadLatestRelease] and return not fount exception.app id:{}, env:{}, clusterName:{}, namespace:{}",
             appId, env, clusterName, namespace);
+        return null;
+      }
+    }
+
+    public ReleaseDTO release(String appId, Apollo.Env env, String clusterName, String namespace, String releaseBy,
+                              String comment) {
+      MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+      parameters.add("name", releaseBy);
+      parameters.add("comment", comment);
+      HttpEntity<MultiValueMap<String, String>> entity =
+          new HttpEntity<MultiValueMap<String, String>>(parameters, null);
+      ResponseEntity<ReleaseDTO> response = restTemplate.postForEntity(getAdminServiceHost(env) + String.
+          format("apps/%s/clusters/%s/namespaces/%s/releases", appId, clusterName, namespace),
+                                                                       entity, ReleaseDTO.class);
+      if (response.getStatusCode() == HttpStatus.OK){
+        return response.getBody();
+      }else {
+        logger.error("release fail.id:{}, env:{}, clusterName:{}, namespace:{},releaseBy{}",appId, env, clusterName, namespace, releaseBy);
         return null;
       }
     }

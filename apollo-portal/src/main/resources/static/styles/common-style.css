@@ -72,27 +72,31 @@ table th {
     height: 500px;
     overflow: scroll;
 }
+.namespace-view-table{
+    max-height: 700px;
+    overflow: scroll;
+}
 
-.historyview {
+.history-view {
     padding: 50px 20px;
 
 }
 
-.historyview .commit {
+.history-view .commit {
     padding: 5px 15px;
     border: 1px solid #ddd;
 }
 
-.historyview img {
+.history-view img {
     position: absolute;
     left: -28px;
 }
 
-.historyview .media .row {
+.history-view .media .row {
     padding-left: 35px;
 }
 
-.historyview .list {
+.history-view .list {
     position: relative;
     border-left: 3px solid #ddd;
 }

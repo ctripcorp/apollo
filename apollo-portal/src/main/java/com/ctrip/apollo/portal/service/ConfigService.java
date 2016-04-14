@@ -13,7 +13,9 @@ import com.ctrip.apollo.core.dto.NamespaceDTO;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
 import com.ctrip.apollo.core.utils.StringUtils;
 import com.ctrip.apollo.portal.api.AdminServiceAPI;
+import com.ctrip.apollo.portal.entity.form.NamespaceModifyModel;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
+import com.ctrip.apollo.portal.entity.form.NamespaceReleaseModel;
 import com.ctrip.apollo.portal.service.txtresolver.ConfigTextResolver;
 import com.ctrip.apollo.portal.service.txtresolver.TextResolverResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +45,13 @@ public class ConfigService {
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
+  /**
+   * load cluster all namespace info with items
+   * @param appId
+   * @param env
+   * @param clusterName
+   * @return
+   */
   public List<NamespaceVO> findNampspaces(String appId, Apollo.Env env, String clusterName) {
 
     List<NamespaceDTO> namespaces = groupAPI.findGroupsByAppAndCluster(appId, env, clusterName);
@@ -122,8 +131,18 @@ public class ConfigService {
     return itemVO;
   }
 
-  public TextResolverResult resolveConfigText(String appId, Apollo.Env env, String clusterName, String namespaceName,
-                                              long namespaceId, String configText) {
+  /**
+   * parse config text and update config items
+   * @return  parse result
+   */
+  public TextResolverResult resolveConfigText(NamespaceModifyModel model) {
+    String appId = model.getAppId();
+    Apollo.Env env = model.getEnv();
+    String clusterName = model.getClusterName();
+    String namespaceName = model.getNamespaceName();
+    long namespaceId = model.getNamespaceId();
+    String configText = model.getConfigText();
+
     TextResolverResult result = new TextResolverResult();
     try {
       result = resolver.resolve( namespaceId, configText, itemAPI.findItems(appId, env, clusterName, namespaceName));
@@ -137,9 +156,8 @@ public class ConfigService {
     }
     if (result.isResolveSuccess()) {
       try {
-        // TODO: 16/4/13 mock data
         ItemChangeSets changeSets = result.getChangeSets();
-        changeSets.setModifyBy("lepdou");
+        changeSets.setModifyBy(model.getModifyBy());
         enrichChangeSetBaseInfo(changeSets);
         itemAPI.updateItems(appId, env, clusterName, namespaceName, changeSets);
       } catch (Exception e) {
@@ -161,5 +179,14 @@ public class ConfigService {
     for (ItemDTO item: changeSets.getCreateItems()){
       item.setDataChangeCreatedTime(new Date());
     }
+  }
+
+  /**
+   * release config items
+   * @return
+   */
+  public ReleaseDTO release(NamespaceReleaseModel model){
+    return releaseAPI.release(model.getAppId(), model.getEnv(), model.getClusterName(), model.getNamespaceName(),
+                              model.getReleaseBy(), model.getReleaseComment());
   }
 }

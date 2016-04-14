@@ -1,5 +1,6 @@
 package com.ctrip.apollo.biz.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,9 @@ public class ReleaseService {
     }
 
     Release release = new Release();
+    release.setDataChangeCreatedTime(new Date());
+    release.setDataChangeCreatedBy(name);
+    release.setDataChangeLastModifiedBy(name);
     release.setName(name);
     release.setComment(comment);
     release.setAppId(appId);

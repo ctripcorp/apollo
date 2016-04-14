@@ -3,6 +3,7 @@ package com.ctrip.apollo.biz.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.boot.actuate.metrics.CounterService;
 import com.ctrip.apollo.biz.entity.App;
 import com.ctrip.apollo.biz.entity.AppNamespace;
 import com.ctrip.apollo.biz.entity.Cluster;
@@ -30,10 +31,13 @@ public class AdminService {
 
   @Autowired
   private ClusterRepository clusterRepository;
+  @Autowired
+  private CounterService counter;
 
   public App createNewApp(App app) {
-    String createBy = app.getDataChangeCreatedBy();
+    counter.increment("admin.createNewApp.start");
 
+    String createBy = app.getDataChangeCreatedBy();
     App createdApp = appRepository.save(app);
     String appId = createdApp.getAppId();
 
@@ -43,6 +47,7 @@ public class AdminService {
 
     createDefaultNamespace(appId, createBy);
 
+    counter.increment("admin.createNewApp.success");
     return app;
   }
 
@@ -76,5 +81,6 @@ public class AdminService {
     ns.setDataChangeCreatedTime(new Date());
     ns.setDataChangeLastModifiedBy(createBy);
     namespaceRepository.save(ns);
+
   }
 }

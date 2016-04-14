@@ -3,7 +3,7 @@ application_module.controller("AppConfigController",
                                function ($scope, $location, toastr, AppService, ConfigService) {
 
                                    var appId = $location.$$url.split("=")[1];
-
+                                   var currentUser = 'lepdou';
                                    var pageContext = {
                                        appId: appId,
                                        env: 'LOCAL',
@@ -21,12 +21,16 @@ application_module.controller("AppConfigController",
                                            var node = {};
                                            //first nav
                                            node.text = item.env;
-
+                                           node.selectable = false;
                                            //second nav
                                            var clusterNodes = [];
                                            item.clusters.forEach(function (item) {
-                                               var clusterNode = {};
+                                               var clusterNode = {},
+                                                   parentNode = [];
+
                                                clusterNode.text = item.name;
+                                               parentNode.push(node.text);
+                                               clusterNode.tags = parentNode;
                                                clusterNodes.push(clusterNode);
                                            });
 
@@ -37,7 +41,12 @@ application_module.controller("AppConfigController",
                                                                    color: "#428bca",
                                                                    showBorder: true,
                                                                    data: navTree,
-                                                                   levels: 99
+                                                                   levels: 99,
+                                                                   onNodeSelected: function (event, data) {
+                                                                       $scope.pageContext.env = data.tags[0];
+                                                                       $scope.pageContext.clusterName = data.text;
+                                                                       refreshNamespaces();
+                                                                   }
                                                                });
                                    }, function (result) {
                                        toastr.error("加载导航出错:" + result);
@@ -122,7 +131,7 @@ application_module.controller("AppConfigController",
                                    $scope.commitChange = function () {
                                        ConfigService.modify_items($scope.pageContext.appId, $scope.pageContext.env, $scope.pageContext.clusterName,
                                                                   $scope.draft.namespace.namespaceName, $scope.draft.text,
-                                                                  $scope.draft.namespace.id).then(
+                                                                  $scope.draft.namespace.id, 'lepdou').then(
                                            function (result) {
                                                toastr.success("更新成功");
                                                //refresh all namespace items
@@ -161,6 +170,30 @@ application_module.controller("AppConfigController",
                                            $scope.OldValue = oldValue;
                                        }
                                    };
+                                   
+                                   /////// release ///////
+                                   var releaseNamespace = {};
+                                   
+                                   $scope.prepareReleaseNamespace = function (namespace) {
+                                       releaseNamespace = namespace;        
+                                   };
+                                   $scope.releaseComment = '';
+                                   $scope.release = function () {
+                                       ConfigService.release($scope.pageContext.appId, $scope.pageContext.env, 
+                                                             $scope.pageContext.clusterName,
+                                                             releaseNamespace.namespace.namespaceName, currentUser,
+                                                             $scope.releaseComment).then(
+                                           function (result) {
+                                               toastr.success("发布成功");
+                                               //refresh all namespace items
+                                               refreshNamespaces();
+
+                                           }, function (result) {
+                                               toastr.error(result.data.msg, "发布失败");
+
+                                           }
+                                       );    
+                                   }
 
                                }]);
 

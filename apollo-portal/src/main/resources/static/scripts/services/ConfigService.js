@@ -5,14 +5,14 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             isArray: true,
             url: '/apps/:appId/env/:env/clusters/:clusterName/namespaces'
         },
+        //todo post
         modify_items: {
-            method: 'GET',
-            isArray: false,
-            url: '/apps/:appId/env/:env/clusters/:clusterName/namespaces/:namespaceName/modify',
-            params: {
-                configText: '@configText',
-                namespaceId: '@namespaceId'
-            }
+            method: 'POST',
+            url: '/namespace/modify'
+        },
+        release: {
+            method: 'POST',
+            url:'/namespace/release'
         }
     });
 
@@ -30,18 +30,37 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             });
             return d.promise;
         },
-        modify_items: function (appId, env, clusterName, namespaceName, configText, namespaceId) {
+
+        modify_items: function (appId, env, clusterName, namespaceName, configText, namespaceId, modifyBy) {
             var d = $q.defer();
-            config_source.modify_items({
-                                           appId: appId,
-                                           env: env,
-                                           clusterName: clusterName,
-                                           namespaceName: namespaceName,
-                                           configText: configText,
-                                           namespaceId:namespaceId 
-                                       }, function (result) {
+            config_source.modify_items({}, {
+                appId: appId,
+                env: env,
+                clusterName: clusterName,
+                namespaceName: namespaceName,
+                configText: configText,
+                namespaceId: namespaceId,
+                modifyBy:modifyBy
+            }, function (result) {
                 d.resolve(result);
 
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        
+        release: function (appId, env, clusterName, namespaceName, releaseBy, comment) {
+            var d = $q.defer();
+            config_source.release({},{
+                appId: appId,
+                env: env,
+                clusterName: clusterName,
+                namespaceName: namespaceName,
+                releaseBy: releaseBy,
+                releaseComment: comment
+            }, function (result) {
+                d.resolve(result);
             }, function (result) {
                 d.reject(result);
             });

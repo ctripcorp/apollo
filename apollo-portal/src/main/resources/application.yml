@@ -15,4 +15,4 @@ ctrip:
   
 apollo:
   portal:
-    env: local,dev
+    env: local

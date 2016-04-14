@@ -18,8 +18,6 @@ import com.ctrip.apollo.core.dto.ItemChangeSets;
 import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.dto.NamespaceDTO;
 
-
-
 public class ItemSetControllerTest extends AbstractControllerTest {
 
   @Autowired
