@@ -25,7 +25,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
   @Test
   @Sql(scripts = "/controller/test-itemset.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-  @Sql(scripts = "/controller/test-itemset-cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testItemSetCreated() {
     String appId = "someAppId";
     AppDTO app =
@@ -72,7 +72,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
   @Test
   @Sql(scripts = "/controller/test-itemset.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-  @Sql(scripts = "/controller/test-itemset-cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testItemSetUpdated() {
     String appId = "someAppId";
     AppDTO app =
@@ -141,7 +141,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
   @Test
   @Sql(scripts = "/controller/test-itemset.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-  @Sql(scripts = "/controller/test-itemset-cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+  @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testItemSetDeleted() {
     String appId = "someAppId";
     AppDTO app =

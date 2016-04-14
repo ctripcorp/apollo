@@ -109,9 +109,14 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.ctrip.framework</groupId>
+				<artifactId>framework-foundation</artifactId>
+				<version>1.1.4</version>
+			</dependency>
+			<dependency>
 				<groupId>com.dianping.cat</groupId>
 				<artifactId>cat-client</artifactId>
-				<version>1.4.4</version>
+				<version>1.4.6</version>
 			</dependency>
 			<!--third party -->
 			<dependency>
@@ -272,12 +277,6 @@
 					</plugin>
 				</plugins>
 			</build>
-			<repositories>
-				<repository>
-					<id>cat.repo</id>
-					<url>https://raw.github.com/dianping/cat/mvn-repo</url>
-				</repository>
-			</repositories>
 		</profile>
 		<profile>
 			<id>ctrip</id>
@@ -313,6 +312,10 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>internal.repo</id>
+			<url>https://raw.github.com/ctripcorp/apollo/mvn-repo/</url>
 		</repository>
 	</repositories>
 
