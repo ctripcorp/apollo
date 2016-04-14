@@ -12,13 +12,12 @@ import com.ctrip.apollo.biz.repository.AppNamespaceRepository;
 import com.ctrip.apollo.biz.repository.AppRepository;
 import com.ctrip.apollo.biz.repository.ClusterRepository;
 import com.ctrip.apollo.biz.repository.NamespaceRepository;
+import com.ctrip.apollo.core.ConfigConsts;
 
 import java.util.Date;
 
 @Service
 public class AdminService {
-  private static final String DEFAULT_NAMESPACE_NAME = "application";
-  private static final String DEFAULT_CLUSTER_NAME = "default";
 
   @Autowired
   private AppRepository appRepository;
@@ -54,7 +53,7 @@ public class AdminService {
   private void createDefaultAppNamespace(String appId, String createBy){
     AppNamespace appNs = new AppNamespace();
     appNs.setAppId(appId);
-    appNs.setName(DEFAULT_NAMESPACE_NAME);
+    appNs.setName(ConfigConsts.NAMESPACE_APPLICATION);
     appNs.setComment("default app namespace");
     appNs.setDataChangeCreatedBy(createBy);
     appNs.setDataChangeCreatedTime(new Date());
@@ -64,7 +63,7 @@ public class AdminService {
 
   private void createDefaultCluster(String appId, String createBy){
     Cluster cluster = new Cluster();
-    cluster.setName(DEFAULT_CLUSTER_NAME);
+    cluster.setName(ConfigConsts.CLUSTER_NAME_DEFAULT);
     cluster.setAppId(appId);
     cluster.setDataChangeCreatedBy(createBy);
     cluster.setDataChangeCreatedTime(new Date());
@@ -75,8 +74,8 @@ public class AdminService {
   private void createDefaultNamespace(String appId, String createBy){
     Namespace ns = new Namespace();
     ns.setAppId(appId);
-    ns.setClusterName(DEFAULT_CLUSTER_NAME);
-    ns.setNamespaceName(DEFAULT_NAMESPACE_NAME);
+    ns.setClusterName(ConfigConsts.CLUSTER_NAME_DEFAULT);
+    ns.setNamespaceName(ConfigConsts.NAMESPACE_APPLICATION);
     ns.setDataChangeCreatedBy(createBy);
     ns.setDataChangeCreatedTime(new Date());
     ns.setDataChangeLastModifiedBy(createBy);
