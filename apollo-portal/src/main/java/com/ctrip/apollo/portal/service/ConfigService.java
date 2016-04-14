@@ -11,6 +11,7 @@ import com.ctrip.apollo.core.dto.ItemChangeSets;
 import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.dto.NamespaceDTO;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
+import com.ctrip.apollo.core.utils.StringUtils;
 import com.ctrip.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
 import com.ctrip.apollo.portal.service.txtresolver.ConfigTextResolver;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,39 +67,6 @@ public class ConfigService {
     return namespaceVOs;
   }
 
-  public TextResolverResult resolve(String appId, Apollo.Env env, String clusterName, String namespaceName,
-                                    String configText) {
-    TextResolverResult result = new TextResolverResult();
-    try {
-      result = resolver.resolve(configText, itemAPI.findItems(appId, env, clusterName, namespaceName));
-    } catch (Exception e) {
-      logger
-          .error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env, clusterName,
-                 namespaceName, e);
-      result.setResolveSuccess(false);
-      result.setMsg("oops! server resolve config text error.");
-      return result;
-    }
-    if (result.isResolveSuccess()) {
-      try {
-        // TODO: 16/4/13
-        result.getChangeSets().setModifyBy("lepdou");
-        itemAPI.updateItems(appId, env, clusterName, namespaceName, result.getChangeSets());
-      } catch (Exception e) {
-        logger.error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env,
-                   clusterName, namespaceName, e);
-        result.setResolveSuccess(false);
-        result.setMsg("oops! server update config error.");
-        return result;
-      }
-    } else {
-      logger.warn("resolve config text error by format error. app id:{}, env:{}, clusterName:{}, namespace:{},cause:{}",
-                  appId,env, clusterName, namespaceName, result.getMsg());
-    }
-
-    return result;
-  }
-
   private NamespaceVO parseNamespace(String appId, Apollo.Env env, String clusterName, NamespaceDTO namespace) {
 
     NamespaceVO namespaceVO = new NamespaceVO();
@@ -140,16 +109,57 @@ public class ConfigService {
   }
 
   private NamespaceVO.ItemVO parseItemVO(ItemDTO itemDTO, Map<String, String> releaseItems) {
+    String key = itemDTO.getKey();
     NamespaceVO.ItemVO itemVO = new NamespaceVO.ItemVO();
     itemVO.setItem(itemDTO);
-    String key = itemDTO.getKey();
     String newValue = itemDTO.getValue();
     String oldValue = releaseItems.get(key);
-    if (oldValue == null || !newValue.equals(oldValue)) {
+    if (!StringUtils.isEmpty(key) && (oldValue == null || !newValue.equals(oldValue))) {
       itemVO.setModified(true);
       itemVO.setOldValue(oldValue == null ? "" : oldValue);
       itemVO.setNewValue(newValue);
     }
     return itemVO;
+  }
+
+  public TextResolverResult resolveConfigText(String appId, Apollo.Env env, String clusterName, String namespaceName,
+                                              long namespaceId, String configText) {
+    TextResolverResult result = new TextResolverResult();
+    try {
+      result = resolver.resolve( namespaceId, configText, itemAPI.findItems(appId, env, clusterName, namespaceName));
+    } catch (Exception e) {
+      logger
+          .error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env, clusterName,
+                 namespaceName, e);
+      result.setResolveSuccess(false);
+      result.setMsg("oops! server resolveConfigText config text error.");
+      return result;
+    }
+    if (result.isResolveSuccess()) {
+      try {
+        // TODO: 16/4/13 mock data
+        ItemChangeSets changeSets = result.getChangeSets();
+        changeSets.setModifyBy("lepdou");
+        enrichChangeSetBaseInfo(changeSets);
+        itemAPI.updateItems(appId, env, clusterName, namespaceName, changeSets);
+      } catch (Exception e) {
+        logger.error("resolve config text error. app id:{}, env:{}, clusterName:{}, namespace:{}", appId, env,
+                     clusterName, namespaceName, e);
+        result.setResolveSuccess(false);
+        result.setMsg("oops! server update config error.");
+        return result;
+      }
+    } else {
+      logger.warn("resolve config text error by format error. app id:{}, env:{}, clusterName:{}, namespace:{},cause:{}",
+                  appId,env, clusterName, namespaceName, result.getMsg());
+    }
+
+    return result;
+  }
+
+  private void enrichChangeSetBaseInfo(ItemChangeSets changeSets){
+    for (ItemDTO item: changeSets.getCreateItems()){
+      item.setDataChangeCreatedTime(new Date());
+    }
   }
 }

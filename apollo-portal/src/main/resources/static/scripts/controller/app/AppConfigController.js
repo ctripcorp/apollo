@@ -10,10 +10,11 @@ application_module.controller("AppConfigController",
                                        clusterName: 'default'
                                    };
 
-                                   $scope.pageEnv = pageContext;
-                                   /////////////
+                                   $scope.pageContext = pageContext;
 
-                                   AppService.load_nav_tree($scope.pageEnv.appId).then(function (result) {
+                                   ///////////// load cluster nav tree /////////
+
+                                   AppService.load_nav_tree($scope.pageContext.appId).then(function (result) {
                                        var navTree = [];
                                        var nodes = result.nodes;
                                        nodes.forEach(function (item) {
@@ -42,90 +43,61 @@ application_module.controller("AppConfigController",
                                        toastr.error("加载导航出错:" + result);
                                    });
 
-                                   ///////////
+                                   /////////// namespace ////////////
 
-                                   ConfigService.load_all_namespaces($scope.pageEnv.appId, $scope.pageEnv.env,
-                                                                     $scope.pageEnv.clusterName).then(
-                                       function (result) {
-                                           $scope.namespaces = result;
-
-                                           //初始化视图
-                                           if ($scope.namespaces) {
-                                               $scope.namespaces.forEach(function (item) {
-                                                   item.isModify = false;
-                                                   item.viewType = 'table';
-                                                   item.isTextEditing = false;
-                                               })
-                                           }
-
-                                       }, function (result) {
-                                           toastr.error("加载配置信息出错");
-                                       });
-
-                                   
-                                   $scope.draft = {};
-                                   //保存草稿
-                                   $scope.saveDraft = function (namespace) {
-                                       $scope.draft = namespace;
+                                   var namespace_view_type = {
+                                       TEXT:'text',
+                                       TABLE: 'table',
+                                       LOG: 'log'
                                    };
 
-                                   //更新配置
-                                   $scope.commitChange = function () {
-                                       ConfigService.modify_items($scope.pageEnv.appId, $scope.pageEnv.env, $scope.pageEnv.clusterName,
-                                                                  $scope.draft.namespace.namespaceName, $scope.draft.text).then(
+                                   refreshNamespaces();
+
+                                   function refreshNamespaces(viewType) {
+                                       ConfigService.load_all_namespaces($scope.pageContext.appId, $scope.pageContext.env,
+                                                                         $scope.pageContext.clusterName, viewType).then(
                                            function (result) {
-                                               toastr.success("更新成功");
-                                               $scope.draft.backupText = '';//清空备份文本
-                                               $scope.toggleTextEditStatus($scope.draft);
+                                               $scope.namespaces = result;
+
+                                               //初始化视图
+                                               if ($scope.namespaces) {
+                                                   $scope.namespaces.forEach(function (item) {
+                                                       item.isModify = false;
+                                                       if (!viewType){//default text view
+                                                           $scope.switchView(item, namespace_view_type.TEXT);
+                                                       }else if (viewType == namespace_view_type.TABLE){
+                                                           item.viewType = namespace_view_type.TABLE;
+                                                       }
+
+
+                                                       item.isTextEditing = false;
+                                                   })
+                                               }
+
                                            }, function (result) {
-                                               toastr.error(result.data.msg, "更新失败");
+                                               toastr.error("加载配置信息出错");
+                                           });
+                                   }
 
-                                           }
-                                       );
-                                   };
-
-                                   /////////
-                                   //文本编辑框状态切换
-                                   $scope.toggleTextEditStatus = function (namespace) {
-                                       namespace.isTextEditing = !namespace.isTextEditing;
-                                       if (namespace.isTextEditing){//切换为编辑状态,保存一下原来值
-                                           $scope.draft.backupText = namespace.text;
-                                       }else {
-                                           if ($scope.draft.backupText){//取消编辑,则复原
-                                               namespace.text = $scope.draft.backupText;
-                                           }
-                                       }
-                                   };
-                                   
-                                   $scope.queryOldValue = function (key, oldValue) {
-                                       $scope.queryKey = key;
-                                       if (oldValue == '') {
-                                           $scope.OldValue = key + "是新添加的key";
-                                       } else {
-                                           $scope.OldValue = oldValue;
-                                       }
-                                   };
+                                   ////////////global view oper /////////////
 
                                    $scope.switchView = function (namespace, viewType) {
 
-                                       if ('textarea' == viewType) {
-                                           namespace.text = parseTableModel2Text(namespace);
-                                       } else if ('table' == viewType) {
+                                       if (namespace_view_type.TEXT == viewType) {
+                                           namespace.text = parseModel2Text(namespace);
+                                       } else if (namespace_view_type.TABLE == viewType) {
 
                                        }
                                        namespace.viewType = viewType;
                                    };
-
+                                   
                                    //把表格内容解析成文本
-                                   function parseTableModel2Text(namespace) {
+                                   function parseModel2Text(namespace) {
                                        if (!namespace.items) {
                                            return "无配置信息";
                                        }
                                        var result = "";
                                        namespace.items.forEach(function (item) {
-                                           // if (item.modified) {
-                                           //     result += "**";
-                                           // }
                                            if (item.item.key) {
                                                result +=
                                                    item.item.key + " = " + item.item.value + "\n";
@@ -138,7 +110,57 @@ application_module.controller("AppConfigController",
                                        return result;
                                    }
 
-                                   //把文本内容解析成表格
+                                   ////////// text view oper /////////
+
+                                   $scope.draft = {};
+                                   //保存草稿
+                                   $scope.saveDraft = function (namespace) {
+                                       $scope.draft = namespace;
+                                   };
+
+                                   //更新配置
+                                   $scope.commitChange = function () {
+                                       ConfigService.modify_items($scope.pageContext.appId, $scope.pageContext.env, $scope.pageContext.clusterName,
+                                                                  $scope.draft.namespace.namespaceName, $scope.draft.text,
+                                                                  $scope.draft.namespace.id).then(
+                                           function (result) {
+                                               toastr.success("更新成功");
+                                               //refresh all namespace items
+                                               refreshNamespaces();
+
+                                               $scope.draft.backupText = '';//清空备份文本
+                                               $scope.toggleTextEditStatus($scope.draft);
+
+                                           }, function (result) {
+                                               toastr.error(result.data.msg, "更新失败");
+
+                                           }
+                                       );
+                                   };
+
+                                   //文本编辑框状态切换
+                                   $scope.toggleTextEditStatus = function (namespace) {
+                                       namespace.isTextEditing = !namespace.isTextEditing;
+                                       if (namespace.isTextEditing){//切换为编辑状态,保存一下原来值
+                                           $scope.draft.backupText = namespace.text;
+                                       }else {
+                                           if ($scope.draft.backupText){//取消编辑,则复原
+                                               namespace.text = $scope.draft.backupText;
+                                           }
+                                       }
+                                   };
+
+                                   ////////// table view oper /////////
+
+                                   //查看旧值
+                                   $scope.queryOldValue = function (key, oldValue) {
+                                       $scope.queryKey = key;
+                                       if (oldValue == '') {
+                                           $scope.OldValue = key + "是新添加的key";
+                                       } else {
+                                           $scope.OldValue = oldValue;
+                                       }
+                                   };
 
                                }]);
 

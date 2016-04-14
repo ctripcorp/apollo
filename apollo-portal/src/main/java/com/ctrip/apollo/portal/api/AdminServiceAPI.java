@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.List;
 
 @Service
 public class AdminServiceAPI {
+
   private static final Logger logger = LoggerFactory.getLogger(AdminServiceAPI.class);
 
   @Service
@@ -31,6 +31,10 @@ public class AdminServiceAPI {
 
     public List<AppDTO> getApps(Apollo.Env env) {
       return Arrays.asList(restTemplate.getForObject(getAdminServiceHost(env) + APP_API, AppDTO[].class));
+    }
+
+    public AppDTO save(Apollo.Env env, AppDTO app) {
+      return restTemplate.postForEntity(getAdminServiceHost(env) + APP_API, app, AppDTO.class).getBody();
     }
   }
 
@@ -76,11 +80,12 @@ public class AdminServiceAPI {
 
     public void updateItems(String appId, Apollo.Env env, String clusterName, String namespace,
                             ItemChangeSets changeSets) {
-      if (StringUtils.isContainEmpty(appId, clusterName, namespace)){
+      if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
         return;
       }
       restTemplate.postForEntity(getAdminServiceHost(env) + String.format("apps/%s/clusters/%s/namespaces/%s/itemset",
-                                                                          appId,clusterName, namespace), changeSets, Void.class);
+                                                                          appId, clusterName, namespace), changeSets,
+                                 Void.class);
     }
 
 
@@ -107,14 +112,15 @@ public class AdminServiceAPI {
       if (StringUtils.isContainEmpty(appId, clusterName, namespace)) {
         return null;
       }
-       try {
-         ReleaseDTO releaseDTO = restTemplate.getForObject(getAdminServiceHost(env) + String
-             .format("apps/%s/clusters/%s/namespaces/%s/releases/latest", appId,
-                     clusterName, namespace), ReleaseDTO.class);
-         return releaseDTO;
-       }catch (HttpClientErrorException e){
-         logger.warn(" call [ReleaseAPI.loadLatestRelease] and return not fount exception.app id:{}, env:{}, clusterName:{}, namespace:{}",
-                     appId, env, clusterName, namespace);
+      try {
+        ReleaseDTO releaseDTO = restTemplate.getForObject(getAdminServiceHost(env) + String
+            .format("apps/%s/clusters/%s/namespaces/%s/releases/latest", appId,
+                    clusterName, namespace), ReleaseDTO.class);
+        return releaseDTO;
+      } catch (HttpClientErrorException e) {
+        logger.warn(
+            " call [ReleaseAPI.loadLatestRelease] and return not fount exception.app id:{}, env:{}, clusterName:{}, namespace:{}",
+            appId, env, clusterName, namespace);
         return null;
       }
     }

@@ -12,8 +12,12 @@ import com.ctrip.apollo.biz.repository.AppRepository;
 import com.ctrip.apollo.biz.repository.ClusterRepository;
 import com.ctrip.apollo.biz.repository.NamespaceRepository;
 
+import java.util.Date;
+
 @Service
 public class AdminService {
+  private static final String DEFAULT_NAMESPACE_NAME = "application";
+  private static final String DEFAULT_CLUSTER_NAME = "default";
 
   @Autowired
   private AppRepository appRepository;
@@ -27,31 +31,50 @@ public class AdminService {
   @Autowired
   private ClusterRepository clusterRepository;
 
-  public App createNewApp(String appId, String appName, String ownerName, String ownerEmail,
-      String namespace) {
-    App app = new App();
-    app.setAppId(appId);
-    app.setName(appName);
-    app.setOwnerName(ownerName);
-    app.setOwnerEmail(ownerEmail);
-    appRepository.save(app);
+  public App createNewApp(App app) {
+    String createBy = app.getDataChangeCreatedBy();
 
-    AppNamespace appNs = new AppNamespace();
-    appNs.setAppId(appId);
-    appNs.setName(namespace);
-    appNamespaceRepository.save(appNs);
+    App createdApp = appRepository.save(app);
+    String appId = createdApp.getAppId();
 
-    Cluster cluster = new Cluster();
-    cluster.setName("default");
-    cluster.setAppId(appId);
-    clusterRepository.save(cluster);
+    createDefaultAppNamespace(appId, createBy);
 
-    Namespace ns = new Namespace();
-    ns.setAppId(appId);
-    ns.setClusterName(cluster.getName());
-    ns.setNamespaceName(namespace);
-    namespaceRepository.save(ns);
+    createDefaultCluster(appId, createBy);
+
+    createDefaultNamespace(appId, createBy);
 
     return app;
+  }
+
+  private void createDefaultAppNamespace(String appId, String createBy){
+    AppNamespace appNs = new AppNamespace();
+    appNs.setAppId(appId);
+    appNs.setName(DEFAULT_NAMESPACE_NAME);
+    appNs.setComment("default app namespace");
+    appNs.setDataChangeCreatedBy(createBy);
+    appNs.setDataChangeCreatedTime(new Date());
+    appNs.setDataChangeLastModifiedBy(createBy);
+    appNamespaceRepository.save(appNs);
+  }
+
+  private void createDefaultCluster(String appId, String createBy){
+    Cluster cluster = new Cluster();
+    cluster.setName(DEFAULT_CLUSTER_NAME);
+    cluster.setAppId(appId);
+    cluster.setDataChangeCreatedBy(createBy);
+    cluster.setDataChangeCreatedTime(new Date());
+    cluster.setDataChangeLastModifiedBy(createBy);
+    clusterRepository.save(cluster);
+  }
+
+  private void createDefaultNamespace(String appId, String createBy){
+    Namespace ns = new Namespace();
+    ns.setAppId(appId);
+    ns.setClusterName(DEFAULT_CLUSTER_NAME);
+    ns.setNamespaceName(DEFAULT_NAMESPACE_NAME);
+    ns.setDataChangeCreatedBy(createBy);
+    ns.setDataChangeCreatedTime(new Date());
+    ns.setDataChangeLastModifiedBy(createBy);
+    namespaceRepository.save(ns);
   }
 }

@@ -5,10 +5,10 @@ import com.ctrip.apollo.core.dto.ItemDTO;
 import java.util.List;
 
 /**
- * users can modify config in text mode.so need resolve text.
+ * users can modify config in text mode.so need resolveConfigText text.
  */
 public interface ConfigTextResolver {
 
-  TextResolverResult resolve(String configText, List<ItemDTO> baseItems);
+  TextResolverResult resolve(long namespaceId, String configText, List<ItemDTO> baseItems);
 
 }

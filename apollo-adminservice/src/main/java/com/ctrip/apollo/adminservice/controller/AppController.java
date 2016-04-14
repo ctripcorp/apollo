@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ctrip.apollo.biz.entity.App;
+import com.ctrip.apollo.biz.service.AdminService;
 import com.ctrip.apollo.biz.service.AppService;
 import com.ctrip.apollo.biz.utils.BeanUtils;
 import com.ctrip.apollo.core.dto.AppDTO;
@@ -25,11 +26,13 @@ public class AppController {
 
   @Autowired
   private AppService appService;
+  @Autowired
+  private AdminService adminService;
 
-  @RequestMapping(path = "/apps/", method = RequestMethod.POST)
+  @RequestMapping(path = "/apps", method = RequestMethod.POST)
   public ResponseEntity<AppDTO> create(@RequestBody AppDTO dto) {
     App entity = BeanUtils.transfrom(App.class, dto);
-    entity = appService.save(entity);
+    entity = adminService.createNewApp(entity);
     dto = BeanUtils.transfrom(AppDTO.class, entity);
     return ResponseEntity.status(HttpStatus.CREATED).body(dto);
   }

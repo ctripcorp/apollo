@@ -38,9 +38,9 @@ public class ConfigController {
   public ResponseEntity<SimpleMsg> modifyConfigs(@PathVariable String appId, @PathVariable String env,
                                                  @PathVariable String clusterName,
                                                  @PathVariable String namespaceName,
-                                                 String configText) {
-    TextResolverResult result =
-        configService.resolve(appId, Apollo.Env.valueOf(env), clusterName, namespaceName, configText);
+                                                 long namespaceId, String configText) {
+    TextResolverResult result = configService.resolveConfigText(appId, Apollo.Env.valueOf(env),
+                                                                clusterName, namespaceName, namespaceId, configText);
     if (result.isResolveSuccess()) {
       return ResponseEntity.ok().body(new SimpleMsg("success"));
     } else {

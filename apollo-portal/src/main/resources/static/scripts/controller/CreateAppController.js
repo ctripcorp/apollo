@@ -5,9 +5,8 @@ create_app_module.controller('CreateAppController', ['$scope', '$window', 'toast
         $scope.app = {
             appId: 1001,
             name: 'lepdou',
-            ownerPhone: '1111',
-            ownerMail: 'qqq@qq.com',
-            owner: 'le'
+            ownerEmail: 'qqq@qq.com',
+            ownerName: 'le'
         };
 
         $scope.save = function () {
@@ -17,7 +16,11 @@ create_app_module.controller('CreateAppController', ['$scope', '$window', 'toast
                     $window.location.href = '/views/app.html?#appid=' + result.appId;
                 }, 1000);
             }, function (result) {
-                toastr.error('添加失败!');
+                if (result.status == 400){
+                    toastr.error('params error','添加失败!');
+                }else {
+                    toastr.error('server error','添加失败!');
+                }
             });
         };
 

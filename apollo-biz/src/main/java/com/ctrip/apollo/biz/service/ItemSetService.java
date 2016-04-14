@@ -20,6 +20,7 @@ public class ItemSetService {
       for (ItemDTO item : changeSet.getCreateItems()) {
         Item entity = BeanUtils.transfrom(Item.class, item);
         entity.setDataChangeCreatedBy(changeSet.getModifyBy());
+        entity.setDataChangeLastModifiedBy(changeSet.getModifyBy());
         itemRepository.save(entity);
       }
     }

@@ -65,7 +65,7 @@
                                             <div class="btn-group" role="group" aria-label="...">
                                                 <button type="button"
                                                         class="btn btn-default btn-sm J_tableview_btn"
-                                                        ng-click="switchView(namespace, 'textarea')">文本
+                                                        ng-click="switchView(namespace, 'text')">文本
                                                 </button>
                                                 <button type="button"
                                                         class="btn btn-default btn-sm J_tableview_btn"
@@ -99,7 +99,7 @@
                                 </div>
                             </header>
 
-                            <div ng-show="namespace.viewType == 'textarea'">
+                            <div ng-show="namespace.viewType == 'text'">
                                 <textarea class="form-control" rows="20" ng-model="namespace.text"
                                           ng-disabled="!namespace.isTextEditing">
 {{namespace.text}}

@@ -10,7 +10,8 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             isArray: false,
             url: '/apps/:appId/env/:env/clusters/:clusterName/namespaces/:namespaceName/modify',
             params: {
-                configText: '@configText'
+                configText: '@configText',
+                namespaceId: '@namespaceId'
             }
         }
     });
@@ -29,14 +30,15 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             });
             return d.promise;
         },
-        modify_items: function (appId, env, clusterName, namespaceName, configText) {
+        modify_items: function (appId, env, clusterName, namespaceName, configText, namespaceId) {
             var d = $q.defer();
             config_source.modify_items({
                                            appId: appId,
                                            env: env,
                                            clusterName: clusterName,
                                            namespaceName: namespaceName,
-                                           configText: configText
+                                           configText: configText,
+                                           namespaceId:namespaceId 
                                        }, function (result) {
                 d.resolve(result);
 

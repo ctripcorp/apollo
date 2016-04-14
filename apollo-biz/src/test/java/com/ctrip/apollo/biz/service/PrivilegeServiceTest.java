@@ -1,5 +1,6 @@
 package com.ctrip.apollo.biz.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -30,10 +31,16 @@ public class PrivilegeServiceTest {
 
   @Test
   public void testAddAndRemovePrivilege() {
-    App newApp = adminService.createNewApp(String.valueOf(System.currentTimeMillis()),
-        "new app " + System.currentTimeMillis(), "owner " + System.currentTimeMillis(),
-        "owner " + System.currentTimeMillis() + "@ctrip.com",
-        "namespace " + System.currentTimeMillis());
+    App app = new App();
+    app.setAppId(String.valueOf(System.currentTimeMillis()));
+    app.setName("new app " + System.currentTimeMillis());
+    String owner = "owner " + System.currentTimeMillis();
+    app.setOwnerName(owner);
+    app.setOwnerEmail("owner " + System.currentTimeMillis() + "@ctrip.com");
+    app.setDataChangeCreatedBy(owner);
+    app.setDataChangeLastModifiedBy(owner);
+    app.setDataChangeCreatedTime(new Date());
+    App newApp = adminService.createNewApp(app);
 
     List<Cluster> clusters = viewService.findClusters(newApp.getAppId());
     List<Namespace> namespaces =
@@ -55,11 +62,16 @@ public class PrivilegeServiceTest {
 
   @Test
   public void testCheckPrivilege() {
-    App newApp = adminService.createNewApp(String.valueOf(System.currentTimeMillis()),
-        "new app " + System.currentTimeMillis(), "owner " + System.currentTimeMillis(),
-        "owner " + System.currentTimeMillis() + "@ctrip.com",
-        "namespace " + System.currentTimeMillis());
-
+    App app = new App();
+    app.setAppId(String.valueOf(System.currentTimeMillis()));
+    app.setName("new app " + System.currentTimeMillis());
+    String owner = "owner " + System.currentTimeMillis();
+    app.setOwnerName(owner);
+    app.setOwnerEmail("owner " + System.currentTimeMillis() + "@ctrip.com");
+    app.setDataChangeCreatedBy(owner);
+    app.setDataChangeLastModifiedBy(owner);
+    app.setDataChangeCreatedTime(new Date());
+    App newApp = adminService.createNewApp(app);
     List<Cluster> clusters = viewService.findClusters(newApp.getAppId());
     List<Namespace> namespaces =
         viewService.findNamespaces(newApp.getAppId(), clusters.get(0).getName());
