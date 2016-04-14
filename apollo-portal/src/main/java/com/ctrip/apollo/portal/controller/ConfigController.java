@@ -2,15 +2,20 @@ package com.ctrip.apollo.portal.controller;
 
 
 import com.ctrip.apollo.Apollo;
+import com.ctrip.apollo.core.dto.ReleaseDTO;
 import com.ctrip.apollo.core.utils.StringUtils;
+import com.ctrip.apollo.portal.entity.form.NamespaceModifyModel;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
 import com.ctrip.apollo.portal.entity.SimpleMsg;
+import com.ctrip.apollo.portal.entity.form.NamespaceReleaseModel;
 import com.ctrip.apollo.portal.service.ConfigService;
 import com.ctrip.apollo.portal.service.txtresolver.TextResolverResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,17 +39,48 @@ public class ConfigController {
     return configService.findNampspaces(appId, Apollo.Env.valueOf(env), clusterName);
   }
 
-  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/modify", method = RequestMethod.GET)
-  public ResponseEntity<SimpleMsg> modifyConfigs(@PathVariable String appId, @PathVariable String env,
-                                                 @PathVariable String clusterName,
-                                                 @PathVariable String namespaceName,
-                                                 String configText) {
-    TextResolverResult result =
-        configService.resolve(appId, Apollo.Env.valueOf(env), clusterName, namespaceName, configText);
+  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items",method = RequestMethod.PUT, consumes = {"application/json"})
+  public ResponseEntity<SimpleMsg> modifyItems(@PathVariable String appId, @PathVariable String env,
+                                                 @PathVariable String clusterName, @PathVariable String namespaceName,
+                                                 @RequestBody NamespaceModifyModel model) {
+
+    model.setAppId(appId);
+    model.setClusterName(clusterName);
+    model.setEnv(env);
+    model.setNamespaceName(namespaceName);
+
+    if (model == null || model.isInvalid()){
+      return ResponseEntity.badRequest().body(new SimpleMsg("form data exception."));
+    }
+
+    TextResolverResult result = configService.resolveConfigText(model);
+
     if (result.isResolveSuccess()) {
       return ResponseEntity.ok().body(new SimpleMsg("success"));
     } else {
       return ResponseEntity.badRequest().body(new SimpleMsg(result.getMsg()));
+    }
+  }
+
+  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/release", method = RequestMethod.POST, consumes = {"application/json"})
+  public ResponseEntity<SimpleMsg> createRelease(@PathVariable String appId, @PathVariable String env,
+                                                 @PathVariable String clusterName, @PathVariable String namespaceName,
+                                                 @RequestBody NamespaceReleaseModel model){
+    model.setAppId(appId);
+    model.setClusterName(clusterName);
+    model.setEnv(env);
+    model.setNamespaceName(namespaceName);
+
+    if (model == null || model.isInvalid()){
+      return ResponseEntity.badRequest().body(new SimpleMsg("form data exception."));
+    }
+
+    ReleaseDTO release = configService.release(model);
+
+    if (release == null){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SimpleMsg("oops! some error in server."));
+    }else {
+      return ResponseEntity.ok().body(new SimpleMsg("success"));
     }
   }
 

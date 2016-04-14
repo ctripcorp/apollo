@@ -8,8 +8,10 @@ import com.ctrip.apollo.portal.util.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * normal property file resolver.
@@ -23,7 +25,7 @@ public class PropertyResolver implements ConfigTextResolver {
   private static final String ITEM_SEPARATOR = "\n";
 
   @Override
-  public TextResolverResult resolve(String configText, List<ItemDTO> baseItems) {
+  public TextResolverResult resolve(long namespaceId, String configText, List<ItemDTO> baseItems) {
 
     TextResolverResult result = new TextResolverResult();
     if (StringUtils.isEmpty(configText)){
@@ -40,6 +42,12 @@ public class PropertyResolver implements ConfigTextResolver {
 
     String[] newItems = configText.split(ITEM_SEPARATOR);
 
+    if (isHasRepeatKey(newItems)){
+      result.setResolveSuccess(false);
+      result.setMsg("config text has repeat key please check.");
+      return result;
+    }
+
     ItemChangeSets changeSets = new ItemChangeSets();
     result.setChangeSets(changeSets);
     Map<Integer, String> newLineNumMapItem = new HashMap();//use for delete blank and comment item
@@ -52,16 +60,16 @@ public class PropertyResolver implements ConfigTextResolver {
       //comment item
       if (isCommentItem(newItem)) {
 
-        handleCommentLine(oldItemByLine, newItem, lineCounter, changeSets);
+        handleCommentLine(namespaceId, oldItemByLine, newItem, lineCounter, changeSets);
 
         //blank item
       } else if (isBlankItem(newItem)) {
 
-        handleBlankLine(oldItemByLine, lineCounter, changeSets);
+        handleBlankLine(namespaceId, oldItemByLine, lineCounter, changeSets);
 
-        //normal line
+        //normal item
       } else {
-        if (!handleNormalLine(oldKeyMapItem, newItem, lineCounter, result)) {
+        if (!handleNormalLine(namespaceId, oldKeyMapItem, newItem, lineCounter, result)) {
           return result;
         }
       }
@@ -77,42 +85,68 @@ public class PropertyResolver implements ConfigTextResolver {
     return result;
   }
 
-  private void handleCommentLine(ItemDTO oldItemByLine, String newItem, int lineCounter, ItemChangeSets changeSets) {
+  private boolean isHasRepeatKey(String[] newItems){
+    Set<String> keys = new HashSet<>();
+    int keyCount = 0;
+    for (String item: newItems){
+      if (!isCommentItem(item) && !isBlankItem(item)){
+        keyCount ++;
+        keys.add(parseKeyValueFromItem(item)[0]);
+      }
+    }
+
+    return keyCount > keys.size();
+  }
+
+  private String[] parseKeyValueFromItem(String item){
+    int kvSeparator = item.indexOf(KV_SEPARATOR);
+    if (kvSeparator == -1) {
+      return null;
+    }
+
+    String[] kv = new String[2];
+    kv[0] = item.substring(0, kvSeparator).trim();
+    kv[1] = item.substring(kvSeparator + 1, item.length()).trim();
+    return kv;
+  }
+
+  private void handleCommentLine(Long namespaceId, ItemDTO oldItemByLine, String newItem, int lineCounter, ItemChangeSets changeSets) {
     String oldComment = oldItemByLine == null ? "" : oldItemByLine.getComment();
     //create comment. implement update comment by delete old comment and create new comment
     if (!(isCommentItem(oldItemByLine) && newItem.equals(oldComment))) {
-      changeSets.addCreateItem(buildCommentItem(0l, newItem, lineCounter));
+      changeSets.addCreateItem(buildCommentItem(0l, namespaceId, newItem, lineCounter));
     }
   }
 
-  private void handleBlankLine(ItemDTO oldItem, int lineCounter, ItemChangeSets changeSets) {
+  private void handleBlankLine(Long namespaceId, ItemDTO oldItem, int lineCounter, ItemChangeSets changeSets) {
     if (!isBlankItem(oldItem)) {
-      changeSets.addCreateItem(buildBlankItem(0l, lineCounter));
+      changeSets.addCreateItem(buildBlankItem(0l, namespaceId, lineCounter));
     }
   }
 
-  private boolean handleNormalLine(Map<String, ItemDTO> keyMapOldItem, String newItem,
+  private boolean handleNormalLine(Long namespaceId, Map<String, ItemDTO> keyMapOldItem, String newItem,
                                    int lineCounter, TextResolverResult result) {
 
     ItemChangeSets changeSets = result.getChangeSets();
 
-    int kvSeparator = newItem.indexOf(KV_SEPARATOR);
-    if (kvSeparator == -1) {
+    String[] kv = parseKeyValueFromItem(newItem);
+
+    if (kv == null) {
       result.setResolveSuccess(false);
       result.setMsg(" line:" + lineCounter + " key value must separate by '='");
       return false;
     }
 
-    String newKey = newItem.substring(0, kvSeparator).trim();
-    String newValue = newItem.substring(kvSeparator + 1, newItem.length()).trim();
+    String newKey = kv[0];
+    String newValue = kv[1];
 
     ItemDTO oldItem = keyMapOldItem.get(newKey);
 
     if (oldItem == null) {//new item
-      changeSets.addCreateItem(buildNormalItem(0l, newKey, newValue, "", lineCounter));
-    } else if (!newValue.equals(oldItem.getValue())){//update item
+      changeSets.addCreateItem(buildNormalItem(0l, namespaceId, newKey, newValue, "", lineCounter));
+    } else if (!newValue.equals(oldItem.getValue()) || lineCounter != oldItem.getLineNum()){//update item
       changeSets.addUpdateItem(
-          buildNormalItem(oldItem.getId(), newKey, newValue, oldItem.getComment(),
+          buildNormalItem(oldItem.getId(), namespaceId, newKey, newValue, oldItem.getComment(),
                           lineCounter));
     }
     keyMapOldItem.remove(newKey);
@@ -154,23 +188,24 @@ public class PropertyResolver implements ConfigTextResolver {
       //1. old is blank by now is not
       //2.old is comment by now is not exist or modified
       if ((isBlankItem(oldItem) && !isBlankItem(newItem))
-          || isCommentItem(oldItem) && (newItem == null || !newItem.equals(oldItem))) {
+          || isCommentItem(oldItem) && (newItem == null || !newItem.equals(oldItem.getComment()))) {
         changeSets.addDeleteItem(oldItem);
       }
     }
   }
 
-  private ItemDTO buildCommentItem(Long id, String comment, int lineNum) {
-    return buildNormalItem(id, "", "", comment, lineNum);
+  private ItemDTO buildCommentItem(Long id, Long namespaceId, String comment, int lineNum) {
+    return buildNormalItem(id, namespaceId, "", "", comment, lineNum);
   }
 
-  private ItemDTO buildBlankItem(Long id, int lineNum) {
-    return buildNormalItem(id, "", "", "", lineNum);
+  private ItemDTO buildBlankItem(Long id, Long namespaceId, int lineNum) {
+    return buildNormalItem(id, namespaceId, "", "", "", lineNum);
   }
 
-  private ItemDTO buildNormalItem(Long id, String key, String value, String comment, int lineNum) {
+  private ItemDTO buildNormalItem(Long id, Long namespaceId, String key, String value, String comment, int lineNum) {
     ItemDTO item = new ItemDTO();
     item.setId(id);
+    item.setNamespaceId(namespaceId);
     item.setKey(key);
     item.setValue(value);
     item.setComment(comment);

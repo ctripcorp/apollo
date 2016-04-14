@@ -16,6 +16,10 @@ public class ItemDTO{
 
   private int lineNum;
 
+  private String dataChangeCreatedBy;
+
+  private Date dataChangeCreatedTime;
+
   private String dataChangeLastModifiedBy;
 
   private Date dataChangeLastModifiedTime;
@@ -93,6 +97,22 @@ public class ItemDTO{
     this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
   }
 
+  public String getDataChangeCreatedBy() {
+    return dataChangeCreatedBy;
+  }
+
+  public void setDataChangeCreatedBy(String dataChangeCreatedBy) {
+    this.dataChangeCreatedBy = dataChangeCreatedBy;
+  }
+
+  public Date getDataChangeCreatedTime() {
+    return dataChangeCreatedTime;
+  }
+
+  public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
+    this.dataChangeCreatedTime = dataChangeCreatedTime;
+  }
+
   @Override
   public String toString() {
     return "ItemDTO{" +
@@ -102,9 +122,10 @@ public class ItemDTO{
            ", value='" + value + '\'' +
            ", comment='" + comment + '\'' +
            ", lineNum=" + lineNum +
+           ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
+           ", dataChangeCreatedTime=" + dataChangeCreatedTime +
            ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
            ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
            '}';
   }
-
 }

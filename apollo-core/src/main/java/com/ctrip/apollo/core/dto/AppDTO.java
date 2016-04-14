@@ -1,5 +1,7 @@
 package com.ctrip.apollo.core.dto;
 
+import java.util.Date;
+
 public class AppDTO {
 
   private long id;
@@ -11,6 +13,12 @@ public class AppDTO {
   private String ownerName;
 
   private String ownerEmail;
+
+  private String dataChangeCreatedBy;
+
+  private Date dataChangeCreatedTime;
+
+  private String dataChangeLastModifiedBy;
 
   public String getAppId() {
     return appId;
@@ -50,5 +58,29 @@ public class AppDTO {
 
   public void setOwnerName(String ownerName) {
     this.ownerName = ownerName;
+  }
+
+  public String getDataChangeCreatedBy() {
+    return dataChangeCreatedBy;
+  }
+
+  public void setDataChangeCreatedBy(String dataChangeCreatedBy) {
+    this.dataChangeCreatedBy = dataChangeCreatedBy;
+  }
+
+  public Date getDataChangeCreatedTime() {
+    return dataChangeCreatedTime;
+  }
+
+  public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
+    this.dataChangeCreatedTime = dataChangeCreatedTime;
+  }
+
+  public String getDataChangeLastModifiedBy() {
+    return dataChangeLastModifiedBy;
+  }
+
+  public void setDataChangeLastModifiedBy(String dataChangeLastModifiedBy) {
+    this.dataChangeLastModifiedBy = dataChangeLastModifiedBy;
   }
 }

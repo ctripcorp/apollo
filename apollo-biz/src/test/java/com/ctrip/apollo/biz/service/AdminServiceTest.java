@@ -1,5 +1,6 @@
 package com.ctrip.apollo.biz.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -27,12 +28,17 @@ public class AdminServiceTest {
   @Test
   public void testCreateNewApp() {
     String appId = "someAppId";
-    String appName = "someAppName";
-    String ownerName = "someOwnerName";
-    String ownerEmail = "someOwnerName@ctrip.com";
-    String namespace = "someNamespace";
+    App app = new App();
+    app.setAppId(appId);
+    app.setName("someAppName");
+    String owner = "someOwnerName";
+    app.setOwnerName(owner);
+    app.setOwnerEmail("someOwnerName@ctrip.com");
+    app.setDataChangeCreatedBy(owner);
+    app.setDataChangeLastModifiedBy(owner);
+    app.setDataChangeCreatedTime(new Date());
 
-    App app = adminService.createNewApp(appId, appName, ownerName, ownerEmail, namespace);
+    app = adminService.createNewApp(app);
     Assert.assertEquals(appId, app.getAppId());
 
     List<Cluster> clusters = viewService.findClusters(app.getAppId());
@@ -41,6 +47,6 @@ public class AdminServiceTest {
 
     List<Namespace> namespaces = viewService.findNamespaces(appId, clusters.get(0).getName());
     Assert.assertEquals(1, namespaces.size());
-    Assert.assertEquals(namespace, namespaces.get(0).getNamespaceName());
+    Assert.assertEquals("application", namespaces.get(0).getNamespaceName());
   }
 }
