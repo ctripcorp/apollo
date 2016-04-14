@@ -39,8 +39,15 @@ public class ConfigController {
     return configService.findNampspaces(appId, Apollo.Env.valueOf(env), clusterName);
   }
 
-  @RequestMapping(value = "/namespace/modify",method = RequestMethod.POST, consumes = {"application/json"})
-  public ResponseEntity<SimpleMsg> modifyConfigs(@RequestBody NamespaceModifyModel model) {
+  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items",method = RequestMethod.PUT, consumes = {"application/json"})
+  public ResponseEntity<SimpleMsg> modifyItems(@PathVariable String appId, @PathVariable String env,
+                                                 @PathVariable String clusterName, @PathVariable String namespaceName,
+                                                 @RequestBody NamespaceModifyModel model) {
+
+    model.setAppId(appId);
+    model.setClusterName(clusterName);
+    model.setEnv(env);
+    model.setNamespaceName(namespaceName);
 
     if (model == null || model.isInvalid()){
       return ResponseEntity.badRequest().body(new SimpleMsg("form data exception."));
@@ -55,8 +62,15 @@ public class ConfigController {
     }
   }
 
-  @RequestMapping(value = "/namespace/release", method = RequestMethod.POST, consumes = {"application/json"})
-  public ResponseEntity<SimpleMsg> release(@RequestBody NamespaceReleaseModel model){
+  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/release", method = RequestMethod.POST, consumes = {"application/json"})
+  public ResponseEntity<SimpleMsg> createRelease(@PathVariable String appId, @PathVariable String env,
+                                                 @PathVariable String clusterName, @PathVariable String namespaceName,
+                                                 @RequestBody NamespaceReleaseModel model){
+    model.setAppId(appId);
+    model.setClusterName(clusterName);
+    model.setEnv(env);
+    model.setNamespaceName(namespaceName);
+
     if (model == null || model.isInvalid()){
       return ResponseEntity.badRequest().body(new SimpleMsg("form data exception."));
     }
