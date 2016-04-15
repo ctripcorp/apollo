@@ -263,27 +263,9 @@
 					<version>2.7</version>
 					<dependencies>
 						<dependency>
-							<groupId>net.sourceforge.cobertura</groupId>
-							<artifactId>cobertura-runtime</artifactId>
-							<version>2.1.1</version>
-							<type>pom</type>
-							<exclusions>
-								<exclusion>
-									<groupId>ch.qos.logback</groupId>
-									<artifactId>logback-classic</artifactId>
-								</exclusion>
-							</exclusions>
-						</dependency>
-						<dependency>
-							<groupId>net.sourceforge.cobertura</groupId>
-							<artifactId>cobertura</artifactId>
-							<version>2.1.1</version>
-							<exclusions>
-								<exclusion>
-									<groupId>ch.qos.logback</groupId>
-									<artifactId>logback-classic</artifactId>
-								</exclusion>
-							</exclusions>
+							<groupId>ch.qos.logback</groupId>
+							<artifactId>logback-classic</artifactId>
+							<version>1.1.7</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -336,6 +318,13 @@
 							<maxmem>256m</maxmem>
 							<aggregate>true</aggregate>
 						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>ch.qos.logback</groupId>
+								<artifactId>logback-classic</artifactId>
+								<version>1.1.7</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 					<plugin>
 						<groupId>org.eluder.coveralls</groupId>
