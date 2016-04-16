@@ -84,6 +84,7 @@
 		<jetty.version>9.3.8.v20160314</jetty.version>
 		<github.global.server>github</github.global.server>
 		<github.global.oauth2Token>${env.GITHUB_OAUTH_TOKEN}</github.global.oauth2Token>
+		<github.path></github.path>
 	</properties>
 
 	<modules>
@@ -172,13 +173,6 @@
 				<groupId>io.spring.platform</groupId>
 				<artifactId>platform-bom</artifactId>
 				<version>2.0.3.RELEASE</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-config</artifactId>
-				<version>1.1.0.M5</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -299,7 +293,9 @@
 						<artifactId>site-maven-plugin</artifactId>
 						<version>0.12</version>
 						<configuration>
-							<message>Building site for ${project.version}</message>
+							<message>Site for ${project.artifactId}, ${project.version}</message>
+							<path>${github.path}</path>
+							<merge>true</merge>
 						</configuration>
 						<executions>
 							<execution>

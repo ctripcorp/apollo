@@ -11,7 +11,9 @@
     <artifactId>apollo-core</artifactId>
     <name>Apollo Core</name>
     <packaging>jar</packaging>
-
+	<properties>
+		<github.path>${project.artifactId}</github.path>
+	</properties>
     <dependencies>
         <!-- json -->
         <dependency>
