@@ -1,6 +1,9 @@
 language: java
 jdk:
   - oraclejdk8
+
+before_script:
+  - echo "MAVEN_OPTS='-Xmx2g -XX:MaxPermSize=512m'" > ~/.mavenrc
   
 #before_install:
 #  - pip install --user codecov
