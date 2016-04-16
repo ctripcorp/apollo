@@ -127,11 +127,6 @@
 			</dependency>
 			<!--third party -->
 			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>1.1.7</version>
-			</dependency>
-			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>5.1.38</version>
@@ -140,6 +135,11 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>19.0</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
@@ -318,13 +318,6 @@
 							<maxmem>256m</maxmem>
 							<aggregate>true</aggregate>
 						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>ch.qos.logback</groupId>
-								<artifactId>logback-classic</artifactId>
-								<version>1.1.7</version>
-							</dependency>
-						</dependencies>
 					</plugin>
 					<plugin>
 						<groupId>org.eluder.coveralls</groupId>
