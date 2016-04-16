@@ -47,7 +47,7 @@
 
 	<distributionManagement>
 		<site>
-			<id>github-pages-site</id>
+			<id>github</id>
 			<name>Deployment through GitHub's site deployment plugin</name>
 			<url>${project.version}</url>
 		</site>
@@ -315,7 +315,6 @@
 						</configuration>
 						<executions>
 							<execution>
-								<id>github-site</id>
 								<goals>
 									<goal>site</goal>
 								</goals>
