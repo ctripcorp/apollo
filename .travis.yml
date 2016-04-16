@@ -5,9 +5,9 @@ jdk:
 notification:
   email:
     recipients:
-	  - liuyiming.vip@gmail.com,nobodyiam@gmail.com,lepdou@gmail.com
+      - liuyiming.vip@gmail.com,nobodyiam@gmail.com,lepdou@gmail.com
     on_success: always
-	on_failure: always
+    on_failure: always
 	
 before_script:
   - echo "MAVEN_OPTS='-Xmx2g -XX:MaxPermSize=512m'" > ~/.mavenrc
