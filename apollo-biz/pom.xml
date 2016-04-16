@@ -10,7 +10,9 @@
 	<artifactId>apollo-biz</artifactId>
 	<name>Apollo Biz</name>
 	<packaging>jar</packaging>
-
+	<properties>
+		<github.path>${project.artifactId}</github.path>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.ctrip.apollo</groupId>

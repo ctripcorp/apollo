@@ -1,69 +1,70 @@
 <?xml version="1.0"  encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>com.ctrip.apollo</groupId>
-        <artifactId>apollo</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>apollo-client</artifactId>
-    <name>Apollo Client</name>
-    <properties>
-        <java.version>1.7</java.version>
-    </properties>
-    <dependencies>
-        <!-- apollo -->
-        <dependency>
-            <groupId>com.ctrip.apollo</groupId>
-            <artifactId>apollo-core</artifactId>
-        </dependency>
-        <!-- end of apollo -->
-        <!-- foundation service -->
-        <dependency>
-            <groupId>com.ctrip.framework</groupId>
-            <artifactId>framework-foundation</artifactId>
-        </dependency>
-        <!-- end of foundation service -->
-        <!-- cat -->
-        <dependency>
-            <groupId>com.dianping.cat</groupId>
-            <artifactId>cat-client</artifactId>
-        </dependency>
-        <!-- end of cat -->
-        <!-- log -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- end of log -->
-        <!-- test -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- end of test -->
-    </dependencies>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.ctrip.apollo</groupId>
+		<artifactId>apollo</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>apollo-client</artifactId>
+	<name>Apollo Client</name>
+	<properties>
+		<java.version>1.7</java.version>
+		<github.path>${project.artifactId}</github.path>
+	</properties>
+	<dependencies>
+		<!-- apollo -->
+		<dependency>
+			<groupId>com.ctrip.apollo</groupId>
+			<artifactId>apollo-core</artifactId>
+		</dependency>
+		<!-- end of apollo -->
+		<!-- foundation service -->
+		<dependency>
+			<groupId>com.ctrip.framework</groupId>
+			<artifactId>framework-foundation</artifactId>
+		</dependency>
+		<!-- end of foundation service -->
+		<!-- cat -->
+		<dependency>
+			<groupId>com.dianping.cat</groupId>
+			<artifactId>cat-client</artifactId>
+		</dependency>
+		<!-- end of cat -->
+		<!-- log -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- end of log -->
+		<!-- test -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- end of test -->
+	</dependencies>
 </project>

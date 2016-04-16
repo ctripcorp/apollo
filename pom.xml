@@ -45,15 +45,6 @@
 		<url>https://github.com/ctripcorp/apollo/issues</url>
 	</issueManagement>
 
-<!-- 
-	<distributionManagement>
-		<site>
-			<id>github</id>
-			<name>Deployment through GitHub's site deployment plugin</name>
-			<url>${project.version}</url>
-		</site>
-	</distributionManagement>
--->
 	<developers>
 		<developer>
 			<id>yiming187</id>
@@ -93,6 +84,7 @@
 		<jetty.version>9.3.8.v20160314</jetty.version>
 		<github.global.server>github</github.global.server>
 		<github.global.oauth2Token>${env.GITHUB_OAUTH_TOKEN}</github.global.oauth2Token>
+		<github.path></github.path>
 	</properties>
 
 	<modules>
@@ -296,27 +288,13 @@
 			</activation>
 			<build>
 				<plugins>
-				<!-- 
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<version>3.5</version>
-						<configuration>
-							<skipDeploy>true</skipDeploy>
-						</configuration>
-					</plugin>
-					-->
-					
 					<plugin>
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
 						<version>0.12</version>
 						<configuration>
-							<message>Building site for ${project.artifactId},
-								${project.version}</message>
-								<!-- 
-							<path>${project.distributionManagement.site.url}</path>
-							-->
+							<message>Site for ${project.artifactId}, ${project.version}</message>
+							<path>${github.path}</path>
 							<merge>true</merge>
 						</configuration>
 						<executions>

@@ -10,6 +10,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>apollo-portal</artifactId>
 	<name>Apollo Portal</name>
+	<properties>
+		<github.path>${project.artifactId}</github.path>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.ctrip.apollo</groupId>
