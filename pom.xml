@@ -308,7 +308,8 @@
 						<artifactId>site-maven-plugin</artifactId>
 						<version>0.12</version>
 						<configuration>
-							<message>Building site for ${project.artifactId}, ${project.version}</message>
+							<message>Building site for ${project.artifactId},
+								${project.version}</message>
 							<path>${project.distributionManagement.site.url}</path>
 							<merge>true</merge>
 						</configuration>
@@ -321,6 +322,15 @@
 								<phase>site-deploy</phase>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cobertura-maven-plugin</artifactId>
+						<configuration>
+							<format>xml</format>
+							<maxmem>256m</maxmem>
+							<aggregate>true</aggregate>
+						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.eluder.coveralls</groupId>
