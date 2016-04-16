@@ -45,6 +45,14 @@
 		<url>https://github.com/ctripcorp/apollo/issues</url>
 	</issueManagement>
 
+	<distributionManagement>
+		<site>
+			<id>github-pages-site</id>
+			<name>Deployment through GitHub's site deployment plugin</name>
+			<url>${project.version}</url>
+		</site>
+	</distributionManagement>
+
 	<developers>
 		<developer>
 			<id>yiming187</id>
@@ -177,13 +185,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-config</artifactId>
-				<version>1.1.0.M5</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-netflix</artifactId>
 				<version>1.1.0.M5</version>
 				<type>pom</type>
@@ -295,14 +296,26 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-site-plugin</artifactId>
+						<version>3.5</version>
+						<configuration>
+							<skipDeploy>true</skipDeploy>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
 						<version>0.12</version>
 						<configuration>
-							<message>Building site for ${project.version}</message>
+							<message>Building site for ${project.artifactId},
+								${project.version}</message>
+							<path>${project.distributionManagement.site.url}</path>
+							<merge>true</merge>
 						</configuration>
 						<executions>
 							<execution>
+								<id>github-site</id>
 								<goals>
 									<goal>site</goal>
 								</goals>
