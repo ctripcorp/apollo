@@ -1,12 +1,21 @@
 package com.ctrip.apollo.core.dto;
 
-public class NamespaceDTO extends BaseDTO{
+public class NamespaceDTO{
+  private long id;
 
   private String appId;
   
   private String clusterName;
 
   private String namespaceName;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   public String getAppId() {
     return appId;

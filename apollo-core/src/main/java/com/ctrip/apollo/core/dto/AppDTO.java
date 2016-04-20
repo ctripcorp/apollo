@@ -1,6 +1,8 @@
 package com.ctrip.apollo.core.dto;
 
-public class AppDTO extends BaseDTO{
+public class AppDTO {
+
+  private long id;
 
   private String name;
 
@@ -9,6 +11,14 @@ public class AppDTO extends BaseDTO{
   private String ownerName;
 
   private String ownerEmail;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   public String getAppId() {
     return appId;

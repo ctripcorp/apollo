@@ -1,6 +1,8 @@
 package com.ctrip.apollo.core.dto;
 
-public class ItemDTO extends BaseDTO{
+public class ItemDTO {
+
+  private long id;
 
   private long namespaceId;
 
@@ -21,6 +23,14 @@ public class ItemDTO extends BaseDTO{
     this.value = value;
     this.comment = comment;
     this.lineNum = lineNum;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
   }
 
   public String getComment() {
@@ -73,10 +83,6 @@ public class ItemDTO extends BaseDTO{
            ", value='" + value + '\'' +
            ", comment='" + comment + '\'' +
            ", lineNum=" + lineNum +
-           ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
-           ", dataChangeCreatedTime=" + dataChangeCreatedTime +
-           ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
-           ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
            '}';
   }
 }
