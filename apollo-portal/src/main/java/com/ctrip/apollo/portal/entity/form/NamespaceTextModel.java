@@ -13,6 +13,7 @@ public class NamespaceTextModel implements FormModel{
   private int namespaceId;
   private String configText;
   private String modifyBy;
+  private String comment;
 
   @Override
   public boolean isInvalid(){
@@ -72,5 +73,13 @@ public class NamespaceTextModel implements FormModel{
 
   public void setModifyBy(String modifyBy) {
     this.modifyBy = modifyBy;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
   }
 }

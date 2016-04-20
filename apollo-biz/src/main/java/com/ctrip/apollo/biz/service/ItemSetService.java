@@ -11,6 +11,8 @@ import com.ctrip.apollo.common.utils.BeanUtils;
 import com.ctrip.apollo.core.dto.ItemChangeSets;
 import com.ctrip.apollo.core.dto.ItemDTO;
 
+import java.util.Date;
+
 @Service
 public class ItemSetService {
 
@@ -25,6 +27,7 @@ public class ItemSetService {
     if (changeSet.getCreateItems() != null) {
       for (ItemDTO item : changeSet.getCreateItems()) {
         Item entity = BeanUtils.transfrom(Item.class, item);
+        entity.setDataChangeCreatedTime(new Date());
         entity.setDataChangeCreatedBy(owner);
         entity.setDataChangeLastModifiedBy(owner);
         itemRepository.save(entity);

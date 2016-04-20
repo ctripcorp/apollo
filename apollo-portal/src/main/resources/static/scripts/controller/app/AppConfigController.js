@@ -3,7 +3,7 @@ application_module.controller("AppConfigController",
                                function ($scope, $location, toastr, AppService, ConfigService) {
 
                                    var appId = $location.$$url.split("=")[1];
-                                   var currentUser = 'lepdou';
+                                   var currentUser = 'test_user';
                                    var pageContext = {
                                        appId: appId,
                                        env: 'LOCAL',
@@ -49,7 +49,7 @@ application_module.controller("AppConfigController",
                                                                    }
                                                                });
                                    }, function (result) {
-                                       toastr.error("加载导航出错:" + result);
+                                       toastr.error(result.status + result.data.message, "加载导航出错");
                                    });
 
                                    /////////// namespace ////////////
@@ -84,7 +84,7 @@ application_module.controller("AppConfigController",
                                                }
 
                                            }, function (result) {
-                                               toastr.error("加载配置信息出错");
+                                               toastr.error(result.status + result.data.message, "加载配置信息出错");
                                            });
                                    }
 
@@ -127,11 +127,12 @@ application_module.controller("AppConfigController",
                                        $scope.draft = namespace;
                                    };
 
+                                   $scope.commitComment = '';
                                    //更新配置
                                    $scope.commitChange = function () {
                                        ConfigService.modify_items($scope.pageContext.appId, $scope.pageContext.env, $scope.pageContext.clusterName,
                                                                   $scope.draft.namespace.namespaceName, $scope.draft.text,
-                                                                  $scope.draft.namespace.id, 'lepdou').then(
+                                                                  $scope.draft.namespace.id, $scope.commitComment, currentUser).then(
                                            function (result) {
                                                toastr.success("更新成功");
                                                //refresh all namespace items
@@ -141,7 +142,7 @@ application_module.controller("AppConfigController",
                                                $scope.toggleTextEditStatus($scope.draft);
 
                                            }, function (result) {
-                                               toastr.error(result.data.message, "更新失败");
+                                               toastr.error(result.status + result.data.message, "更新失败");
 
                                            }
                                        );
@@ -189,7 +190,7 @@ application_module.controller("AppConfigController",
                                                refreshNamespaces();
 
                                            }, function (result) {
-                                               toastr.error(result.data.message, "发布失败");
+                                               toastr.error(result.status + result.data.message,  "发布失败");
 
                                            }
                                        );    

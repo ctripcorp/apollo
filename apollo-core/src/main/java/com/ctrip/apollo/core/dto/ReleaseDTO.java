@@ -1,8 +1,6 @@
 package com.ctrip.apollo.core.dto;
 
-public class ReleaseDTO {
-
-  private long id;
+public class ReleaseDTO extends BaseDTO{
 
   private String name;
 
@@ -32,10 +30,6 @@ public class ReleaseDTO {
     return configurations;
   }
 
-  public long getId() {
-    return id;
-  }
-
   public String getName() {
     return name;
   }
@@ -58,10 +52,6 @@ public class ReleaseDTO {
 
   public void setConfigurations(String configurations) {
     this.configurations = configurations;
-  }
-
-  public void setId(long id) {
-    this.id = id;
   }
 
   public void setName(String name) {

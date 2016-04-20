@@ -38,17 +38,16 @@
                                 <input type="text" class="form-control" name="appName" ng-model="app.name" required>
                             </div>
                         </div>
-                        <!--接入sso之后将会去除-->
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Owner</label>
+                            <label class="col-sm-2 control-label"><font style="color: red">*</font>应用Owner</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="appOwner" ng-model="app.ownerName">
+                                <input type="text" class="form-control" name="appOwner" ng-model="app.ownerName" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label"> 邮箱地址</label>
+                            <label class="col-sm-2 control-label"><font style="color: red">*</font>邮箱地址</label>
                             <div class="col-sm-4">
-                                <input type="email" class="form-control" ng-model="app.ownerEmail">
+                                <input type="email" class="form-control" ng-model="app.ownerEmail" required>
                             </div>
                         </div>
 

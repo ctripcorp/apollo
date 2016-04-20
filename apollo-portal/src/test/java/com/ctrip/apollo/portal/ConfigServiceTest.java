@@ -5,7 +5,6 @@ import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.dto.NamespaceDTO;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
 import com.ctrip.apollo.core.enums.Env;
-import com.ctrip.apollo.core.exception.ServiceException;
 import com.ctrip.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
 import com.ctrip.apollo.portal.entity.form.NamespaceTextModel;
@@ -101,22 +100,18 @@ public class ConfigServiceTest extends AbstractPortalTest{
     model.setNamespaceName(namespaceName);
     model.setClusterName(clusterName);
     model.setAppId(appId);
-    model.setConfigText("a=b\nb=c\nc=d");
-
+    model.setConfigText("a=b\nb=c\nc=d\nd=e");
 
     List<ItemDTO> itemDTOs = mockBaseItemHas3Key();
     ItemChangeSets changeSets = new ItemChangeSets();
     changeSets.addCreateItem(new ItemDTO("d", "c", "", 4));
 
     when(itemAPI.findItems(appId, Env.DEV, clusterName, namespaceName)).thenReturn(itemDTOs);
-
+    when(resolver.resolve(0, model.getConfigText(), itemDTOs)).thenReturn(changeSets);
     try {
-      // 调用itemAPI.updateConfig 会抛出ServiceException.
-      // itemAPI.updateConfig ut 放在admin service.
-      // 所以只要在调用itemAPI.updateConfig前全部通过,此ut应该通过.
       configService.updateConfigItemByText(model);
     }catch (Exception e){
-      Assert.assertTrue(e instanceof ServiceException);
+      Assert.fail();
     }
   }
 

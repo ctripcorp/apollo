@@ -146,22 +146,19 @@ public class ConfigService {
 
     ItemChangeSets changeSets = resolver.resolve(namespaceId, configText,
         itemAPI.findItems(appId, env, clusterName, namespaceName));
+    if (changeSets.isEmpty()){
+      return;
+    }
     try {
-      enrichChangeSetBaseInfo(changeSets);
       itemAPI.updateItems(appId, env, clusterName, namespaceName, changeSets);
     } catch (Exception e) {
       logger.error("itemAPI.updateItems error. appId{},env:{},clusterName:{},namespaceName:{}", appId, env, clusterName,
                    namespaceName);
-      throw new ServiceException("oops! call admin service config error. ");
+      throw new ServiceException(e.getMessage());
     }
 
   }
 
-  private void enrichChangeSetBaseInfo(ItemChangeSets changeSets) {
-    for (ItemDTO item : changeSets.getCreateItems()) {
-      item.setDataChangeCreatedTime(new Date());
-    }
-  }
 
   /**
    * createRelease config items

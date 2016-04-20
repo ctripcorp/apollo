@@ -24,6 +24,10 @@ public class ItemChangeSets {
     deleteItems.add(item);
   }
 
+  public boolean isEmpty(){
+    return createItems.isEmpty() && updateItems.isEmpty() && deleteItems.isEmpty();
+  }
+
   public List<ItemDTO> getCreateItems() {
     return createItems;
   }

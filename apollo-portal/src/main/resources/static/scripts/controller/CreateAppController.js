@@ -8,11 +8,7 @@ create_app_module.controller('CreateAppController', ['$scope', '$window', 'toast
                     $window.location.href = '/views/app.html?#appid=' + result.appId;
                 }, 1000);
             }, function (result) {
-                if (result.status == 400){
-                    toastr.error('params error','添加失败!');
-                }else {
-                    toastr.error('server error','添加失败!');
-                }
+                toastr.error(result.status + result.data.message, '添加失败!');
             });
         };
 

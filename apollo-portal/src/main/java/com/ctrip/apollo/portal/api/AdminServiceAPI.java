@@ -157,15 +157,15 @@ public class AdminServiceAPI {
       HttpEntity<MultiValueMap<String, String>> entity =
           new HttpEntity<MultiValueMap<String, String>>(parameters, null);
       ResponseEntity<ReleaseDTO> response = restTemplate.postForEntity(getAdminServiceHost(env) + String.
-          format("apps/%s/clusters/%s/namespaces/%s/releases", appId, clusterName, namespace),
-                                                                       entity, ReleaseDTO.class);
+                                       format("apps/%s/clusters/%s/namespaces/%s/releases", appId, clusterName, namespace),
+                                   entity, ReleaseDTO.class);
 
       if (response != null && response.getStatusCode() == HttpStatus.OK){
         return response.getBody();
       }else {
         logger.error("createRelease fail.id:{}, env:{}, clusterName:{}, namespace:{},releaseBy{}",
                      appId, env, clusterName, namespace, releaseBy);
-        throw new ServiceException("call create createRelease api error.");
+        throw new ServiceException(" call create createRelease api error.");
       }
     }
   }
