@@ -1,10 +1,13 @@
 package com.ctrip.apollo.portal.controller;
 
 
+import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.enums.Env;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
 import com.ctrip.apollo.core.exception.BadRequestException;
 import com.ctrip.apollo.core.utils.StringUtils;
+import com.ctrip.apollo.portal.entity.ItemDiffs;
+import com.ctrip.apollo.portal.entity.form.NamespaceSyncModel;
 import com.ctrip.apollo.portal.entity.form.NamespaceTextModel;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
 import com.ctrip.apollo.portal.entity.form.NamespaceReleaseModel;
@@ -76,6 +79,30 @@ public class ConfigController {
 
     return configService.createRelease(model);
 
+  }
+
+  @RequestMapping(value = "/apps/{appId}/env/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items")
+  public List<ItemDTO> findItems(@PathVariable String appId, @PathVariable String env,
+                                 @PathVariable String clusterName, @PathVariable String namespaceName){
+
+    if (StringUtils.isContainEmpty(appId, env, clusterName, namespaceName)){
+      throw new BadRequestException("appid,env,cluster name,namespace name can not be null");
+    }
+
+    return configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
+  }
+
+  @RequestMapping(value = "/namespaces/{namespaceName}/diff", method = RequestMethod.POST, consumes = {
+      "application/json"})
+  public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model){
+    if (model == null){
+      throw new BadRequestException("request payload shoud not be null");
+    }
+    if (model.isInvalid()) {
+      throw new BadRequestException("request model is invalid");
+    }
+
+    return configService.compare(model.getSyncItems(), model.getSyncToNamespaces());
   }
 
 }

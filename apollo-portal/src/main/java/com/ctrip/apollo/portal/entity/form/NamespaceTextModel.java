@@ -4,7 +4,7 @@ package com.ctrip.apollo.portal.entity.form;
 import com.ctrip.apollo.core.enums.Env;
 import com.ctrip.apollo.core.utils.StringUtils;
 
-public class NamespaceTextModel implements FormModel{
+public class NamespaceTextModel implements Verifiable {
 
   private String appId;
   private String env;

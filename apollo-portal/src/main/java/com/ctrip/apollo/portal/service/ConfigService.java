@@ -7,17 +7,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.ctrip.apollo.common.utils.BeanUtils;
 import com.ctrip.apollo.common.utils.ExceptionUtils;
 import com.ctrip.apollo.core.enums.Env;
 import com.ctrip.apollo.core.dto.ItemChangeSets;
 import com.ctrip.apollo.core.dto.ItemDTO;
 import com.ctrip.apollo.core.dto.NamespaceDTO;
 import com.ctrip.apollo.core.dto.ReleaseDTO;
+import com.ctrip.apollo.core.exception.BadRequestException;
+import com.ctrip.apollo.core.exception.NotFoundException;
 import com.ctrip.apollo.core.exception.ServiceException;
 import com.ctrip.apollo.core.utils.StringUtils;
 import com.ctrip.apollo.portal.api.AdminServiceAPI;
+import com.ctrip.apollo.portal.entity.ItemDiffs;
+import com.ctrip.apollo.portal.entity.NamespaceIdentifer;
 import com.ctrip.apollo.portal.entity.form.NamespaceTextModel;
 import com.ctrip.apollo.portal.entity.NamespaceVO;
 import com.ctrip.apollo.portal.entity.form.NamespaceReleaseModel;
@@ -171,5 +177,83 @@ public class ConfigService {
   public ReleaseDTO createRelease(NamespaceReleaseModel model) {
     return releaseAPI.release(model.getAppId(), model.getEnv(), model.getClusterName(),
         model.getNamespaceName(), model.getReleaseBy(), model.getReleaseComment());
+  }
+
+  public List<ItemDTO> findItems(String appId, Env env, String clusterName, String namespaceName){
+    return itemAPI.findItems(appId, env, clusterName, namespaceName);
+  }
+
+  public List<ItemDiffs> compare(List<ItemDTO> sourceItems, List<NamespaceIdentifer> comparedNamespaces){
+
+    List<ItemDiffs> result = new LinkedList<>();
+
+    String appId, clusterName, namespaceName;
+    Env env;
+    for (NamespaceIdentifer namespace: comparedNamespaces){
+      appId = namespace.getAppId();
+      clusterName = namespace.getClusterName();
+      namespaceName = namespace.getNamespaceName();
+      env = namespace.getEnv();
+      NamespaceDTO namespaceDTO = null;
+      try {
+        namespaceDTO = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
+      } catch (NotFoundException e){
+        logger.warn("namespace not exist. appId:{}, env:{}, clusterName:{}, namespaceName:{}", appId, env, clusterName,
+                    namespaceName);
+        throw new BadRequestException(String.format(
+            "namespace not exist. appId:%s, env:%s, clusterName:%s, namespaceName:%s", appId, env, clusterName,
+            namespaceName));
+      }
+
+      ItemDiffs itemDiffs = new ItemDiffs(namespace);
+      ItemChangeSets changeSets = new ItemChangeSets();
+      itemDiffs.setDiffs(changeSets);
+
+      List<ItemDTO>
+          targetItems =
+          itemAPI.findItems(namespace.getAppId(), namespace.getEnv(),
+                            namespace.getClusterName(), namespace.getNamespaceName());
+
+      long namespaceId = namespaceDTO.getId();
+      if (CollectionUtils.isEmpty(targetItems)){//all source items is added
+        int lineNum = 1;
+        for (ItemDTO sourceItem: sourceItems){
+          changeSets.addCreateItem(buildItem(namespaceId, lineNum++, sourceItem));
+        }
+      }else {
+        Map<String, ItemDTO> keyMapItem = BeanUtils.mapByKey("key", targetItems);
+        String key,sourceValue,sourceComment;
+        ItemDTO targetItem = null;
+        int maxLineNum = targetItems.size();//append to last
+        for (ItemDTO sourceItem: sourceItems){
+          key = sourceItem.getKey();
+          sourceValue = sourceItem.getValue();
+          sourceComment = sourceItem.getComment();
+          targetItem = keyMapItem.get(key);
+
+          if (targetItem == null) {//added items
+
+            changeSets.addCreateItem(buildItem(namespaceId, ++maxLineNum, sourceItem));
+
+          }else if (!sourceValue.equals(targetItem.getValue()) || !sourceComment.equals(targetItem.getComment())){//modified items
+            targetItem.setValue(sourceValue);
+            targetItem.setComment(sourceComment);
+            changeSets.addUpdateItem(targetItem);
+          }
+        }
+      }
+
+      result.add(itemDiffs);
+    }
+
+    return result;
+  }
+
+  private ItemDTO buildItem(long namespaceId, int lineNum, ItemDTO sourceItem){
+    ItemDTO createdItem = new ItemDTO();
+    BeanUtils.copyEntityProperties(sourceItem, createdItem);
+    createdItem.setLineNum(lineNum++);
+    createdItem.setNamespaceId(namespaceId);
+    return createdItem;
   }
 }

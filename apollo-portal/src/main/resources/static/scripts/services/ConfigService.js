@@ -1,9 +1,14 @@
 appService.service("ConfigService", ['$resource', '$q', function ($resource, $q) {
     var config_source = $resource("", {}, {
-        load_all_groups: {
+        load_all_namespaces: {
             method: 'GET',
             isArray: true,
             url: '/apps/:appId/env/:env/clusters/:clusterName/namespaces'
+        },
+        find_items:{
+            method:'GET',
+            isArray: true,
+            url:'/apps/:appId/env/:env/clusters/:clusterName/namespaces/:namespaceName/items'
         },
         modify_items: {
             method: 'PUT',
@@ -18,7 +23,7 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
     return {
         load_all_namespaces: function (appId, env, clusterName) {
             var d = $q.defer();
-            config_source.load_all_groups({
+            config_source.load_all_namespaces({
                                               appId: appId,
                                               env: env,
                                               clusterName: clusterName
@@ -26,6 +31,20 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
                 d.resolve(result);
             }, function (result) {
                 d.reject(result);
+            });
+            return d.promise;
+        },
+        find_items: function (appId, env, clusterName, namespaceName) {
+            var d = $q.defer();
+            config_source.find_items({
+                                         appId: appId,
+                                         env: env,
+                                         clusterName: clusterName,
+                                         namespaceName: namespaceName
+                                     }, function (result) {
+               d.resolve(result);
+            }, function (result) {
+               d.reject(result);
             });
             return d.promise;
         },

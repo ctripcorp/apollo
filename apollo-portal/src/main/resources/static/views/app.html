@@ -65,7 +65,16 @@
 
                         </div>
                     </section>
-                    <a class="list-group-item" data-toggle="modal" data-target="#createEnvModal" ng-show="missEnvs.length > 0">
+                    <a class="list-group-item" data-toggle="modal" data-target="#syncItems">
+                        <div class="row">
+                            <div class="col-md-2"><img src="../img/sync.png" class="i-20"></div>
+                            <div class="col-md-7 hidden-xs">
+                                <p class="apps-description">配置同步</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a class="list-group-item" data-toggle="modal" data-target="#createEnvModal"
+                       ng-show="missEnvs.length > 0">
                         <div class="row">
                             <div class="col-md-2"><img src="../img/plus.png" class="i-20"></div>
                             <div class="col-md-7 hidden-xs">
@@ -126,9 +135,10 @@
                                                     <button type="button"
                                                             class="btn btn-default btn-sm J_tableview_btn">授权
                                                     </button>
-                                                    <button type="button"
-                                                            class="btn btn-default btn-sm J_tableview_btn">克隆
-                                                    </button>
+                                                    <a type="button" target="_blank"
+                                                       href="sync.html?#/appid={{pageContext.appId}}&env={{pageContext.env}}&clusterName={{pageContext.clusterName}}&namespaceName={{namespace.namespace.namespaceName}}"
+                                                       class="btn btn-default btn-sm J_tableview_btn">同步
+                                                    </a>
                                                 </div>
                                             </div>
                                             <div class="btn-group" role="group" aria-label="...">
@@ -169,7 +179,7 @@
                             </header>
 
                             <!--text view-->
-                            <textarea class="form-control" rows="30"
+                            <textarea class="form-control" rows="{{namespace.itemCnt}}"
                                       ng-show="namespace.viewType == 'text'"
                                       ng-disabled="!namespace.isTextEditing" ng-model="namespace.text">
 {{namespace.text}}
@@ -177,7 +187,7 @@
 
                             <!--table view-->
                             <div class="namespace-view-table">
-                                <table class="table table-bordered text-center table-hover"
+                                <table class="table table-bordered table-striped text-center table-hover"
                                        ng-show="namespace.viewType == 'table'">
                                     <thead>
                                     <tr>
@@ -200,21 +210,16 @@
                                     </thead>
                                     <tbody>
 
-                                    <tr ng-repeat="config in namespace.items" ng-class="{warning:config.modified}"
-                                        ng-if="config.item.key">
+                                    <tr title="点击查看" data-toggle="modal" data-target="#oldValueModal" ng-repeat="config in namespace.items" ng-class="{warning:config.modified}"
+                                        ng-if="config.item.key" ng-click="watchItem(config.item.key, config.item.value, config.oldValue)">
                                         <td width="25%">
-                                            {{config.item.key}}
+                                            {{config.item.key | limitTo: 20}} {{config.item.key.length >  20 ? '...' : ''}}
                                         </td>
                                         <td width="30%">
-                                            <button data-placement="top" title="查看旧值"
-                                                    class="glyphicon glyphicon-eye-open"
-                                                    aria-hidden="true" data-toggle="modal" data-target="#oldValueModal"
-                                                    ng-show="config.modified"
-                                                    ng-click="queryOldValue(config.item.key, config.oldValue)"></button>
-                                            {{config.item.value}}
+                                            {{config.item.value | limitTo: 20}} {{config.item.value.length >  20 ? '...' : ''}}
                                         </td>
                                         <td width="20%">
-                                            {{config.item.comment}}
+                                            {{config.item.comment | limitTo: 20}} {{config.item.comment.length >  20 ? '...' : ''}}
                                         </td>
                                         <td width="10%">
                                             {{config.item.lastModifiedBy}}
@@ -282,19 +287,22 @@
         </div>
 
         <!-- view old value Modal -->
-        <div class="modal fade " id="oldValueModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-sm" role="document">
+        <div class="modal fade" id="oldValueModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header panel-primary">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">旧值</h4>
+                        <h4 class="modal-title">{{watch.key}}</h4>
                     </div>
-                    <div class="modal-body">
-                        {{OldValue}}
+                    <div class="modal-body" style="word-wrap: break-word;">
+                        {{watch.value}}
+                        <div ng-show="watch.oldValue">
+                            <hr>
+                            老的值:{{watch.oldValue}}
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -375,6 +383,8 @@
                 </div>
             </div>
         </div>
+
+        </div>
     </div>
 
 </div>
@@ -414,24 +424,7 @@
 <!--controller-->
 <script type="application/javascript" src="../scripts/controller/app/AppConfigController.js"></script>
 
-<script type="application/javascript">
-    $(document).ready(function () {
-        $("html").niceScroll({
-                                 styler: "fb",
-                                 cursorcolor: "#e8403f",
-                                 cursorwidth: '6',
-                                 cursorborderradius: '10px',
-                                 background: '#404040',
-                                 spacebarenabled: false,
-                                 cursorborder: '',
-                                 zindex: '1000'
-                             });
-    });
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-</script>
-
+<script type="application/javascript" src="../scripts/PageCommon.js"></script>
 
 </body>
 </html>
