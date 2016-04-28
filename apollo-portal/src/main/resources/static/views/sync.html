@@ -1,0 +1,200 @@
+<!doctype html>
+<html ng-app="sync_item">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../vendor/angular/angular-toastr-1.4.1.min.css">
+    <link rel="stylesheet" type="text/css" media='all' href="../vendor/angular/loading-bar.min.css">
+    <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
+    <title>同步配置</title>
+</head>
+
+<body ng-controller="SyncItemController">
+
+<div ng-include="'common/nav.html'"></div>
+
+<div class="container-fluid apollo-container">
+    <section class="panel col-md-offset-1 col-md-10">
+        <header class="panel-heading">
+            <div class="row">
+                <div class="col-md-3">
+                    <h4 class="modal-title">同步配置
+                        <small ng-show="syncItemStep == 1">(第一步:选择同步信息)</small>
+                        <small ng-show="syncItemStep == 2">(第二步:检查Diff)</small>
+                    </h4>
+                </div>
+                <div class="col-md-9 text-right">
+                    <button type="button" class="btn btn-primary" ng-show="syncItemStep > 1 && syncItemStep < 3"
+                            ng-click="syncItemNextStep(-1)">上一步
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-show="syncItemStep < 2"
+                            ng-click="syncItemNextStep(1)">下一步
+                    </button>
+                    <button type="button" class="btn btn-success" ng-show="syncItemStep == 2" ng-click="syncItems()">同步
+                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-show="syncItemStep == 3"
+                            ng-click="destorySync()">返回
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="panel-body">
+            <div class="row" ng-show="syncItemStep == 1">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">同步到那个集群</label>
+                        <div class="col-sm-6">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <td><input type="checkbox" ng-click="toggleEnvsCheckedStatus()"></td>
+                                    </td>
+                                    <td>环境</td>
+                                    <td>集群</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="cluster in clusters">
+                                    <td width="10%"><input type="checkbox" ng-checked="cluster.checked"></td>
+                                    <td width="30%">{{cluster.env}}</td>
+                                    <td width="60%">{{cluster.name}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+
+            <div class="row" ng-show="syncItemStep == 1" style="margin-top: 10px;">
+                <div class="form-horizontal">
+                    <div class="col-sm-2 text-right">
+                        <label class="control-label">需要同步的配置</label>
+                    </div>
+                    <div class="col-sm-10">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <td><input type="checkbox" ng-click="toggleItemsCheckedStatus()"></td>
+                                <td>key</td>
+                                <td>value</td>
+                                <td>comment</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in sourceItems">
+                                <td width="10%"><input type="checkbox" ng-checked="item.checked"></td>
+                                <td width="20%">{{item.key}}</td>
+                                <td width="50%">{{item.value | limitTo: 36}} {{item.value.length >  36 ? '...' : ''}}</td>
+                                <td width="20%">{{item.comment | limitTo: 15}}{{item.comment.length >  15 ? '...' : ''}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!--step 2-->
+            <div class="row" ng-show="syncItemStep == 2">
+                <h4 class="text-center">环境:fat 集群:default</h4>
+                <hr>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="form-horizontal">
+                        <label class="col-sm-2 control-label">新增的配置</label>
+                        <div class="col-sm-9">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <td>key</td>
+                                    <td>value</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td width="30%">k1</td>
+                                    <td width="60%">v1</td>
+                                </tr>
+                                <tr>
+                                    <td width="30%">k1</td>
+                                    <td width="60%">v1</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-show="syncItemStep == 2">
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="form-horizontal">
+                            <label class="col-sm-2 control-label">更新的配置</label>
+                            <div class="col-sm-9">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <td>key</td>
+                                        <td>value</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td width="30%">k1</td>
+                                        <td width="60%">v1</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="30%">k1</td>
+                                        <td width="60%">v1</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!--step 3-->
+            <div class="row text-center" ng-show="syncItemStep == 3">
+                <img src="../img/sync-succ.png" style="height: 100px; width: 100px">
+                <h3>同步成功!</h3>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<div ng-include="'common/footer.html'"></div>
+
+<!--angular-->
+<script src="../vendor/angular/angular.min.js"></script>
+<script src="../vendor/angular/angular-route.min.js"></script>
+<script src="../vendor/angular/angular-resource.min.js"></script>
+<script src="../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
+<script src="../vendor/angular/loading-bar.min.js"></script>
+
+<!-- jquery.js -->
+<script src="../vendor/jquery.js" type="text/javascript"></script>
+
+<!-- bootstrap.js -->
+<script src="../vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+
+<!--nicescroll-->
+<script src="../vendor/jquery.nicescroll.min.js"></script>
+
+<!--biz-->
+<script type="application/javascript" src="../scripts/app.js"></script>
+<script type="application/javascript" src="../scripts/services/AppService.js"></script>
+<script type="application/javascript" src="../scripts/services/ConfigService.js"></script>
+<script type="application/javascript" src="../scripts/AppUtils.js"></script>
+<script type="application/javascript" src="../scripts/controller/app/SyncConfigController.js"></script>
+
+<script type="application/javascript" src="../scripts/PageCommon.js"></script>
+</body>
+</html>

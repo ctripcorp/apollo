@@ -197,6 +197,10 @@ table th {
     table-layout: fixed;
 }
 
+.namespace-view-table tr{
+    cursor: pointer;
+
+}
 .namespace-view-table td {
     word-wrap: break-word;
 }

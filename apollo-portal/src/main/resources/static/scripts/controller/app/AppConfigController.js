@@ -2,7 +2,8 @@ application_module.controller("AppConfigController",
                               ['$scope', '$location', 'toastr', 'AppService', 'AppUtil', 'ConfigService',
                                function ($scope, $location, toastr, AppService, AppUtil, ConfigService) {
 
-                                   var appId = $location.$$url.split("=")[1];
+
+                                   var appId = AppUtil.parseParams($location.$$url).appid;
                                    var currentUser = 'test_user';
                                    var pageContext = {
                                        appId: appId,
@@ -92,16 +93,17 @@ application_module.controller("AppConfigController",
 
                                                //初始化视图
                                                if ($scope.namespaces) {
+                                                   
                                                    $scope.namespaces.forEach(function (item) {
                                                        item.isModify = false;
-                                                       if (!viewType){//default text view
+                                                       if (!viewType) {//default text view
                                                            $scope.switchView(item, namespace_view_type.TEXT);
-                                                       }else if (viewType == namespace_view_type.TABLE){
+                                                       } else if (viewType == namespace_view_type.TABLE) {
                                                            item.viewType = namespace_view_type.TABLE;
                                                        }
 
                                                        item.isTextEditing = false;
-                                                   })
+                                                   });
                                                }
 
                                            }, function (result) {
@@ -122,10 +124,12 @@ application_module.controller("AppConfigController",
                                    
                                    //把表格内容解析成文本
                                    function parseModel2Text(namespace) {
+                                       
                                        if (!namespace.items) {
                                            return "无配置信息";
                                        }
                                        var result = "";
+                                       var itemCnt = 0;
                                        namespace.items.forEach(function (item) {
                                            if (item.item.key) {
                                                result +=
@@ -133,9 +137,12 @@ application_module.controller("AppConfigController",
                                            } else {
                                                result += item.item.comment + "\n";
                                            }
-
+                                           itemCnt ++;
                                        });
 
+                                       itemCnt > 30 ? 30 : itemCnt;
+                                       itemCnt < 9 ? 8 : itemCnt;
+                                       namespace.itemCnt = itemCnt + 3;
                                        return result;
                                    }
 
@@ -183,14 +190,12 @@ application_module.controller("AppConfigController",
 
                                    ////// table view oper //////
 
-                                   //查看旧值
-                                   $scope.queryOldValue = function (key, oldValue) {
-                                       $scope.queryKey = key;
-                                       if (oldValue == '') {
-                                           $scope.OldValue = key + "是新添加的key";
-                                       } else {
-                                           $scope.OldValue = oldValue;
-                                       }
+                                   $scope.watch = {};
+                                   //查看配置
+                                   $scope.watchItem = function (key, value, oldValue) {
+                                       $scope.watch.key = key;
+                                       $scope.watch.value = value;
+                                       $scope.watch.oldValue = oldValue;
                                    };
                                    
                                    /////// release ///////
@@ -251,7 +256,6 @@ application_module.controller("AppConfigController",
                                            });
                                        });
                                    };
-
-
+                                   
                                }]);
 
