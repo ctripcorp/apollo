@@ -23,7 +23,7 @@
 			<artifactId>apollo-buildtools</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>                d
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
