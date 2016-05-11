@@ -6,10 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 
 @SpringBootApplication
 @EnableEurekaClient
+@EnableAspectJAutoProxy
 public class AdminServiceApplication {
   public static void main(String[] args) {
     ConfigurableApplicationContext context = new SpringApplicationBuilder(AdminServiceApplication.class).run(args);

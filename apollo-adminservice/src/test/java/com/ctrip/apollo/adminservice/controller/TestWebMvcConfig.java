@@ -1,25 +1,25 @@
-package com.ctrip.apollo.common.controller;
-
-import com.google.common.collect.Lists;
+package com.ctrip.apollo.adminservice.controller;
 
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
 
+/**
+ * @author Jason Song(song_s@ctrip.com)
+ */
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
-
+@Order(99)
+public class TestWebMvcConfig extends WebMvcConfigurerAdapter {
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
     PageableHandlerMethodArgumentResolver pageResolver =
@@ -36,12 +36,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public HttpMessageConverters messageConverters() {
-    final List<HttpMessageConverter<?>> converters =
-        Lists.newArrayList(new ByteArrayHttpMessageConverter(), new GsonHttpMessageConverter());
     return new HttpMessageConverters() {
       @Override
       public List<HttpMessageConverter<?>> getConverters() {
-        return converters;
+        return super.getConverters();
       }
     };
   }

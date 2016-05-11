@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * Spring boot application entry point
@@ -14,6 +15,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @SpringBootApplication
 @EnableEurekaServer
+@EnableAspectJAutoProxy
 public class ConfigServiceApplication {
 
   public static void main(String[] args) throws Exception {
