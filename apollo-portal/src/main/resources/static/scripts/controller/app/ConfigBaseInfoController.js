@@ -16,7 +16,8 @@ application_module.controller("ConfigBaseInfoController",
 
                                    AppService.load_nav_tree($rootScope.pageContext.appId).then(function (result) {
                                        var navTree = [];
-                                       var nodes = result.nodes;
+                                       var nodes = AppUtil.collectData(result);
+
                                        nodes.forEach(function (item) {
                                            var node = {};
                                            //first nav
@@ -41,6 +42,7 @@ application_module.controller("ConfigBaseInfoController",
                                            node.nodes = clusterNodes;
                                            navTree.push(node);
                                        });
+
                                        $('#treeview').treeview({
                                                                    color: "#797979",
                                                                    showBorder: true,
@@ -57,22 +59,28 @@ application_module.controller("ConfigBaseInfoController",
                                                                        $rootScope.refreshNamespaces();
                                                                    }
                                                                });
+
                                    }, function (result) {
                                        toastr.error(AppUtil.errorMsg(result), "加载导航出错");
                                    });
 
                                    ////// app info //////
-
+                                   
                                    AppService.load($rootScope.pageContext.appId).then(function (result) {
-                                       $scope.appBaseInfo = result.app;
-                                       $scope.missEnvs = result.missEnvs;
-                                       $scope.selectedEnvs = angular.copy($scope.missEnvs);
+                                       $scope.appBaseInfo = result;
                                    },function (result) {
                                        toastr.error(AppUtil.errorMsg(result), "加载App信息出错");
                                    });
 
 
                                    ////// 补缺失的环境 //////
+                                   $scope.missEnvs = [];
+                                   AppService.find_miss_envs($rootScope.pageContext.appId).then(function (result) {
+                                       $scope.missEnvs = AppUtil.collectData(result);
+                                   },function (result) {
+                                       console.log(AppUtil.errorMsg(result));
+                                   });
+
 
                                    $scope.toggleSelection = function toggleSelection(env) {
                                        var idx = $scope.selectedEnvs.indexOf(env);

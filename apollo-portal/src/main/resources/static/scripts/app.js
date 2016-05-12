@@ -2,7 +2,7 @@
 var appService = angular.module('app.service', ['ngResource']);
 
 /**utils*/
-var appUtil = angular.module('app.util', []);
+var appUtil = angular.module('app.util', ['toastr']);
 
 /** directive */
 var directive_module = angular.module('apollo.directive', ['app.service']);

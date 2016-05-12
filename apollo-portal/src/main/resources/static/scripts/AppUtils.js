@@ -1,4 +1,4 @@
-appUtil.service('AppUtil', [function () {
+appUtil.service('AppUtil', ['toastr', function (toastr) {
 
     return {
         errorMsg: function (response) {
@@ -22,6 +22,17 @@ appUtil.service('AppUtil', [function () {
                 result[kv[0]] = kv[1];
             });
             return result;
+        },
+        collectData: function (response) {
+            var data = [];
+            response.entities.forEach(function (entity) {
+                if (entity.code == 200){
+                    data.push(entity.body);
+                }else {
+                    toastr.warning(entity.message);
+                }
+            });  
+            return data;
         }
     }
 }]);
