@@ -17,6 +17,10 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
         create_app: {
             method: 'POST',
             url: '/apps/envs/:env'
+        },
+        find_miss_envs: {
+            method: 'GET',
+            url: '/apps/:appId/miss_envs'
         }
     });
     return {
@@ -56,6 +60,17 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
             app_resource.load_app({
                 appId: appId
             }, function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        find_miss_envs: function (appId) {
+            var d = $q.defer();
+            app_resource.find_miss_envs({
+                appId: appId
+                                        }, function (result) {
                 d.resolve(result);
             }, function (result) {
                 d.reject(result);
