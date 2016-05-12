@@ -25,7 +25,6 @@ public class API {
   }
 
   public String getAdminServiceHost(Env env) {
-//    return "http://localhost:8090";
     return serviceLocator.getAdminService(env).getHomepageUrl();
   }
 }

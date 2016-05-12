@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class MultiResponseEntity<T> {
 
-  private int code;
-
   private HttpStatus httpCode;
 
   private List<RichResponseEntity<T>> entities = new LinkedList<>();

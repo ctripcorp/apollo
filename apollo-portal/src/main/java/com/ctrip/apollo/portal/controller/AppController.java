@@ -40,7 +40,7 @@ public class AppController {
     return appService.findAll(Env.valueOf(env));
   }
 
-  @RequestMapping("{appId}/navtree")
+  @RequestMapping("/{appId}/navtree")
   public MultiResponseEntity<EnvNavNode> nav(@PathVariable String appId) {
 
     if (StringUtils.isEmpty(appId)) {
