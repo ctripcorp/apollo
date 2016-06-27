@@ -128,7 +128,9 @@ directive_module.directive('apolloclusterselector', function ($compile, $window,
             defaultAllChecked: '=apolloDefaultAllChecked',
             select: '=apolloSelect',
             defaultCheckedEnv: '=apolloDefaultCheckedEnv',
-            defaultCheckedCluster: '=apolloDefaultCheckedCluster'
+            defaultCheckedCluster: '=apolloDefaultCheckedCluster',
+            notCheckedEnv:'=apolloNotCheckedEnv',
+            notCheckedCluster: '=apolloNotCheckedCluster'
         },
         link: function (scope, element, attrs) {
             
@@ -146,9 +148,15 @@ directive_module.directive('apolloclusterselector', function ($compile, $window,
                         var env = node.env;
                         node.clusters.forEach(function (cluster) {
                             cluster.env = env;
+                            //default checked
                             cluster.checked = scope.defaultAllChecked ||
                                               (cluster.env == scope.defaultCheckedEnv && cluster.name
                                                                                          == scope.defaultCheckedCluster);
+                            //not checked
+                            if (cluster.env == scope.notCheckedEnv && cluster.name == scope.notCheckedCluster){
+                                cluster.checked = false;
+                            }
+
                             scope.clusters.push(cluster);
                         })
                     });
