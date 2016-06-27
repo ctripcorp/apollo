@@ -44,10 +44,21 @@
             <div class="row" ng-show="syncItemStep == 1">
                 <div class="form-horizontal">
                     <div class="form-group">
+                        <label class="col-sm-2 control-label">同步的Namespace</label>
+                        <div class="col-sm-6">
+                            <h4 ng-bind="pageContext.namespaceName"></h4>
+                            <small>(所选择的集群必须包含同名的namespace)</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">同步到那个集群</label>
                         <div class="col-sm-6">
                             <apolloclusterselector apollo-app-id="pageContext.appId" apollo-default-all-checked="true"
-                                                   apollo-select="collectSelectedClusters"></apolloclusterselector>
+                                                   apollo-select="collectSelectedClusters"
+                                                   apollo-not-checked-env="pageContext.env"
+                                                   apollo-not-checked-cluster="pageContext.clusterName"></apolloclusterselector>
                         </div>
                     </div>
                 </div>
@@ -178,7 +189,6 @@
 <script src="../vendor/angular/angular-resource.min.js"></script>
 <script src="../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
 <script src="../vendor/angular/loading-bar.min.js"></script>
-
 
 
 <!-- bootstrap.js -->

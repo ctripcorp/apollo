@@ -13,6 +13,7 @@ import com.ctrip.framework.apollo.biz.utils.ConfigChangeContentBuilder;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.core.dto.ItemDTO;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 
 
 @Service
@@ -71,7 +72,11 @@ public class ItemSetService {
       auditService.audit("ItemSet", null, Audit.OP.DELETE, operator);
     }
 
-    createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(), changeSet.getDataChangeLastModifiedBy());
+    String configChangeContent = configChangeContentBuilder.build();
+    if (!StringUtils.isEmpty(configChangeContent)){
+      createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(), changeSet.getDataChangeLastModifiedBy());
+    }
+
     return changeSet;
 
   }
