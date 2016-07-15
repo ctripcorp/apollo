@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.build;
 
 import com.ctrip.framework.apollo.internals.ConfigServiceLocator;
 import com.ctrip.framework.apollo.internals.DefaultConfigManager;
+import com.ctrip.framework.apollo.internals.RemoteConfigLongPollService;
 import com.ctrip.framework.apollo.spi.DefaultConfigFactory;
 import com.ctrip.framework.apollo.spi.DefaultConfigFactoryManager;
 import com.ctrip.framework.apollo.spi.DefaultConfigRegistry;
@@ -33,6 +34,7 @@ public class ComponentConfigurator extends AbstractResourceConfigurator {
     all.add(A(ConfigUtil.class));
     all.add(A(HttpUtil.class));
     all.add(A(ConfigServiceLocator.class));
+    all.add(A(RemoteConfigLongPollService.class));
 
     return all;
   }

@@ -1,7 +1,9 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -67,10 +69,10 @@ public class NotificationController implements ReleaseMessageListener {
       @RequestParam(value = "dataCenter", required = false) String dataCenter,
       @RequestParam(value = "notificationId", defaultValue = "-1") long notificationId,
       @RequestParam(value = "ip", required = false) String clientIp) {
-    //strip out .properties suffix
-    namespace = namespaceUtil.filterNamespaceName(namespace);
+    Set<String> namespaces = splitAndFilterNamespaces(namespace);
 
-    Set<String> watchedKeys = watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespace, dataCenter);
+    Set<String> watchedKeys =
+        watchKeysUtil.assembleAllWatchKeys(appId, cluster, namespaces, dataCenter);
 
     DeferredResult<ResponseEntity<ApolloConfigNotification>> deferredResult =
         new DeferredResult<>(TIMEOUT, NOT_MODIFIED_RESPONSE);
@@ -87,8 +89,12 @@ public class NotificationController implements ReleaseMessageListener {
     entityManagerUtil.closeEntityManager();
 
     if (latest != null && latest.getId() != notificationId) {
+      String changedNamespace = retrieveNamespaceFromReleaseMessage.apply(latest.getMessage());
+      if (changedNamespace == null) {
+        changedNamespace = namespace;
+      }
       deferredResult.setResult(new ResponseEntity<>(
-          new ApolloConfigNotification(namespace, latest.getId()), HttpStatus.OK));
+          new ApolloConfigNotification(changedNamespace, latest.getId()), HttpStatus.OK));
     } else {
       //register all keys
       for (String key : watchedKeys) {
@@ -123,16 +129,17 @@ public class NotificationController implements ReleaseMessageListener {
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
     }
-    List<String> keys = STRING_SPLITTER.splitToList(content);
-    //message should be appId+cluster+namespace
-    if (keys.size() != 3) {
+
+    String changedNamespace = retrieveNamespaceFromReleaseMessage.apply(content);
+
+    if (Strings.isNullOrEmpty(changedNamespace)) {
       logger.error("message format invalid - {}", content);
       return;
     }
 
     ResponseEntity<ApolloConfigNotification> notification =
         new ResponseEntity<>(
-            new ApolloConfigNotification(keys.get(2), message.getId()), HttpStatus.OK);
+            new ApolloConfigNotification(changedNamespace, message.getId()), HttpStatus.OK);
 
     if (!deferredResults.containsKey(content)) {
       return;
@@ -147,6 +154,26 @@ public class NotificationController implements ReleaseMessageListener {
     }
     logger.debug("Notification completed");
   }
+
+  private Set<String> splitAndFilterNamespaces(String namespace) {
+    //strip out .properties suffix
+    return FluentIterable.from(STRING_SPLITTER.splitToList(namespace)).transform(
+        namespaceName -> namespaceUtil.filterNamespaceName(namespaceName)).toSet();
+  }
+
+  private static final Function<String, String> retrieveNamespaceFromReleaseMessage =
+      releaseMessage -> {
+        if (Strings.isNullOrEmpty(releaseMessage)) {
+          return null;
+        }
+        List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
+        //message should be appId+cluster+namespace
+        if (keys.size() != 3) {
+          logger.error("message format invalid - {}", releaseMessage);
+          return null;
+        }
+        return keys.get(2);
+      };
 
   private void logWatchedKeysToCat(Set<String> watchedKeys, String eventName) {
     for (String watchedKey : watchedKeys) {

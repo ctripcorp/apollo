@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.SettableFuture;
+
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
@@ -34,12 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doAnswer;
 
 /**
  * Created by Jason on 4/9/16.
@@ -53,8 +54,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
   private static HttpResponse<ApolloConfig> someResponse;
   @Mock
   private static HttpResponse<ApolloConfigNotification> pollResponse;
-  @Mock
-  private ConfigUtil someConfigUtil;
+  private RemoteConfigLongPollService remoteConfigLongPollService;
 
   @Before
   public void setUp() throws Exception {
@@ -66,6 +66,8 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     defineComponent(ConfigUtil.class, MockConfigUtil.class);
     defineComponent(ConfigServiceLocator.class, MockConfigServiceLocator.class);
     defineComponent(HttpUtil.class, MockHttpUtil.class);
+
+    remoteConfigLongPollService = lookup(RemoteConfigLongPollService.class);
   }
 
   @Test
@@ -84,7 +86,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     Properties config = remoteConfigRepository.getConfig();
 
     assertEquals(configurations, config);
-    remoteConfigRepository.stopLongPollingRefresh();
+    remoteConfigLongPollService.stopLongPollingRefresh();
   }
 
   @Test(expected = ApolloConfigException.class)
@@ -95,7 +97,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
 
     //must stop the long polling before exception occurred
-    remoteConfigRepository.stopLongPollingRefresh();
+    remoteConfigLongPollService.stopLongPollingRefresh();
 
     remoteConfigRepository.getConfig();
   }
@@ -124,7 +126,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
 
     assertEquals(newConfigurations, captor.getValue());
 
-    remoteConfigRepository.stopLongPollingRefresh();
+    remoteConfigLongPollService.stopLongPollingRefresh();
   }
 
   @Test
@@ -153,35 +155,19 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
 
     Map<String, String> newConfigurations = ImmutableMap.of("someKey", "anotherValue");
     ApolloConfig newApolloConfig = assembleApolloConfig(newConfigurations);
-
+    ApolloConfigNotification someNotification = mock(ApolloConfigNotification.class);
+    when(someNotification.getNamespaceName()).thenReturn(someNamespace);
 
     when(pollResponse.getStatusCode()).thenReturn(HttpServletResponse.SC_OK);
+    when(pollResponse.getBody()).thenReturn(someNotification);
     when(someResponse.getBody()).thenReturn(newApolloConfig);
     
     longPollFinished.get(500, TimeUnit.MILLISECONDS);
 
-    remoteConfigRepository.stopLongPollingRefresh();
+    remoteConfigLongPollService.stopLongPollingRefresh();
 
     verify(someListener, times(1)).onRepositoryChange(eq(someNamespace), captor.capture());
     assertEquals(newConfigurations, captor.getValue());
-  }
-
-  @Test
-  public void testAssembleLongPollRefreshUrl() throws Exception {
-    String someUri = "http://someServer";
-    String someAppId = "someAppId";
-    String someCluster = "someCluster+ &.-_someSign";
-
-    RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
-
-    String longPollRefreshUrl =
-        remoteConfigRepository
-            .assembleLongPollRefreshUrl(someUri, someAppId, someCluster, someNamespace, null, null);
-
-    assertTrue(longPollRefreshUrl.contains("http://someServer/notifications?"));
-    assertTrue(longPollRefreshUrl.contains("appId=someAppId"));
-    assertTrue(longPollRefreshUrl.contains("cluster=someCluster%2B+%26.-_someSign"));
-    assertTrue(longPollRefreshUrl.contains("namespace=" + someNamespace));
   }
 
   @Test

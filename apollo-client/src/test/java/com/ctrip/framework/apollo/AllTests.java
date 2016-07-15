@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.internals.DefaultConfigManagerTest;
 import com.ctrip.framework.apollo.internals.DefaultConfigTest;
 import com.ctrip.framework.apollo.internals.LocalFileConfigRepositoryTest;
 import com.ctrip.framework.apollo.internals.PropertiesConfigFileTest;
+import com.ctrip.framework.apollo.internals.RemoteConfigLongPollServiceTest;
 import com.ctrip.framework.apollo.internals.RemoteConfigRepositoryTest;
 import com.ctrip.framework.apollo.internals.SimpleConfigTest;
 import com.ctrip.framework.apollo.internals.XmlConfigFileTest;
@@ -23,7 +24,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ConfigServiceTest.class, DefaultConfigRegistryTest.class, DefaultConfigFactoryManagerTest.class,
     DefaultConfigManagerTest.class, DefaultConfigTest.class, LocalFileConfigRepositoryTest.class,
     RemoteConfigRepositoryTest.class, SimpleConfigTest.class, DefaultConfigFactoryTest.class,
-    ConfigIntegrationTest.class, ExceptionUtilTest.class, XmlConfigFileTest.class, PropertiesConfigFileTest.class
+    ConfigIntegrationTest.class, ExceptionUtilTest.class, XmlConfigFileTest.class,
+    PropertiesConfigFileTest.class, RemoteConfigLongPollServiceTest.class
 })
 public class AllTests {
 
