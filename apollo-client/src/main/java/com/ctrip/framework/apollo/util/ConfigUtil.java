@@ -96,7 +96,7 @@ public class ConfigUtil {
   }
 
   public String getLocalIp() {
-    return Networks.forIp().getLocalHostAddress();
+    return Foundation.net().getHostAddress();
   }
 
   public String getMetaServerDomainName() {

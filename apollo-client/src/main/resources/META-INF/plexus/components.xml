@@ -31,6 +31,15 @@
 			<implementation>com.ctrip.framework.apollo.util.ConfigUtil</implementation>
 		</component>
 		<component>
+			<role>com.ctrip.framework.apollo.util.http.HttpUtil</role>
+			<implementation>com.ctrip.framework.apollo.util.http.HttpUtil</implementation>
+			<requirements>
+				<requirement>
+					<role>com.ctrip.framework.apollo.util.ConfigUtil</role>
+				</requirement>
+			</requirements>
+		</component>
+		<component>
 			<role>com.ctrip.framework.apollo.internals.ConfigServiceLocator</role>
 			<implementation>com.ctrip.framework.apollo.internals.ConfigServiceLocator</implementation>
 			<requirements>
@@ -43,11 +52,17 @@
 			</requirements>
 		</component>
 		<component>
-			<role>com.ctrip.framework.apollo.util.http.HttpUtil</role>
-			<implementation>com.ctrip.framework.apollo.util.http.HttpUtil</implementation>
+			<role>com.ctrip.framework.apollo.internals.RemoteConfigLongPollService</role>
+			<implementation>com.ctrip.framework.apollo.internals.RemoteConfigLongPollService</implementation>
 			<requirements>
 				<requirement>
 					<role>com.ctrip.framework.apollo.util.ConfigUtil</role>
+				</requirement>
+				<requirement>
+					<role>com.ctrip.framework.apollo.util.http.HttpUtil</role>
+				</requirement>
+				<requirement>
+					<role>com.ctrip.framework.apollo.internals.ConfigServiceLocator</role>
 				</requirement>
 			</requirements>
 		</component>

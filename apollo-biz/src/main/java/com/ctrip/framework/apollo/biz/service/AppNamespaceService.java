@@ -1,24 +1,27 @@
 package com.ctrip.framework.apollo.biz.service;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
+import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.exception.ServiceException;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class AppNamespaceService {
@@ -45,6 +48,14 @@ public class AppNamespaceService {
     return appNamespaceRepository.findByNameAndIsPublicTrue(namespaceName);
   }
 
+  public List<AppNamespace> findPublicNamespacesByNames(Set<String> namespaceNames) {
+    if (namespaceNames == null || namespaceNames.isEmpty()) {
+      return Collections.EMPTY_LIST;
+    }
+
+    return appNamespaceRepository.findByNameInAndIsPublicTrue(namespaceNames);
+  }
+
   public List<AppNamespace> findPrivateAppNamespace(String appId){
     return appNamespaceRepository.findByAppIdAndIsPublic(appId, false);
   }
@@ -52,6 +63,14 @@ public class AppNamespaceService {
   public AppNamespace findOne(String appId, String namespaceName){
     Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId or Namespace must not be null");
     return appNamespaceRepository.findByAppIdAndName(appId, namespaceName);
+  }
+
+  public List<AppNamespace> findByAppIdAndNamespaces(String appId, Set<String> namespaceNames) {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(appId), "appId must not be null");
+    if (namespaceNames == null || namespaceNames.isEmpty()) {
+      return Collections.EMPTY_LIST;
+    }
+    return appNamespaceRepository.findByAppIdAndNameIn(appId, namespaceNames);
   }
 
   @Transactional

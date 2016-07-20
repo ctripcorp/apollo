@@ -64,6 +64,11 @@
 			<artifactId>jetty-server</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- end of test -->
 		<!-- dal-jdbc -->
 		<dependency>

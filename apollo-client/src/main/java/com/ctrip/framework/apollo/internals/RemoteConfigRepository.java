@@ -11,14 +11,10 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.ctrip.framework.apollo.Apollo;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
-import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.schedule.ExponentialSchedulePolicy;
-import com.ctrip.framework.apollo.core.schedule.SchedulePolicy;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.ctrip.framework.apollo.util.http.HttpRequest;
 import com.ctrip.framework.apollo.util.http.HttpResponse;
 import com.ctrip.framework.apollo.util.http.HttpUtil;
@@ -36,12 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -55,15 +48,11 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   private final ConfigServiceLocator m_serviceLocator;
   private final HttpUtil m_httpUtil;
   private final ConfigUtil m_configUtil;
+  private final RemoteConfigLongPollService remoteConfigLongPollService;
   private volatile AtomicReference<ApolloConfig> m_configCache;
   private final String m_namespace;
   private final static ScheduledExecutorService m_executorService;
-  private final ExecutorService m_longPollingService;
-  private final AtomicBoolean m_longPollingStopped;
-  private SchedulePolicy m_longPollFailSchedulePolicyInSecond;
   private AtomicReference<ServiceDTO> m_longPollServiceDto;
-  private AtomicReference<ApolloConfigNotification> m_longPollResult;
-  private RateLimiter m_longPollRateLimiter;
   private RateLimiter m_loadConfigRateLimiter;
   private static final Escaper pathEscaper = UrlEscapers.urlPathSegmentEscaper();
   private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
@@ -86,17 +75,12 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
       m_configUtil = m_container.lookup(ConfigUtil.class);
       m_httpUtil = m_container.lookup(HttpUtil.class);
       m_serviceLocator = m_container.lookup(ConfigServiceLocator.class);
+      remoteConfigLongPollService = m_container.lookup(RemoteConfigLongPollService.class);
     } catch (ComponentLookupException ex) {
       Cat.logError(ex);
       throw new ApolloConfigException("Unable to load component!", ex);
     }
-    m_longPollFailSchedulePolicyInSecond = new ExponentialSchedulePolicy(1, 120); //in second
-    m_longPollingStopped = new AtomicBoolean(false);
-    m_longPollingService = Executors.newSingleThreadExecutor(
-        ApolloThreadFactory.create("RemoteConfigRepository-LongPolling", true));
     m_longPollServiceDto = new AtomicReference<>();
-    m_longPollResult = new AtomicReference<>();
-    m_longPollRateLimiter = RateLimiter.create(m_configUtil.getLongPollQPS());
     m_loadConfigRateLimiter = RateLimiter.create(m_configUtil.getLoadConfigQPS());
     this.trySync();
     this.schedulePeriodicRefresh();
@@ -119,7 +103,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   private void schedulePeriodicRefresh() {
     logger.debug("Schedule periodic refresh with interval: {} {}",
         m_configUtil.getRefreshInterval(), m_configUtil.getRefreshIntervalTimeUnit());
-    this.m_executorService.scheduleAtFixedRate(
+    m_executorService.scheduleAtFixedRate(
         new Runnable() {
           @Override
           public void run() {
@@ -238,7 +222,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   }
 
   String assembleQueryConfigUrl(String uri, String appId, String cluster, String namespace,
-                                        String dataCenter, ApolloConfig previousConfig) {
+                                String dataCenter, ApolloConfig previousConfig) {
 
     String path = "configs/%s/%s/%s";
     List<String> pathParams =
@@ -271,126 +255,17 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   }
 
   private void scheduleLongPollingRefresh() {
-    try {
-      final String appId = m_configUtil.getAppId();
-      final String cluster = m_configUtil.getCluster();
-      final String dataCenter = m_configUtil.getDataCenter();
-      m_longPollingService.submit(new Runnable() {
-        @Override
-        public void run() {
-          doLongPollingRefresh(appId, cluster, dataCenter);
-        }
-      });
-    } catch (Throwable ex) {
-      ApolloConfigException exception =
-          new ApolloConfigException("Schedule long polling refresh failed", ex);
-      Cat.logError(exception);
-      logger.warn(ExceptionUtil.getDetailMessage(exception));
-    }
+    remoteConfigLongPollService.submit(m_namespace, this);
   }
 
-  private void doLongPollingRefresh(String appId, String cluster, String dataCenter) {
-    final Random random = new Random();
-    ServiceDTO lastServiceDto = null;
-    while (!m_longPollingStopped.get() && !Thread.currentThread().isInterrupted()) {
-      if (!m_longPollRateLimiter.tryAcquire(5, TimeUnit.SECONDS)) {
-        //wait at most 5 seconds
-        try {
-          TimeUnit.SECONDS.sleep(5);
-        } catch (InterruptedException e) {
-        }
+  public void onLongPollNotified(ServiceDTO longPollNotifiedServiceDto) {
+    m_longPollServiceDto.set(longPollNotifiedServiceDto);
+    m_executorService.submit(new Runnable() {
+      @Override
+      public void run() {
+        trySync();
       }
-      Transaction transaction = Cat.newTransaction("Apollo.ConfigService", "pollNotification");
-      try {
-        if (lastServiceDto == null) {
-          List<ServiceDTO> configServices = getConfigServices();
-          lastServiceDto = configServices.get(random.nextInt(configServices.size()));
-        }
-
-        String url =
-            assembleLongPollRefreshUrl(lastServiceDto.getHomepageUrl(), appId, cluster,
-                m_namespace, dataCenter, m_longPollResult.get());
-
-        logger.debug("Long polling from {}", url);
-        HttpRequest request = new HttpRequest(url);
-        //longer timeout for read - 1 minute
-        request.setReadTimeout(60000);
-
-        transaction.addData("Url", url);
-
-        HttpResponse<ApolloConfigNotification> response =
-            m_httpUtil.doGet(request, ApolloConfigNotification.class);
-
-        logger.debug("Long polling response: {}, url: {}", response.getStatusCode(), url);
-        if (response.getStatusCode() == 200) {
-          m_longPollServiceDto.set(lastServiceDto);
-          if (response.getBody() != null) {
-            m_longPollResult.set(response.getBody());
-            transaction.addData("Result", response.getBody().toString());
-          }
-          m_executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-              trySync();
-            }
-          });
-        }
-
-        m_longPollFailSchedulePolicyInSecond.success();
-        transaction.addData("StatusCode", response.getStatusCode());
-        transaction.setStatus(Message.SUCCESS);
-      } catch (Throwable ex) {
-        lastServiceDto = null;
-        Cat.logError(ex);
-        transaction.setStatus(ex);
-        long sleepTimeInSecond = m_longPollFailSchedulePolicyInSecond.fail();
-        logger.warn(
-            "Long polling failed, will retry in {} seconds. appId: {}, cluster: {}, namespace: {}, reason: {}",
-            sleepTimeInSecond, appId, cluster, m_namespace, ExceptionUtil.getDetailMessage(ex));
-        try {
-          TimeUnit.SECONDS.sleep(sleepTimeInSecond);
-        } catch (InterruptedException ie) {
-          //ignore
-        }
-      } finally {
-        transaction.complete();
-      }
-    }
-  }
-
-  String assembleLongPollRefreshUrl(String uri, String appId, String cluster,
-                                            String namespace, String dataCenter,
-                                            ApolloConfigNotification previousResult) {
-    Map<String, String> queryParams = Maps.newHashMap();
-    queryParams.put("appId", queryParamEscaper.escape(appId));
-    queryParams.put("cluster", queryParamEscaper.escape(cluster));
-
-    if (!Strings.isNullOrEmpty(namespace)) {
-      queryParams.put("namespace", queryParamEscaper.escape(namespace));
-    }
-    if (!Strings.isNullOrEmpty(dataCenter)) {
-      queryParams.put("dataCenter", queryParamEscaper.escape(dataCenter));
-    }
-    String localIp = m_configUtil.getLocalIp();
-    if (!Strings.isNullOrEmpty(localIp)) {
-      queryParams.put("ip", queryParamEscaper.escape(localIp));
-    }
-
-    if (previousResult != null) {
-      //number doesn't need encode
-      queryParams.put("notificationId", String.valueOf(previousResult.getNotificationId()));
-    }
-
-    String params = MAP_JOINER.join(queryParams);
-    if (!uri.endsWith("/")) {
-      uri += "/";
-    }
-
-    return uri + "notifications?" + params;
-  }
-
-  void stopLongPollingRefresh() {
-    this.m_longPollingStopped.compareAndSet(false, true);
+    });
   }
 
   private List<ServiceDTO> getConfigServices() {
