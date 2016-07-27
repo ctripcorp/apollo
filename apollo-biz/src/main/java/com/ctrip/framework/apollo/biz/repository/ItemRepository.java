@@ -13,4 +13,5 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
   List<Item> findByNamespaceIdOrderByLineNumAsc(Long namespaceId);
 
   Item findFirst1ByNamespaceIdOrderByLineNumDesc(Long namespaceId);
+
 }

@@ -91,7 +91,7 @@ public class NamespaceService {
     NamespaceVO namespaceVO = new NamespaceVO();
     namespaceVO.setBaseInfo(namespace);
 
-    fillFormatAndIsPublicAndParentAppField(namespaceVO);
+    fillAppNamespaceProperties(namespaceVO);
 
     List<NamespaceVO.ItemVO> itemVos = new LinkedList<>();
     namespaceVO.setItems(itemVos);
@@ -130,7 +130,7 @@ public class NamespaceService {
     return namespaceVO;
   }
 
-  private void fillFormatAndIsPublicAndParentAppField(NamespaceVO namespace) {
+  private void fillAppNamespaceProperties(NamespaceVO namespace) {
 
     NamespaceDTO namespaceDTO = namespace.getBaseInfo();
     //先从当前appId下面找,包含私有的和公共的
@@ -140,6 +140,7 @@ public class NamespaceService {
     if (appNamespace == null) {
       appNamespace = appNamespaceService.findPublicAppNamespace(namespaceDTO.getNamespaceName());
     }
+
     String format;
     boolean isPublic;
     if (appNamespace == null) {
@@ -149,10 +150,10 @@ public class NamespaceService {
       format = appNamespace.getFormat();
       isPublic = appNamespace.isPublic();
       namespace.setParentAppId(appNamespace.getAppId());
+      namespace.setComment(appNamespace.getComment());
     }
     namespace.setFormat(format);
     namespace.setPublic(isPublic);
-
   }
 
   private List<NamespaceVO.ItemVO> parseDeletedItems(List<ItemDTO> newItems, Map<String, String> releaseItems) {

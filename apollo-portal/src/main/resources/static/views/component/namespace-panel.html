@@ -1,16 +1,18 @@
 <div class="panel" style="border-top: 0px;">
     <div class="row namespace-attribute-panel" ng-if="namespace.isPublic">
         <div class="text-center namespace-attribute-public" data-tooltip="tooltip" data-placement="bottom"
-             title="点击跳转到公共Namespace" ng-click="goToParentAppConfigPage(namespace)">
+             title="点击跳转到公共Namespace">
             <span ng-show="namespace.parentAppId == namespace.baseInfo.appId">公共</span>
-            <span ng-show="namespace.parentAppId != namespace.baseInfo.appId">关联</span>
+            <span ng-show="namespace.parentAppId != namespace.baseInfo.appId"
+                  ng-click="goToParentAppConfigPage(namespace)">关联</span>
         </div>
     </div>
     <header class="panel-heading">
         <div class="row">
 
             <div class="col-md-6">
-                <b ng-bind="namespace.viewName" style="font-size: 20px;"></b>
+                <b ng-bind="namespace.viewName" style="font-size: 20px;" data-tooltip="tooltip" data-placement="bottom"
+                   title="{{namespace.comment}}"></b>
                 <span class="label label-info no-radius" ng-bind="namespace.format"></span>
                                 <span class="label label-primary no-radius" ng-show="namespace.itemModifiedCnt > 0">有修改
                                 <span class="badge label" ng-bind="namespace.itemModifiedCnt"></span></span>
@@ -168,10 +170,10 @@
                     <span ng-bind="config.item.comment | limitTo: 250"></span>
                     <span ng-bind="config.item.comment.length > 250 ?'...' : ''"></span>
                 </td>
-                <td width="10%" ng-bind="config.item.lastModifiedBy">
+                <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
                 </td>
                 <td width="15%"
-                    ng-bind="config.item.lastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
+                    ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
                 </td>
 
                 <td width="10%">

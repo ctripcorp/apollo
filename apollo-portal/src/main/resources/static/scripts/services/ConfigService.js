@@ -53,13 +53,14 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             return d.promise;
         },
 
-        find_items: function (appId, env, clusterName, namespaceName) {
+        find_items: function (appId, env, clusterName, namespaceName, orderBy) {
             var d = $q.defer();
             config_source.find_items({
                                          appId: appId,
                                          env: env,
                                          clusterName: clusterName,
-                                         namespaceName: namespaceName
+                                         namespaceName: namespaceName,
+                                         orderBy: orderBy
                                      }, function (result) {
                 d.resolve(result);
             }, function (result) {

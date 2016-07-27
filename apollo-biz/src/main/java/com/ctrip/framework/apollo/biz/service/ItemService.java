@@ -83,10 +83,10 @@ public class ItemService {
   }
   
   public List<Item> findItems(String appId, String clusterName, String namespaceName) {
-    Namespace group = namespaceRepository.findByAppIdAndClusterNameAndNamespaceName(appId, clusterName,
+    Namespace namespace = namespaceRepository.findByAppIdAndClusterNameAndNamespaceName(appId, clusterName,
         namespaceName);
-    if (group != null) {
-      return findItems(group.getId());
+    if (namespace != null) {
+      return findItems(namespace.getId());
     } else {
       return Collections.emptyList();
     }

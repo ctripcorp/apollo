@@ -105,35 +105,56 @@
             </div>
 
             <!--step 2-->
-            <div class="row" ng-show="syncItemStep == 2" ng-repeat="diff in diffs">
-                <h5 class="text-center">
-                    环境:<span ng-bind="diff.namespace.env"></span>
-                    集群:<span ng-bind="diff.namespace.clusterName"></span>
-                    <span ng-show="!diff.extInfo">Namespace:{{pageContext.namespaceName}}</span>
-                </h5>
-                <div class="text-center" ng-show="diff.diffs.createItems.length + diff.diffs.updateItems.length == 0 || diff.extInfo">
-                    <font ng-show="diff.diffs.createItems.length + diff.diffs.updateItems.length == 0 && !diff.extInfo">没有更新的配置</font>
-                    <font ng-show="diff.extInfo" ng-bind="diff.extInfo"></font>
+            <div class="row" ng-show="syncItemStep == 2" ng-repeat="clusterDiff in clusterDiffs">
+                <h4 class="text-center">
+                    环境:<span ng-bind="clusterDiff.namespace.env"></span>
+                    集群:<span ng-bind="clusterDiff.namespace.clusterName"></span>
+                    <span ng-show="!clusterDiff.extInfo">Namespace:{{pageContext.namespaceName}}</span>
+                </h4>
+                <div class="text-center"
+                     ng-show="clusterDiff.diffs.createItems.length + clusterDiff.diffs.updateItems.length == 0 || clusterDiff.extInfo">
+                    <span ng-show="clusterDiff.diffs.createItems.length + clusterDiff.diffs.updateItems.length == 0 && !clusterDiff.extInfo">没有更新的配置</span>
+                    <span ng-show="clusterDiff.extInfo" ng-bind="clusterDiff.extInfo"></span>
                     ,忽略同步
                 </div>
 
-                <div class="row" style="margin-top: 10px;" ng-show="diff.diffs.createItems.length > 0">
+                <div class="row" style="margin-top: 10px;"
+                     ng-show="clusterDiff.diffs.updateItems.length + clusterDiff.diffs.createItems.length > 0">
                     <div class="form-horizontal">
-                        <label class="col-sm-2 control-label">新增的配置</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-12">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
-                                    <td>key</td>
-                                    <td>value</td>
-                                    <td>comment</td>
+                                    <td>Type</td>
+                                    <td>Key</td>
+                                    <td>同步前</td>
+                                    <td>同步后</td>
+                                    <td>Comment</td>
+                                    <td>操作</td>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="createItem in diff.diffs.createItems">
-                                    <td width="30%" ng-bind="createItem.key"></td>
-                                    <td width="40%" ng-bind="createItem.value"></td>
-                                    <td width="30%" ng-bind="createItem.comment"></td>
+                                <tr ng-repeat="createItem in clusterDiff.diffs.createItems">
+                                    <td width="5%">新增</td>
+                                    <td width="15%" ng-bind="createItem.key"></td>
+                                    <td width="30%"></td>
+                                    <td width="30%" ng-bind="createItem.value"></td>
+                                    <td width="15%" ng-bind="createItem.comment"></td>
+                                    <td width="5%">
+                                        <a data-tooltip="tooltip" data-placement="bottom" title="不同步该配置"
+                                           ng-click="removeItem(clusterDiff.diffs, 'create', createItem)">删除</a>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="updateItem in clusterDiff.diffs.updateItems">
+                                    <td width="5%">更新</td>
+                                    <td width="15%" ng-bind="updateItem.key"></td>
+                                    <td width="30%" ng-bind="updateItem.oldValue"></td>
+                                    <td width="30%" ng-bind="updateItem.value"></td>
+                                    <td width="15%" ng-bind="updateItem.comment"></td>
+                                    <td width="5%">
+                                        <a data-tooltip="tooltip" data-placement="bottom" title="不同步该配置"
+                                           ng-click="removeItem(clusterDiff.diffs, 'update', updateItem)">删除</a>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -141,31 +162,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 10px;" ng-show="diff.diffs.updateItems.length > 0">
-                    <div class="form-horizontal">
-                        <label class="col-sm-2 control-label">修改的配置</label>
-                        <div class="col-sm-9">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <td>key</td>
-                                    <td>value</td>
-                                    <td>comment</td>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="updateItem in diff.diffs.updateItems">
-                                    <td width="30%" ng-bind="updateItem.key"></td>
-                                    <td width="40%" ng-bind="updateItem.value"></td>
-                                    <td width="30%" ng-bind="updateItem.comment"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-                </div>
-                <hr>
             </div>
 
 

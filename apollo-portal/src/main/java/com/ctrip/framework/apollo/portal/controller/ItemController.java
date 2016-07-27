@@ -17,15 +17,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
-@RequestMapping("")
-public class ConfigController {
+public class ItemController {
 
   @Autowired
   private ConfigService configService;
@@ -83,9 +84,22 @@ public class ConfigController {
 
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items")
   public List<ItemDTO> findItems(@PathVariable String appId, @PathVariable String env,
-                                 @PathVariable String clusterName, @PathVariable String namespaceName){
+                                 @PathVariable String clusterName, @PathVariable String namespaceName,
+                                 @RequestParam(defaultValue = "lineNum") String orderBy){
 
-    return configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
+    List<ItemDTO> items = configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
+    if ("lastModifyTime".equals(orderBy)){
+      Collections.sort(items, (o1, o2) -> {
+        if (o1.getDataChangeLastModifiedTime().after(o2.getDataChangeLastModifiedTime())){
+          return -1;
+        }
+        if (o1.getDataChangeLastModifiedTime().before(o2.getDataChangeLastModifiedTime())){
+          return 1;
+        }
+        return 0;
+      });
+    }
+    return items;
   }
 
   @RequestMapping(value = "/namespaces/{namespaceName}/diff", method = RequestMethod.POST, consumes = {

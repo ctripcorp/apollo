@@ -215,7 +215,7 @@ directive_module.directive('apollonspanel',
                                            var itemCnt = 0;
                                            namespace.items.forEach(function (item) {
                                                //deleted key
-                                               if (!item.item.lastModifiedBy) {
+                                               if (!item.item.dataChangeLastModifiedBy) {
                                                    return;
                                                }
                                                if (item.item.key) {

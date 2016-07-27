@@ -25,6 +25,10 @@ p, td, span {
     word-break: break-all;
 }
 
+table{
+    text-align: center;
+}
+
 .no-radius{
     border-radius: 0px;
 }
@@ -359,6 +363,7 @@ table th {
     height: 200px;
     position: absolute;
     margin-left: 0px;
+    cursor: pointer;
     background: #ffffff;
     border: 1px solid #ddd;
     overflow-y: scroll;

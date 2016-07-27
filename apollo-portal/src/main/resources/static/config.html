@@ -178,10 +178,10 @@
                                                 <span ng-bind="config.newValue | limitTo: 250"></span>
                                                 <span ng-bind="config.newValue.length > 250 ? '...': ''"></span>
                                             </td>
-                                            <td width="15%" ng-bind="config.item.lastModifiedBy">
+                                            <td width="15%" ng-bind="config.item.dataChangeLastModifiedBy">
                                             </td>
                                             <td width="15%"
-                                                ng-bind="config.item.lastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
+                                                ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
                                             </td>
                                         </tr>
                                         </tbody>

@@ -73,26 +73,13 @@ application_module.controller("ConfigNamespaceController",
                                                                          $rootScope.pageContext.clusterName,
                                                                          viewType).then(
                                            function (result) {
+
                                                $scope.namespaces = result;
-
-                                               setInterval(function () {
-                                                   $('[data-tooltip="tooltip"]').tooltip();
-                                                   $('.namespace-view-table').bind('mousewheel DOMMouseScroll',
-                                                                                   function (e) {
-                                                                                       var e0 = e.originalEvent,
-                                                                                           delta = e0.wheelDelta
-                                                                                                   || -e0.detail;
-
-                                                                                       this.scrollTop +=
-                                                                                           ( delta < 0 ? 1 : -1 ) * 30;
-                                                                                       e.preventDefault();
-                                                                                   });
-                                               }, 2500);
 
                                            }, function (result) {
                                                toastr.error(AppUtil.errorMsg(result), "加载配置信息出错");
                                            });
-                                   };
+                                   }
 
                                    function commitChange(namespace) {
                                        var model = {

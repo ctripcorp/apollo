@@ -12,6 +12,7 @@ import com.ctrip.framework.apollo.biz.utils.ConfigChangeContentBuilder;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.core.dto.ItemDTO;
+import com.ctrip.framework.apollo.core.exception.NotFoundException;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 
 
@@ -50,9 +51,10 @@ public class ItemSetService {
         Item entity = BeanUtils.transfrom(Item.class, item);
 
         Item beforeUpdateItem = itemService.findOne(entity.getId());
-        if (beforeUpdateItem != null){
-          beforeUpdateItem = BeanUtils.transfrom(Item.class, beforeUpdateItem);
+        if (beforeUpdateItem == null) {
+          throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
         }
+        beforeUpdateItem = BeanUtils.transfrom(Item.class, beforeUpdateItem);
 
         entity.setDataChangeLastModifiedBy(operator);
         Item updatedItem = itemService.update(entity);

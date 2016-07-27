@@ -11,6 +11,7 @@ public class NamespaceVO {
   private String format;
   private boolean isPublic;
   private String parentAppId;
+  private String comment;
 
 
   public NamespaceDTO getBaseInfo() {
@@ -61,6 +62,14 @@ public class NamespaceVO {
     this.parentAppId = parentAppId;
   }
 
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
   public static class ItemVO{
     private ItemDTO item;
     private boolean isModified;
@@ -107,6 +116,7 @@ public class NamespaceVO {
     public void setNewValue(String newValue) {
       this.newValue = newValue;
     }
+
 
 
   }
