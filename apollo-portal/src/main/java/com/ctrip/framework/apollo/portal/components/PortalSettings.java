@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal.components;
 
 
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.service.ServerConfigService;
 
@@ -58,7 +59,9 @@ public class PortalSettings {
       envStatusMark.put(env, true);
     }
 
-    ScheduledExecutorService healthCheckService = Executors.newScheduledThreadPool(1);
+    ScheduledExecutorService
+        healthCheckService =
+        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("EnvHealthChecker", false));
 
     healthCheckService
         .scheduleWithFixedDelay(new HealthCheckTask(applicationContext), 1000, HEALTH_CHECK_INTERVAL,

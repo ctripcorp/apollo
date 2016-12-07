@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.slf4j.Logger;
@@ -66,7 +67,8 @@ public class AdminServiceAddressLocator {
       rf.setConnectTimeout(DEFAULT_TIMEOUT_MS);
     }
 
-    refreshServiceAddressService = Executors.newScheduledThreadPool(1);
+    refreshServiceAddressService =
+        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ServiceLocator", false));
 
     refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
   }
@@ -117,8 +119,9 @@ public class AdminServiceAddressLocator {
       } catch (Throwable e) {
         logger.error(String.format("Get admin server address from meta server failed. env: %s, meta server address:%s",
                                    env, MetaDomainConsts.getDomain(env)), e);
-        Tracer.logError(String.format("Get admin server address from meta server failed. env: %s, meta server address:%s",
-                                   env, MetaDomainConsts.getDomain(env)), e);
+        Tracer
+            .logError(String.format("Get admin server address from meta server failed. env: %s, meta server address:%s",
+                                    env, MetaDomainConsts.getDomain(env)), e);
       }
     }
     return false;
