@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ctrip.framework.apollo</groupId>
 	<artifactId>apollo</artifactId>
-	<version>0.4.0-SNAPSHOT</version>
+	<version>0.4.0</version>
 	<name>Apollo</name>
 	<packaging>pom</packaging>
 	<description>Ctrip Configuration Center</description>

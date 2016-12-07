@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,9 +48,17 @@ public class ConfigPublishListener {
 
   @PostConstruct
   public void init() {
+    initEmailSupportedEnvs();
+  }
+
+  private void initEmailSupportedEnvs() {
     try {
       String sendEmailSwitchConfig =
-          serverConfigService.getValue("email.supported.envs", "PRO");
+          serverConfigService.getValue("email.supported.envs", "");
+
+      if (StringUtils.isEmpty(sendEmailSwitchConfig)) {
+        return;
+      }
 
       String[] supportedEnvs = sendEmailSwitchConfig.split(",");
       for (String env : supportedEnvs) {
@@ -59,7 +68,6 @@ public class ConfigPublishListener {
       logger.error("init email supported envs failed.", e);
       Tracer.logError("init email supported envs failed.", e);
     }
-
   }
 
 

@@ -58,6 +58,11 @@ Apollo（阿波罗）是携程框架部门研发的配置管理平台，能够�
   * 还有一些使用方如DAL，不仅有特定的格式，而且对输入的值也需要进行校验后方可保存，如检查数据库、用户名和密码是否匹配。
   * 对于这类应用，Apollo支持应用方通过开放接口在Apollo进行配置的修改和发布，并且具备完善的授权和权限控制
 
+* **部署简单**
+  * 配置中心作为基础服务，可用性要求非常高，这就要求Apollo对外部依赖尽可能地少
+  * 目前唯一的外部依赖是MySQL，所以部署非常简单，只要安装好Java和MySQL就可以让Apollo跑起来
+  * Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数
+
 #Usage
   1. [应用接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
   2. [Java客户端使用指南](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
