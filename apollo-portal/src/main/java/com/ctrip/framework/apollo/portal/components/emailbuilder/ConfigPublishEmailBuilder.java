@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
@@ -24,7 +23,6 @@ import com.ctrip.framework.apollo.portal.util.RoleUtils;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -47,6 +45,7 @@ public abstract class ConfigPublishEmailBuilder {
   private static final String EMAIL_CONTENT_FIELD_OPERATOR = "\\$\\{operator}";
   private static final String EMAIL_CONTENT_FIELD_RELEASE_TIME = "\\$\\{releaseTime}";
   private static final String EMAIL_CONTENT_FIELD_RELEASE_ID = "\\$\\{releaseId}";
+  private static final String EMAIL_CONTENT_FIELD_RELEASE_HISTORY_ID = "\\$\\{releaseHistoryId}";
   private static final String EMAIL_CONTENT_FIELD_RELEASE_TITLE = "\\$\\{releaseTitle}";
   private static final String EMAIL_CONTENT_FIELD_RELEASE_COMMENT = "\\$\\{releaseComment}";
   private static final String EMAIL_CONTENT_FIELD_APOLLO_SERVER_ADDRESS = "\\$\\{apollo.portal.address}";
@@ -156,6 +155,8 @@ public abstract class ConfigPublishEmailBuilder {
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_RELEASE_TITLE, Matcher.quoteReplacement(releaseHistory.getReleaseTitle()));
     renderResult =
         renderResult.replaceAll(EMAIL_CONTENT_FIELD_RELEASE_ID, String.valueOf(releaseHistory.getReleaseId()));
+    renderResult =
+        renderResult.replaceAll(EMAIL_CONTENT_FIELD_RELEASE_HISTORY_ID, String.valueOf(releaseHistory.getId()));
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_RELEASE_COMMENT, Matcher.quoteReplacement(releaseHistory.getReleaseComment()));
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_APOLLO_SERVER_ADDRESS, getApolloPortalAddress());
     return renderResult

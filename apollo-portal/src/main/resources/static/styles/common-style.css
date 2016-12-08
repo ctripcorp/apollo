@@ -612,12 +612,6 @@ table th {
     padding: 15px;
 }
 
-.release-history .panel-body {
-    max-height: 750px;
-    padding: 0;
-    overflow: scroll;
-}
-
 .release-history .empty-container {
     padding: 15px;
 }
