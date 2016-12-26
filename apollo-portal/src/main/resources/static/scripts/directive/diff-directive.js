@@ -29,7 +29,10 @@ directive_module.directive('apollodiff',
                                                span = null,
                                                pre = '';
 
-                                           var diff = JsDiff.diffLines(scope.oldStr, scope.newStr),
+                                           var oldStr = scope.oldStr == undefined ? '' : scope.oldStr;
+                                           var newStr = scope.newStr == undefined ? '' : scope.newStr;
+
+                                           var diff = JsDiff.diffLines(oldStr, newStr),
                                                fragment = document.createDocumentFragment();
 
                                            diff.forEach(function (part) {
