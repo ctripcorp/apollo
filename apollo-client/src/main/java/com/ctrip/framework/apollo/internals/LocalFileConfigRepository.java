@@ -163,6 +163,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       updateFileProperties(properties);
       return true;
     } catch (Throwable ex) {
+      Tracer.logError(ex);
       logger
           .warn("Sync config from upstream repository {} failed, reason: {}", m_upstream.getClass(),
               ExceptionUtil.getDetailMessage(ex));
