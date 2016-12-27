@@ -14,6 +14,7 @@ import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.ctrip.framework.apollo.util.http.HttpRequest;
 import com.ctrip.framework.apollo.util.http.HttpResponse;
 import com.ctrip.framework.apollo.util.http.HttpUtil;
@@ -122,6 +123,7 @@ public class ConfigServiceLocator implements Initializable {
         logConfigServicesToCat(services);
         return;
       } catch (Throwable ex) {
+        Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
         transaction.setStatus(ex);
         exception = ex;
       } finally {

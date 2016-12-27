@@ -141,6 +141,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       m_fileProperties = this.loadFromLocalCacheFile(m_baseDir, m_namespace);
       transaction.setStatus(Transaction.SUCCESS);
     } catch (Throwable ex) {
+      Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
       transaction.setStatus(ex);
       exception = ex;
       //ignore

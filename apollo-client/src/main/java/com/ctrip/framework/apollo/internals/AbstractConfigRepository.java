@@ -23,6 +23,7 @@ public abstract class AbstractConfigRepository implements ConfigRepository {
       sync();
       return true;
     } catch (Throwable ex) {
+      Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
       logger
           .warn("Sync config failed, will retry. Repository {}, reason: {}", this.getClass(), ExceptionUtil
               .getDetailMessage(ex));
