@@ -90,14 +90,16 @@ public class ItemController {
     builder.updateItem(beforeUpdateItem, entity);
     itemDTO = BeanUtils.transfrom(ItemDTO.class, entity);
 
-    Commit commit = new Commit();
-    commit.setAppId(appId);
-    commit.setClusterName(clusterName);
-    commit.setNamespaceName(namespaceName);
-    commit.setChangeSets(builder.build());
-    commit.setDataChangeCreatedBy(itemDTO.getDataChangeLastModifiedBy());
-    commit.setDataChangeLastModifiedBy(itemDTO.getDataChangeLastModifiedBy());
-    commitService.save(commit);
+    if (builder.hasContent()) {
+      Commit commit = new Commit();
+      commit.setAppId(appId);
+      commit.setClusterName(clusterName);
+      commit.setNamespaceName(namespaceName);
+      commit.setChangeSets(builder.build());
+      commit.setDataChangeCreatedBy(itemDTO.getDataChangeLastModifiedBy());
+      commit.setDataChangeLastModifiedBy(itemDTO.getDataChangeLastModifiedBy());
+      commitService.save(commit);
+    }
 
     return itemDTO;
   }

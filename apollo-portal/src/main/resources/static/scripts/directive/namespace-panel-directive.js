@@ -40,7 +40,6 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 ALL: 'all'
             };
 
-
             var operate_branch_storage_key = 'OperateBranch';
 
             scope.switchView = switchView;
@@ -101,6 +100,8 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 initNamespaceLock(namespace);
                 initNamespaceInstancesCount(namespace);
                 initPermission(namespace);
+                initLinkedNamespace(namespace);
+                loadInstanceInfo(namespace);
 
                 function initNamespaceBranch(namespace) {
                     NamespaceBranchService.findNamespaceBranch(scope.appId, scope.env,
@@ -221,6 +222,44 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                         });
                 }
 
+                function initLinkedNamespace(namespace) {
+                    if (!namespace.isPublic || !namespace.isLinkedNamespace || namespace.format != 'properties') {
+                        return;
+                    }
+                    //load public namespace
+                    ConfigService.load_public_namespace_for_associated_namespace(scope.env, scope.appId, scope.cluster,
+                                                                                 namespace.baseInfo.namespaceName)
+                        .then(function (result) {
+                            var publicNamespace = result;
+                            namespace.publicNamespace = publicNamespace;
+
+                            var linkNamespaceItemKeys = [];
+                            namespace.items.forEach(function (item) {
+                                var key = item.item.key;
+                                linkNamespaceItemKeys.push(key);
+                            });
+
+                            publicNamespace.viewItems = [];
+                            publicNamespace.items.forEach(function (item) {
+                                var key = item.item.key;
+
+                                if (key) {
+                                    publicNamespace.viewItems.push(item);
+                                }
+
+                                item.covered = linkNamespaceItemKeys.indexOf(key) >= 0;
+
+                                if (item.isModified || item.isDeleted) {
+                                    publicNamespace.isModified = true;
+                                } else if (key) {
+                                    publicNamespace.hasPublishedItem = true;
+                                }
+                            });
+
+                        });
+
+                }
+
                 function initNamespaceViewName(namespace) {
                     //namespace view name hide suffix
                     namespace.viewName =
@@ -270,7 +309,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                     switchBranch(operateBranchStorage[namespaceId]);
 
                 }
-                
+
             }
 
             function initNamespaceInstancesCount(namespace) {
@@ -372,28 +411,28 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
 
                 if (namespace_instance_view_type.LATEST_RELEASE == type) {
                     if (!namespace.latestRelease) {
-                        ReleaseService.findActiveReleases(scope.appId,
-                                                          scope.env,
-                                                          namespace.baseInfo.clusterName,
-                                                          namespace.baseInfo.namespaceName,
-                                                          0, 1).then(function (result) {
+                        ReleaseService.findLatestActiveRelease(scope.appId,
+                                                               scope.env,
+                                                               namespace.baseInfo.clusterName,
+                                                               namespace.baseInfo.namespaceName)
+                            .then(function (result) {
+                                if (!result) {
+                                    namespace.latestReleaseInstances = {};
+                                    namespace.latestReleaseInstances.total = 0;
+                                    return;
+                                }
+                                namespace.latestRelease = result;
+                                InstanceService.findInstancesByRelease(scope.env,
+                                                                       namespace.latestRelease.id,
+                                                                       namespace.latestReleaseInstancesPage,
+                                                                       size)
+                                    .then(function (result) {
+                                        namespace.latestReleaseInstances = result;
+                                        namespace.latestReleaseInstancesPage++;
+                                    })
 
-                            var latestRelease = result[0];
-                            if (!latestRelease) {
-                                namespace.latestReleaseInstances = {};
-                                namespace.latestReleaseInstances.total = 0;
-                                return;
-                            }
-                            namespace.latestRelease = latestRelease;
-                            InstanceService.findInstancesByRelease(scope.env,
-                                                                   latestRelease.id,
-                                                                   namespace.latestReleaseInstancesPage,
-                                                                   size)
-                                .then(function (result) {
-                                    namespace.latestReleaseInstances = result;
-                                    namespace.latestReleaseInstancesPage++;
-                                })
-                        });
+                                namespace.isLatestReleaseLoaded = true;
+                            });
                     } else {
                         InstanceService.findInstancesByRelease(scope.env,
                                                                namespace.latestRelease.id,
@@ -497,11 +536,11 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                                            scope.namespace.baseInfo.namespaceName,
                                                            branch.baseInfo.clusterName)
                     .then(function (result) {
-                        
+
                         if (result.appId) {
                             branch.rules = result;
                         }
-                        
+
                     }, function (result) {
                         toastr.error(AppUtil.errorMsg(result), "加载灰度规则出错");
                     });
@@ -684,7 +723,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 namespace.itemCnt = itemCnt;
                 return result;
             }
-            
+
             function toggleItemSearchInput(namespace) {
                 namespace.showSearchInput = !namespace.showSearchInput;
             }
@@ -727,7 +766,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 var parentNamespace = branch.parentNamespace;
                 if (!parentNamespace.hasReleasePermission) {
                     AppUtil.showModal('#releaseNoPermissionDialog');
-                }else if (branch.lockOwner && scope.user == branch.lockOwner) {
+                } else if (branch.lockOwner && scope.user == branch.lockOwner) {
                     AppUtil.showModal('#releaseDenyDialog');
                 } else if (parentNamespace.itemModifiedCnt > 0) {
                     AppUtil.showModal('#mergeAndReleaseDenyDialog');
@@ -741,6 +780,9 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 EventManager.emit(EventManager.EventType.PRE_ROLLBACK_NAMESPACE, {namespace: namespace});
             }
 
+            setTimeout(function () {
+                scope.namespace.show = true;
+            }, 70);
         }
     }
 }

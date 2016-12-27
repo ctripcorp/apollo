@@ -122,7 +122,6 @@ public class ConfigServiceLocator implements Initializable {
         logConfigServicesToCat(services);
         return;
       } catch (Throwable ex) {
-        Tracer.logError(ex);
         transaction.setStatus(ex);
         exception = ex;
       } finally {

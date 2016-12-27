@@ -5,7 +5,7 @@ import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
-import com.ctrip.framework.apollo.portal.entity.vo.ReleaseVO;
+import com.ctrip.framework.apollo.portal.entity.bo.ReleaseBO;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 
@@ -89,7 +89,7 @@ public class ReleaseController {
 
 
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases/all")
-  public List<ReleaseVO> findAllReleases(@PathVariable String appId,
+  public List<ReleaseBO> findAllReleases(@PathVariable String appId,
                                          @PathVariable String env,
                                          @PathVariable String clusterName,
                                          @PathVariable String namespaceName,

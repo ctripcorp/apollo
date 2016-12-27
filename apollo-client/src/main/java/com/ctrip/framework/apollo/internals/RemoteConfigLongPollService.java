@@ -180,7 +180,6 @@ public class RemoteConfigLongPollService implements Initializable {
         transaction.setStatus(Transaction.SUCCESS);
       } catch (Throwable ex) {
         lastServiceDto = null;
-        Tracer.logError(ex);
         transaction.setStatus(ex);
         long sleepTimeInSecond = m_longPollFailSchedulePolicyInSecond.fail();
         logger.warn(

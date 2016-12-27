@@ -98,6 +98,29 @@ appService.service('ReleaseService', ['$resource', '$q', function ($resource, $q
         });
         return d.promise;
     }
+    
+    function findLatestActiveRelease(appId, env, clusterName, namespaceName) {
+        var d = $q.defer();
+        resource.find_active_releases({
+                                          appId: appId,
+                                          env: env,
+                                          clusterName: clusterName,
+                                          namespaceName: namespaceName,
+                                          page: 0,
+                                          size: 1
+                                      }, function (result) {
+            if (result && result.length){
+                d.resolve(result[0]);
+            }
+
+            d.resolve(undefined);
+
+        }, function (result) {
+            d.reject(result);
+        });
+        return d.promise;
+
+    }
 
     function compare(env, baseReleaseId, toCompareReleaseId) {
         var d = $q.defer();
@@ -133,6 +156,7 @@ appService.service('ReleaseService', ['$resource', '$q', function ($resource, $q
         grayPublish: createGrayRelease,
         findAllRelease: findAllReleases,
         findActiveReleases: findActiveReleases,
+        findLatestActiveRelease: findLatestActiveRelease,
         compare: compare,
         rollback: rollback
     }

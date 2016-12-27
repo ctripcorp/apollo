@@ -12,7 +12,8 @@ import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceVO;
+import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 
 import org.springframework.util.CollectionUtils;
 
@@ -51,22 +52,22 @@ public class OpenApiBeanUtils {
     return openReleaseDTO;
   }
 
-  public static OpenNamespaceDTO transformFromNamespaceVO(NamespaceVO namespaceVO) {
-    Preconditions.checkArgument(namespaceVO != null);
+  public static OpenNamespaceDTO transformFromNamespaceBO(NamespaceBO namespaceBO) {
+    Preconditions.checkArgument(namespaceBO != null);
 
-    OpenNamespaceDTO openNamespaceDTO = BeanUtils.transfrom(OpenNamespaceDTO.class, namespaceVO
+    OpenNamespaceDTO openNamespaceDTO = BeanUtils.transfrom(OpenNamespaceDTO.class, namespaceBO
         .getBaseInfo());
 
     //app namespace info
-    openNamespaceDTO.setFormat(namespaceVO.getFormat());
-    openNamespaceDTO.setComment(namespaceVO.getComment());
-    openNamespaceDTO.setPublic(namespaceVO.isPublic());
+    openNamespaceDTO.setFormat(namespaceBO.getFormat());
+    openNamespaceDTO.setComment(namespaceBO.getComment());
+    openNamespaceDTO.setPublic(namespaceBO.isPublic());
 
     //items
     List<OpenItemDTO> items = new LinkedList<>();
-    List<NamespaceVO.ItemVO> itemVOs = namespaceVO.getItems();
-    if (!CollectionUtils.isEmpty(itemVOs)) {
-      items.addAll(itemVOs.stream().map(itemVO -> transformFromItemDTO(itemVO.getItem())).collect
+    List<ItemBO> itemBOs = namespaceBO.getItems();
+    if (!CollectionUtils.isEmpty(itemBOs)) {
+      items.addAll(itemBOs.stream().map(itemBO -> transformFromItemDTO(itemBO.getItem())).collect
           (Collectors.toList()));
     }
     openNamespaceDTO.setItems(items);
@@ -74,14 +75,14 @@ public class OpenApiBeanUtils {
 
   }
 
-  public static List<OpenNamespaceDTO> batchTransformFromNamespaceVOs(List<NamespaceVO>
-                                                                          namespaceVOs) {
-    if (CollectionUtils.isEmpty(namespaceVOs)) {
+  public static List<OpenNamespaceDTO> batchTransformFromNamespaceBOs(List<NamespaceBO>
+                                                                          namespaceBOs) {
+    if (CollectionUtils.isEmpty(namespaceBOs)) {
       return Collections.emptyList();
     }
 
     List<OpenNamespaceDTO> openNamespaceDTOs =
-        namespaceVOs.stream().map(OpenApiBeanUtils::transformFromNamespaceVO)
+        namespaceBOs.stream().map(OpenApiBeanUtils::transformFromNamespaceBO)
             .collect(Collectors.toCollection(LinkedList::new));
 
     return openNamespaceDTOs;

@@ -20,7 +20,16 @@ public class RollbackEmailBuilder extends ConfigPublishEmailBuilder {
 
   @Override
   protected String emailContent(Env env, ReleaseHistoryBO releaseHistory) {
-    String template = getRollbackTemplate();
-    return renderEmailCommonContent(template, env, releaseHistory);
+    return renderEmailCommonContent(env, releaseHistory);
+  }
+
+  @Override
+  protected String getTemplateFramework() {
+    return portalConfig.emailTemplateFramework();
+  }
+
+  @Override
+  protected String getDiffModuleTemplate() {
+    return portalConfig.emailRollbackDiffModuleTemplate();
   }
 }

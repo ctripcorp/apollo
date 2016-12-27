@@ -6,7 +6,7 @@ import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.components.PermissionValidator;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceVO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
@@ -35,7 +35,7 @@ public class NamespaceBranchController {
   private ApplicationEventPublisher publisher;
 
   @RequestMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
-  public NamespaceVO findBranch(@PathVariable String appId,
+  public NamespaceBO findBranch(@PathVariable String appId,
                                 @PathVariable String env,
                                 @PathVariable String clusterName,
                                 @PathVariable String namespaceName) {

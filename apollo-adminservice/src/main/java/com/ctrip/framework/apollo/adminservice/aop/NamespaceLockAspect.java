@@ -1,13 +1,13 @@
 package com.ctrip.framework.apollo.adminservice.aop;
 
 
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
 import com.ctrip.framework.apollo.biz.service.ItemService;
 import com.ctrip.framework.apollo.biz.service.NamespaceLockService;
 import com.ctrip.framework.apollo.biz.service.NamespaceService;
-import com.ctrip.framework.apollo.biz.utils.ApolloSwitcher;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
@@ -39,7 +39,7 @@ public class NamespaceLockAspect {
   @Autowired
   private ItemService itemService;
   @Autowired
-  private ApolloSwitcher apolloSwitcher;
+  private BizConfig bizConfig;
 
 
   //create item
@@ -75,7 +75,7 @@ public class NamespaceLockAspect {
 
   void acquireLock(String appId, String clusterName, String namespaceName,
                            String currentUser) {
-    if (apolloSwitcher.isNamespaceLockSwitchOff()) {
+    if (bizConfig.isNamespaceLockSwitchOff()) {
       return;
     }
 
@@ -85,7 +85,7 @@ public class NamespaceLockAspect {
   }
 
   void acquireLock(long namespaceId, String currentUser) {
-    if (apolloSwitcher.isNamespaceLockSwitchOff()) {
+    if (bizConfig.isNamespaceLockSwitchOff()) {
       return;
     }
 

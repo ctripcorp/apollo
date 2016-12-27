@@ -1,14 +1,13 @@
-package com.ctrip.framework.apollo.portal.entity.vo;
+package com.ctrip.framework.apollo.portal.entity.bo;
 
-import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 
 import java.util.List;
 
-public class NamespaceVO {
+public class NamespaceBO {
   private NamespaceDTO baseInfo;
   private int itemModifiedCnt;
-  private List<ItemVO> items;
+  private List<ItemBO> items;
   private String format;
   private boolean isPublic;
   private String parentAppId;
@@ -31,11 +30,11 @@ public class NamespaceVO {
     this.itemModifiedCnt = itemModifiedCnt;
   }
 
-  public List<ItemVO> getItems() {
+  public List<ItemBO> getItems() {
     return items;
   }
 
-  public void setItems(List<ItemVO> items) {
+  public void setItems(List<ItemBO> items) {
     this.items = items;
   }
 
@@ -69,56 +68,6 @@ public class NamespaceVO {
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  public static class ItemVO {
-    private ItemDTO item;
-    private boolean isModified;
-    private boolean isDeleted;
-    private String oldValue;
-    private String newValue;
-
-    public ItemDTO getItem() {
-      return item;
-    }
-
-    public void setItem(ItemDTO item) {
-      this.item = item;
-    }
-
-    public boolean isDeleted() {
-      return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-      isDeleted = deleted;
-    }
-
-    public boolean isModified() {
-      return isModified;
-    }
-
-    public void setModified(boolean isModified) {
-      this.isModified = isModified;
-    }
-
-    public String getOldValue() {
-      return oldValue;
-    }
-
-    public void setOldValue(String oldValue) {
-      this.oldValue = oldValue;
-    }
-
-    public String getNewValue() {
-      return newValue;
-    }
-
-    public void setNewValue(String newValue) {
-      this.newValue = newValue;
-    }
-
-
   }
 
 }

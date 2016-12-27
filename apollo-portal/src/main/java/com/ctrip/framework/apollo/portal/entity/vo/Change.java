@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
 import com.ctrip.framework.apollo.common.entity.EntityPair;
+import com.ctrip.framework.apollo.portal.entity.bo.KVEntity;
 import com.ctrip.framework.apollo.portal.enums.ChangeType;
 
 public class Change {

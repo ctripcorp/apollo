@@ -119,6 +119,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
     }
 
     function loadNavTree() {
+
         AppService.load_nav_tree($rootScope.pageContext.appId).then(function (result) {
             var navTree = [];
             var nodes = AppUtil.collectData(result);
@@ -140,6 +141,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
                 }
                 var node = {};
                 node.text = env.env;
+
                 var clusterNodes = [];
 
                 //如果env下面只有一个default集群则不显示集群列表
@@ -150,6 +152,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
                         node.state.selected = true;
                     }
                     node.selectable = true;
+
                 } else {
                     node.selectable = false;
                     //cluster list
@@ -169,6 +172,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
                         clusterNode.tags = ['集群'];
                         clusterNode.parentNode = parentNode;
                         clusterNodes.push(clusterNode);
+
                     });
                 }
                 node.nodes = clusterNodes;
@@ -229,6 +233,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
         }, function (result) {
             toastr.error(AppUtil.errorMsg(result), "系统出错,请重试或联系系统负责人");
         });
+
     }
 
     function handleFavorite() {

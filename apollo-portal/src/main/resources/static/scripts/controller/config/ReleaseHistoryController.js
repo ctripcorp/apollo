@@ -12,7 +12,8 @@ function releaseHistoryController($scope, $location, AppUtil,
         env: params.env,
         clusterName: params.clusterName,
         namespaceName: params.namespaceName,
-        releaseId: params.releaseId
+        releaseId: params.releaseId,
+        releaseHistoryId: params.releaseHistoryId
     };
     var PAGE_SIZE = 10;
     var CONFIG_VIEW_TYPE = {
@@ -50,7 +51,7 @@ function releaseHistoryController($scope, $location, AppUtil,
                                                             $scope.pageContext.namespaceName,
                                                             $scope.page, PAGE_SIZE)
             .then(function (result) {
-                if ($scope.page == 0){
+                if ($scope.page == 0) {
                     $(".release-history").removeClass('hidden');
                 }
 
@@ -66,13 +67,14 @@ function releaseHistoryController($scope, $location, AppUtil,
 
                 if ($scope.page == 0) {
                     var defaultToShowReleaseHistory = result[0];
-                    if ($scope.pageContext.releaseId){
-                        $scope.releaseHistories.forEach(function (history) {
-                            if ($scope.pageContext.releaseId == history.releaseId){
-                                defaultToShowReleaseHistory = history;
-                            }
-                        })
-                    }
+                    $scope.releaseHistories.forEach(function (history) {
+                        if ($scope.pageContext.releaseHistoryId == history.id) {
+                            defaultToShowReleaseHistory = history;
+                        } else if ($scope.pageContext.releaseId == history.releaseId) {
+                            history.viewType = CONFIG_VIEW_TYPE.ALL;
+                            defaultToShowReleaseHistory = history;
+                        }
+                    });
 
                     showReleaseHistoryDetail(defaultToShowReleaseHistory);
                 }
@@ -98,26 +100,28 @@ function releaseHistoryController($scope, $location, AppUtil,
 
         $scope.history = history;
         $scope.selectedReleaseHistory = history.id;
-        history.viewType = CONFIG_VIEW_TYPE.DIFF;
-        showReleaseDiffConfiguration(history);
+        if (!history.viewType) {//default view type
+            history.viewType = CONFIG_VIEW_TYPE.DIFF;
+            getReleaseDiffConfiguration(history);
+        }
+
     }
 
     function switchConfigViewType(history, viewType) {
         history.viewType = viewType;
 
         if (viewType == CONFIG_VIEW_TYPE.DIFF) {
-            showReleaseDiffConfiguration(history);
+            getReleaseDiffConfiguration(history);
         }
 
     }
 
-    function showReleaseDiffConfiguration(history) {
-        history.viewType = CONFIG_VIEW_TYPE.DIFF;
+    function getReleaseDiffConfiguration(history) {
 
         if (!history.changes) {
 
             //Set previous release id to master latest release id when branch first gray release.
-            if (history.operation == 2 && history.previousReleaseId == 0){
+            if (history.operation == 2 && history.previousReleaseId == 0) {
                 history.previousReleaseId = history.operationContext.baseReleaseId;
             }
 

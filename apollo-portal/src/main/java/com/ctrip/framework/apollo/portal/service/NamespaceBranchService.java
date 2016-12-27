@@ -11,7 +11,7 @@ import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.components.ItemsComparator;
 import com.ctrip.framework.apollo.portal.components.PermissionValidator;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceVO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
@@ -100,7 +100,7 @@ public class NamespaceBranchService {
 
   private ItemChangeSets calculateBranchChangeSet(String appId, Env env, String clusterName, String namespaceName,
                                                   String branchName) {
-    NamespaceVO parentNamespace = namespaceService.loadNamespace(appId, env, clusterName, namespaceName);
+    NamespaceBO parentNamespace = namespaceService.loadNamespaceBO(appId, env, clusterName, namespaceName);
 
     if (parentNamespace == null) {
       throw new BadRequestException("base namespace not existed");
@@ -125,12 +125,12 @@ public class NamespaceBranchService {
     return namespaceBranchAPI.findBranch(appId, env, clusterName, namespaceName);
   }
 
-  public NamespaceVO findBranch(String appId, Env env, String clusterName, String namespaceName) {
+  public NamespaceBO findBranch(String appId, Env env, String clusterName, String namespaceName) {
     NamespaceDTO namespaceDTO = findBranchBaseInfo(appId, env, clusterName, namespaceName);
     if (namespaceDTO == null) {
       return null;
     }
-    return namespaceService.loadNamespace(appId, env, namespaceDTO.getClusterName(), namespaceName);
+    return namespaceService.loadNamespaceBO(appId, env, namespaceDTO.getClusterName(), namespaceName);
   }
 
 }

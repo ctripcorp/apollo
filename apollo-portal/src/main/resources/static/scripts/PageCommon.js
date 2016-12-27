@@ -17,13 +17,14 @@ $(document).ready(function () {
         $('[data-tooltip="tooltip"]').tooltip({
                                                   trigger : 'hover'
                                               });
-    }, 2500);
-
-    setTimeout(function () {
         $("textarea").niceScroll({cursoropacitymax: 0});
         $("pre").niceScroll({cursoropacitymax: 0});
+    }, 1000);
+
+    setTimeout(function () {
+
         $(".release-history-list").niceScroll({cursoropacitymax: 0});
-        $(".release-info .config").niceScroll({cursoropacitymax: 0});
+
     }, 2500);
 });
 

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +16,8 @@ import javax.persistence.Table;
 @Where(clause = "isDeleted = 0")
 public class Commit extends BaseEntity {
 
-  @Column(name = "ChangeSets", length = 4048, nullable = false)
+  @Lob
+  @Column(name = "ChangeSets", nullable = false)
   private String changeSets;
 
   @Column(name = "AppId", nullable = false)

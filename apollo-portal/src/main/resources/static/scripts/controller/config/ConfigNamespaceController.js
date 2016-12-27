@@ -1,10 +1,10 @@
 application_module.controller("ConfigNamespaceController",
                               ['$rootScope', '$scope', 'toastr', 'AppUtil', 'EventManager', 'ConfigService',
-                               'PermissionService', 'UserService', 'NamespaceBranchService',
+                               'PermissionService', 'UserService', 'NamespaceBranchService', 'NamespaceService',
                                controller]);
 
 function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigService,
-                    PermissionService, UserService, NamespaceBranchService) {
+                    PermissionService, UserService, NamespaceBranchService, NamespaceService) {
 
     $scope.rollback = rollback;
     $scope.preDeleteItem = preDeleteItem;
@@ -21,9 +21,15 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
     $scope.lockCheck = lockCheck;
 
     init();
-    
 
     function init() {
+
+        initRole();
+        initUser();
+        initPublishInfo();
+    }
+
+    function initRole() {
         PermissionService.get_app_role_users($rootScope.pageContext.appId)
             .then(function (result) {
                 var masterUsers = '';
@@ -34,18 +40,56 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             }, function (result) {
 
             });
+    }
 
+    function initUser() {
         UserService.load_user().then(function (result) {
             $scope.currentUser = result.userId;
         });
 
     }
 
+    function initPublishInfo() {
+        NamespaceService.getNamespacePublishInfo($rootScope.pageContext.appId)
+            .then(function (result) {
+                if (!result) {
+                    return;
+                }
+                $scope.hasNotPublishNamespace = false;
+                var namespacePublishInfo = [];
+
+                Object.keys(result).forEach(function (env) {
+                    if (env.indexOf("$") >= 0) {
+                        return;
+                    }
+
+                    var envPublishInfo = result[env];
+                    Object.keys(envPublishInfo).forEach(function (cluster) {
+
+                        var clusterPublishInfo = envPublishInfo[cluster];
+                        if (clusterPublishInfo) {
+                            $scope.hasNotPublishNamespace = true;
+
+                            if (Object.keys(envPublishInfo).length > 1) {
+                                namespacePublishInfo.push("[" + env + ", " + cluster + "]");
+                            } else {
+                                namespacePublishInfo.push("[" + env + "]");
+                            }
+
+                        }
+                    })
+                });
+
+                $scope.namespacePublishInfo = namespacePublishInfo;
+            });
+
+    }
+
     EventManager.subscribe(EventManager.EventType.REFRESH_NAMESPACE,
                            function (context) {
-                               if (context.namespace){
+                               if (context.namespace) {
                                    refreshSingleNamespace(context.namespace);
-                               }else {
+                               } else {
                                    refreshAllNamespaces();
                                }
 
@@ -57,18 +101,18 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
         }
 
         ConfigService.load_all_namespaces($rootScope.pageContext.appId,
-                                     $rootScope.pageContext.env,
-                                     $rootScope.pageContext.clusterName).then(
+                                          $rootScope.pageContext.env,
+                                          $rootScope.pageContext.clusterName).then(
             function (result) {
 
                 $scope.namespaces = result;
+                $('.config-item-container').removeClass('hide');
 
+                initPublishInfo();
             }, function (result) {
                 toastr.error(AppUtil.errorMsg(result), "加载配置信息出错");
             });
     }
-
-
 
     function refreshSingleNamespace(namespace) {
         if ($rootScope.pageContext.env == '') {
@@ -82,16 +126,17 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             function (result) {
 
                 $scope.namespaces.forEach(function (namespace, index) {
-                    if (namespace.baseInfo.namespaceName == result.baseInfo.namespaceName){
+                    if (namespace.baseInfo.namespaceName == result.baseInfo.namespaceName) {
                         $scope.namespaces[index] = result;
-                    }    
-                })
+                    }
+                });
+
+                initPublishInfo();
 
             }, function (result) {
                 toastr.error(AppUtil.errorMsg(result), "加载配置信息出错");
             });
     }
-
 
     function rollback() {
         EventManager.emit(EventManager.EventType.ROLLBACK_NAMESPACE);
@@ -138,10 +183,9 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
         $scope.item = _.clone(toEditItem);
 
-        if (namespace.isBranch) {
+        if (namespace.isBranch || namespace.isLinkedNamespace) {
             var existedItem = false;
             namespace.items.forEach(function (item) {
-                //branch items contain the item
                 if (!item.isDeleted && item.item.key == toEditItem.key) {
                     existedItem = true;
                 }
@@ -267,10 +311,6 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             })
 
     }
-
-    
-
-    $('.config-item-container').removeClass('hide');
 
     new Clipboard('.clipboard');
 }

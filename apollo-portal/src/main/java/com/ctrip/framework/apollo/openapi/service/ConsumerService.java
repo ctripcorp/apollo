@@ -12,10 +12,9 @@ import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerAuditRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerTokenRepository;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 
 import org.apache.commons.lang.time.FastDateFormat;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ import java.util.Date;
  * @author Jason Song(song_s@ctrip.com)
  */
 @Service
-public class ConsumerService implements InitializingBean {
+public class ConsumerService {
   static final String TOKEN_SALT_KEY = "consumer.token.salt";
   private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance
       ("yyyyMMddHHmmss");
@@ -38,9 +37,7 @@ public class ConsumerService implements InitializingBean {
   @Autowired
   private ConsumerAuditRepository consumerAuditRepository;
   @Autowired
-  private ServerConfigService serverConfigService;
-
-  private String consumerTokenSalt;
+  private PortalConfig portalConfig;
 
   public Long getConsumerIdByToken(String token) {
     if (Strings.isNullOrEmpty(token)) {
@@ -65,7 +62,7 @@ public class ConsumerService implements InitializingBean {
       consumerToken.setDataChangeCreatedTime(new Date());
     }
     consumerToken.setToken(generateConsumerToken(consumer.getAppId(), consumerToken
-        .getDataChangeCreatedTime(), consumerTokenSalt));
+        .getDataChangeCreatedTime(), portalConfig.consumerTokenSalt()));
   }
 
   @Transactional
@@ -86,8 +83,4 @@ public class ConsumerService implements InitializingBean {
         (generationTime), consumerTokenSalt), Charsets.UTF_8).toString();
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    consumerTokenSalt = serverConfigService.getValue(TOKEN_SALT_KEY, "apollo-portal");
-  }
 }

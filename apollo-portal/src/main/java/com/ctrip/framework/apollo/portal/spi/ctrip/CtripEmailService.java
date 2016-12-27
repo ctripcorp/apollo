@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
 import com.ctrip.framework.apollo.portal.spi.EmailService;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
@@ -21,11 +21,12 @@ public class CtripEmailService implements EmailService {
 
   private Object emailServiceClient;
   private Method sendEmailAsync;
+  private Method sendEmail;
 
   @Autowired
   private CtripEmailRequestBuilder emailRequestBuilder;
   @Autowired
-  private ServerConfigService serverConfigService;
+  private PortalConfig portalConfig;
 
   @PostConstruct
   public void init() {
@@ -33,13 +34,15 @@ public class CtripEmailService implements EmailService {
       initServiceClientConfig();
 
       Class emailServiceClientClazz =
-          Class.forName("com.ctrip.framework.apolloctripservice.emailservice.EmailServiceClient");
+              Class.forName("com.ctrip.framework.apolloctripservice.emailservice.EmailServiceClient");
+
       Method getInstanceMethod = emailServiceClientClazz.getMethod("getInstance");
       emailServiceClient = getInstanceMethod.invoke(null);
 
       Class sendEmailRequestClazz =
-          Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
+              Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
       sendEmailAsync = emailServiceClientClazz.getMethod("sendEmailAsync", sendEmailRequestClazz);
+      sendEmail = emailServiceClientClazz.getMethod("sendEmail", sendEmailRequestClazz);
     } catch (Throwable e) {
       logger.error("init ctrip email service failed", e);
       Tracer.logError("init ctrip email service failed", e);
@@ -52,8 +55,7 @@ public class CtripEmailService implements EmailService {
     Object serviceClientConfig = serviceClientConfigClazz.newInstance();
     Method setFxConfigServiceUrlMethod = serviceClientConfigClazz.getMethod("setFxConfigServiceUrl", String.class);
 
-    String soaServerAddress = serverConfigService.getValue("soa.server.address");
-    setFxConfigServiceUrlMethod.invoke(serviceClientConfig, soaServerAddress);
+    setFxConfigServiceUrlMethod.invoke(serviceClientConfig, portalConfig.soaServerAddress());
 
     Class serviceClientBaseClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientBase");
     Method initializeMethod = serviceClientBaseClazz.getMethod("initialize", serviceClientConfigClazz);
@@ -65,9 +67,12 @@ public class CtripEmailService implements EmailService {
 
     try {
       Object emailRequest = emailRequestBuilder.buildEmailRequest(email);
-      Object sendResponse = sendEmailAsync.invoke(emailServiceClient, emailRequest);
 
-      logger.info("Email sender response:" + sendResponse);
+      Object sendResponse = portalConfig.isSendEmailAsync() ?
+              sendEmailAsync.invoke(emailServiceClient, emailRequest) :
+              sendEmail.invoke(emailServiceClient, emailRequest);
+
+      logger.info("Email server response: " + sendResponse);
 
     } catch (Throwable e) {
       logger.error("send email failed", e);

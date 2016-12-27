@@ -1,11 +1,13 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.reflect.Method;
@@ -31,16 +33,8 @@ public class CtripEmailRequestBuilder {
   private static Method setExpiredTime;
   private static Method setAppID;
 
-  @Value("${ctrip.appid}")
-  private int appId;
-  //send code & template id. apply from ewatch
-  @Value("${ctrip.email.send.code}")
-  private String sendCode;
-  @Value("${ctrip.email.template.id}")
-  private int templateId;
-  //email retention time in email server queue.TimeUnit: hour
-  @Value("${ctrip.email.survival.duration}")
-  private int survivalDuration;
+  @Autowired
+  private PortalConfig portalConfig;
 
 
   @PostConstruct
@@ -72,7 +66,10 @@ public class CtripEmailRequestBuilder {
 
     setSender.invoke(emailRequest, email.getSenderEmailAddress());
     setSubject.invoke(emailRequest, email.getSubject());
-    setBodyContent.invoke(emailRequest, email.getBody());
+    String emailBodyBuilder = "<entry><content><![CDATA[<!DOCTYPE html>" +
+            email.getBody() +
+            "]]></content></entry>";
+    setBodyContent.invoke(emailRequest, emailBodyBuilder);
     setRecipient.invoke(emailRequest, email.getRecipients());
 
     return emailRequest;
@@ -81,12 +78,12 @@ public class CtripEmailRequestBuilder {
   private Object createBasicEmailRequest() throws Exception {
     Object request = sendEmailRequestClazz.newInstance();
 
-    setSendCode.invoke(request, sendCode);
-    setBodyTemplateID.invoke(request, templateId);
+    setSendCode.invoke(request, portalConfig.sendCode());
+    setBodyTemplateID.invoke(request, portalConfig.templateId());
     setIsBodyHtml.invoke(request, true);
     setCharset.invoke(request, "UTF-8");
     setExpiredTime.invoke(request, calExpiredTime());
-    setAppID.invoke(request, appId);
+    setAppID.invoke(request, portalConfig.appId());
 
     return request;
   }
@@ -95,7 +92,7 @@ public class CtripEmailRequestBuilder {
   private Calendar calExpiredTime() {
 
     Calendar calendar = Calendar.getInstance();
-    calendar.setTime(DateUtils.addHours(new Date(), survivalDuration));
+    calendar.setTime(DateUtils.addHours(new Date(), portalConfig.survivalDuration()));
 
     return calendar;
   }

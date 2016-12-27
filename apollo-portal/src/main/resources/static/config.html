@@ -137,7 +137,7 @@
         <!--namespaces-->
         <div class="col-md-10 col-xs-10 col-sm-10 config-item-container hide"
              ng-controller="ConfigNamespaceController">
-            <div class="alert alert-warning alert-dismissible" role="alert"
+            <div class="alert alert-info alert-dismissible" role="alert"
                  ng-show="(!hideTip || !hideTip[pageContext.appId][pageContext.clusterName]) && envMapClusters[pageContext.env]">
 
                 <button class="btn btn-sm btn-default pull-right" style="margin-top: -7px;margin-right:-15px;"
@@ -146,7 +146,7 @@
 
                 <!--default cluster tip -->
                 <div ng-show="pageContext.clusterName == 'default'">
-                    <strong>注意:</strong>所有不属于
+                    <strong>注意: </strong>所有不属于
                     <span ng-bind="envMapClusters[pageContext.env]"></span>
                     集群的实例会使用default集群（当前页面）的配置，属于
                     <span ng-bind="envMapClusters[pageContext.env]"></span>
@@ -164,6 +164,11 @@
 
             </div>
 
+            <div class="alert alert-info"
+                 ng-if="hasNotPublishNamespace">
+                <p><b>注意:</b>以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
+                <p><mark ng-bind="namespacePublishInfo.join('，')"></mark></p>
+            </div>
 
             <apollonspanel ng-repeat="namespace in namespaces"
                            namespace="namespace"
@@ -336,6 +341,7 @@
 <script type="application/javascript" src="scripts/services/ConfigService.js"></script>
 <script type="application/javascript" src="scripts/services/ReleaseService.js"></script>
 <script type="application/javascript" src="scripts/services/PermissionService.js"></script>
+<script type="application/javascript" src="scripts/services/NamespaceService.js"></script>
 <script type="application/javascript" src="scripts/services/CommitService.js"></script>
 <script type="application/javascript" src="scripts/services/NamespaceLockService.js"></script>
 <script type="application/javascript" src="scripts/services/InstanceService.js"></script>

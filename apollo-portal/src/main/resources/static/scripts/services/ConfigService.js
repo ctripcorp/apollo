@@ -5,6 +5,11 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             isArray: false,
             url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName'
         },
+        load_public_namespace_for_associated_namespace: {
+            method: 'GET',
+            isArray: false,
+            url: '/envs/:env/apps/:appId/clusters/:clusterName/namespaces/:namespaceName/associated-public-namespace'
+        },
         load_all_namespaces: {
             method: 'GET',
             isArray: true,
@@ -47,11 +52,25 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
         load_namespace: function (appId, env, clusterName, namespaceName) {
             var d = $q.defer();
             config_source.load_namespace({
-                                                  appId: appId,
-                                                  env: env,
-                                                  clusterName: clusterName,
-                                                  namespaceName: namespaceName
-                                              }, function (result) {
+                                             appId: appId,
+                                             env: env,
+                                             clusterName: clusterName,
+                                             namespaceName: namespaceName
+                                         }, function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        load_public_namespace_for_associated_namespace: function (env, appId, clusterName, namespaceName) {
+            var d = $q.defer();
+            config_source.load_public_namespace_for_associated_namespace({
+                                                                             env: env,
+                                                                             appId: appId,
+                                                                             clusterName: clusterName,
+                                                                             namespaceName: namespaceName
+                                                                         }, function (result) {
                 d.resolve(result);
             }, function (result) {
                 d.reject(result);

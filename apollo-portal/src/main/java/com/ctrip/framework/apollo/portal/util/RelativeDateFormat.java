@@ -6,7 +6,7 @@ import java.util.Date;
 
 
 public class RelativeDateFormat {
-  private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
+  private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd");
   private static final long ONE_MINUTE = 60000L;
   private static final long ONE_HOUR = 3600000L;
   private static final long ONE_DAY = 86400000L;

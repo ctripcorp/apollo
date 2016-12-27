@@ -8,7 +8,7 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.components.txtresolver.PropertyResolver;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceVO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -87,9 +87,9 @@ public class NamespaceServiceTest {
     when(releaseService.loadLatestRelease(appId, Env.DEV, clusterName, "hermes")).thenReturn(someRelease);
     when(itemService.findItems(appId, Env.DEV, clusterName, namespaceName)).thenReturn(someItems);
 
-    List<NamespaceVO> namespaceVOs = namespaceService.findNamespaces(appId, Env.DEV, clusterName);
+    List<NamespaceBO> namespaceVOs = namespaceService.findNamespaceBOs(appId, Env.DEV, clusterName);
     assertEquals(2, namespaceVOs.size());
-    NamespaceVO namespaceVO = namespaceVOs.get(0);
+    NamespaceBO namespaceVO = namespaceVOs.get(0);
     assertEquals(4, namespaceVO.getItems().size());
     assertEquals("a", namespaceVO.getItems().get(0).getItem().getKey());
     assertEquals(2, namespaceVO.getItemModifiedCnt());

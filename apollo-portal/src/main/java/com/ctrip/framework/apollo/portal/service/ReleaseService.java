@@ -11,9 +11,9 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
-import com.ctrip.framework.apollo.portal.entity.vo.KVEntity;
+import com.ctrip.framework.apollo.portal.entity.bo.KVEntity;
 import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
-import com.ctrip.framework.apollo.portal.entity.vo.ReleaseVO;
+import com.ctrip.framework.apollo.portal.entity.bo.ReleaseBO;
 import com.ctrip.framework.apollo.portal.enums.ChangeType;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
@@ -65,7 +65,7 @@ public class ReleaseService {
                                        deleteBranch, changeSets);
   }
 
-  public List<ReleaseVO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
+  public List<ReleaseBO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
                                          int size) {
     List<ReleaseDTO> releaseDTOs = releaseAPI.findAllReleases(appId, env, clusterName, namespaceName, page, size);
 
@@ -73,9 +73,9 @@ public class ReleaseService {
       return Collections.emptyList();
     }
 
-    List<ReleaseVO> releases = new LinkedList<>();
+    List<ReleaseBO> releases = new LinkedList<>();
     for (ReleaseDTO releaseDTO : releaseDTOs) {
-      ReleaseVO release = new ReleaseVO();
+      ReleaseBO release = new ReleaseBO();
       release.setBaseInfo(releaseDTO);
 
       Set<KVEntity> kvEntities = new LinkedHashSet<>();

@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,16 +39,16 @@ public class CtripUserServiceTest extends AbstractUnitTest{
       someResponseType;
 
   @Mock
-  private ServerConfigService serverConfigService;
+  private PortalConfig portalConfig;
 
   @Mock
   private RestTemplate restTemplate;
 
   @Before
   public void setUp() throws Exception {
-    when(serverConfigService.getValue("api.connectTimeout", "3000")).thenReturn("3000");
-    when(serverConfigService.getValue("api.readTimeout", "3000")).thenReturn("3000");
-    ctripUserService = new CtripUserService(serverConfigService);
+    when(portalConfig.connectTimeout()).thenReturn(3000);
+    when(portalConfig.readTimeout()).thenReturn(3000);
+    ctripUserService = new CtripUserService(portalConfig);
     ReflectionTestUtils.setField(ctripUserService, "restTemplate", restTemplate);
     someResponseType =
         (ParameterizedTypeReference<Map<String, List<CtripUserService.UserServiceResponse>>>) ReflectionTestUtils
@@ -56,8 +56,8 @@ public class CtripUserServiceTest extends AbstractUnitTest{
 
     someUserServiceUrl = "http://someurl";
     someUserServiceToken = "someToken";
-    when(serverConfigService.getValue("userService.url")).thenReturn(someUserServiceUrl);
-    when(serverConfigService.getValue("userService.accessToken")).thenReturn(someUserServiceToken);
+    when(portalConfig.userServiceUrl()).thenReturn(someUserServiceUrl);
+    when(portalConfig.userServiceAccessToken()).thenReturn(someUserServiceToken);
 
   }
 

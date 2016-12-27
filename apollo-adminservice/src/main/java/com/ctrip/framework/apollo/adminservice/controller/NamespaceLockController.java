@@ -1,10 +1,10 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
 import com.ctrip.framework.apollo.biz.service.NamespaceLockService;
 import com.ctrip.framework.apollo.biz.service.NamespaceService;
-import com.ctrip.framework.apollo.biz.utils.ApolloSwitcher;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
@@ -23,7 +23,7 @@ public class NamespaceLockController {
   @Autowired
   private NamespaceService namespaceService;
   @Autowired
-  private ApolloSwitcher apolloSwitcher;
+  private BizConfig bizConfig;
 
   @RequestMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock")
   public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId, @PathVariable String clusterName,
@@ -33,7 +33,7 @@ public class NamespaceLockController {
       throw new BadRequestException("namespace not exist.");
     }
 
-    if (apolloSwitcher.isNamespaceLockSwitchOff()) {
+    if (bizConfig.isNamespaceLockSwitchOff()) {
       return null;
     }
 

@@ -50,6 +50,14 @@ p, td, span {
     border: solid 1px #c3c3c3;
 }
 
+.padding-top-5 {
+    padding-top: 5px;
+}
+
+.border-top {
+    border-top: 1px solid #ddd;
+}
+
 .active {
     background: #f5f5f5;
 }
@@ -336,6 +344,7 @@ table th {
 
 .namespace-panel {
     border-top: 0;
+    border-bottom: 0;
 }
 
 .namespace-panel .namespace-name {
@@ -386,6 +395,10 @@ table th {
     padding-top: 15px;
     padding-bottom: 10px;
 
+}
+
+.namespace-panel .no-config-panel {
+    padding: 15px 0;
 }
 
 .namespace-panel .history-view {
@@ -612,12 +625,6 @@ table th {
     padding: 15px;
 }
 
-.release-history .panel-body {
-    max-height: 750px;
-    padding: 0;
-    overflow: scroll;
-}
-
 .release-history .empty-container {
     padding: 15px;
 }
@@ -730,4 +737,10 @@ table th {
     width: auto !important;
 }
 
+.search-onblur {
+    background: #f5f5f5;
+}
 
+.search-focus {
+    background: #fff;
+}

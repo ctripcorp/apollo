@@ -7,7 +7,7 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceVO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.service.NamespaceLockService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 
@@ -33,7 +33,7 @@ public class NamespaceController {
                                                @PathVariable String clusterName) {
 
     return OpenApiBeanUtils
-        .batchTransformFromNamespaceVOs(namespaceService.findNamespaces(appId, Env
+        .batchTransformFromNamespaceBOs(namespaceService.findNamespaceBOs(appId, Env
             .fromString(env), clusterName));
   }
 
@@ -41,12 +41,12 @@ public class NamespaceController {
   public OpenNamespaceDTO loadNamespace(@PathVariable String appId, @PathVariable String env,
                                         @PathVariable String clusterName, @PathVariable String
                                             namespaceName) {
-    NamespaceVO namespaceVO = namespaceService.loadNamespace(appId, Env.fromString
+    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.fromString
         (env), clusterName, namespaceName);
-    if (namespaceVO == null) {
+    if (namespaceBO == null) {
       return null;
     }
-    return OpenApiBeanUtils.transformFromNamespaceVO(namespaceVO);
+    return OpenApiBeanUtils.transformFromNamespaceBO(namespaceBO);
   }
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)

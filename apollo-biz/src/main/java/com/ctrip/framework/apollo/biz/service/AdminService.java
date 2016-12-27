@@ -12,13 +12,10 @@ public class AdminService {
 
   @Autowired
   private AppService appService;
-
   @Autowired
   private AppNamespaceService appNamespaceService;
-
   @Autowired
   private ClusterService clusterService;
-
   @Autowired
   private NamespaceService namespaceService;
 
@@ -37,5 +34,6 @@ public class AdminService {
 
     return app;
   }
+
 
 }

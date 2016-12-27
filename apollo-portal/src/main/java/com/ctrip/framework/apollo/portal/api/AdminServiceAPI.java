@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -62,6 +63,10 @@ public class AdminServiceAPI {
   @Service
   public static class NamespaceAPI extends API {
 
+    private ParameterizedTypeReference<Map<String, Boolean>>
+        typeReference = new ParameterizedTypeReference<Map<String, Boolean>>() {
+    };
+
     public List<NamespaceDTO> findNamespaceByCluster(String appId, Env env, String clusterName) {
       NamespaceDTO[] namespaceDTOs = restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces",
                                                       NamespaceDTO[].class, appId,
@@ -71,12 +76,16 @@ public class AdminServiceAPI {
 
     public NamespaceDTO loadNamespace(String appId, Env env, String clusterName,
                                       String namespaceName) {
-      NamespaceDTO dto =
+      return
           restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}",
                            NamespaceDTO.class, appId, clusterName, namespaceName);
-      return dto;
     }
 
+    public NamespaceDTO findPublicNamespaceForAssociatedNamespace(Env env, String appId, String clusterName, String namespaceName) {
+      return
+          restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace",
+                           NamespaceDTO.class, appId, clusterName, namespaceName);
+    }
 
     public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {
       return restTemplate
@@ -94,6 +103,10 @@ public class AdminServiceAPI {
           .delete(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}?operator={operator}", appId,
                   clusterName,
                   namespaceName, operator);
+    }
+
+    public Map<String, Boolean> getNamespacePublishInfo(Env env, String appId) {
+      return restTemplate.get(env, "apps/{appId}/namespaces/publish_info", typeReference, appId).getBody();
     }
 
   }
@@ -378,23 +391,26 @@ public class AdminServiceAPI {
   public static class ReleaseHistoryAPI extends API {
 
     private ParameterizedTypeReference<PageDTO<ReleaseHistoryDTO>> type =
-        new ParameterizedTypeReference<PageDTO<ReleaseHistoryDTO>>() {};
+        new ParameterizedTypeReference<PageDTO<ReleaseHistoryDTO>>() {
+        };
 
 
     public PageDTO<ReleaseHistoryDTO> findReleaseHistoriesByNamespace(String appId, Env env, String clusterName,
-                                                                   String namespaceName, int page, int size) {
+                                                                      String namespaceName, int page, int size) {
       return restTemplate.get(env,
                               "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories?page={page}&size={size}",
                               type, appId, clusterName, namespaceName, page, size).getBody();
     }
 
-    public PageDTO<ReleaseHistoryDTO> findByReleaseIdAndOperation(Env env, long releaseId, int operation, int page, int size) {
+    public PageDTO<ReleaseHistoryDTO> findByReleaseIdAndOperation(Env env, long releaseId, int operation, int page,
+                                                                  int size) {
       return restTemplate.get(env,
                               "/releases/histories/by_release_id_and_operation?releaseId={releaseId}&operation={operation}&page={page}&size={size}",
                               type, releaseId, operation, page, size).getBody();
     }
 
-    public PageDTO<ReleaseHistoryDTO> findByPreviousReleaseIdAndOperation(Env env, long previousReleaseId, int operation, int page, int size) {
+    public PageDTO<ReleaseHistoryDTO> findByPreviousReleaseIdAndOperation(Env env, long previousReleaseId,
+                                                                          int operation, int page, int size) {
       return restTemplate.get(env,
                               "/releases/histories/by_previous_release_id_and_operation?previousReleaseId={releaseId}&operation={operation}&page={page}&size={size}",
                               type, previousReleaseId, operation, page, size).getBody();

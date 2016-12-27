@@ -9,12 +9,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
 import com.ctrip.framework.apollo.biz.message.Topics;
 import com.ctrip.framework.apollo.biz.repository.GrayReleaseRuleRepository;
-import com.ctrip.framework.apollo.biz.service.ServerConfigService;
 import com.ctrip.framework.apollo.common.constants.NamespaceBranchStatus;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
 import com.ctrip.framework.apollo.common.utils.GrayReleaseRuleItemTransformer;
@@ -45,11 +45,12 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private static final Splitter STRING_SPLITTER =
       Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
-  private static final int DEFAULT_SCAN_INTERVAL_IN_SECONDS = 60;
-  @Autowired
-  private ServerConfigService serverConfigService;
+
   @Autowired
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
+  @Autowired
+  private BizConfig bizConfig;
+
   private int databaseScanInterval;
   private ScheduledExecutorService executorService;
   //store configAppId+configCluster+configNamespace -> GrayReleaseRuleCache map
@@ -249,12 +250,8 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   private void populateDataBaseInterval() {
-    databaseScanInterval = DEFAULT_SCAN_INTERVAL_IN_SECONDS;
     try {
-      String interval = serverConfigService.getValue("apollo.gray-release-rule-scan.interval");
-      if (!Objects.isNull(interval)) {
-        databaseScanInterval = Integer.parseInt(interval);
-      }
+      databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();
     } catch (Throwable ex) {
       Tracer.logError(ex);
       logger.error("Load apollo gray release rule scan interval from server config failed", ex);

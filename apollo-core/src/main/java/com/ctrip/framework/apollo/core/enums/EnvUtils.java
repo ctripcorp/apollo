@@ -8,7 +8,7 @@ public final class EnvUtils {
     if (StringUtils.isBlank(envName)) {
       return null;
     }
-    switch (envName.toUpperCase()) {
+    switch (envName.trim().toUpperCase()) {
       case "LPT":
         return Env.LPT;
       case "FAT":

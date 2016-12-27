@@ -141,7 +141,6 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       m_fileProperties = this.loadFromLocalCacheFile(m_baseDir, m_namespace);
       transaction.setStatus(Transaction.SUCCESS);
     } catch (Throwable ex) {
-      Tracer.logError(ex);
       transaction.setStatus(ex);
       exception = ex;
       //ignore
@@ -164,7 +163,6 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       updateFileProperties(properties);
       return true;
     } catch (Throwable ex) {
-      Tracer.logError(ex);
       logger
           .warn("Sync config from upstream repository {} failed, reason: {}", m_upstream.getClass(),
               ExceptionUtil.getDetailMessage(ex));

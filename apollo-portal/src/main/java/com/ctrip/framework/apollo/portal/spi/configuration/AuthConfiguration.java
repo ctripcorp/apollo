@@ -2,10 +2,7 @@ package com.ctrip.framework.apollo.portal.spi.configuration;
 
 import com.google.common.collect.Maps;
 
-import com.ctrip.framework.apollo.openapi.filter.ConsumerAuthenticationFilter;
-import com.ctrip.framework.apollo.openapi.util.ConsumerAuditUtil;
-import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -44,7 +41,7 @@ public class AuthConfiguration {
   static class CtripAuthAutoConfiguration {
 
     @Autowired
-    private ServerConfigService serverConfigService;
+    private PortalConfig portalConfig;
 
     @Bean
     public ServletListenerRegistrationBean redisAppSettingListner() {
@@ -76,8 +73,8 @@ public class AuthConfiguration {
 
       Map<String, String> filterInitParam = Maps.newHashMap();
       filterInitParam.put("redisClusterName", "casClientPrincipal");
-      filterInitParam.put("serverName", serverConfigService.getValue("serverName"));
-      filterInitParam.put("casServerLoginUrl", serverConfigService.getValue("casServerLoginUrl"));
+      filterInitParam.put("serverName", portalConfig.portalServerName());
+      filterInitParam.put("casServerLoginUrl", portalConfig.casServerLoginUrl());
       //we don't want to use session to store login information, since we will be deployed to a cluster, not a single instance
       filterInitParam.put("useSession", "false");
       filterInitParam.put("/openapi.*", "exclude");
@@ -94,8 +91,8 @@ public class AuthConfiguration {
     public FilterRegistrationBean casValidationFilter() {
       FilterRegistrationBean casValidationFilter = new FilterRegistrationBean();
       Map<String, String> filterInitParam = Maps.newHashMap();
-      filterInitParam.put("casServerUrlPrefix", serverConfigService.getValue("casServerUrlPrefix"));
-      filterInitParam.put("serverName", serverConfigService.getValue("serverName"));
+      filterInitParam.put("casServerUrlPrefix", portalConfig.casServerUrlPrefix());
+      filterInitParam.put("serverName", portalConfig.portalServerName());
       filterInitParam.put("encoding", "UTF-8");
       //we don't want to use session to store login information, since we will be deployed to a cluster, not a single instance
       filterInitParam.put("useSession", "false");
@@ -163,8 +160,8 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public UserService ctripUserService(ServerConfigService serverConfigService) {
-      return new CtripUserService(serverConfigService);
+    public UserService ctripUserService(PortalConfig portalConfig) {
+      return new CtripUserService(portalConfig);
     }
 
     @Bean

@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,24 +18,21 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class CtripUserService implements UserService {
-  private ServerConfigService serverConfigService;
   private RestTemplate restTemplate;
   private List<String> searchUserMatchFields;
   private ParameterizedTypeReference<Map<String, List<UserServiceResponse>>> responseType;
+  private PortalConfig portalConfig;
 
-
-  public CtripUserService(ServerConfigService serverConfigService) {
-    this.serverConfigService = serverConfigService;
+  public CtripUserService(PortalConfig portalConfig) {
+    this.portalConfig = portalConfig;
     this.restTemplate = new RestTemplate(clientHttpRequestFactory());
     this.searchUserMatchFields =
         Lists.newArrayList("empcode", "empaccount", "displayname", "c_name", "pinyin");
@@ -45,22 +42,10 @@ public class CtripUserService implements UserService {
 
   private ClientHttpRequestFactory clientHttpRequestFactory() {
     SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-    factory.setConnectTimeout(getConnectTimeout());
-    factory.setReadTimeout(getReadTimeout());
+    factory.setConnectTimeout(portalConfig.connectTimeout());
+    factory.setReadTimeout(portalConfig.readTimeout());
 
     return factory;
-  }
-
-  private int getConnectTimeout() {
-    String connectTimeout = serverConfigService.getValue("api.connectTimeout", "3000");
-
-    return Integer.parseInt(connectTimeout);
-  }
-
-  private int getReadTimeout() {
-    String readTimeout = serverConfigService.getValue("api.readTimeout", "3000");
-
-    return Integer.parseInt(readTimeout);
   }
 
   @Override
@@ -69,7 +54,7 @@ public class CtripUserService implements UserService {
 
     HttpEntity<UserServiceRequest> entity = new HttpEntity<>(request);
     ResponseEntity<Map<String, List<UserServiceResponse>>> response =
-        restTemplate.exchange(getUserServiceUrl(), HttpMethod.POST, entity, responseType);
+        restTemplate.exchange(portalConfig.userServiceUrl(), HttpMethod.POST, entity, responseType);
 
     if (!response.getBody().containsKey("result")) {
       return Collections.emptyList();
@@ -97,7 +82,7 @@ public class CtripUserService implements UserService {
 
     HttpEntity<UserServiceRequest> entity = new HttpEntity<>(request);
     ResponseEntity<Map<String, List<UserServiceResponse>>> response =
-        restTemplate.exchange(getUserServiceUrl(), HttpMethod.POST, entity, responseType);
+        restTemplate.exchange(portalConfig.userServiceUrl(), HttpMethod.POST, entity, responseType);
 
     if (!response.getBody().containsKey("result")) {
       return Collections.emptyList();
@@ -143,7 +128,7 @@ public class CtripUserService implements UserService {
   private UserServiceRequest assembleUserServiceRequest(Map<String, Object> query, int offset,
                                                         int limit) {
     UserServiceRequest request = new UserServiceRequest();
-    request.setAccess_token(getUserServiceAccessToken());
+    request.setAccess_token(portalConfig.userServiceAccessToken());
 
     UserServiceRequestBody requestBody = new UserServiceRequestBody();
     requestBody.setIndexAlias("itdb_emloyee");
@@ -161,14 +146,6 @@ public class CtripUserService implements UserService {
     return request;
   }
 
-
-  private String getUserServiceUrl() {
-    return serverConfigService.getValue("userService.url");
-  }
-
-  private String getUserServiceAccessToken() {
-    return serverConfigService.getValue("userService.accessToken");
-  }
 
   static class UserServiceRequest {
     private String access_token;

@@ -4,7 +4,7 @@ import com.ctrip.framework.apollo.openapi.entity.Consumer;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerTokenRepository;
-import com.ctrip.framework.apollo.portal.service.ServerConfigService;
+import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class ConsumerServiceTest {
   @Mock
   private ConsumerRepository consumerRepository;
   @Mock
-  private ServerConfigService serverConfigService;
+  private PortalConfig portalConfig;
   private String someTokenSalt;
 
   @Before
@@ -50,12 +50,11 @@ public class ConsumerServiceTest {
         consumerTokenRepository);
     ReflectionTestUtils.setField(consumerService, "consumerRepository",
         consumerRepository);
-    ReflectionTestUtils.setField(consumerService, "serverConfigService",
-        serverConfigService);
+    ReflectionTestUtils.setField(consumerService, "portalConfig",
+                                 portalConfig);
     someTokenSalt = "someTokenSalt";
-    when(serverConfigService.getValue(eq(ConsumerService.TOKEN_SALT_KEY), anyString())).thenReturn(someTokenSalt);
+    when(portalConfig.consumerTokenSalt()).thenReturn(someTokenSalt);
 
-    consumerService.afterPropertiesSet();
   }
 
   @Test

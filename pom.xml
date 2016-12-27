@@ -81,7 +81,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<jetty.version>9.2.16.v20160414</jetty.version>
 		<github.global.server>github</github.global.server>
 		<github.global.oauth2Token>${env.GITHUB_OAUTH_TOKEN}</github.global.oauth2Token>
 	</properties>
@@ -144,7 +143,7 @@
 			<dependency>
 				<groupId>com.dianping.cat</groupId>
 				<artifactId>cat-client</artifactId>
-				<version>2.1.2</version>
+				<version>2.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.unidal.framework</groupId>
@@ -207,16 +206,6 @@
 				<artifactId>logback-classic</artifactId>
 				<version>1.1.7</version>
 			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-util</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
 			<!--for test -->
 			<dependency>
 				<groupId>com.h2database</groupId>
@@ -227,14 +216,14 @@
 			<dependency>
 				<groupId>io.spring.platform</groupId>
 				<artifactId>platform-bom</artifactId>
-				<version>2.0.5.RELEASE</version>
+				<version>2.0.8.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-netflix</artifactId>
-				<version>1.1.0.RELEASE</version>
+				<version>1.2.3.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -332,6 +321,12 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.6</version>
+				</plugin>
+				<!-- Need to set releases.repo and snapshots.repo properties in your .m2/settings.xml -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -478,14 +473,6 @@
 	</profiles>
 
 	<repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/libs-milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 		<repository>
 			<id>internal.repo</id>
 			<url>https://raw.github.com/ctripcorp/apollo/mvn-repo/</url>

@@ -23,7 +23,6 @@ public abstract class AbstractConfigRepository implements ConfigRepository {
       sync();
       return true;
     } catch (Throwable ex) {
-      Tracer.logError(ex);
       logger
           .warn("Sync config failed, will retry. Repository {}, reason: {}", this.getClass(), ExceptionUtil
               .getDetailMessage(ex));
