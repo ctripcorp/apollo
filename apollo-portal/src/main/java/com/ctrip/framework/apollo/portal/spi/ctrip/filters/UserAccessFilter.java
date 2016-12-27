@@ -1,12 +1,15 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip.filters;
 
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
+
 import com.google.common.base.Strings;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 
 public class UserAccessFilter implements Filter {
@@ -26,12 +29,19 @@ public class UserAccessFilter implements Filter {
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-          throws IOException, ServletException {
+      throws IOException, ServletException {
 
     String requestUri = ((HttpServletRequest) request).getRequestURI();
 
-    if (!isStaticResource(requestUri)) {
-      Tracer.logEvent(CatEventType.USER_ACCESS, userInfoHolder.getUser().getUserId());
+    try {
+      if (!isOpenAPIRequest(requestUri) && !isStaticResource(requestUri)) {
+        UserInfo userInfo = userInfoHolder.getUser();
+        if (userInfo != null) {
+          Tracer.logEvent(CatEventType.USER_ACCESS, userInfo.getUserId());
+        }
+      }
+    } catch (Throwable e) {
+      Tracer.logError("Record user access info error.", e);
     }
 
     chain.doFilter(request, response);
@@ -40,6 +50,10 @@ public class UserAccessFilter implements Filter {
   @Override
   public void destroy() {
 
+  }
+
+  private boolean isOpenAPIRequest(String uri) {
+    return !Strings.isNullOrEmpty(uri) && uri.startsWith("/openapi");
   }
 
   private boolean isStaticResource(String uri) {
