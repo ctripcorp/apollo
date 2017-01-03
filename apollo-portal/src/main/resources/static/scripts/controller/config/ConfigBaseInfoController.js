@@ -208,6 +208,7 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
                                                                }));
 
                                             EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE);
+                                            $rootScope.showSideBar = false;
                                         }
                                     });
 
@@ -297,6 +298,31 @@ function ConfigBaseInfoController($rootScope, $scope, $location, toastr, EventMa
             $("#masterNoPermissionDialog").modal('show');
         };
     }
+
+    var VIEW_MODE_SWITCH_WIDTH = 1156;
+    if (window.innerWidth <= VIEW_MODE_SWITCH_WIDTH) {
+        $rootScope.viewMode = 2;
+        $rootScope.showSideBar = false;
+    } else {
+        $rootScope.viewMode = 1;
+    }
+
+
+    $rootScope.adaptScreenSize = function () {
+        if (window.innerWidth <= VIEW_MODE_SWITCH_WIDTH) {
+            $rootScope.viewMode = 2;
+        } else {
+            $rootScope.viewMode = 1;
+            $rootScope.showSideBar = false;
+        }
+
+    };
+
+    $(window).resize(function(){
+        $scope.$apply(function(){
+            $rootScope.adaptScreenSize();
+        });
+    });
 
 }
 
