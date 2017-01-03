@@ -36,6 +36,7 @@ public class InstanceConfigAuditUtil implements InitializingBean {
   private static final int INSTANCE_CONFIG_AUDIT_MAX_SIZE = 2000;
   private static final int INSTANCE_CACHE_MAX_SIZE = 10000;
   private static final int INSTANCE_CONFIG_CACHE_MAX_SIZE = 10000;
+  private static final long OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI = TimeUnit.MINUTES.toMillis(10);//10 minutes
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private final ExecutorService auditExecutorService;
   private final AtomicBoolean auditStopped;
@@ -93,6 +94,10 @@ public class InstanceConfigAuditUtil implements InitializingBean {
         instanceConfig.setConfigClusterName(auditModel.getConfigClusterName());
         instanceConfig.setReleaseKey(auditModel.getReleaseKey());
         instanceConfig.setReleaseDeliveryTime(auditModel.getOfferTime());
+      } else if (offerTimeAndLastModifiedTimeCloseEnough(auditModel.getOfferTime(),
+          instanceConfig.getDataChangeLastModifiedTime())) {
+        //when releaseKey is the same, optimize to reduce writes if the record was updated not long ago
+        return;
       }
       //we need to update no matter the release key is the same or not, to ensure the
       //last modified time is updated each day
@@ -115,6 +120,11 @@ public class InstanceConfigAuditUtil implements InitializingBean {
     } catch (DataIntegrityViolationException ex) {
       //concurrent insertion, safe to ignore
     }
+  }
+
+  private boolean offerTimeAndLastModifiedTimeCloseEnough(Date offerTime, Date lastModifiedTime) {
+    return (offerTime.getTime() - lastModifiedTime.getTime()) <
+        OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI;
   }
 
   private long prepareInstanceId(InstanceConfigAuditModel auditModel) {

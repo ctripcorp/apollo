@@ -97,14 +97,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>github</id>
-			<properties>
-				<package.environment>github</package.environment>
-			</properties>
-			<dependencies>
-			</dependencies>
-		</profile>
-	</profiles>
 </project>
