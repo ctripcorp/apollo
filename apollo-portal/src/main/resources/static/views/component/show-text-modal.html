@@ -7,8 +7,11 @@
 
                 <h4 class="modal-title">查看</h4>
             </div>
-            <pre id="watchText" class="modal-body no-radius" style="margin-bottom: 0"
-                 ng-bind="text">
+            <pre class="modal-body no-radius" style="margin-bottom: 0"
+                 ng-show="!jsonObject" ng-bind="text">
+            </pre>
+            <pre class="modal-body no-radius" style="margin-bottom: 0"
+                 ng-show="jsonObject" ng-bind="jsonObject | json:4">
             </pre>
         </div>
     </div>

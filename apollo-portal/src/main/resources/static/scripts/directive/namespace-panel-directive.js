@@ -416,6 +416,8 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                                                namespace.baseInfo.clusterName,
                                                                namespace.baseInfo.namespaceName)
                             .then(function (result) {
+                                namespace.isLatestReleaseLoaded = true;
+
                                 if (!result) {
                                     namespace.latestReleaseInstances = {};
                                     namespace.latestReleaseInstances.total = 0;
@@ -430,8 +432,6 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                         namespace.latestReleaseInstances = result;
                                         namespace.latestReleaseInstancesPage++;
                                     })
-
-                                namespace.isLatestReleaseLoaded = true;
                             });
                     } else {
                         InstanceService.findInstancesByRelease(scope.env,

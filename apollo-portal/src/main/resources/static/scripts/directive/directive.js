@@ -8,6 +8,7 @@ directive_module.directive('apollonav',
                                    replace: true,
                                    link: function (scope, element, attrs) {
 
+
                                        scope.sourceApps = [];
                                        scope.copyedApps = [];
 
