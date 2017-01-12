@@ -45,8 +45,8 @@ DROP TABLE IF EXISTS `AppNamespace`;
 
 CREATE TABLE `AppNamespace` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `Name` varchar(32) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
-  `AppId` varchar(32) NOT NULL DEFAULT '' COMMENT 'app id',
+  `Name` varchar(500) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
+  `AppId` varchar(500) NOT NULL DEFAULT '' COMMENT 'app id',
   `Format` varchar(32) NOT NULL DEFAULT 'properties' COMMENT 'namespace的format类型',
   `IsPublic` bit(1) NOT NULL DEFAULT b'0' COMMENT 'namespace是否为公共',
   `Comment` varchar(64) NOT NULL DEFAULT '' COMMENT '注释',
@@ -178,7 +178,7 @@ DROP TABLE IF EXISTS `Permission`;
 CREATE TABLE `Permission` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
   `PermissionType` varchar(32) NOT NULL DEFAULT '' COMMENT '权限类型',
-  `TargetId` varchar(256) NOT NULL DEFAULT '' COMMENT '权限对象类型',
+  `TargetId` varchar(2048) NOT NULL DEFAULT '' COMMENT '权限对象类型',
   `IsDeleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) NOT NULL DEFAULT '' COMMENT '创建人邮箱前缀',
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -198,7 +198,7 @@ DROP TABLE IF EXISTS `Role`;
 
 CREATE TABLE `Role` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `RoleName` varchar(256) NOT NULL DEFAULT '' COMMENT 'Role name',
+  `RoleName` varchar(2048) NOT NULL DEFAULT '' COMMENT 'Role name',
   `IsDeleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) NOT NULL DEFAULT 'default' COMMENT '创建人邮箱前缀',
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
