@@ -602,9 +602,12 @@
                   ng-show="namespace.viewType == 'text' && namespace.isTextEditing"
                   ng-disabled="!namespace.isTextEditing" ng-model="namespace.editText">
             </textarea>
+
         <!--history view-->
         <div class="J_historyview history-view" ng-show="namespace.viewType == 'history'">
-            <div class="media" ng-repeat="commits in namespace.commits">
+            <div class="media"
+                 ng-show="namespace.commits && namespace.commits.length"
+                 ng-repeat="commits in namespace.commits">
                 <div class="media-body">
                     <div class="row">
                         <div class="col-md-6"><h3 class="media-heading" ng-bind="commits.dataChangeCreatedBy"></h3>
@@ -732,35 +735,44 @@
                         ng-click="loadCommitHistory(namespace)">加载更多
                     <span class="glyphicon glyphicon-menu-down"></span></button>
             </div>
+            <div class="empty-container text-center" ng-show="!namespace.commits || !namespace.commits.length">
+                无更改历史
+            </div>
         </div>
         <!--instance view-->
         <div class="panel panel-default instance-view" ng-show="namespace.viewType == 'instance'">
             <div class="panel-heading">
-                <div class="row text-right" style="padding-right: 15px;">
+                <div class="row">
 
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-default"
-                                ng-class="{'btn-primary':namespace.instanceViewType == 'latest_release'}"
-                                ng-click="switchInstanceViewType(namespace, 'latest_release')"> 使用最新配置的实例
-                            <span class="badge" ng-bind="namespace.latestReleaseInstances.total"></span>
-                        </button>
-                        <button type="button" class="btn btn-default"
-                                ng-class="{'btn-primary':namespace.instanceViewType == 'not_latest_release'}"
-                                ng-click="switchInstanceViewType(namespace, 'not_latest_release')">使用非最新配置的实例
+                    <div class="col-md-5">
+                        <small>实例说明:只展示最近一天访问过Apollo的实例</small>
+                    </div>
+                    <div class="col-md-7 text-right">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-default"
+                                    ng-class="{'btn-primary':namespace.instanceViewType == 'latest_release'}"
+                                    ng-click="switchInstanceViewType(namespace, 'latest_release')"> 使用最新配置的实例
+                                <span class="badge" ng-bind="namespace.latestReleaseInstances.total"></span>
+                            </button>
+                            <button type="button" class="btn btn-default"
+                                    ng-class="{'btn-primary':namespace.instanceViewType == 'not_latest_release'}"
+                                    ng-click="switchInstanceViewType(namespace, 'not_latest_release')">使用非最新配置的实例
                         <span class="badge"
                               ng-bind="namespace.instancesCount - namespace.latestReleaseInstances.total"></span>
-                        </button>
-                        <button type="button" class="btn btn-default"
-                                ng-class="{'btn-primary':namespace.instanceViewType == 'all'}"
-                                ng-click="switchInstanceViewType(namespace, 'all')">所有实例
-                            <span class="badge" ng-bind="namespace.instancesCount"></span>
+                            </button>
+                            <button type="button" class="btn btn-default"
+                                    ng-class="{'btn-primary':namespace.instanceViewType == 'all'}"
+                                    ng-click="switchInstanceViewType(namespace, 'all')">所有实例
+                                <span class="badge" ng-bind="namespace.instancesCount"></span>
+                            </button>
+                        </div>
+                        <button class="btn btn-default btn-sm"
+                                data-tooltip="tooltip" data-placement="bottom" title="刷新列表"
+                                ng-click="refreshInstancesInfo(namespace)">
+                            <img src="../../img/refresh.png"/>
                         </button>
                     </div>
-                    <button class="btn btn-default btn-sm"
-                            data-tooltip="tooltip" data-placement="bottom" title="刷新列表"
-                            ng-click="refreshInstancesInfo(namespace)">
-                        <img src="../../img/refresh.png"/>
-                    </button>
+
                 </div>
             </div>
 

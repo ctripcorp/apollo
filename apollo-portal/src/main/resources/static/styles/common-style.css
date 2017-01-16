@@ -207,6 +207,38 @@ table th {
     margin-top: 20px;
 }
 
+.side-bar {
+    position: absolute;
+    width: 195px;
+    top: 85px;
+    left: 15px;
+    margin-bottom: 25px;
+    background: #f1f2f7;
+    z-index: 2;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.position-fix {
+    position: fixed;
+}
+
+.view-mode-1 {
+    margin-left: 235px;
+    padding-right: 15px;
+}
+
+.view-mode-2 {
+    padding: 0 15px;
+}
+
+.side-bar-switch {
+    padding: 10px 10px;
+    margin-right: 30px;
+}
+
 .node-treeview {
     color: #797979;
 }
@@ -241,7 +273,6 @@ table th {
 }
 
 .panel-heading .header-buttons {
-    /*float: right;*/
     min-width: 405px;
 }
 
@@ -625,7 +656,7 @@ table th {
     padding: 15px;
 }
 
-.release-history .empty-container {
+.empty-container {
     padding: 15px;
 }
 
@@ -744,3 +775,4 @@ table th {
 .search-focus {
     background: #fff;
 }
+

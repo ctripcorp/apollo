@@ -16,21 +16,22 @@
 
 <apollonav></apollonav>
 
-<div id="config-info" class="container-fluid apollo-container app">
-    <!--具体配置信息-->
-    <div class="config-info-container row">
+<div id="config-info" class="apollo-container app">
+    <div ng-controller="ConfigBaseInfoController">
+        <div class="J_appNotFound hidden row text-center app-not-found" ng-show="notFoundApp">
+            <img src="img/404.png">
+            <br>
+            <p>
+                <span ng-bind="pageContext.appId"></span> 不存在，<a href="/app.html">点击创建</a>
+            </p>
+        </div>
 
-        <div ng-controller="ConfigBaseInfoController">
+        <div class="side-bar"
+             ng-class="{'position-absolute': viewMode == 1, 'position-fixed': viewMode == 2}">
+            <div class="J_appFound hidden"
+                 ng-show="!notFoundApp && (viewMode == 1 || (viewMode == 2 && showSideBar))">
 
-            <div class="J_appNotFound hidden row text-center app-not-found" ng-show="notFoundApp">
-                <img src="img/404.png">
-                <br>
-                <p>
-                    <span ng-bind="pageContext.appId"></span> 不存在，<a href="/app.html">点击创建</a>
-                </p>
-            </div>
-
-            <div class="J_appFound hidden col-md-2 col-xs-2 col-sm-2" ng-show="!notFoundApp">
+                <!--env list-->
                 <section class="panel">
                     <header class="panel-heading">
                         <img src="img/env.png" class="i-20">&nbsp;环境列表
@@ -98,198 +99,208 @@
                     </div>
                 </section>
 
-                <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
-                    <div class="row icon-text icon-plus-orange">
-                        <p class="btn-title ng-binding">补缺环境</p>
+                <!--operation entrance-->
+                <section>
+                    <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
+                        <div class="row icon-text icon-plus-orange">
+                            <p class="btn-title ng-binding">补缺环境</p>
+                        </div>
+                    </a>
+
+                    <apolloentrance apollo-title="'添加集群'" apollo-img-src="'plus-orange'"
+                                    apollo-href="'cluster.html?#/appid=' + pageContext.appId"
+                                    ng-show="hasCreateClusterPermission"></apolloentrance>
+
+                    <div class="list-group-item cursor-pointer hover" ng-click="showMasterPermissionTips()"
+                         ng-show="!hasCreateClusterPermission">
+                        <div class="row icon-text icon-plus-orange">
+                            <p class="btn-title">添加集群</p>
+                        </div>
                     </div>
-                </a>
 
-                <apolloentrance apollo-title="'添加集群'" apollo-img-src="'plus-orange'"
-                                apollo-href="'cluster.html?#/appid=' + pageContext.appId"
-                                ng-show="hasCreateClusterPermission"></apolloentrance>
-            <span class="list-group-item cursor-pointer hover" ng-click="showMasterPermissionTips()"
-                  ng-show="!hasCreateClusterPermission">
-                <div class="row icon-text icon-plus-orange">
-                    <p class="btn-title">添加集群</p>
-                </div>
-            </span>
+                    <apolloentrance apollo-title="'添加Namespace'" apollo-img-src="'plus-orange'"
+                                    apollo-href="'namespace.html?#/appid=' + pageContext.appId"
+                                    ng-show="hasCreateNamespacePermission"></apolloentrance>
 
-                <apolloentrance apollo-title="'添加Namespace'" apollo-img-src="'plus-orange'"
-                                apollo-href="'namespace.html?#/appid=' + pageContext.appId"
-                                ng-show="hasCreateNamespacePermission"></apolloentrance>
-            <span class="list-group-item cursor-pointer hover" ng-click="showMasterPermissionTips()"
-                  ng-show="!hasCreateNamespacePermission">
-                <div class="row icon-text icon-plus-orange">
-                    <p class="btn-title">添加Namespace</p>
-                </div>
-            </span>
+                    <div class="list-group-item cursor-pointer hover" ng-click="showMasterPermissionTips()"
+                         ng-show="!hasCreateNamespacePermission">
+                        <div class="row icon-text icon-plus-orange">
+                            <p class="btn-title">添加Namespace</p>
+                        </div>
+                    </div>
 
-                <apolloentrance apollo-title="'项目权限'" apollo-img-src="'user-manage'"
-                                apollo-href="'/app/role.html?#/appid=' + pageContext.appId"
-                                ng-show="hasAssignUserPermission"></apolloentrance>
+                    <apolloentrance apollo-title="'项目权限'" apollo-img-src="'user-manage'"
+                                    apollo-href="'/app/role.html?#/appid=' + pageContext.appId"
+                                    ng-show="hasAssignUserPermission"></apolloentrance>
                 </section>
-
 
             </div>
         </div>
+    </div>
 
+    <!--具体配置信息-->
+    <!--namespaces-->
+    <div class="config-item-container hide"
+         ng-class="{'view-mode-1': viewMode == 1, 'view-mode-2': viewMode == 2}"
+         ng-controller="ConfigNamespaceController">
 
-        <!--namespaces-->
-        <div class="col-md-10 col-xs-10 col-sm-10 config-item-container hide"
-             ng-controller="ConfigNamespaceController">
-            <div class="alert alert-info alert-dismissible" role="alert"
-                 ng-show="(!hideTip || !hideTip[pageContext.appId][pageContext.clusterName]) && envMapClusters[pageContext.env]">
+        <h4 class="text-center" ng-show="viewMode == 2">
+            当前操作环境:{{pageContext.env}}， 集群:{{pageContext.clusterName}}
+        </h4>
+        <div class="alert alert-info alert-dismissible" role="alert"
+             ng-show="(!hideTip || !hideTip[pageContext.appId][pageContext.clusterName]) && envMapClusters[pageContext.env]">
 
-                <button class="btn btn-sm btn-default pull-right" style="margin-top: -7px;margin-right:-15px;"
-                        ng-click="closeTip(pageContext.clusterName)">不再提示
-                </button>
+            <button class="btn btn-sm btn-default pull-right" style="margin-top: -7px;margin-right:-15px;"
+                    ng-click="closeTip(pageContext.clusterName)">不再提示
+            </button>
 
-                <!--default cluster tip -->
-                <div ng-show="pageContext.clusterName == 'default'">
-                    <strong>注意: </strong>所有不属于
-                    <span ng-bind="envMapClusters[pageContext.env]"></span>
-                    集群的实例会使用default集群（当前页面）的配置，属于
-                    <span ng-bind="envMapClusters[pageContext.env]"></span>
-                    的实例会使用对应集群的配置！
-                </div>
-
-                <!--custom cluster tip-->
-                <div ng-show="pageContext.clusterName != 'default'">
-                    <strong>注意:</strong>属于
-                    <span ng-bind="pageContext.clusterName"></span>
-                    集群的实例只会使用
-                    <span ng-bind="pageContext.clusterName"></span>
-                    集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置！
-                </div>
-
+            <!--default cluster tip -->
+            <div ng-show="pageContext.clusterName == 'default'">
+                <strong>注意: </strong>所有不属于
+                <span ng-bind="envMapClusters[pageContext.env]"></span>
+                集群的实例会使用default集群（当前页面）的配置，属于
+                <span ng-bind="envMapClusters[pageContext.env]"></span>
+                的实例会使用对应集群的配置！
             </div>
 
-            <div class="alert alert-info"
-                 ng-if="hasNotPublishNamespace">
-                <p><b>注意:</b>以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
-                <p><mark ng-bind="namespacePublishInfo.join('，')"></mark></p>
+            <!--custom cluster tip-->
+            <div ng-show="pageContext.clusterName != 'default'">
+                <strong>注意:</strong>属于
+                <span ng-bind="pageContext.clusterName"></span>
+                集群的实例只会使用
+                <span ng-bind="pageContext.clusterName"></span>
+                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置！
             </div>
 
-            <apollonspanel ng-repeat="namespace in namespaces"
-                           namespace="namespace"
-                           app-id="pageContext.appId"
-                           env="pageContext.env"
-                           lock-check="lockCheck"
-                           cluster="pageContext.clusterName"
-                           user="currentUser"
-                           pre-release-ns="prepareReleaseNamespace"
-                           create-item="createItem" edit-item="editItem"
-                           pre-delete-item="preDeleteItem"
-                           show-text="showText"
-                           show-no-modify-permission-dialog="showNoModifyPermissionDialog"
-                           pre-create-branch="preCreateBranch"
-                           pre-delete-branch="preDeleteBranch">
-            </apollonspanel>
+        </div>
 
-            <releasemodal app-id="pageContext.appId"
-                          env="pageContext.env"
-                          cluster="pageContext.clusterName">
-            </releasemodal>
+        <div class="alert alert-info"
+             ng-if="hasNotPublishNamespace">
+            <p><b>注意:</b>以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
+            <p>
+                <mark ng-bind="namespacePublishInfo.join('，')"></mark>
+            </p>
+        </div>
 
-            <itemmodal to-operation-namespace="toOperationNamespace"
+        <apollonspanel ng-repeat="namespace in namespaces"
+                       namespace="namespace"
                        app-id="pageContext.appId"
                        env="pageContext.env"
+                       lock-check="lockCheck"
                        cluster="pageContext.clusterName"
-                       item="item">
-            </itemmodal>
+                       user="currentUser"
+                       pre-release-ns="prepareReleaseNamespace"
+                       create-item="createItem" edit-item="editItem"
+                       pre-delete-item="preDeleteItem"
+                       show-text="showText"
+                       show-no-modify-permission-dialog="showNoModifyPermissionDialog"
+                       pre-create-branch="preCreateBranch"
+                       pre-delete-branch="preDeleteBranch">
+        </apollonspanel>
 
-            <showtextmodal text="text"></showtextmodal>
+        <releasemodal app-id="pageContext.appId"
+                      env="pageContext.env"
+                      cluster="pageContext.clusterName">
+        </releasemodal>
 
-            <rollbackmodal app-id="pageContext.appId"
-                           env="pageContext.env"
-                           cluster="pageContext.clusterName">
-            </rollbackmodal>
+        <itemmodal to-operation-namespace="toOperationNamespace"
+                   app-id="pageContext.appId"
+                   env="pageContext.env"
+                   cluster="pageContext.clusterName"
+                   item="item">
+        </itemmodal>
 
-            <rulesmodal app-id="pageContext.appId"
-                        env="pageContext.env"
-                        cluster="pageContext.clusterName">
+        <showtextmodal text="text"></showtextmodal>
 
-            </rulesmodal>
+        <rollbackmodal app-id="pageContext.appId"
+                       env="pageContext.env"
+                       cluster="pageContext.clusterName">
+        </rollbackmodal>
+
+        <rulesmodal app-id="pageContext.appId"
+                    env="pageContext.env"
+                    cluster="pageContext.clusterName">
+
+        </rulesmodal>
 
 
-            <mergeandpublishmodal app-id="pageContext.appId"
-                                  env="pageContext.env"
-                                  cluster="pageContext.clusterName">
-            </mergeandpublishmodal>
+        <mergeandpublishmodal app-id="pageContext.appId"
+                              env="pageContext.env"
+                              cluster="pageContext.clusterName">
+        </mergeandpublishmodal>
 
 
-            <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
-                                 apollo-detail="'确定要删除配置吗?'"
-                                 apollo-show-cancel-btn="true" apollo-confirm="deleteItem"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
+                             apollo-detail="'确定要删除配置吗?'"
+                             apollo-show-cancel-btn="true" apollo-confirm="deleteItem"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'releaseNoPermissionDialog'" apollo-title="'发布'"
-                                 apollo-detail="'您没有发布权限哦~ 请找项目管理员 ' + masterUsers + ' 分配发布权限'"
-                                 apollo-show-cancel-btn="false"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'releaseNoPermissionDialog'" apollo-title="'发布'"
+                             apollo-detail="'您没有发布权限哦~ 请找项目管理员 ' + masterUsers + ' 分配发布权限'"
+                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'modifyNoPermissionDialog'" apollo-title="'申请配置权限'"
-                                 apollo-detail="'请找项目管理员 ' + masterUsers + ' 分配编辑或发布权限'"
-                                 apollo-show-cancel-btn="false"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'modifyNoPermissionDialog'" apollo-title="'申请配置权限'"
+                             apollo-detail="'请找项目管理员 ' + masterUsers + ' 分配编辑或发布权限'"
+                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'masterNoPermissionDialog'" apollo-title="'申请配置权限'"
-                                 apollo-detail="'您不是项目管理员， 只有项目管理员才有添加集群、namespace的权限。
+        <apolloconfirmdialog apollo-dialog-id="'masterNoPermissionDialog'" apollo-title="'申请配置权限'"
+                             apollo-detail="'您不是项目管理员， 只有项目管理员才有添加集群、namespace的权限。
                                  如需管理员权限，请找项目管理员 ' + masterUsers + ' 分配管理员权限'"
-                                 apollo-show-cancel-btn="false"></apolloconfirmdialog>
+                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'namespaceLockedDialog'" apollo-title="'编辑受限'"
-                                 apollo-detail="'当前namespace正在被 ' + lockOwner + ' 编辑，一次发布只能被一个人修改.'"
-                                 apollo-show-cancel-btn="false"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'namespaceLockedDialog'" apollo-title="'编辑受限'"
+                             apollo-detail="'当前namespace正在被 ' + lockOwner + ' 编辑，一次发布只能被一个人修改.'"
+                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'releaseDenyDialog'" apollo-title="'发布受限'"
-                                 apollo-detail="'您不能发布哟~ ' + pageContext.env + '环境配置的编辑和发布必须为不同的人，请找另一个具有当前namespace发布权的人操作发布~'"
-                                 apollo-show-cancel-btn="false"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'releaseDenyDialog'" apollo-title="'发布受限'"
+                             apollo-detail="'您不能发布哟~ ' + pageContext.env + '环境配置的编辑和发布必须为不同的人，请找另一个具有当前namespace发布权的人操作发布~'"
+                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'rollbackAlertDialog'" apollo-title="'回滚'"
-                                 apollo-detail="'确定要回滚吗?'"
-                                 apollo-show-cancel-btn="true" apollo-confirm="rollback"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'rollbackAlertDialog'" apollo-title="'回滚'"
+                             apollo-detail="'确定要回滚吗?'"
+                             apollo-show-cancel-btn="true" apollo-confirm="rollback"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'deleteBranchDialog'" apollo-title="'删除灰度'"
-                                 apollo-detail="'删除灰度会丢失灰度的配置，确定要删除吗?'"
-                                 apollo-show-cancel-btn="true" apollo-confirm="deleteBranch"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'deleteBranchDialog'" apollo-title="'删除灰度'"
+                             apollo-detail="'删除灰度会丢失灰度的配置，确定要删除吗?'"
+                             apollo-show-cancel-btn="true" apollo-confirm="deleteBranch"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'updateRuleTips'" apollo-title="'更新灰度规则提示'"
-                                 apollo-detail="'灰度规则已生效，但发现灰度版本有未发布的配置，这些配置需要手动灰度发布才会生效'"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'updateRuleTips'" apollo-title="'更新灰度规则提示'"
+                             apollo-detail="'灰度规则已生效，但发现灰度版本有未发布的配置，这些配置需要手动灰度发布才会生效'"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'mergeAndReleaseDenyDialog'" apollo-title="'全量发布'"
-                                 apollo-detail="'namespace主版本有未发布的配置，请先发布主版本配置'"></apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'mergeAndReleaseDenyDialog'" apollo-title="'全量发布'"
+                             apollo-detail="'namespace主版本有未发布的配置，请先发布主版本配置'"></apolloconfirmdialog>
 
-            <apolloconfirmdialog apollo-dialog-id="'grayReleaseWithoutRulesTips'" apollo-title="'缺失灰度规则提示'"
-                                 apollo-detail="'灰度版本还没有配置任何灰度规则，请配置灰度规则'">
-            </apolloconfirmdialog>
+        <apolloconfirmdialog apollo-dialog-id="'grayReleaseWithoutRulesTips'" apollo-title="'缺失灰度规则提示'"
+                             apollo-detail="'灰度版本还没有配置任何灰度规则，请配置灰度规则'">
+        </apolloconfirmdialog>
 
 
-            <div class="modal fade" id="createBranchTips" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header panel-primary">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">创建灰度须知</h4>
-                        </div>
-                        <div class="modal-body">
-                            通过创建灰度版本，您可以对某些配置做灰度测试<br>
-                            灰度流程为:<br>
-                            &nbsp;&nbsp;1.创建灰度版本 <br>
-                            &nbsp;&nbsp;2.配置灰度配置项<br>
-                            &nbsp;&nbsp;3.配置灰度规则.如果是私有的namespace可以按照客户端的IP进行灰度，如果是公共的namespace则可以同时按AppId和客户端的IP进行灰度<br>
-                            &nbsp;&nbsp;4.灰度发布<br>
-                            灰度版本最终有两种结果:<b>全量发布和放弃灰度</b><br>
-                            <b>全量发布</b>:灰度的配置合到主版本并发布，所有的客户端都会使用合并后的配置<br>
-                            <b>放弃灰度</b>:删除灰度版本，所有的客户端都会使用回主版本的配置<br>
-                            注意事项:<br>
-                            &nbsp;&nbsp;1.如果灰度版本已经有灰度发布过，那么修改灰度规则后，无需再次灰度发布就立即生效<br>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                    ng-click="createBranch()">
-                                确定
-                            </button>
-                        </div>
+        <div class="modal fade" id="createBranchTips" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header panel-primary">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">创建灰度须知</h4>
+                    </div>
+                    <div class="modal-body">
+                        通过创建灰度版本，您可以对某些配置做灰度测试<br>
+                        灰度流程为:<br>
+                        &nbsp;&nbsp;1.创建灰度版本 <br>
+                        &nbsp;&nbsp;2.配置灰度配置项<br>
+                        &nbsp;&nbsp;3.配置灰度规则.如果是私有的namespace可以按照客户端的IP进行灰度，如果是公共的namespace则可以同时按AppId和客户端的IP进行灰度<br>
+                        &nbsp;&nbsp;4.灰度发布<br>
+                        灰度版本最终有两种结果:<b>全量发布和放弃灰度</b><br>
+                        <b>全量发布</b>:灰度的配置合到主版本并发布，所有的客户端都会使用合并后的配置<br>
+                        <b>放弃灰度</b>:删除灰度版本，所有的客户端都会使用回主版本的配置<br>
+                        注意事项:<br>
+                        &nbsp;&nbsp;1.如果灰度版本已经有灰度发布过，那么修改灰度规则后，无需再次灰度发布就立即生效<br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                ng-click="createBranch()">
+                            确定
+                        </button>
                     </div>
                 </div>
             </div>

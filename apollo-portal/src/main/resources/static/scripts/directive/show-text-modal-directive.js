@@ -10,7 +10,23 @@ function showTextModalDirective() {
             text: '='
         },
         link: function (scope) {
+            scope.$watch('text', init);
 
+            function init() {
+                scope.jsonObject = undefined;
+                if (isJsonText(scope.text)) {
+                    scope.jsonObject = JSON.parse(scope.text);
+                }
+            }
+
+            function isJsonText(text) {
+                try {
+                    JSON.parse(text);
+                } catch (e) {
+                    return false;
+                }
+                return true;
+            }
         }
     }
 }

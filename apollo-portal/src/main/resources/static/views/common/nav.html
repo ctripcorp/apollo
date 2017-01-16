@@ -1,7 +1,18 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-
+            <img class="navbar-brand side-bar-switch cursor-pointer" src="../../img/show_sidebar.png"
+                 onMouseOver="this.style.background='#f1f2f7'"
+                 onMouseOut="this.style.background='#fff'"
+                 data-tooltip="tooltip" data-placement="bottom" title="显示导航栏"
+                 ng-show="viewMode == 2 && !showSideBar"
+                 ng-click="showSideBar = !showSideBar">
+            <img class="navbar-brand side-bar-switch cursor-pointer" src="../../img/hide_sidebar.png"
+                 onMouseOver="this.style.background='#f1f2f7'"
+                 onMouseOut="this.style.background='#fff'"
+                 data-tooltip="tooltip" data-placement="bottom" title="隐藏导航栏"
+                 ng-show="viewMode == 2 && showSideBar"
+                 ng-click="showSideBar = !showSideBar">
             <a class="navbar-brand logo" href="/">
                 <b>Apollo 配置中心</b>
             </a>
@@ -11,14 +22,15 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a href="http://conf.ctripcorp.com/display/FRAM/Apollo" target="_blank">
-                    <span class="glyphicon glyphicon-question-sign"></span>帮助
-                </a>
+                        <span class="glyphicon glyphicon-question-sign"></span>帮助
+                    </a>
                 </li>
 
                 <li class="dropdown">
 
                     <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false"><span class="glyphicon glyphicon-user"></span>{{userName}} <span class="caret"></span></a>
+                       aria-expanded="false"><span class="glyphicon glyphicon-user"></span>{{userName}} <span
+                            class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/user/logout">退出</a></li>
                     </ul>
@@ -27,7 +39,8 @@
 
             <div class="navbar-form navbar-right form-inline" role="search">
                 <div class="form-group">
-                    <input type="text" class="form-control search-input" placeholder="搜索项目(项目ID、项目名)" style="width: 350px"
+                    <input type="text" class="form-control search-input" placeholder="搜索项目(项目ID、项目名)"
+                           style="width: 350px"
                            ng-model="searchKey" ng-change="changeSearchKey()" ng-focus="changeSearchKey()">
 
                     <div class="row app-list" ng-show="shouldShowAppList">
