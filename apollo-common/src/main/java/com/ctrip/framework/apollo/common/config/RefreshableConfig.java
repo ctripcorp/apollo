@@ -75,7 +75,7 @@ public abstract class RefreshableConfig {
     try {
       String value = getValue(key);
       return value == null ? defaultValue : Integer.parseInt(value);
-    } catch (Exception e) {
+    } catch (Throwable e) {
       Tracer.logError("Get int property failed.", e);
       return defaultValue;
     }
@@ -85,7 +85,7 @@ public abstract class RefreshableConfig {
     try {
       String value = getValue(key);
       return value == null ? defaultValue : "true".equals(value);
-    } catch (Exception e) {
+    } catch (Throwable e) {
       Tracer.logError("Get boolean property failed.", e);
       return defaultValue;
     }
@@ -95,7 +95,7 @@ public abstract class RefreshableConfig {
     try {
       String value = getValue(key);
       return Strings.isNullOrEmpty(value) ? defaultValue : value.split(LIST_SEPARATOR);
-    } catch (Exception e) {
+    } catch (Throwable e) {
       Tracer.logError("Get array property failed.", e);
       return defaultValue;
     }
@@ -104,7 +104,7 @@ public abstract class RefreshableConfig {
   public String getValue(String key, String defaultValue) {
     try {
       return environment.getProperty(key, defaultValue);
-    } catch (Exception e) {
+    } catch (Throwable e) {
       Tracer.logError("Get value failed.", e);
       return defaultValue;
     }

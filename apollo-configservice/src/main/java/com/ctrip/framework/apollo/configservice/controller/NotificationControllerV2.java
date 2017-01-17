@@ -15,9 +15,9 @@ import com.google.gson.reflect.TypeToken;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
 import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.service.ReleaseMessageService;
 import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -65,7 +65,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   private WatchKeysUtil watchKeysUtil;
 
   @Autowired
-  private ReleaseMessageService releaseMessageService;
+  private ReleaseMessageServiceWithCache releaseMessageService;
 
   @Autowired
   private EntityManagerUtil entityManagerUtil;

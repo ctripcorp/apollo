@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -250,12 +249,7 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   private void populateDataBaseInterval() {
-    try {
-      databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();
-    } catch (Throwable ex) {
-      Tracer.logError(ex);
-      logger.error("Load apollo gray release rule scan interval from server config failed", ex);
-    }
+    databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();
   }
 
   private int getDatabaseScanIntervalSecond() {

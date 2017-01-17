@@ -56,9 +56,6 @@
 	<profiles>
 		<profile>
 			<id>ctrip</id>
-			<properties>
-				<package.environment>ctrip</package.environment>
-			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>com.ctrip.framework.apollo-sso</groupId>

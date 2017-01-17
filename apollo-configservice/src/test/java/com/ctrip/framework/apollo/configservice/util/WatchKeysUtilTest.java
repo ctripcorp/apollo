@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import com.ctrip.framework.apollo.biz.service.AppNamespaceService;
+import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class WatchKeysUtilTest {
   @Mock
-  private AppNamespaceService appNamespaceService;
+  private AppNamespaceServiceWithCache appNamespaceService;
   @Mock
   private AppNamespace someAppNamespace;
   @Mock

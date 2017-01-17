@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class BizConfig extends RefreshableConfig {
@@ -80,5 +81,28 @@ public class BizConfig extends RefreshableConfig {
     return getValue("clogging.server.port");
   }
 
+  public int appNamespaceCacheScanInterval() {
+    return getIntProperty("apollo.app-namespace-cache-scan.interval", 1);
+  }
+
+  public TimeUnit appNamespaceCacheScanIntervalTimeUnit() {
+    return TimeUnit.SECONDS;
+  }
+
+  public int appNamespaceCacheRebuildInterval() {
+    return getIntProperty("apollo.app-namespace-cache-rebuild.interval", 60);
+  }
+
+  public TimeUnit appNamespaceCacheRebuildIntervalTimeUnit() {
+    return TimeUnit.SECONDS;
+  }
+
+  public int releaseMessageCacheScanInterval() {
+    return getIntProperty("apollo.release-message-cache-scan.interval", 1);
+  }
+
+  public TimeUnit releaseMessageCacheScanIntervalTimeUnit() {
+    return TimeUnit.SECONDS;
+  }
 
 }

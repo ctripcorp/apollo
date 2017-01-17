@@ -59,6 +59,11 @@
 					<artifactId>aws-java-sdk-route53</artifactId>
 					<groupId>com.amazonaws</groupId>
 				</exclusion>
+				<!-- duplicated with spring-security-core -->
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-crypto</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- end of eureka -->

@@ -5,9 +5,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 
+import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -33,6 +36,9 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
   @Autowired
   private Gson gson;
 
+  @Autowired
+  private ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
+
   private String someAppId;
   private String someCluster;
   private String defaultNamespace;
@@ -42,6 +48,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
 
   @Before
   public void setUp() throws Exception {
+    ReflectionTestUtils.invokeMethod(releaseMessageServiceWithCache, "reset");
     someAppId = "someAppId";
     someCluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     defaultNamespace = ConfigConsts.NAMESPACE_APPLICATION;

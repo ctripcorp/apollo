@@ -7,7 +7,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import com.ctrip.framework.apollo.biz.service.AppNamespaceService;
+import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 
@@ -26,7 +26,7 @@ import java.util.Set;
 public class WatchKeysUtil {
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   @Autowired
-  private AppNamespaceService appNamespaceService;
+  private AppNamespaceServiceWithCache appNamespaceService;
 
   /**
    * Assemble watch keys for the given appId, cluster, namespace, dataCenter combination

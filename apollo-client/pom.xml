@@ -38,9 +38,10 @@
 			<artifactId>jetty-server</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- take over jcl -->
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.biz.message.ReleaseMessageScanner;
 import com.ctrip.framework.apollo.configservice.controller.ConfigFileController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationControllerV2;
+import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,10 +31,14 @@ public class ConfigServiceAutoConfiguration {
     private NotificationControllerV2 notificationControllerV2;
     @Autowired
     private GrayReleaseRulesHolder grayReleaseRulesHolder;
+    @Autowired
+    private ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
 
     @Bean
     public ReleaseMessageScanner releaseMessageScanner() {
       ReleaseMessageScanner releaseMessageScanner = new ReleaseMessageScanner();
+      //0. handle release message cache
+      releaseMessageScanner.addMessageListener(releaseMessageServiceWithCache);
       //1. handle gray release rule
       releaseMessageScanner.addMessageListener(grayReleaseRulesHolder);
       //2. handle server cache

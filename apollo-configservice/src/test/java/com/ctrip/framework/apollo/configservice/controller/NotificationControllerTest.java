@@ -6,8 +6,8 @@ import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.Topics;
-import com.ctrip.framework.apollo.biz.service.ReleaseMessageService;
 import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
+import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -45,7 +45,7 @@ public class NotificationControllerTest {
   private long someNotificationId;
   private String someClientIp;
   @Mock
-  private ReleaseMessageService releaseMessageService;
+  private ReleaseMessageServiceWithCache releaseMessageService;
   @Mock
   private EntityManagerUtil entityManagerUtil;
   @Mock

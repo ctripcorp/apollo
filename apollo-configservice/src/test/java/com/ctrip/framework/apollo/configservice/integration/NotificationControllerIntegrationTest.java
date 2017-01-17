@@ -2,14 +2,19 @@ package com.ctrip.framework.apollo.configservice.integration;
 
 import com.google.common.base.Joiner;
 
+import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,8 +33,12 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
   private String somePublicNamespace;
   private ExecutorService executorService;
 
+  @Autowired
+  private ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
+
   @Before
   public void setUp() throws Exception {
+    ReflectionTestUtils.invokeMethod(releaseMessageServiceWithCache, "reset");
     someAppId = "someAppId";
     someCluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     defaultNamespace = ConfigConsts.NAMESPACE_APPLICATION;
