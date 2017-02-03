@@ -62,26 +62,27 @@ public class NamespaceController {
   @Autowired
   private RolePermissionService rolePermissionService;
 
-  @RequestMapping("/appnamespaces/public")
+  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)
   public List<AppNamespace> findPublicAppNamespaces() {
     return appNamespaceService.findPublicAppNamespaces();
   }
 
-  @RequestMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
   public List<NamespaceBO> findNamespaces(@PathVariable String appId, @PathVariable String env,
                                           @PathVariable String clusterName) {
 
     return namespaceService.findNamespaceBOs(appId, Env.valueOf(env), clusterName);
   }
 
-  @RequestMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.GET)
   public NamespaceBO findNamespace(@PathVariable String appId, @PathVariable String env,
                                    @PathVariable String clusterName, @PathVariable String namespaceName) {
 
     return namespaceService.loadNamespaceBO(appId, Env.valueOf(env), clusterName, namespaceName);
   }
 
-  @RequestMapping("/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace")
+  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace",
+      method = RequestMethod.GET)
   public NamespaceBO findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
                                                                @PathVariable String appId,
                                                                @PathVariable String namespaceName,
@@ -170,7 +171,6 @@ public class NamespaceController {
     return createdAppNamespace;
   }
 
-
   /**
    * env -> cluster -> cluster has not published namespace?
    * Example:
@@ -178,7 +178,7 @@ public class NamespaceController {
    *  default -> true   (default cluster has not published namespace)
    *  customCluster -> false (customCluster cluster's all namespaces had published)
    */
-  @RequestMapping("/apps/{appId}/namespaces/publish_info")
+  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {
     return namespaceService.getNamespacesPublishInfo(appId);
   }

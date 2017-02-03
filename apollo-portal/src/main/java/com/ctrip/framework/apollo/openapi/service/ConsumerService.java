@@ -12,7 +12,7 @@ import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerAuditRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerTokenRepository;
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;

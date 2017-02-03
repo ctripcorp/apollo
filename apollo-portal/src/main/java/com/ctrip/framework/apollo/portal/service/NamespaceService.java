@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
@@ -15,7 +15,7 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-import com.ctrip.framework.apollo.portal.components.PortalSettings;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;

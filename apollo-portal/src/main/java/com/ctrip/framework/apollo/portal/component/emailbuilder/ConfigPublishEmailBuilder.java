@@ -1,14 +1,15 @@
-package com.ctrip.framework.apollo.portal.components.emailbuilder;
+package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 
 import com.google.common.collect.Lists;
 
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
+import com.ctrip.framework.apollo.common.constants.ReleaseOperationContext;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
@@ -29,11 +30,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
 
 public abstract class ConfigPublishEmailBuilder {
+
+  private static final String EMERGENCY_PUBLISH_TAG = "<span style='color:red'>(紧急发布)</span>";
 
   //email content common field placeholder
   private static final String EMAIL_CONTENT_FIELD_APPID = "#\\{appId\\}";
@@ -48,6 +52,7 @@ public abstract class ConfigPublishEmailBuilder {
   private static final String EMAIL_CONTENT_FIELD_RELEASE_COMMENT = "#\\{releaseComment}";
   private static final String EMAIL_CONTENT_FIELD_APOLLO_SERVER_ADDRESS = "#\\{apollo.portal.address}";
   private static final String EMAIL_CONTENT_FIELD_DIFF_CONTENT = "#\\{diffContent}";
+  private static final String EMAIL_CONTENT_FIELD_EMERGENCY_PUBLISH = "#\\{emergencyPublish}";
 
   private static final String EMAIL_CONTENT_DIFF_MODULE = "#\\{diffModule}";
   protected static final String EMAIL_CONTENT_GRAY_RULES_MODULE = "#\\{rulesModule}";
@@ -118,7 +123,18 @@ public abstract class ConfigPublishEmailBuilder {
   }
 
   private String renderReleaseBasicInfo(String template, Env env, ReleaseHistoryBO releaseHistory) {
-    String renderResult = template.replaceAll(EMAIL_CONTENT_FIELD_APPID, Matcher.quoteReplacement(releaseHistory.getAppId()));
+    String renderResult = template;
+
+    Map<String, Object> operationContext = releaseHistory.getOperationContext();
+    boolean isEmergencyPublish = operationContext.containsKey(ReleaseOperationContext.IS_EMERGENCY_PUBLISH) &&
+                                 (boolean) operationContext.get(ReleaseOperationContext.IS_EMERGENCY_PUBLISH);
+    if (isEmergencyPublish) {
+      renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_EMERGENCY_PUBLISH, Matcher.quoteReplacement(EMERGENCY_PUBLISH_TAG));
+    } else {
+      renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_EMERGENCY_PUBLISH, "");
+    }
+
+    renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_APPID, Matcher.quoteReplacement(releaseHistory.getAppId()));
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_ENV, Matcher.quoteReplacement(env.toString()));
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_CLUSTER, Matcher.quoteReplacement(releaseHistory.getClusterName()));
     renderResult = renderResult.replaceAll(EMAIL_CONTENT_FIELD_NAMESPACE, Matcher.quoteReplacement(releaseHistory.getNamespaceName()));

@@ -10,9 +10,11 @@ import com.ctrip.framework.apollo.common.utils.ExceptionUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
 import com.ctrip.framework.apollo.portal.repository.AppRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.slf4j.Logger;
@@ -35,17 +37,17 @@ public class AppService {
   @Autowired
   private UserInfoHolder userInfoHolder;
   @Autowired
+  private AdminServiceAPI.AppAPI appAPI;
+  @Autowired
+  private AppRepository appRepository;
+  @Autowired
   private ClusterService clusterService;
   @Autowired
   private AppNamespaceService appNamespaceService;
   @Autowired
   private RoleInitializationService roleInitializationService;
-
   @Autowired
-  private AdminServiceAPI.AppAPI appAPI;
-
-  @Autowired
-  private AppRepository appRepository;
+  private UserService userService;
 
 
   public List<App> findAll() {
@@ -56,11 +58,11 @@ public class AppService {
     return Lists.newArrayList((apps));
   }
 
-  public List<App> findByAppIds(Set<String> appIds){
+  public List<App> findByAppIds(Set<String> appIds) {
     return appRepository.findByAppIdIn(appIds);
   }
 
-  public List<App> findByOwnerName(String ownerName, Pageable page){
+  public List<App> findByOwnerName(String ownerName, Pageable page) {
     return appRepository.findByOwnerName(ownerName, page);
   }
 
@@ -100,16 +102,27 @@ public class AppService {
     App managedApp = appRepository.findByAppId(appId);
 
     if (managedApp != null) {
-      throw new BadRequestException(String.format("app id %s already exists!", app.getAppId()));
-    } else {
-      App createdApp = appRepository.save(app);
-      appNamespaceService.createDefaultAppNamespace(appId);
-      //role
-      roleInitializationService.initAppRoles(createdApp);
-
-      Tracer.logEvent(CatEventType.CREATE_APP, appId);
-      return createdApp;
+      throw new BadRequestException(String.format("App already exists. AppId = %s", appId));
     }
+
+    UserInfo owner = userService.findByUserId(app.getOwnerName());
+    if (owner == null) {
+      throw new BadRequestException("Application's owner not exist.");
+    }
+    app.setOwnerEmail(owner.getEmail());
+
+    String operator = userInfoHolder.getUser().getUserId();
+    app.setDataChangeCreatedBy(operator);
+    app.setDataChangeLastModifiedBy(operator);
+
+    App createdApp = appRepository.save(app);
+
+    appNamespaceService.createDefaultAppNamespace(appId);
+    roleInitializationService.initAppRoles(createdApp);
+
+    Tracer.logEvent(CatEventType.CREATE_APP, appId);
+
+    return createdApp;
   }
 
   public EnvClusterInfo createEnvNavNode(Env env, String appId) {

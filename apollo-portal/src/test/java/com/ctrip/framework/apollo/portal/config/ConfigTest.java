@@ -1,20 +1,18 @@
 package com.ctrip.framework.apollo.portal.config;
 
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.AbstractUnitTest;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConfigTest {
+public class ConfigTest extends AbstractUnitTest{
 
   @Mock
   private ConfigurableEnvironment environment;
@@ -27,7 +25,7 @@ public class ConfigTest {
     String testKey = "key";
     String testDefaultValue = "value";
 
-    when(environment.getProperty(testKey)).thenReturn(null);
+    when(environment.getProperty(testKey, testDefaultValue)).thenReturn(testDefaultValue);
 
     Assert.assertEquals(testDefaultValue, config.getValue(testKey, testDefaultValue));
   }

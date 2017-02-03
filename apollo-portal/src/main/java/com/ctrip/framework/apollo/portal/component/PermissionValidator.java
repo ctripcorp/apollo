@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components;
+package com.ctrip.framework.apollo.portal.component;
 
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;

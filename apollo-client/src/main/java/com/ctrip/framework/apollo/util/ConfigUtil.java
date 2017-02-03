@@ -29,6 +29,13 @@ public class ConfigUtil {
   private String cluster;
   private int loadConfigQPS = 2; //2 times per second
   private int longPollQPS = 2; //2 times per second
+  //for on error retry
+  private long onErrorRetryInterval = 1;//1 second
+  private TimeUnit onErrorRetryIntervalTimeUnit = TimeUnit.SECONDS;//1 second
+  //for typed config cache of parser result, e.g. integer, double, long, etc.
+  private long maxConfigCacheSize = 500;//500 cache key
+  private long configCacheExpireTime = 1;//1 minute
+  private TimeUnit configCacheExpireTimeUnit = TimeUnit.MINUTES;//1 minute
 
   public ConfigUtil() {
     initRefreshInterval();
@@ -36,6 +43,7 @@ public class ConfigUtil {
     initReadTimeout();
     initCluster();
     initQPS();
+    initMaxConfigCacheSize();
   }
 
   /**
@@ -47,7 +55,8 @@ public class ConfigUtil {
     String appId = Foundation.app().getAppId();
     if (Strings.isNullOrEmpty(appId)) {
       appId = ConfigConsts.NO_APPID_PLACEHOLDER;
-      logger.warn("app.id is not set, please make sure it is set in classpath:/META-INF/app.properties, now apollo will only load public namespace configurations!");
+      logger.warn("app.id is not set, please make sure it is set in classpath:/META-INF/app.properties, now apollo " +
+          "will only load public namespace configurations!");
     }
     return appId;
   }
@@ -206,6 +215,14 @@ public class ConfigUtil {
     return longPollQPS;
   }
 
+  public long getOnErrorRetryInterval() {
+    return onErrorRetryInterval;
+  }
+
+  public TimeUnit getOnErrorRetryIntervalTimeUnit() {
+    return onErrorRetryIntervalTimeUnit;
+  }
+
   public String getDefaultLocalCacheDir() {
     String cacheRoot = isOSWindows() ? "C:\\opt\\data\\%s" : "/opt/data/%s";
     return String.format(cacheRoot, getAppId());
@@ -227,5 +244,28 @@ public class ConfigUtil {
       return false;
     }
     return osName.startsWith("Windows");
+  }
+
+  private void initMaxConfigCacheSize() {
+    String customizedConfigCacheSize = System.getProperty("apollo.configCacheSize");
+    if (!Strings.isNullOrEmpty(customizedConfigCacheSize)) {
+      try {
+        maxConfigCacheSize = Long.valueOf(customizedConfigCacheSize);
+      } catch (Throwable ex) {
+        logger.error("Config for apollo.configCacheSize is invalid: {}", customizedConfigCacheSize);
+      }
+    }
+  }
+
+  public long getMaxConfigCacheSize() {
+    return maxConfigCacheSize;
+  }
+
+  public long getConfigCacheExpireTime() {
+    return configCacheExpireTime;
+  }
+
+  public TimeUnit getConfigCacheExpireTimeUnit() {
+    return configCacheExpireTimeUnit;
   }
 }

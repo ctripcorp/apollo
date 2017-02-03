@@ -14,19 +14,59 @@ import org.unidal.lookup.ContainerLoader;
 
 /**
  * Entry point for client config use
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigService {
   private static final ConfigService s_instance = new ConfigService();
 
   private PlexusContainer m_container;
+  private volatile ConfigManager m_configManager;
+  private volatile ConfigRegistry m_configRegistry;
 
   private ConfigService() {
     m_container = ContainerLoader.getDefaultContainer();
   }
 
+  private ConfigManager getManager() {
+    if (m_configManager == null) {
+      synchronized (this) {
+        if (m_configManager == null) {
+          try {
+            m_configManager = m_container.lookup(ConfigManager.class);
+          } catch (ComponentLookupException ex) {
+            ApolloConfigException exception = new ApolloConfigException("Unable to load ConfigManager!", ex);
+            Tracer.logError(exception);
+            throw exception;
+          }
+        }
+      }
+    }
+
+    return m_configManager;
+  }
+
+  private ConfigRegistry getRegistry() {
+    if (m_configRegistry == null) {
+      synchronized (this) {
+        if (m_configRegistry == null) {
+          try {
+            m_configRegistry = m_container.lookup(ConfigRegistry.class);
+          } catch (ComponentLookupException ex) {
+            ApolloConfigException exception = new ApolloConfigException("Unable to load ConfigRegistry!", ex);
+            Tracer.logError(exception);
+            throw exception;
+          }
+        }
+      }
+    }
+
+    return m_configRegistry;
+  }
+
   /**
    * Get Application's config instance.
+   *
    * @return config instance
    */
   public static Config getAppConfig() {
@@ -35,35 +75,16 @@ public class ConfigService {
 
   /**
    * Get the config instance for the namespace.
+   *
    * @param namespace the namespace of the config
    * @return config instance
    */
   public static Config getConfig(String namespace) {
-    return getManager().getConfig(namespace);
+    return s_instance.getManager().getConfig(namespace);
   }
 
   public static ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
-    return getManager().getConfigFile(namespace, configFileFormat);
-  }
-
-  private static ConfigManager getManager() {
-    try {
-      return s_instance.m_container.lookup(ConfigManager.class);
-    } catch (ComponentLookupException ex) {
-      ApolloConfigException exception = new ApolloConfigException("Unable to load ConfigManager!", ex);
-      Tracer.logError(exception);
-      throw exception;
-    }
-  }
-
-  private static ConfigRegistry getRegistry() {
-    try {
-      return s_instance.m_container.lookup(ConfigRegistry.class);
-    } catch (ComponentLookupException ex) {
-      ApolloConfigException exception = new ApolloConfigException("Unable to load ConfigRegistry!", ex);
-      Tracer.logError(exception);
-      throw exception;
-    }
+    return s_instance.getManager().getConfigFile(namespace, configFileFormat);
   }
 
   static void setConfig(Config config) {
@@ -72,11 +93,12 @@ public class ConfigService {
 
   /**
    * Manually set the config for the namespace specified, use with caution.
+   *
    * @param namespace the namespace
-   * @param config the config instance
+   * @param config    the config instance
    */
   static void setConfig(String namespace, final Config config) {
-    getRegistry().register(namespace, new ConfigFactory() {
+    s_instance.getRegistry().register(namespace, new ConfigFactory() {
       @Override
       public Config create(String namespace) {
         return config;
@@ -96,15 +118,20 @@ public class ConfigService {
 
   /**
    * Manually set the config factory for the namespace specified, use with caution.
+   *
    * @param namespace the namespace
-   * @param factory the factory instance
+   * @param factory   the factory instance
    */
   static void setConfigFactory(String namespace, ConfigFactory factory) {
-    getRegistry().register(namespace, factory);
+    s_instance.getRegistry().register(namespace, factory);
   }
 
   // for test only
   static void setContainer(PlexusContainer m_container) {
-    s_instance.m_container = m_container;
+    synchronized (s_instance) {
+      s_instance.m_container = m_container;
+      s_instance.m_configManager = null;
+      s_instance.m_configRegistry = null;
+    }
   }
 }

@@ -1,0 +1,28 @@
+<div class="modal fade" id="publishDenyModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header panel-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">发布受限</h4>
+            </div>
+            <div class="modal-body">
+                您不能发布哟~{{env}}环境配置的编辑和发布必须为不同的人，请找另一个具有当前namespace发布权的人操作发布~
+                <span ng-if="toReleaseNamespace.isEmergencyPublishAllowed">
+                    <br><br><small>（如果是非工作时间或者特殊情况，您可以通过点击<mark>紧急发布</mark>按钮进行发布）</small>
+                </span>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal"
+                        ng-if="toReleaseNamespace.isEmergencyPublishAllowed"
+                        ng-click="emergencyPublish()">
+                    紧急发布
+                </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,27 +42,30 @@ public class ReleaseService {
   private AdminServiceAPI.ReleaseAPI releaseAPI;
 
   public ReleaseDTO publish(NamespaceReleaseModel model) {
-    String appId = model.getAppId();
     Env env = model.getEnv();
+    boolean isEmergencyPublish = model.isEmergencyPublish();
+    String appId = model.getAppId();
     String clusterName = model.getClusterName();
     String namespaceName = model.getNamespaceName();
-    String releaseBy =
-        StringUtils.isEmpty(model.getReleasedBy()) ? userInfoHolder.getUser().getUserId() : model.getReleasedBy();
+    String releaseBy = StringUtils.isEmpty(model.getReleasedBy()) ?
+                       userInfoHolder.getUser().getUserId() : model.getReleasedBy();
 
-    ReleaseDTO releaseDTO = releaseAPI
-        .createRelease(appId, env, clusterName, namespaceName, model.getReleaseTitle(), model.getReleaseComment()
-            , releaseBy);
+    ReleaseDTO releaseDTO = releaseAPI.createRelease(appId, env, clusterName, namespaceName,
+                                                     model.getReleaseTitle(), model.getReleaseComment(),
+                                                     releaseBy, isEmergencyPublish);
 
-    Tracer.logEvent(CatEventType.RELEASE_NAMESPACE, String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+    Tracer.logEvent(CatEventType.RELEASE_NAMESPACE,
+                    String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+
     return releaseDTO;
   }
 
   public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespaceName,
                                      String releaseTitle, String releaseComment, String branchName,
-                                     boolean deleteBranch, ItemChangeSets changeSets) {
+                                     boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
 
     return releaseAPI.updateAndPublish(appId, env, clusterName, namespaceName, releaseTitle, releaseComment, branchName,
-                                       deleteBranch, changeSets);
+                                       isEmergencyPublish, deleteBranch, changeSets);
   }
 
   public List<ReleaseBO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,

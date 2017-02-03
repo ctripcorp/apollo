@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.portal.spi.ctrip;
 import com.ctrip.framework.apollo.portal.spi.ctrip.filters.UserAccessFilter;
 import com.google.common.base.Strings;
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
 import org.springframework.beans.factory.annotation.Autowired;

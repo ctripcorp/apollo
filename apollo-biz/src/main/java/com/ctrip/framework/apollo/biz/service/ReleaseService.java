@@ -13,6 +13,7 @@ import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.repository.ReleaseRepository;
 import com.ctrip.framework.apollo.biz.utils.ReleaseKeyGenerator;
+import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperationContext;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
@@ -43,11 +44,9 @@ import java.util.Set;
  */
 @Service
 public class ReleaseService {
+
   private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
   private Gson gson = new Gson();
-
-  private Type configurationTypeReference = new TypeToken<Map<String, String>>() {
-  }.getType();
 
   @Autowired
   private ReleaseRepository releaseRepository;
@@ -123,12 +122,11 @@ public class ReleaseService {
   }
 
   @Transactional
-  public Release mergeBranchChangeSetsAndRelease(Namespace namespace, String branchName, String
-      releaseName, String releaseComment, ItemChangeSets changeSets) {
-    NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
-    if (lock != null && lock.getDataChangeCreatedBy().equals(changeSets.getDataChangeLastModifiedBy())) {
-      throw new BadRequestException("config can not be published by yourself.");
-    }
+  public Release mergeBranchChangeSetsAndRelease(Namespace namespace, String branchName, String releaseName,
+                                                 String releaseComment, boolean isEmergencyPublish,
+                                                 ItemChangeSets changeSets) {
+
+    checkLock(namespace, isEmergencyPublish, changeSets.getDataChangeLastModifiedBy());
 
     itemSetService.updateSet(namespace, changeSets);
 
@@ -141,22 +139,19 @@ public class ReleaseService {
     Map<String, Object> operationContext = Maps.newHashMap();
     operationContext.put(ReleaseOperationContext.SOURCE_BRANCH, branchName);
     operationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, branchReleaseId);
+    operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
 
-    Release release = masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems,
-                                    changeSets.getDataChangeLastModifiedBy(),
-                                    ReleaseOperation.GRAY_RELEASE_MERGE_TO_MASTER, operationContext);
+    return masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems,
+                         changeSets.getDataChangeLastModifiedBy(),
+                         ReleaseOperation.GRAY_RELEASE_MERGE_TO_MASTER, operationContext);
 
-    return release;
   }
 
   @Transactional
   public Release publish(Namespace namespace, String releaseName, String releaseComment,
-                         String operator) {
+                         String operator, boolean isEmergencyPublish) {
 
-    NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
-    if (lock != null && lock.getDataChangeCreatedBy().equals(operator)) {
-      throw new BadRequestException("config can not be published by yourself.");
-    }
+    checkLock(namespace, isEmergencyPublish, operator);
 
     Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
@@ -165,7 +160,7 @@ public class ReleaseService {
     //branch release
     if (parentNamespace != null) {
       return publishBranchNamespace(parentNamespace, namespace, operateNamespaceItems,
-                                    releaseName, releaseComment, operator);
+                                    releaseName, releaseComment, operator, isEmergencyPublish);
     }
 
     Namespace childNamespace = namespaceService.findChildNamespace(namespace);
@@ -176,31 +171,43 @@ public class ReleaseService {
     }
 
     //master release
+    Map<String, Object> operationContext = Maps.newHashMap();
+    operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
+
     Release release = masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems,
-                                    operator, ReleaseOperation.NORMAL_RELEASE, null);
+                                    operator, ReleaseOperation.NORMAL_RELEASE, operationContext);
 
     //merge to branch and auto release
     if (childNamespace != null) {
       mergeFromMasterAndPublishBranch(namespace, childNamespace, operateNamespaceItems,
-                                      releaseName, releaseComment, operator, previousRelease, release);
+                                      releaseName, releaseComment, operator, previousRelease,
+                                      release, isEmergencyPublish);
     }
 
     return release;
   }
 
+  private void checkLock(Namespace namespace, boolean isEmergencyPublish, String operator) {
+    if (!isEmergencyPublish) {
+      NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
+      if (lock != null && lock.getDataChangeCreatedBy().equals(operator)) {
+        throw new BadRequestException("Config can not be published by yourself.");
+      }
+    }
+  }
+
   private void mergeFromMasterAndPublishBranch(Namespace parentNamespace, Namespace childNamespace,
                                                Map<String, String> parentNamespaceItems,
                                                String releaseName, String releaseComment,
-                                               String operator, Release masterPreviousRelease, Release parentRelease) {
-//    //create release for child namespace
+                                               String operator, Release masterPreviousRelease,
+                                               Release parentRelease, boolean isEmergencyPublish) {
+    //create release for child namespace
     Map<String, String> childReleaseConfiguration = getNamespaceReleaseConfiguration(childNamespace);
-    Map<String, String> parentNamespaceOldConfiguration = masterPreviousRelease == null ? null :
-                                                          gson.fromJson(
-                                                              masterPreviousRelease.getConfigurations(),
-                                                              configurationTypeReference);
+    Map<String, String> parentNamespaceOldConfiguration = masterPreviousRelease == null ?
+                                                          null : gson.fromJson(masterPreviousRelease.getConfigurations(),
+                                                                        GsonType.CONFIG);
 
-    Map<String, String>
-        childNamespaceToPublishConfigs =
+    Map<String, String> childNamespaceToPublishConfigs =
         calculateChildNamespaceToPublishConfiguration(parentNamespaceOldConfiguration,
                                                       parentNamespaceItems,
                                                       childNamespace);
@@ -208,27 +215,27 @@ public class ReleaseService {
     if (!childNamespaceToPublishConfigs.equals(childReleaseConfiguration)) {
       branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
                     childNamespaceToPublishConfigs, parentRelease.getId(), operator,
-                    ReleaseOperation.MASTER_NORMAL_RELEASE_MERGE_TO_GRAY);
+                    ReleaseOperation.MASTER_NORMAL_RELEASE_MERGE_TO_GRAY, isEmergencyPublish);
     }
 
   }
 
   private Release publishBranchNamespace(Namespace parentNamespace, Namespace childNamespace,
                                          Map<String, String> childNamespaceItems,
-                                         String releaseName, String releaseComment, String operator) {
+                                         String releaseName, String releaseComment,
+                                         String operator, boolean isEmergencyPublish) {
     Release parentLatestRelease = findLatestActiveRelease(parentNamespace);
     Map<String, String> parentConfigurations = parentLatestRelease != null ?
                                                gson.fromJson(parentLatestRelease.getConfigurations(),
-                                                             configurationTypeReference) : new HashMap<>();
+                                                             GsonType.CONFIG) : new HashMap<>();
     long baseReleaseId = parentLatestRelease == null ? 0 : parentLatestRelease.getId();
 
     Map<String, String> childNamespaceToPublishConfigs = mergeConfiguration(parentConfigurations, childNamespaceItems);
-    Release release =
-        branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
-                      childNamespaceToPublishConfigs, baseReleaseId, operator,
-                      ReleaseOperation.GRAY_RELEASE);
 
-    return release;
+    return branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
+                         childNamespaceToPublishConfigs, baseReleaseId, operator,
+                         ReleaseOperation.GRAY_RELEASE, isEmergencyPublish);
+
   }
 
   private Release masterRelease(Namespace namespace, String releaseName, String releaseComment,
@@ -241,8 +248,8 @@ public class ReleaseService {
 
     releaseHistoryService.createReleaseHistory(namespace.getAppId(), namespace.getClusterName(),
                                                namespace.getNamespaceName(), namespace.getClusterName(),
-                                               release.getId(),
-                                               previousReleaseId, releaseOperation, operationContext, operator);
+                                               release.getId(), previousReleaseId, releaseOperation,
+                                               operationContext, operator);
 
     return release;
   }
@@ -250,7 +257,7 @@ public class ReleaseService {
   private Release branchRelease(Namespace parentNamespace, Namespace childNamespace,
                                 String releaseName, String releaseComment,
                                 Map<String, String> configurations, long baseReleaseId,
-                                String operator, int releaseOperation) {
+                                String operator, int releaseOperation, boolean isEmergencyPublish) {
     Release previousRelease = findLatestActiveRelease(childNamespace.getAppId(),
                                                       childNamespace.getClusterName(),
                                                       childNamespace.getNamespaceName());
@@ -258,6 +265,7 @@ public class ReleaseService {
 
     Map<String, Object> releaseOperationContext = Maps.newHashMap();
     releaseOperationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, baseReleaseId);
+    releaseOperationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
 
     Release release =
         createRelease(childNamespace, releaseName, releaseComment, configurations, operator);
@@ -316,8 +324,7 @@ public class ReleaseService {
     Release release = findLatestActiveRelease(namespace);
     Map<String, String> configuration = new HashMap<>();
     if (release != null) {
-      configuration = new Gson().fromJson(release.getConfigurations(),
-                                          configurationTypeReference);
+      configuration = new Gson().fromJson(release.getConfigurations(), GsonType.CONFIG);
     }
     return configuration;
   }
@@ -395,12 +402,11 @@ public class ReleaseService {
     Release parentNamespaceNewLatestRelease = parentNamespaceTwoLatestActiveRelease.get(1);
 
     Map<String, String> parentNamespaceAbandonedConfiguration = gson.fromJson(abandonedRelease.getConfigurations(),
-                                                                              configurationTypeReference);
+                                                                              GsonType.CONFIG);
 
     Map<String, String>
         parentNamespaceNewLatestConfiguration =
-        gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(),
-                      configurationTypeReference);
+        gson.fromJson(parentNamespaceNewLatestRelease.getConfigurations(), GsonType.CONFIG);
 
     Map<String, String>
         childNamespaceNewConfiguration =
@@ -408,9 +414,10 @@ public class ReleaseService {
                                                       parentNamespaceNewLatestConfiguration,
                                                       childNamespace);
 
-    branchRelease(parentNamespace, childNamespace, TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "",
+    branchRelease(parentNamespace, childNamespace,
+                  TIMESTAMP_FORMAT.format(new Date()) + "-master-rollback-merge-to-gray", "",
                   childNamespaceNewConfiguration, parentNamespaceNewLatestRelease.getId(), operator,
-                  ReleaseOperation.MATER_ROLLBACK_MERGE_TO_GRAY);
+                  ReleaseOperation.MATER_ROLLBACK_MERGE_TO_GRAY, false);
   }
 
   private Map<String, String> calculateChildNamespaceToPublishConfiguration(
@@ -423,7 +430,7 @@ public class ReleaseService {
     Map<String, String> childNamespaceLatestActiveConfiguration = childNamespaceLatestActiveRelease == null ? null :
                                                                   gson.fromJson(childNamespaceLatestActiveRelease
                                                                                     .getConfigurations(),
-                                                                                configurationTypeReference);
+                                                                                GsonType.CONFIG);
 
     Map<String, String> childNamespaceModifiedConfiguration = calculateBranchModifiedItemsAccordingToRelease(
         parentNamespaceOldConfiguration, childNamespaceLatestActiveConfiguration);

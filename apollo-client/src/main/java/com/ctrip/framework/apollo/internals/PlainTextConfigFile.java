@@ -12,7 +12,7 @@ public abstract class PlainTextConfigFile extends AbstractConfigFile {
 
   @Override
   public String getContent() {
-    if (m_configProperties.get() == null) {
+    if (!this.hasContent()) {
       return null;
     }
     return m_configProperties.get().getProperty(ConfigConsts.CONFIG_FILE_CONTENT_KEY);

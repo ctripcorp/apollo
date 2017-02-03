@@ -8,8 +8,8 @@ import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-import com.ctrip.framework.apollo.portal.components.ItemsComparator;
-import com.ctrip.framework.apollo.portal.components.PermissionValidator;
+import com.ctrip.framework.apollo.portal.component.ItemsComparator;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -84,13 +84,14 @@ public class NamespaceBranchService {
 
 
   public ReleaseDTO merge(String appId, Env env, String clusterName, String namespaceName,
-                          String branchName, String title, String comment, boolean deleteBranch) {
+                          String branchName, String title, String comment,
+                          boolean isEmergencyPublish, boolean deleteBranch) {
 
     ItemChangeSets changeSets = calculateBranchChangeSet(appId, env, clusterName, namespaceName, branchName);
 
-    ReleaseDTO
-        mergedResult =
-        releaseService.updateAndPublish(appId, env, clusterName, namespaceName, title, comment, branchName, deleteBranch, changeSets);
+    ReleaseDTO mergedResult =
+        releaseService.updateAndPublish(appId, env, clusterName, namespaceName, title, comment,
+                                        branchName, isEmergencyPublish, deleteBranch, changeSets);
 
     Tracer.logEvent(CatEventType.MERGE_GRAY_RELEASE,
                  String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));

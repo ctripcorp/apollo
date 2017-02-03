@@ -16,7 +16,7 @@ public abstract class Tracer {
   private static final Logger logger = LoggerFactory.getLogger(Tracer.class);
   private static final MessageProducerManager NULL_MESSAGE_PRODUCER_MANAGER =
       new NullMessageProducerManager();
-  private static MessageProducerManager producerManager;
+  private static volatile MessageProducerManager producerManager;
   private static Object lock = new Object();
 
   static {

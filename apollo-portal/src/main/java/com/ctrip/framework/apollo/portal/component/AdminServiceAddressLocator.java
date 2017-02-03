@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components;
+package com.ctrip.framework.apollo.portal.component;
 
 import com.google.common.collect.Lists;
 

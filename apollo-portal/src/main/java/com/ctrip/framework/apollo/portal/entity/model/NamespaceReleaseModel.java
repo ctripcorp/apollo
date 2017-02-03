@@ -13,6 +13,7 @@ public class NamespaceReleaseModel implements Verifiable {
   private String releaseTitle;
   private String releaseComment;
   private String releasedBy;
+  private boolean isEmergencyPublish;
 
   @Override
   public boolean isInvalid() {
@@ -73,5 +74,13 @@ public class NamespaceReleaseModel implements Verifiable {
 
   public void setReleasedBy(String releasedBy) {
     this.releasedBy = releasedBy;
+  }
+
+  public boolean isEmergencyPublish() {
+    return isEmergencyPublish;
+  }
+
+  public void setEmergencyPublish(boolean emergencyPublish) {
+    isEmergencyPublish = emergencyPublish;
   }
 }

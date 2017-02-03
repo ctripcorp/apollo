@@ -25,6 +25,10 @@ p, td, span {
     word-break: break-all;
 }
 
+.modal {
+    overflow-y: scroll
+}
+
 .no-radius {
     border-radius: 0;
 }
@@ -423,9 +427,11 @@ table th {
 }
 
 .namespace-panel .namespace-view-table .search-input {
-    padding-top: 15px;
-    padding-bottom: 10px;
+    padding: 15px 0 15px 10px;
+}
 
+.namespace-panel .namespace-view-table .search-input input {
+    width: 350px;
 }
 
 .namespace-panel .no-config-panel {
@@ -607,6 +613,12 @@ table th {
     padding: 0;
 }
 
+.release-history .release-history-list .emergency-publish {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 .release-history .release-history-list .load-more {
     height: 45px;
     background: #f5f5f5;
@@ -769,10 +781,12 @@ table th {
 }
 
 .search-onblur {
+    width: 165px;
     background: #f5f5f5;
 }
 
 .search-focus {
+    width: 165px;
     background: #fff;
 }
 

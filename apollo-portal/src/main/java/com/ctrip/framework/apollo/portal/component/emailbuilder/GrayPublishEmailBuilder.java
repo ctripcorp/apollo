@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components.emailbuilder;
+package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;

@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components.emailbuilder;
+package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 
 import com.ctrip.framework.apollo.core.enums.Env;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class MergeEmailBuilder extends ConfigPublishEmailBuilder {
+public class NormalPublishEmailBuilder extends ConfigPublishEmailBuilder {
 
-  private static final String EMAIL_SUBJECT = "[Apollo] 全量发布";
+  private static final String EMAIL_SUBJECT = "[Apollo] 配置发布";
 
 
   @Override

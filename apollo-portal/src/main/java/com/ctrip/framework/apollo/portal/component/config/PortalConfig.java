@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components.config;
+package com.ctrip.framework.apollo.portal.component.config;
 
 
 import com.google.common.base.Strings;
@@ -15,11 +15,11 @@ import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -97,6 +97,19 @@ public class PortalConfig extends RefreshableConfig {
     return getValue("apollo.portal.address");
   }
 
+  public boolean isEmergencyPublishAllowed(Env env) {
+    String targetEnv = env.name();
+
+    String[] emergencyPublishSupportedEnvs = getArrayProperty("emergencyPublish.supported.envs", new String[0]);
+
+    for (String supportedEnv: emergencyPublishSupportedEnvs) {
+      if (Objects.equals(targetEnv, supportedEnv.toUpperCase().trim())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   /***
    * Level: low

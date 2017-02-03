@@ -125,14 +125,14 @@ public class ItemController {
     commitService.save(commit);
   }
 
-  @RequestMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
   public List<ItemDTO> findItems(@PathVariable("appId") String appId,
                                  @PathVariable("clusterName") String clusterName,
                                  @PathVariable("namespaceName") String namespaceName) {
     return BeanUtils.batchTransform(ItemDTO.class, itemService.findItems(appId, clusterName, namespaceName));
   }
 
-  @RequestMapping("/items/{itemId}")
+  @RequestMapping(value = "/items/{itemId}", method = RequestMethod.GET)
   public ItemDTO get(@PathVariable("itemId") long itemId) {
     Item item = itemService.findOne(itemId);
     if (item == null) {
@@ -141,7 +141,7 @@ public class ItemController {
     return BeanUtils.transfrom(ItemDTO.class, item);
   }
 
-  @RequestMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.GET)
   public ItemDTO get(@PathVariable("appId") String appId,
                      @PathVariable("clusterName") String clusterName,
                      @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {

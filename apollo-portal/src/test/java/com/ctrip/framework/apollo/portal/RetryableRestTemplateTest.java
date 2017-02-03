@@ -3,8 +3,8 @@ package com.ctrip.framework.apollo.portal;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.components.AdminServiceAddressLocator;
-import com.ctrip.framework.apollo.portal.components.RetryableRestTemplate;
+import com.ctrip.framework.apollo.portal.component.AdminServiceAddressLocator;
+import com.ctrip.framework.apollo.portal.component.RetryableRestTemplate;
 
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collections;

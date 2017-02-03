@@ -1,9 +1,9 @@
-package com.ctrip.framework.apollo.portal.components;
+package com.ctrip.framework.apollo.portal.component;
 
 import com.google.common.io.BaseEncoding;
 
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 
 import org.apache.http.Header;
 import org.apache.http.auth.AuthScope;

@@ -19,12 +19,14 @@ function releaseModalDirective(toastr, AppUtil, EventManager, ReleaseService, Na
             scope.releaseBtnDisabled = false;
             scope.releaseChangeViewType = 'change';
             scope.releaseComment = '';
-
+            scope.isEmergencyPublish = false;
+            
             EventManager.subscribe(EventManager.EventType.PUBLISH_NAMESPACE,
                                    function (context) {
 
                                        var namespace = context.namespace;
                                        scope.toReleaseNamespace = context.namespace;
+                                       scope.isEmergencyPublish = !!context.isEmergencyPublish;
 
                                        var date = new Date().Format("yyyyMMddhhmmss");
                                        if (namespace.mergeAndPublish) {
@@ -55,7 +57,8 @@ function releaseModalDirective(toastr, AppUtil, EventManager, ReleaseService, Na
                                        scope.toReleaseNamespace.baseInfo.clusterName,
                                        scope.toReleaseNamespace.baseInfo.namespaceName,
                                        scope.toReleaseNamespace.releaseTitle,
-                                       scope.releaseComment).then(
+                                       scope.releaseComment,
+                                       scope.isEmergencyPublish).then(
                     function (result) {
                         AppUtil.hideModal('#releaseModal');
                         toastr.success("发布成功");
@@ -83,7 +86,8 @@ function releaseModalDirective(toastr, AppUtil, EventManager, ReleaseService, Na
                                            scope.toReleaseNamespace.baseInfo.namespaceName,
                                            scope.toReleaseNamespace.baseInfo.clusterName,
                                            scope.toReleaseNamespace.releaseTitle,
-                                           scope.releaseComment).then(
+                                           scope.releaseComment,
+                                           scope.isEmergencyPublish).then(
                     function (result) {
                         AppUtil.hideModal('#releaseModal');
                         toastr.success("灰度发布成功");
@@ -98,7 +102,9 @@ function releaseModalDirective(toastr, AppUtil, EventManager, ReleaseService, Na
                                 item.isModified = false;
                             }
                         });
+                        //reset namespace status
                         scope.toReleaseNamespace.itemModifiedCnt = 0;
+                        scope.toReleaseNamespace.lockOwner = undefined;
 
                         //check rules
                         if (!scope.toReleaseNamespace.rules
@@ -125,6 +131,7 @@ function releaseModalDirective(toastr, AppUtil, EventManager, ReleaseService, Na
                                                              scope.toReleaseNamespace.baseInfo.clusterName,
                                                              scope.toReleaseNamespace.releaseTitle,
                                                              scope.releaseComment,
+                                                             scope.isEmergencyPublish,
                                                              scope.toReleaseNamespace.mergeAfterDeleteBranch)
                     .then(function (result) {
 

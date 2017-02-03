@@ -75,7 +75,8 @@
                         <h5 class="col-md-7 word-break" ng-show="releaseHistory.operation == 8">删除灰度(全量发布)</h5>
 
                         <h6 class="col-md-5 text-right" ng-bind="releaseHistory.releaseTimeFormatted"></h6>
-
+                        <span class="label label-warning no-radius emergency-publish"
+                              ng-if="releaseHistory.operationContext.isEmergencyPublish">紧急发布</span>
                     </div>
                 </div>
 

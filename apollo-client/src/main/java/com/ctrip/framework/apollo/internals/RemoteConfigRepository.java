@@ -228,7 +228,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
       }
 
       try {
-        TimeUnit.SECONDS.sleep(1);
+        m_configUtil.getOnErrorRetryIntervalTimeUnit().sleep(m_configUtil.getOnErrorRetryInterval());
       } catch (InterruptedException ex) {
         //ignore
       }

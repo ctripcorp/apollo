@@ -46,7 +46,7 @@ public class ApolloDataSourceProvider implements DataSourceProvider, LogEnabled 
          String appId = Foundation.app().getAppId();
          String envType = Foundation.server().getEnvType();
 
-         if (file.hasContent()) {
+         if (file != null && file.hasContent()) {
             String content = file.getContent();
 
             m_logger.info(String.format("Found datasources.xml from Apollo(env=%s, app.id=%s)!", envType, appId));

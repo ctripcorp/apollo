@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
+import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
 
 import org.junit.Assert;
@@ -24,8 +25,6 @@ import java.util.Map;
 public class ReleaseCreationTest extends AbstractIntegrationTest {
 
   private Gson gson = new Gson();
-  private Type configurationTypeReference = new TypeToken<Map<String, String>>() {
-  }.getType();
 
   @Autowired
   private ReleaseService releaseService;
@@ -47,7 +46,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String clusterName = "only-master";
     Namespace namespace = instanceNamespace(namespaceId, clusterName);
 
-    releaseService.publish(namespace, "", "", operator);
+    releaseService.publish(namespace, "", "", operator, false);
 
     Release latestRelease = releaseService.findLatestActiveRelease(namespace);
 
@@ -92,7 +91,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster1";
     Namespace parentNamespace = instanceNamespace(parentNamespaceId, parentClusterName);
 
-    releaseService.publish(parentNamespace, "", "", operator);
+    releaseService.publish(parentNamespace, "", "", operator, false);
 
     Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 
@@ -166,7 +165,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster2";
     Namespace parentNamespace = instanceNamespace(parentNamespaceId, parentClusterName);
 
-    releaseService.publish(parentNamespace, "", "", operator);
+    releaseService.publish(parentNamespace, "", "", operator, false);
 
     Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 
@@ -237,7 +236,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster3";
     Namespace parentNamespace = instanceNamespace(parentNamespaceId, parentClusterName);
 
-    releaseService.publish(parentNamespace, "", "", operator);
+    releaseService.publish(parentNamespace, "", "", operator, false);
 
     Release latestParentNamespaceRelease = releaseService.findLatestActiveRelease(parentNamespace);
 
@@ -306,7 +305,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster4";
     //assert child namespace
     Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
-    releaseService.publish(childNamespace, "", "", operator);
+    releaseService.publish(childNamespace, "", "", operator, false);
 
     Release latestChildNamespaceRelease = releaseService.findLatestActiveRelease(childNamespace);
 
@@ -377,7 +376,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
     String childClusterName = "child-cluster5";
     //assert child namespace
     Namespace childNamespace = instanceNamespace(childNamespaceId, childClusterName);
-    releaseService.publish(childNamespace, "", "", operator);
+    releaseService.publish(childNamespace, "", "", operator, false);
 
     Release latestChildNamespaceRelease = releaseService.findLatestActiveRelease(childNamespace);
 
@@ -495,7 +494,7 @@ public class ReleaseCreationTest extends AbstractIntegrationTest {
   }
 
   private Map<String, String> parseConfiguration(String configuration) {
-    return gson.fromJson(configuration, configurationTypeReference);
+    return gson.fromJson(configuration, GsonType.CONFIG);
   }
 
 }

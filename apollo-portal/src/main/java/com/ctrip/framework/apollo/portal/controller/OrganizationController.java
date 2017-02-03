@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
 
 import org.springframework.beans.factory.annotation.Autowired;

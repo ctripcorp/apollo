@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.portal.components.emailbuilder;
+package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 
 import com.ctrip.framework.apollo.core.enums.Env;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class NormalPublishEmailBuilder extends ConfigPublishEmailBuilder {
+public class RollbackEmailBuilder extends ConfigPublishEmailBuilder {
 
-  private static final String EMAIL_SUBJECT = "[Apollo] 配置发布";
+  private static final String EMAIL_SUBJECT = "[Apollo] 配置回滚";
 
 
   @Override
@@ -30,6 +30,6 @@ public class NormalPublishEmailBuilder extends ConfigPublishEmailBuilder {
 
   @Override
   protected String getDiffModuleTemplate() {
-    return portalConfig.emailReleaseDiffModuleTemplate();
+    return portalConfig.emailRollbackDiffModuleTemplate();
   }
 }

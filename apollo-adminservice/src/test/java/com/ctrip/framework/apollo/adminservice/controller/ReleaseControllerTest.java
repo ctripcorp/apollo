@@ -121,7 +121,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
         .thenReturn(someNamespace);
 
     releaseController
-        .publish(someAppId, someCluster, someNamespaceName, someName, someComment, "test");
+        .publish(someAppId, someCluster, someNamespaceName, someName, someComment, "test", false);
 
     verify(someMessageSender, times(1))
         .sendMessage(Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)

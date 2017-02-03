@@ -59,6 +59,7 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
 
   @Before
   public void setUp() throws Exception {
+    super.tearDown();//clear the container
     super.setUp();
     someNamespace = "someName";
 
@@ -231,6 +232,16 @@ public class RemoteConfigRepositoryTest extends ComponentTestCase {
     @Override
     public int getLongPollQPS() {
       return 200;
+    }
+
+    @Override
+    public long getOnErrorRetryInterval() {
+      return 10;
+    }
+
+    @Override
+    public TimeUnit getOnErrorRetryIntervalTimeUnit() {
+      return TimeUnit.MILLISECONDS;
     }
   }
 

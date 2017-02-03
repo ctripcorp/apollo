@@ -230,31 +230,32 @@ public class AdminServiceAPI {
     }
 
     public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
-                                    String releaseName, String releaseComment, String operator) {
+                                    String releaseName, String releaseComment, String operator, boolean isEmergencyPublish) {
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8"));
       MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
       parameters.add("name", releaseName);
       parameters.add("comment", releaseComment);
       parameters.add("operator", operator);
+      parameters.add("isEmergencyPublish", String.valueOf(isEmergencyPublish));
       HttpEntity<MultiValueMap<String, String>> entity =
           new HttpEntity<>(parameters, headers);
       ReleaseDTO response = restTemplate.post(
           env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", entity,
-          ReleaseDTO.class,
-          appId, clusterName, namespace);
+          ReleaseDTO.class, appId, clusterName, namespace);
       return response;
     }
 
     public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
                                        String releaseName, String releaseComment, String branchName,
-                                       boolean deleteBranch, ItemChangeSets changeSets) {
+                                       boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
 
       return restTemplate.post(env,
                                "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/updateAndPublish?"
-                               + "releaseName={releaseName}&releaseComment={releaseComment}&branchName={branchName}&deleteBranch={deleteBranch}",
-                               changeSets, ReleaseDTO.class,
-                               appId, clusterName, namespace, releaseName, releaseComment, branchName, deleteBranch);
+                               + "releaseName={releaseName}&releaseComment={releaseComment}&branchName={branchName}"
+                               + "&deleteBranch={deleteBranch}&isEmergencyPublish={isEmergencyPublish}",
+                               changeSets, ReleaseDTO.class, appId, clusterName, namespace,
+                               releaseName, releaseComment, branchName, deleteBranch, isEmergencyPublish);
 
     }
 

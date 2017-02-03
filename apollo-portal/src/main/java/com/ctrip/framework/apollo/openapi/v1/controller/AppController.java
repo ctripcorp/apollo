@@ -4,12 +4,13 @@ import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.openapi.dto.OpenEnvClusterDTO;
-import com.ctrip.framework.apollo.portal.components.PortalSettings;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
@@ -24,7 +25,7 @@ public class AppController {
   @Autowired
   private ClusterService clusterService;
 
-  @RequestMapping("/apps/{appId}/envclusters")
+  @RequestMapping(value = "/apps/{appId}/envclusters", method = RequestMethod.GET)
   public List<OpenEnvClusterDTO> loadEnvClusterInfo(@PathVariable String appId){
 
     List<OpenEnvClusterDTO> envClusters = new LinkedList<>();

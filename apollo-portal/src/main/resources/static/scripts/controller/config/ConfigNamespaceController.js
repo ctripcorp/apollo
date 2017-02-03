@@ -19,6 +19,7 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
     $scope.deleteBranch = deleteBranch;
     $scope.showNoModifyPermissionDialog = showNoModifyPermissionDialog;
     $scope.lockCheck = lockCheck;
+    $scope.emergencyPublish = emergencyPublish;
 
     init();
 
@@ -309,6 +310,30 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             }, function (result) {
                 toastr.error(AppUtil.errorMsg(result), "删除分支失败");
             })
+
+    }
+
+    EventManager.subscribe(EventManager.EventType.EMERGENCY_PUBLISH,
+                           function (context) {
+                               AppUtil.showModal("#emergencyPublishAlertDialog");
+                               $scope.emergencyPublishContext = context;
+                           });
+
+    function emergencyPublish() {
+        if ($scope.emergencyPublishContext.mergeAndPublish) {
+
+            EventManager.emit(EventManager.EventType.MERGE_AND_PUBLISH_NAMESPACE,
+                              {
+                                  branch: $scope.emergencyPublishContext.namespace,
+                                  isEmergencyPublish: true
+                              });
+        } else {
+            EventManager.emit(EventManager.EventType.PUBLISH_NAMESPACE,
+                              {
+                                  namespace: $scope.emergencyPublishContext.namespace,
+                                  isEmergencyPublish: true
+                              });
+        }
 
     }
 

@@ -1,7 +1,11 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.Config;
@@ -13,37 +17,63 @@ import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
+import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.ctrip.framework.apollo.util.function.Functions;
 import com.ctrip.framework.apollo.util.parser.Parsers;
 
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.unidal.lookup.ContainerLoader;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfig implements Config {
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
-  private static final String LONG_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-  private static final String MEDIUM_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-  private static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
-  private static final String[] DATE_FORMATS = {LONG_DATE_FORMAT, MEDIUM_DATE_FORMAT,
-      SHORT_DATE_FORMAT};
 
   private static ExecutorService m_executorService;
+
   private List<ConfigChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
+  private ConfigUtil m_configUtil;
+  private volatile Cache<String, Integer> m_integerCache;
+  private volatile Cache<String, Long> m_longCache;
+  private volatile Cache<String, Short> m_shortCache;
+  private volatile Cache<String, Float> m_floatCache;
+  private volatile Cache<String, Double> m_doubleCache;
+  private volatile Cache<String, Byte> m_byteCache;
+  private volatile Cache<String, Boolean> m_booleanCache;
+  private volatile Cache<String, Date> m_dateCache;
+  private volatile Cache<String, Long> m_durationCache;
+  private Map<String, Cache<String, String[]>> m_arrayCache;
+  private List<Cache> allCaches;
+  private AtomicLong m_configVersion; //indicate config version
 
   static {
     m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
         .create("Config", true));
+  }
 
+  public AbstractConfig() {
+    try {
+      m_configUtil = ContainerLoader.getDefaultContainer().lookup(ConfigUtil.class);
+      m_configVersion = new AtomicLong();
+      m_arrayCache = Maps.newConcurrentMap();
+      allCaches = Lists.newArrayList();
+    } catch (ComponentLookupException ex) {
+      Tracer.logError(ex);
+      throw new ApolloConfigException("Unable to load component!", ex);
+    }
   }
 
   @Override
@@ -56,11 +86,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Integer getIntProperty(String key, Integer defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Integer.parseInt(value);
+      if (m_integerCache == null) {
+        synchronized (this) {
+          if (m_integerCache == null) {
+            m_integerCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_INT_FUNCTION, m_integerCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getIntProperty for %s failed, return default value %d", key,
@@ -72,11 +106,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Long getLongProperty(String key, Long defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Long.parseLong(value);
+      if (m_longCache == null) {
+        synchronized (this) {
+          if (m_longCache == null) {
+            m_longCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_LONG_FUNCTION, m_longCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getLongProperty for %s failed, return default value %d", key,
@@ -88,11 +126,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Short getShortProperty(String key, Short defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Short.parseShort(value);
+      if (m_shortCache == null) {
+        synchronized (this) {
+          if (m_shortCache == null) {
+            m_shortCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_SHORT_FUNCTION, m_shortCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getShortProperty for %s failed, return default value %d", key,
@@ -104,11 +146,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Float getFloatProperty(String key, Float defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Float.parseFloat(value);
+      if (m_floatCache == null) {
+        synchronized (this) {
+          if (m_floatCache == null) {
+            m_floatCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_FLOAT_FUNCTION, m_floatCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getFloatProperty for %s failed, return default value %f", key,
@@ -120,11 +166,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Double getDoubleProperty(String key, Double defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Double.parseDouble(value);
+      if (m_doubleCache == null) {
+        synchronized (this) {
+          if (m_doubleCache == null) {
+            m_doubleCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_DOUBLE_FUNCTION, m_doubleCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getDoubleProperty for %s failed, return default value %f", key,
@@ -136,11 +186,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Byte getByteProperty(String key, Byte defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Byte.parseByte(value);
+      if (m_byteCache == null) {
+        synchronized (this) {
+          if (m_byteCache == null) {
+            m_byteCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_BYTE_FUNCTION, m_byteCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getByteProperty for %s failed, return default value %d", key,
@@ -152,11 +206,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Boolean getBooleanProperty(String key, Boolean defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Boolean.parseBoolean(value);
+      if (m_booleanCache == null) {
+        synchronized (this) {
+          if (m_booleanCache == null) {
+            m_booleanCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_BOOLEAN_FUNCTION, m_booleanCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getBooleanProperty for %s failed, return default value %b", key,
@@ -166,13 +224,29 @@ public abstract class AbstractConfig implements Config {
   }
 
   @Override
-  public String[] getArrayProperty(String key, String delimiter, String[] defaultValue) {
+  public String[] getArrayProperty(String key, final String delimiter, String[] defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return value.split(delimiter);
+      if (!m_arrayCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_arrayCache.containsKey(delimiter)) {
+            m_arrayCache.put(delimiter, this.<String[]>newCache());
+          }
+        }
       }
+
+      Cache<String, String[]> cache = m_arrayCache.get(delimiter);
+      String[] result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, String[]>() {
+        @Override
+        public String[] apply(String input) {
+          return input.split(delimiter);
+        }
+      }, cache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getArrayProperty for %s failed, return default value", key), ex));
@@ -200,11 +274,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public Date getDateProperty(String key, Date defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Parsers.forDate().parse(value);
+      if (m_dateCache == null) {
+        synchronized (this) {
+          if (m_dateCache == null) {
+            m_dateCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_DATE_FUNCTION, m_dateCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getDateProperty for %s failed, return default value %s", key,
@@ -251,11 +329,15 @@ public abstract class AbstractConfig implements Config {
   @Override
   public long getDurationProperty(String key, long defaultValue) {
     try {
-      String value = getProperty(key, null);
-
-      if (value != null) {
-        return Parsers.forDuration().parseToMillis(value);
+      if (m_durationCache == null) {
+        synchronized (this) {
+          if (m_durationCache == null) {
+            m_durationCache = newCache();
+          }
+        }
       }
+
+      return getValueFromCache(key, Functions.TO_DURATION_FUNCTION, m_durationCache, defaultValue);
     } catch (Throwable ex) {
       Tracer.logError(new ApolloConfigException(
           String.format("getDurationProperty for %s failed, return default value %d", key,
@@ -263,6 +345,59 @@ public abstract class AbstractConfig implements Config {
     }
 
     return defaultValue;
+  }
+
+  private <T> T getValueFromCache(String key, Function<String, T> parser, Cache<String, T> cache, T defaultValue) {
+    T result = cache.getIfPresent(key);
+
+    if (result != null) {
+      return result;
+    }
+
+    return getValueAndStoreToCache(key, parser, cache, defaultValue);
+  }
+
+  private <T> T getValueAndStoreToCache(String key, Function<String, T> parser, Cache<String, T> cache, T defaultValue) {
+    long currentConfigVersion = m_configVersion.get();
+    String value = getProperty(key, null);
+
+    if (value != null) {
+      T result = parser.apply(value);
+
+      if (result != null) {
+        synchronized (this) {
+          if (m_configVersion.get() == currentConfigVersion) {
+            cache.put(key, result);
+          }
+        }
+        return result;
+      }
+    }
+
+    return defaultValue;
+  }
+
+  private <T> Cache<String, T> newCache() {
+    Cache<String, T> cache = CacheBuilder.newBuilder()
+        .maximumSize(m_configUtil.getMaxConfigCacheSize())
+        .expireAfterAccess(m_configUtil.getConfigCacheExpireTime(), m_configUtil.getConfigCacheExpireTimeUnit())
+        .build();
+    allCaches.add(cache);
+    return cache;
+  }
+
+  /**
+   * Clear config cache
+   */
+  protected void clearConfigCache() {
+    synchronized (this) {
+      for (Cache c : allCaches) {
+        if (c != null) {
+          c.invalidateAll();
+        }
+      }
+      m_configVersion.incrementAndGet();
+    }
   }
 
   protected void fireConfigChange(final ConfigChangeEvent changeEvent) {

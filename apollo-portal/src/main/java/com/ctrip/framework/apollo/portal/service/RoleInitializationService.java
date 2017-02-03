@@ -76,7 +76,7 @@ public class RoleInitializationService {
     Set<Permission> appPermissions =
         FluentIterable.from(Lists.newArrayList(
             PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE))
-            .transform(permissionType -> createPermisson(appId, permissionType)).toSet();
+            .transform(permissionType -> createPermission(appId, permissionType)).toSet();
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>
         appPermissionIds =
@@ -88,9 +88,9 @@ public class RoleInitializationService {
     rolePermissionService.createRoleWithPermissions(appMasterRole, appPermissionIds);
   }
 
-  private Permission createPermisson(String targetId, String permisson) {
+  private Permission createPermission(String targetId, String permissionType) {
     Permission permission = new Permission();
-    permission.setPermissionType(permisson);
+    permission.setPermissionType(permissionType);
     permission.setTargetId(targetId);
     String userId = userInfoHolder.getUser().getUserId();
     permission.setDataChangeCreatedBy(userId);
@@ -101,17 +101,17 @@ public class RoleInitializationService {
   private Role createRole(String roleName) {
     Role role = new Role();
     role.setRoleName(roleName);
-    String operaterUserId = userInfoHolder.getUser().getUserId();
-    role.setDataChangeCreatedBy(operaterUserId);
-    role.setDataChangeLastModifiedBy(operaterUserId);
+    String operator = userInfoHolder.getUser().getUserId();
+    role.setDataChangeCreatedBy(operator);
+    role.setDataChangeLastModifiedBy(operator);
     return role;
   }
 
   private void createDefaultNamespaceRole(String appId, String namespaceName, String permissionType, String roleName) {
 
-    Permission permisson =
-        createPermisson(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType);
-    Permission createdPermission = rolePermissionService.createPermission(permisson);
+    Permission permission =
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType);
+    Permission createdPermission = rolePermissionService.createPermission(permission);
 
     Role role = createRole(roleName);
     rolePermissionService

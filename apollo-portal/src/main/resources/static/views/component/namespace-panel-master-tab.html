@@ -6,7 +6,7 @@
     <!--main header-->
     <header class="panel-heading">
         <div class="row">
-            <div class="col-md-6 header-namespace">
+            <div class="col-md-6 col-sm-6 header-namespace">
                 <b class="namespace-name" ng-bind="namespace.viewName"
                    data-tooltip="tooltip" data-placement="bottom" title="{{namespace.comment}}"></b>
                 <span class="label label-info no-radius namespace-label" ng-bind="namespace.format"></span>
@@ -19,7 +19,7 @@
                       ng-show="namespace.lockOwner">当前修改者:{{namespace.lockOwner}}</span>
             </div>
 
-            <div class="col-md-6 text-right header-buttons">
+            <div class="col-md-6 col-sm-6 text-right header-buttons">
                 <button type="button" class="btn btn-success btn-sm"
                         data-tooltip="tooltip" data-placement="bottom" title="发布配置"
                         ng-show="(namespace.hasReleasePermission || namespace.hasModifyPermission)"
@@ -69,7 +69,7 @@
     <!--second header-->
     <header class="panel-heading second-panel-heading">
         <div class="row">
-            <div class="col-md-6 pull-left">
+            <div class="col-md-6 col-sm-6 pull-left">
                 <!--master branch nav tabs-->
                 <ul class="nav nav-tabs">
                     <li role="presentation" ng-click="switchView(namespace, 'table')"
@@ -101,7 +101,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-md-6 text-right">
+            <div class="col-md-6 col-sm-6 text-right">
                 <a class="clipboard"
                    data-clipboard-text="{{namespace.text}}"
                    data-tooltip="tooltip" data-placement="bottom" title="复制文本"
@@ -169,7 +169,7 @@
             </div>
             <!--not link namespace-->
             <div ng-if="!namespace.isLinkedNamespace">
-                <div class="col-md-8 col-lg-offset-2 search-input" ng-show="namespace.showSearchInput">
+                <div class="search-input" ng-show="namespace.showSearchInput">
                     <input type="text" class="form-control" placeholder="输入key过滤"
                            ng-model="namespace.searchKey"
                            ng-change="searchItems(namespace)">
@@ -268,11 +268,11 @@
             <div class="panel panel-default" ng-if="namespace.isLinkedNamespace">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="padding-top-5 col-md-4">
+                        <div class="padding-top-5 col-md-4 col-sm-4">
                             覆盖的配置
                         </div>
-                        <div class="col-md-2 col-lg-offset-6 text-right">
-                            <input type="text" class="form-control" placeholder="filter by key ..."
+                        <div class="col-md-8 col-sm-8">
+                            <input type="text" class="form-control pull-right" placeholder="filter by key ..."
                                    ng-class="{'search-onblur': namespace.searchStatus == 'OFF' || !namespace.searchStatus,
                                     'search-focus': namespace.searchStatus == 'ON'}"
                                    ng-model="namespace.searchKey"
@@ -383,9 +383,9 @@
                 <div class="panel panel-default" ng-if="namespace.publicNamespace">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="padding-top-5 col-md-4">
+                            <div class="padding-top-5 col-md-4 col-sm-4">
                                 公共的配置
-                                <a href="/config.html?#/appid={{namespace.publicNamespace.baseInfo.appId}}" target="_blank">
+                                <a href="/config.html?#/appid={{namespace.publicNamespace.baseInfo.appId}}&env={{env}}&cluster={{namespace.publicNamespace.baseInfo.clusterName}}" target="_blank">
                                     <small>
                                         (AppId:{{namespace.publicNamespace.baseInfo.appId}},
                                         Cluster:{{namespace.publicNamespace.baseInfo.clusterName}})
@@ -393,7 +393,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-md-4 text-center">
+                            <div class="col-md-4 col-sm-4 text-center">
                                 <div class="btn-group btn-group-sm" role="group"  ng-show="namespace.publicNamespace.isModified">
                                     <button type="button" class="btn btn-default"
                                             ng-class="{'active':namespace.publicNamespaceViewType == 'RELEASE'
@@ -409,8 +409,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 col-lg-offset-2 text-right">
-                                <input type="text" class="form-control" placeholder="filter by key ..."
+                            <div class="col-md-4 col-sm-4">
+                                <input type="text" class="form-control pull-right" placeholder="filter by key ..."
                                        ng-class="{'search-onblur': namespace.publicNamespace.searchStatus == 'OFF'
                                    || !namespace.publicNamespace.searchStatus,
                                     'search-focus': namespace.publicNamespace.searchStatus == 'ON'}"
@@ -610,9 +610,9 @@
                  ng-repeat="commits in namespace.commits">
                 <div class="media-body">
                     <div class="row">
-                        <div class="col-md-6"><h3 class="media-heading" ng-bind="commits.dataChangeCreatedBy"></h3>
+                        <div class="col-md-6 col-sm-6"><h3 class="media-heading" ng-bind="commits.dataChangeCreatedBy"></h3>
                         </div>
-                        <div class="col-md-6 text-right"><h5 class="media-heading"
+                        <div class="col-md-6 col-sm-6 text-right"><h5 class="media-heading"
                                                              ng-bind="commits.dataChangeCreatedTime  | date: 'yyyy-MM-dd HH:mm:ss'"></h5>
                         </div>
                     </div>
@@ -744,10 +744,10 @@
             <div class="panel-heading">
                 <div class="row">
 
-                    <div class="col-md-5">
+                    <div class="col-md-5 col-sm-5">
                         <small>实例说明:只展示最近一天访问过Apollo的实例</small>
                     </div>
-                    <div class="col-md-7 text-right">
+                    <div class="col-md-7 col-sm-7 text-right">
                         <div class="btn-group btn-group-sm" role="group">
                             <button type="button" class="btn btn-default"
                                     ng-class="{'btn-primary':namespace.instanceViewType == 'latest_release'}"

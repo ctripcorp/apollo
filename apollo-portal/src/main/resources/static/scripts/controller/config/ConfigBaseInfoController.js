@@ -10,7 +10,8 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
                                   PermissionService,
                                   AppUtil) {
 
-    var appId = AppUtil.parseParams($location.$$url).appid;
+    var urlParams = AppUtil.parseParams($location.$$url);
+    var appId = urlParams.appid;
 
     if (!appId) {
         $window.location.href = '/index.html';
@@ -23,11 +24,20 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
 
         //load session storage to recovery scene
         var scene = JSON.parse(sessionStorage.getItem(appId));
+
         $rootScope.pageContext = {
             appId: appId,
-            env: scene ? scene.env : '',
-            clusterName: scene ? scene.cluster : 'default'
+            env: urlParams.env ? urlParams.env : (scene ? scene.env : ''),
+            clusterName: urlParams.cluster ? urlParams.cluster : (scene ? scene.cluster : 'default')
         };
+
+        //storage page context to session storage
+        sessionStorage.setItem(
+            $rootScope.pageContext.appId,
+            JSON.stringify({
+                               env: $rootScope.pageContext.env,
+                               cluster: $rootScope.pageContext.clusterName
+                           }));
 
         UserService.load_user().then(function (result) {
             $rootScope.pageContext.userId = result.userId;
@@ -211,6 +221,11 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
                                                                    cluster: $rootScope.pageContext.clusterName
                                                                }));
 
+                                            $window.location.href = "/config.html#/appid="
+                                                                    + $rootScope.pageContext.appId
+                                                                    + "&env=" + $rootScope.pageContext.env
+                                                                    + "&cluster=" + $rootScope.pageContext.clusterName;
+
                                             EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE);
                                             $rootScope.showSideBar = false;
                                         }
@@ -311,7 +326,6 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
         $rootScope.viewMode = 1;
     }
 
-
     $rootScope.adaptScreenSize = function () {
         if (window.innerWidth <= VIEW_MODE_SWITCH_WIDTH) {
             $rootScope.viewMode = 2;
@@ -322,8 +336,8 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
 
     };
 
-    $(window).resize(function(){
-        $scope.$apply(function(){
+    $(window).resize(function () {
+        $scope.$apply(function () {
             $rootScope.adaptScreenSize();
         });
     });

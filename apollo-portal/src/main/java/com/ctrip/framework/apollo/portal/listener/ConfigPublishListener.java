@@ -2,11 +2,11 @@ package com.ctrip.framework.apollo.portal.listener;
 
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
-import com.ctrip.framework.apollo.portal.components.emailbuilder.GrayPublishEmailBuilder;
-import com.ctrip.framework.apollo.portal.components.emailbuilder.MergeEmailBuilder;
-import com.ctrip.framework.apollo.portal.components.emailbuilder.NormalPublishEmailBuilder;
-import com.ctrip.framework.apollo.portal.components.emailbuilder.RollbackEmailBuilder;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.emailbuilder.GrayPublishEmailBuilder;
+import com.ctrip.framework.apollo.portal.component.emailbuilder.MergeEmailBuilder;
+import com.ctrip.framework.apollo.portal.component.emailbuilder.NormalPublishEmailBuilder;
+import com.ctrip.framework.apollo.portal.component.emailbuilder.RollbackEmailBuilder;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 import com.ctrip.framework.apollo.portal.service.ReleaseHistoryService;

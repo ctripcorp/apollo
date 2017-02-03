@@ -3,8 +3,10 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
+import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.components.PermissionValidator;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
@@ -33,8 +35,10 @@ public class NamespaceBranchController {
   private NamespaceBranchService namespaceBranchService;
   @Autowired
   private ApplicationEventPublisher publisher;
+  @Autowired
+  private PortalConfig portalConfig;
 
-  @RequestMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.GET)
   public NamespaceBO findBranch(@PathVariable String appId,
                                 @PathVariable String env,
                                 @PathVariable String clusterName,
@@ -84,8 +88,13 @@ public class NamespaceBranchController {
                           @PathVariable String branchName, @RequestParam(value = "deleteBranch", defaultValue = "true") boolean deleteBranch,
                           @RequestBody NamespaceReleaseModel model) {
 
+    if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.fromString(env))) {
+      throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+    }
+
     ReleaseDTO createdRelease = namespaceBranchService.merge(appId, Env.valueOf(env), clusterName, namespaceName, branchName,
-                                                             model.getReleaseTitle(), model.getReleaseComment(), deleteBranch);
+                                                             model.getReleaseTitle(), model.getReleaseComment(),
+                                                             model.isEmergencyPublish(), deleteBranch);
 
     ConfigPublishEvent event = ConfigPublishEvent.instance();
     event.withAppId(appId)

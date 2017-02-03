@@ -58,6 +58,7 @@ public class RemoteConfigLongPollServiceTest extends ComponentTestCase {
 
   @Before
   public void setUp() throws Exception {
+    super.tearDown();//clear the container
     super.setUp();
 
     defineComponent(ConfigUtil.class, MockConfigUtil.class);

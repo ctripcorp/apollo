@@ -90,6 +90,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
         });
 
     m_configProperties = newConfigProperties;
+    clearConfigCache();
 
     this.fireConfigChange(new ConfigChangeEvent(m_namespace, changeMap));
 

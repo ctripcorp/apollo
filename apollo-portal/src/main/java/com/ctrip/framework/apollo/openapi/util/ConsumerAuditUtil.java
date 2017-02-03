@@ -46,6 +46,10 @@ public class ConsumerAuditUtil implements InitializingBean {
   }
 
   public boolean audit(HttpServletRequest request, long consumerId) {
+    //ignore GET request
+    if ("GET".equalsIgnoreCase(request.getMethod())) {
+      return true;
+    }
     String uri = request.getRequestURI();
     if (!Strings.isNullOrEmpty(request.getQueryString())) {
       uri += "?" + request.getQueryString();

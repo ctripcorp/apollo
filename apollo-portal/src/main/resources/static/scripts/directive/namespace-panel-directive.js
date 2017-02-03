@@ -279,16 +279,12 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 }
 
                 function initNamespaceLock(namespace) {
-                    NamespaceLockService.get_namespace_lock(
-                        scope.appId, scope.env,
-                        namespace.baseInfo.clusterName,
-                        namespace.baseInfo.namespaceName)
+                    NamespaceLockService.get_namespace_lock(scope.appId, scope.env,
+                                                            namespace.baseInfo.clusterName,
+                                                            namespace.baseInfo.namespaceName)
                         .then(function (result) {
-                            if (result.dataChangeCreatedBy) {
-                                namespace.lockOwner = result.dataChangeCreatedBy;
-                            } else {
-                                namespace.lockOwner = "";
-                            }
+                            namespace.lockOwner = result.lockOwner;
+                            namespace.isEmergencyPublishAllowed = result.isEmergencyPublishAllowed;
                         });
 
                 }
@@ -748,7 +744,10 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                     return;
                 } else if (namespace.lockOwner && scope.user == namespace.lockOwner) {
                     //can not publish if config modified by himself
-                    AppUtil.showModal('#releaseDenyDialog');
+                    EventManager.emit(EventManager.EventType.PUBLISH_DENY, {
+                        namespace: namespace,
+                        mergeAndPublish: false
+                    });
                     return;
                 }
 
@@ -766,12 +765,14 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 var parentNamespace = branch.parentNamespace;
                 if (!parentNamespace.hasReleasePermission) {
                     AppUtil.showModal('#releaseNoPermissionDialog');
-                } else if (branch.lockOwner && scope.user == branch.lockOwner) {
-                    AppUtil.showModal('#releaseDenyDialog');
                 } else if (parentNamespace.itemModifiedCnt > 0) {
                     AppUtil.showModal('#mergeAndReleaseDenyDialog');
-                }
-                else {
+                } else if (branch.lockOwner && scope.user == branch.lockOwner) {
+                    EventManager.emit(EventManager.EventType.PUBLISH_DENY, {
+                        namespace: branch,
+                        mergeAndPublish: true
+                    });
+                } else {
                     EventManager.emit(EventManager.EventType.MERGE_AND_PUBLISH_NAMESPACE, {branch: branch});
                 }
             }

@@ -83,7 +83,7 @@ appService.service('NamespaceBranchService', ['$resource', '$q', function ($reso
     }
 
     function merge_and_release_branch(appId, env, clusterName, namespaceName,
-                                      branchName, title, comment, deleteBranch) {
+                                      branchName, title, comment, isEmergencyPublish, deleteBranch) {
         var d = $q.defer();
         resource.merge_and_release_branch({
                                               appId: appId,
@@ -94,7 +94,8 @@ appService.service('NamespaceBranchService', ['$resource', '$q', function ($reso
                                               deleteBranch:deleteBranch
                                           }, {
                                               releaseTitle: title,
-                                              releaseComment: comment
+                                              releaseComment: comment,
+                                              isEmergencyPublish: isEmergencyPublish
                                           },
                                           function (result) {
                                               d.resolve(result);

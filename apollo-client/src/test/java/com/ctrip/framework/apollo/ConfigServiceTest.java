@@ -23,6 +23,7 @@ public class ConfigServiceTest extends ComponentTestCase {
   @Override
   @Before
   public void setUp() throws Exception {
+    super.tearDown();//clear the container
     super.setUp();
     someAppId = "someAppId";
     //as ConfigService is singleton, so we must manually clear its container

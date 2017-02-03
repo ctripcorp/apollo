@@ -2,7 +2,7 @@ appService.service('NamespaceLockService', ['$resource', '$q', function ($resour
     var resource = $resource('', {}, {
         get_namespace_lock: {
             method: 'GET',
-            url: 'apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/lock'
+            url: 'apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/lock-info'
         }
     });
 

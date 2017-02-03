@@ -58,13 +58,13 @@ public class ClusterController {
     clusterService.delete(entity.getId(), operator);
   }
 
-  @RequestMapping("/apps/{appId}/clusters")
+  @RequestMapping(value = "/apps/{appId}/clusters", method = RequestMethod.GET)
   public List<ClusterDTO> find(@PathVariable("appId") String appId) {
     List<Cluster> clusters = clusterService.findParentClusters(appId);
     return BeanUtils.batchTransform(ClusterDTO.class, clusters);
   }
 
-  @RequestMapping("/apps/{appId}/clusters/{clusterName:.+}")
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.GET)
   public ClusterDTO get(@PathVariable("appId") String appId,
                         @PathVariable("clusterName") String clusterName) {
     Cluster cluster = clusterService.findOne(appId, clusterName);
@@ -74,7 +74,7 @@ public class ClusterController {
     return BeanUtils.transfrom(ClusterDTO.class, cluster);
   }
 
-  @RequestMapping("/apps/{appId}/cluster/{clusterName}/unique")
+  @RequestMapping(value = "/apps/{appId}/cluster/{clusterName}/unique", method = RequestMethod.GET)
   public boolean isAppIdUnique(@PathVariable("appId") String appId,
                                @PathVariable("clusterName") String clusterName) {
     return clusterService.isClusterNameUnique(appId, clusterName);

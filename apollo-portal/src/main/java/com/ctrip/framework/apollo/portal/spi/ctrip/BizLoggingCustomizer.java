@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
 import com.ctrip.framework.apollo.common.customize.LoggingCustomizer;
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

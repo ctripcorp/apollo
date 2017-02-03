@@ -229,6 +229,7 @@
                               cluster="pageContext.clusterName">
         </mergeandpublishmodal>
 
+        <publishdenymodal env="pageContext.env"></publishdenymodal>
 
         <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
                              apollo-detail="'确定要删除配置吗?'"
@@ -251,13 +252,13 @@
                              apollo-detail="'当前namespace正在被 ' + lockOwner + ' 编辑，一次发布只能被一个人修改.'"
                              apollo-show-cancel-btn="false"></apolloconfirmdialog>
 
-        <apolloconfirmdialog apollo-dialog-id="'releaseDenyDialog'" apollo-title="'发布受限'"
-                             apollo-detail="'您不能发布哟~ ' + pageContext.env + '环境配置的编辑和发布必须为不同的人，请找另一个具有当前namespace发布权的人操作发布~'"
-                             apollo-show-cancel-btn="false"></apolloconfirmdialog>
-
         <apolloconfirmdialog apollo-dialog-id="'rollbackAlertDialog'" apollo-title="'回滚'"
                              apollo-detail="'确定要回滚吗?'"
                              apollo-show-cancel-btn="true" apollo-confirm="rollback"></apolloconfirmdialog>
+
+        <apolloconfirmdialog apollo-dialog-id="'emergencyPublishAlertDialog'" apollo-title="'紧急发布'"
+                             apollo-detail="'确定要紧急发布吗?'"
+                             apollo-show-cancel-btn="true" apollo-confirm="emergencyPublish"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'deleteBranchDialog'" apollo-title="'删除灰度'"
                              apollo-detail="'删除灰度会丢失灰度的配置，确定要删除吗?'"
@@ -373,6 +374,7 @@
 <script type="application/javascript" src="scripts/directive/rollback-modal-directive.js"></script>
 <script type="application/javascript" src="scripts/directive/gray-release-rules-modal-directive.js"></script>
 <script type="application/javascript" src="scripts/directive/merge-and-publish-modal-directive.js"></script>
+<script type="application/javascript" src="scripts/directive/publish-deny-modal-directive.js"></script>
 
 <!--controller-->
 <script type="application/javascript" src="scripts/controller/config/ConfigNamespaceController.js"></script>

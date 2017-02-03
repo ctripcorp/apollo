@@ -3,7 +3,7 @@
     <header class="panel-heading">
 
         <div class="row">
-            <div class="col-md-6 header-namespace">
+            <div class="col-md-6 col-sm-6 header-namespace">
                 <b class="namespace-name" ng-bind="namespace.viewName" data-tooltip="tooltip"
                    data-placement="bottom"
                    title="{{namespace.comment}}"></b>
@@ -19,7 +19,7 @@
                     </span>
             </div>
 
-            <div class="col-md-6 text-right header-buttons">
+            <div class="col-md-6 col-sm-6 text-right header-buttons">
                 <a type="button" class="btn btn-success btn-sm"
                    data-tooltip="tooltip" data-placement="bottom" title="继续灰度发布"
                    ng-show="(namespace.hasReleasePermission || namespace.hasModifyPermission)"
@@ -47,7 +47,7 @@
     <!--second header-->
     <header class="panel-heading second-panel-heading">
         <div class="row">
-            <div class="col-md-8 pull-left">
+            <div class="col-md-12 pull-left">
                 <ul class="nav nav-tabs">
                     <li role="presentation" ng-click="switchView(namespace.branch, 'table')"
                         ng-show="namespace.isPropertiesFormat">
@@ -386,13 +386,15 @@
         </div>
         <!--history view-->
         <div class="J_historyview history-view" ng-show="namespace.branch.viewType == 'history'">
-            <div class="media" ng-repeat="commits in namespace.branch.commits">
+            <div class="media"
+                 ng-show="namespace.branch.commits && namespace.branch.commits.length"
+                 ng-repeat="commits in namespace.branch.commits">
                 <div class="media-body">
                     <div class="row">
-                        <div class="col-md-6"><h3 class="media-heading"
+                        <div class="col-md-6 col-sm-6 "><h3 class="media-heading"
                                                   ng-bind="commits.dataChangeCreatedBy"></h3>
                         </div>
-                        <div class="col-md-6 text-right">
+                        <div class="col-md-6 col-sm-6 text-right">
                             <h5 class="media-heading"
                                 ng-bind="commits.dataChangeCreatedTime  | date: 'yyyy-MM-dd HH:mm:ss'"></h5>
                         </div>
@@ -515,6 +517,9 @@
                 <button type="button" class="btn btn-default" ng-show="!namespace.branch.hasLoadAllCommit"
                         ng-click="loadCommitHistory(namespace.branch)">加载更多
                     <span class="glyphicon glyphicon-menu-down"></span></button>
+            </div>
+            <div class="empty-container text-center" ng-show="!namespace.branch.commits || !namespace.branch.commits.length">
+                无更改历史
             </div>
         </div>
     </section>

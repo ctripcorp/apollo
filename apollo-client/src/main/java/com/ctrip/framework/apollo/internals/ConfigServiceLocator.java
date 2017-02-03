@@ -131,7 +131,7 @@ public class ConfigServiceLocator implements Initializable {
       }
 
       try {
-        TimeUnit.SECONDS.sleep(1);
+        m_configUtil.getOnErrorRetryIntervalTimeUnit().sleep(m_configUtil.getOnErrorRetryInterval());
       } catch (InterruptedException ex) {
         //ignore
       }

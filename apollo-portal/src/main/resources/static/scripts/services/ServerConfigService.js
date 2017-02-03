@@ -2,7 +2,7 @@ appService.service('ServerConfigService', ['$resource', '$q', function ($resourc
     var server_config_resource = $resource('', {}, {
         create_server_config: {
             method: 'POST',
-            url:'/server/config'
+            url: '/server/config'
         }
     });
     return {

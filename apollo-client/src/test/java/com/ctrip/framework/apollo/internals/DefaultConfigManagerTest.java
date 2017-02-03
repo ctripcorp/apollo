@@ -26,6 +26,7 @@ public class DefaultConfigManagerTest extends ComponentTestCase {
 
   @Before
   public void setUp() throws Exception {
+    super.tearDown();//clear the container
     super.setUp();
     defineComponent(ConfigFactoryManager.class, MockConfigManager.class);
     defaultConfigManager = (DefaultConfigManager) lookup(ConfigManager.class);

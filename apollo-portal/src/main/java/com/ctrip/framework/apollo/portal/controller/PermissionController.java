@@ -38,7 +38,7 @@ public class PermissionController {
   @Autowired
   private UserService userService;
 
-  @RequestMapping("/apps/{appId}/permissions/{permissionType}")
+  @RequestMapping(value = "/apps/{appId}/permissions/{permissionType}", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String permissionType) {
     PermissionCondition permissionCondition = new PermissionCondition();
 
@@ -48,7 +48,7 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
-  @RequestMapping("/apps/{appId}/namespaces/{namespaceName}/permissions/{permissionType}")
+  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/permissions/{permissionType}", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String namespaceName,
                                                            @PathVariable String permissionType) {
     PermissionCondition permissionCondition = new PermissionCondition();
@@ -60,7 +60,7 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
-  @RequestMapping("/permissions/root")
+  @RequestMapping(value = "/permissions/root", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasRootPermission() {
     PermissionCondition permissionCondition = new PermissionCondition();
 
@@ -70,7 +70,7 @@ public class PermissionController {
   }
 
 
-  @RequestMapping("/apps/{appId}/namespaces/{namespaceName}/role_users")
+  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
   public NamespaceRolesAssignedUsers getNamespaceRoles(@PathVariable String appId, @PathVariable String namespaceName) {
 
     NamespaceRolesAssignedUsers assignedUsers = new NamespaceRolesAssignedUsers();
@@ -121,7 +121,7 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/apps/{appId}/role_users")
+  @RequestMapping(value = "/apps/{appId}/role_users", method = RequestMethod.GET)
   public AppRolesAssignedUsers getAppRoles(@PathVariable String appId) {
     AppRolesAssignedUsers users = new AppRolesAssignedUsers();
     users.setAppId(appId);

@@ -3,10 +3,10 @@ package com.ctrip.framework.apollo.portal;
 
 import com.google.gson.Gson;
 
-import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.portal.controller.AppController;
-import com.ctrip.framework.apollo.portal.spi.UserService;
+import com.ctrip.framework.apollo.portal.entity.model.AppModel;
+import com.ctrip.framework.apollo.portal.service.AppService;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class ServiceExceptionTest extends AbstractUnitTest {
 	@InjectMocks
 	private AppController appController;
 	@Mock
-	private UserService userService;
+	private AppService appService;
 
 
 	@Test
@@ -51,9 +51,9 @@ public class ServiceExceptionTest extends AbstractUnitTest {
 				new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "admin server error",
 																		 new Gson().toJson(errorAttributes).getBytes(), Charset.defaultCharset());
 
-		when(userService.findByUserId(any(String.class))).thenThrow(adminException);
+		when(appService.create(any())).thenThrow(adminException);
 
-		App app = generateSampleApp();
+		AppModel app = generateSampleApp();
 		try {
 			appController.create(app);
 		} catch (HttpStatusCodeException e) {
@@ -65,14 +65,13 @@ public class ServiceExceptionTest extends AbstractUnitTest {
 		}
 	}
 
-	private App generateSampleApp() {
-		App app = new App();
+	private AppModel generateSampleApp() {
+		AppModel app = new AppModel();
 		app.setAppId("someAppId");
 		app.setName("someName");
 		app.setOrgId("someOrgId");
 		app.setOrgName("someOrgNam");
 		app.setOwnerName("someOwner");
-		app.setOwnerEmail("someOwner@ctrip.com");
 		return app;
 	}
 }

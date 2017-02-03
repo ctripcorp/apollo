@@ -56,7 +56,7 @@ public class AppController {
     appService.delete(entity.getId(), operator);
   }
 
-  @RequestMapping("/apps")
+  @RequestMapping(value = "/apps", method = RequestMethod.GET)
   public List<AppDTO> find(@RequestParam(value = "name", required = false) String name,
                            Pageable pageable) {
     List<App> app = null;
@@ -68,7 +68,7 @@ public class AppController {
     return BeanUtils.batchTransform(AppDTO.class, app);
   }
 
-  @RequestMapping("/apps/{appId}")
+  @RequestMapping(value = "/apps/{appId}", method = RequestMethod.GET)
   public AppDTO get(@PathVariable("appId") String appId) {
     App app = appService.findOne(appId);
     if (app == null) {
@@ -77,7 +77,7 @@ public class AppController {
     return BeanUtils.transfrom(AppDTO.class, app);
   }
 
-  @RequestMapping("/apps/{appId}/unique")
+  @RequestMapping(value = "/apps/{appId}/unique", method = RequestMethod.GET)
   public boolean isAppIdUnique(@PathVariable("appId") String appId) {
     return appService.isAppIdUnique(appId);
   }

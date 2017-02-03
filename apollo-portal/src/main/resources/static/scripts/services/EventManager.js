@@ -131,7 +131,9 @@ appService.service('EventManager', [function () {
             PRE_ROLLBACK_NAMESPACE: 'pre_rollback_namespace',
             ROLLBACK_NAMESPACE: 'rollback_namespace',
             EDIT_GRAY_RELEASE_RULES: 'edit_gray_release_rules',
-            UPDATE_GRAY_RELEASE_RULES: 'update_gray_release_rules'
+            UPDATE_GRAY_RELEASE_RULES: 'update_gray_release_rules',
+            PUBLISH_DENY: 'publish_deny',
+            EMERGENCY_PUBLISH: 'emergency_publish'
         }
 
     }

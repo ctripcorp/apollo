@@ -20,17 +20,22 @@ function mergeAndPublishDirective(AppUtil, EventManager) {
                                        var branch = context.branch;
                                        scope.toReleaseNamespace = branch;
                                        scope.toDeleteBranch = branch;
+                                       scope.isEmergencyPublish =
+                                           context.isEmergencyPublish ? context.isEmergencyPublish : false;
 
                                        var branchStatusMerge = 2;
                                        branch.branchStatus = branchStatusMerge;
                                        branch.mergeAndPublish = true;
-                                       
+
                                        AppUtil.showModal('#mergeAndPublishModal');
                                    });
 
-
             function showReleaseModal() {
-                EventManager.emit(EventManager.EventType.PUBLISH_NAMESPACE, {namespace: scope.toReleaseNamespace});
+                EventManager.emit(EventManager.EventType.PUBLISH_NAMESPACE,
+                                  {
+                                      namespace: scope.toReleaseNamespace,
+                                      isEmergencyPublish: scope.isEmergencyPublish
+                                  });
             }
 
         }

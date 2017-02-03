@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.ctrip.framework.apollo.portal.components.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.portal.spi.EmailService;
 import com.ctrip.framework.apollo.tracer.Tracer;

@@ -34,7 +34,7 @@ public class PropertiesConfigFile extends AbstractConfigFile {
   }
 
   String doGetContent() {
-    if (m_configProperties.get() == null) {
+    if (!this.hasContent()) {
       return null;
     }
 

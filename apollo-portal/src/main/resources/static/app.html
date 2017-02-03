@@ -29,7 +29,7 @@
                     <form class="form-horizontal" name="appForm" ng-controller="CreateAppController" valdr-type="App"
                           ng-submit="create()">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">
+                            <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>
                                 部门</label>
                             <div class="col-sm-3">
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                         <div class="form-group" valdr-form-group>
-                            <label class="col-sm-2 control-label">
+                            <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>
                                 应用Id</label>
                             <div class="col-sm-3">
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <div class="form-group" valdr-form-group>
-                            <label class="col-sm-2 control-label">
+                            <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>
                                 应用名称</label>
                             <div class="col-sm-5">
@@ -57,18 +57,31 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">
+                            <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>
                                 应用负责人</label>
-                            <div class="col-sm-6">
-                                <apollouserselector apollo-id="userSelectWidgetId"></apollouserselector>
-                                <br>
-                                <small>(负责人具有项目管理的最高权限,比如分配配置的修改权,发布权等)</small>
+                            <div class="col-sm-6 J_ownerSelectorPanel">
+                                <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
+                            <label class="col-sm-3 control-label">项目管理员<br>
+
+                            </label>
+                            <div class="col-sm-9 J_adminSelectorPanel">
+
+                                <apollomultipleuserselector apollo-id="'adminSelector'"></apollomultipleuserselector>
+                                <br>
+                                <small>(应用负责人默认具有项目管理员权限，</small>
+                                <br>
+                                <small>项目管理员可以创建Namespace和集群、分配用户权限)</small>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
 
                                 <button type="submit" class="btn btn-primary"
                                         ng-disabled="appForm.$invalid || submitBtnDisabled">提交

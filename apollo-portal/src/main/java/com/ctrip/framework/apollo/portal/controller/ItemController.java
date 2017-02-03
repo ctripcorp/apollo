@@ -96,7 +96,7 @@ public class ItemController {
   }
 
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
   public List<ItemDTO> findItems(@PathVariable String appId, @PathVariable String env,
                                  @PathVariable String clusterName, @PathVariable String namespaceName,
                                  @RequestParam(defaultValue = "lineNum") String orderBy) {
@@ -116,7 +116,7 @@ public class ItemController {
     return items;
   }
 
-  @RequestMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/items")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/items", method = RequestMethod.GET)
   public List<ItemDTO> findBranchItems(@PathVariable("appId") String appId, @PathVariable String env,
                                        @PathVariable("clusterName") String clusterName,
                                        @PathVariable("namespaceName") String namespaceName,

@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz;
 
+import com.ctrip.framework.apollo.biz.config.BizConfigTest;
 import com.ctrip.framework.apollo.biz.grayReleaseRule.GrayReleaseRulesHolderTest;
 import com.ctrip.framework.apollo.biz.message.DatabaseMessageSenderTest;
 import com.ctrip.framework.apollo.biz.message.ReleaseMessageScannerTest;
@@ -10,7 +11,8 @@ import com.ctrip.framework.apollo.biz.service.AdminServiceTransactionTest;
 import com.ctrip.framework.apollo.biz.service.ClusterServiceTest;
 import com.ctrip.framework.apollo.biz.service.InstanceServiceTest;
 import com.ctrip.framework.apollo.biz.service.NamespaceBranchServiceTest;
-import com.ctrip.framework.apollo.biz.service.PrivilegeServiceTest;
+import com.ctrip.framework.apollo.biz.service.NamespacePublishInfoTest;
+import com.ctrip.framework.apollo.biz.service.NamespaceServiceTest;
 import com.ctrip.framework.apollo.biz.service.ReleaseCreationTest;
 import com.ctrip.framework.apollo.biz.service.ReleaseServiceTest;
 import com.ctrip.framework.apollo.biz.service.BizDBPropertySourceTest;
@@ -25,7 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
     AppRepositoryTest.class,
     AppNamespaceRepositoryTest.class,
     AdminServiceTest.class,
-    PrivilegeServiceTest.class,
     AdminServiceTransactionTest.class,
     DatabaseMessageSenderTest.class,
     BizDBPropertySourceTest.class,
@@ -36,7 +37,10 @@ import org.junit.runners.Suite.SuiteClasses;
     InstanceServiceTest.class,
     GrayReleaseRulesHolderTest.class,
     NamespaceBranchServiceTest.class,
-    ReleaseCreationTest.class
+    ReleaseCreationTest.class,
+    NamespacePublishInfoTest.class,
+    NamespaceServiceTest.class,
+    BizConfigTest.class
 })
 public class AllTests {
 

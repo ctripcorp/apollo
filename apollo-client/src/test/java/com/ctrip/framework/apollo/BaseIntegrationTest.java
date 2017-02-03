@@ -56,6 +56,7 @@ public abstract class BaseIntegrationTest extends ComponentTestCase {
 
   @Before
   public void setUp() throws Exception {
+    super.tearDown();//clear the container
     super.setUp();
     someAppId = "1003171";
     someClusterName = "someClusterName";
@@ -180,6 +181,16 @@ public abstract class BaseIntegrationTest extends ComponentTestCase {
     @Override
     public String getDefaultLocalCacheDir() {
       return ClassLoaderUtil.getClassPath();
+    }
+
+    @Override
+    public long getOnErrorRetryInterval() {
+      return 10;
+    }
+
+    @Override
+    public TimeUnit getOnErrorRetryIntervalTimeUnit() {
+      return TimeUnit.MILLISECONDS;
     }
   }
 
