@@ -58,6 +58,10 @@ public class AdminServiceAPI {
     public AppDTO createApp(Env env, AppDTO app) {
       return restTemplate.post(env, "apps", app, AppDTO.class);
     }
+
+    public void updateApp(Env env, AppDTO app) {
+      restTemplate.put(env, "apps/{appId}", app, app.getAppId());
+    }
   }
 
 

@@ -25,71 +25,71 @@
                     创建项目
                 </header>
 
-                <div class="panel-body">
-                    <form class="form-horizontal" name="appForm" ng-controller="CreateAppController" valdr-type="App"
-                          ng-submit="create()">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <apollorequiredfield></apollorequiredfield>
-                                部门</label>
-                            <div class="col-sm-3">
-                                <select id="organization">
-                                    <option></option>
-                                </select>
-                            </div>
+                <form class="form-horizontal panel-body" name="appForm" ng-controller="CreateAppController"
+                      valdr-type="App"
+                      ng-submit="create()">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <apollorequiredfield></apollorequiredfield>
+                            部门</label>
+                        <div class="col-sm-3">
+                            <select id="organization">
+                                <option></option>
+                            </select>
                         </div>
-                        <div class="form-group" valdr-form-group>
-                            <label class="col-sm-3 control-label">
-                                <apollorequiredfield></apollorequiredfield>
-                                应用Id</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="appId" ng-model="app.appId">
-                                <small>(CMS上申请的App Id)</small>
-                            </div>
+                    </div>
+                    <div class="form-group" valdr-form-group>
+                        <label class="col-sm-3 control-label">
+                            <apollorequiredfield></apollorequiredfield>
+                            应用Id</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" name="appId" ng-model="app.appId">
+                            <small>(CMS上申请的App Id)</small>
                         </div>
-                        <div class="form-group" valdr-form-group>
-                            <label class="col-sm-3 control-label">
-                                <apollorequiredfield></apollorequiredfield>
-                                应用名称</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control" name="appName" ng-model="app.name">
-                                <small>(建议格式 xx-yy-zz 例:apollo-server)</small>
-                            </div>
+                    </div>
+                    <div class="form-group" valdr-form-group>
+                        <label class="col-sm-3 control-label">
+                            <apollorequiredfield></apollorequiredfield>
+                            应用名称</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" name="appName" ng-model="app.name">
+                            <small>(建议格式 xx-yy-zz 例:apollo-server)</small>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">
-                                <apollorequiredfield></apollorequiredfield>
-                                应用负责人</label>
-                            <div class="col-sm-6 J_ownerSelectorPanel">
-                                <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <apollorequiredfield></apollorequiredfield>
+                            应用负责人</label>
+                        <div class="col-sm-6 J_ownerSelectorPanel">
+                            <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">项目管理员<br>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">项目管理员<br>
 
-                            </label>
-                            <div class="col-sm-9 J_adminSelectorPanel">
+                        </label>
+                        <div class="col-sm-9 J_adminSelectorPanel">
 
-                                <apollomultipleuserselector apollo-id="'adminSelector'"></apollomultipleuserselector>
-                                <br>
-                                <small>(应用负责人默认具有项目管理员权限，</small>
-                                <br>
-                                <small>项目管理员可以创建Namespace和集群、分配用户权限)</small>
+                            <apollomultipleuserselector apollo-id="'adminSelector'"></apollomultipleuserselector>
+                            <br>
+                            <small>(应用负责人默认具有项目管理员权限，</small>
+                            <br>
+                            <small>项目管理员可以创建Namespace和集群、分配用户权限)</small>
 
-                            </div>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
 
-                                <button type="submit" class="btn btn-primary"
-                                        ng-disabled="appForm.$invalid || submitBtnDisabled">提交
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-primary"
+                                    ng-disabled="appForm.$invalid || submitBtnDisabled">提交
+                            </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

@@ -14,6 +14,7 @@ import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
 import com.ctrip.framework.apollo.portal.listener.AppCreationEvent;
+import com.ctrip.framework.apollo.portal.listener.AppUpdateEvent;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -24,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -69,6 +72,38 @@ public class AppController {
     return appService.findByOwnerName(owner, page);
   }
 
+  @RequestMapping(value = "", method = RequestMethod.POST)
+  public App create(@RequestBody AppModel appModel) {
+
+    App app = transformToApp(appModel);
+
+    App createdApp = appService.createAppInLocal(app);
+
+    publisher.publishEvent(new AppCreationEvent(createdApp));
+
+    Set<String> admins = appModel.getAdmins();
+    if (!CollectionUtils.isEmpty(admins)) {
+      rolePermissionService.assignRoleToUsers(RoleUtils.buildAppMasterRoleName(createdApp.getAppId()),
+                                              admins, userInfoHolder.getUser().getUserId());
+    }
+
+    return createdApp;
+  }
+
+  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
+  @RequestMapping(value = "/{appId}", method = RequestMethod.PUT)
+  public void update(@PathVariable String appId, @RequestBody AppModel appModel) {
+    if (!Objects.equals(appId, appModel.getAppId())) {
+      throw new BadRequestException("The App Id of path variable and request body is different");
+    }
+
+    App app = transformToApp(appModel);
+
+    App updatedApp = appService.updateAppInLocal(app);
+
+    publisher.publishEvent(new AppUpdateEvent(updatedApp));
+  }
+
   @RequestMapping(value = "/{appId}/navtree", method = RequestMethod.GET)
   public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
 
@@ -86,41 +121,6 @@ public class AppController {
     return response;
   }
 
-  @RequestMapping(value = "", method = RequestMethod.POST)
-  public App create(@RequestBody AppModel appModel) {
-
-    String appId = appModel.getAppId();
-    String appName = appModel.getName();
-    String ownerName = appModel.getOwnerName();
-    String orgId = appModel.getOrgId();
-    String orgName = appModel.getOrgName();
-
-    RequestPrecondition.checkArgumentsNotEmpty(appId, appName, ownerName, orgId, orgName);
-
-    if (!InputValidator.isValidClusterNamespace(appModel.getAppId())) {
-      throw new BadRequestException(String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-    }
-
-    App app = new App();
-    app.setAppId(appId);
-    app.setName(appName);
-    app.setOwnerName(ownerName);
-    app.setOrgId(orgId);
-    app.setOrgName(orgName);
-
-    App createdApp = appService.create(app);
-
-    publisher.publishEvent(new AppCreationEvent(createdApp));
-
-    Set<String> admins = appModel.getAdmins();
-    if (!CollectionUtils.isEmpty(admins)) {
-      rolePermissionService
-          .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), admins, userInfoHolder.getUser().getUserId());
-    }
-
-    return createdApp;
-  }
-
   @RequestMapping(value = "/envs/{env}", method = RequestMethod.POST, consumes = {
       "application/json"})
   public ResponseEntity<Void> create(@PathVariable String env, @RequestBody App app) {
@@ -131,7 +131,7 @@ public class AppController {
       throw new BadRequestException(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE);
     }
 
-    appService.createApp(Env.valueOf(env), app);
+    appService.createAppInRemote(Env.valueOf(env), app);
 
     return ResponseEntity.ok().build();
   }
@@ -155,7 +155,8 @@ public class AppController {
           response.addResponseEntity(RichResponseEntity.ok(env));
         } else {
           response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
-                                                              String.format("load appId:%s from env %s error.", appId,env)
+                                                              String.format("load appId:%s from env %s error.", appId,
+                                                                            env)
                                                               + e.getMessage()));
         }
       }
@@ -163,5 +164,28 @@ public class AppController {
 
     return response;
 
+  }
+
+  private App transformToApp(AppModel appModel) {
+    String appId = appModel.getAppId();
+    String appName = appModel.getName();
+    String ownerName = appModel.getOwnerName();
+    String orgId = appModel.getOrgId();
+    String orgName = appModel.getOrgName();
+
+    RequestPrecondition.checkArgumentsNotEmpty(appId, appName, ownerName, orgId, orgName);
+
+    if (!InputValidator.isValidClusterNamespace(appModel.getAppId())) {
+      throw new BadRequestException(String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+    }
+
+    App app = new App();
+    app.setAppId(appId);
+    app.setName(appName);
+    app.setOwnerName(ownerName);
+    app.setOrgId(orgId);
+    app.setOrgName(orgName);
+
+    return app;
   }
 }
