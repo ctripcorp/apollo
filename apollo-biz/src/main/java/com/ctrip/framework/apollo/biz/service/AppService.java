@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.biz.service;
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.repository.AppRepository;
 import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 
@@ -71,14 +72,25 @@ public class AppService {
   }
 
   @Transactional
-  public App update(App app) {
-    App managedApp = appRepository.findByAppId(app.getAppId());
-    BeanUtils.copyEntityProperties(app, managedApp);
+  public void update(App app) {
+    String appId = app.getAppId();
+
+    App managedApp = appRepository.findByAppId(appId);
+    if (managedApp == null) {
+      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+    }
+
+    managedApp.setName(app.getName());
+    managedApp.setOrgId(app.getOrgId());
+    managedApp.setOrgName(app.getOrgName());
+    managedApp.setOwnerName(app.getOwnerName());
+    managedApp.setOwnerEmail(app.getOwnerEmail());
+    managedApp.setDataChangeLastModifiedBy(app.getDataChangeLastModifiedBy());
+
     managedApp = appRepository.save(managedApp);
     
     auditService.audit(App.class.getSimpleName(), managedApp.getId(), Audit.OP.UPDATE,
         managedApp.getDataChangeLastModifiedBy());
     
-    return managedApp;
   }
 }

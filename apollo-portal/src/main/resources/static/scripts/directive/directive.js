@@ -275,13 +275,14 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
         transclude: true,
         replace: true,
         scope: {
-            id: '=apolloId'
+            id: '=apolloId',
+            disabled: '='
         },
         link: function (scope, element, attrs) {
 
             scope.$watch("id", initSelect2);
 
-            var searchUsersAjax = {
+            var select2Options = {
                 ajax: {
                     url: '/users',
                     dataType: 'json',
@@ -311,8 +312,9 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
             };
 
             function initSelect2() {
-                $('.' + scope.id).select2(searchUsersAjax);
+                $('.' + scope.id).select2(select2Options);
             }
+            
 
         }
     }
