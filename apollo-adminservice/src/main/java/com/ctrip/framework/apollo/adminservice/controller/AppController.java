@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class AppController {
@@ -47,13 +48,22 @@ public class AppController {
     return dto;
   }
 
-  @RequestMapping(path = "/apps/{appId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/apps/{appId}", method = RequestMethod.DELETE)
   public void delete(@PathVariable("appId") String appId, @RequestParam String operator) {
     App entity = appService.findOne(appId);
     if (entity == null) {
       throw new NotFoundException("app not found for appId " + appId);
     }
     appService.delete(entity.getId(), operator);
+  }
+
+  @RequestMapping(value = "/apps/{appId}", method = RequestMethod.PUT)
+  public void update(@PathVariable String appId, @RequestBody App app) {
+    if (!Objects.equals(appId, app.getAppId())) {
+      throw new BadRequestException("The App Id of path variable and request body is different");
+    }
+
+    appService.update(app);
   }
 
   @RequestMapping(value = "/apps", method = RequestMethod.GET)

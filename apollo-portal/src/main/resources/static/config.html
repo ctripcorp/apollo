@@ -34,7 +34,7 @@
                 <!--env list-->
                 <section class="panel">
                     <header class="panel-heading">
-                        <img src="img/env.png" class="i-20">&nbsp;环境列表
+                        环境列表
                         <span class="pull-right"
                               data-tooltip="tooltip" data-placement="bottom" title="通过切换环境、集群来管理不同环境、集群的配置">
                                     <img src="img/question.png" class="i-20"/>
@@ -47,16 +47,22 @@
                 <!--app info-->
                 <section class="panel">
                     <header class="panel-heading">
-                        <img src="img/info.png" class="i-25-20"/> 项目信息
-                            <span class="pull-right cursor-pointer">
-                                <a ng-if="!favoriteId" ng-click="addFavorite()"
-                                   data-tooltip="tooltip" data-placement="bottom" title="收藏">
-                                    <img src="img/unlike.png" class="i-20"/>
+                        项目信息
+                            <span class="pull-right">
+
+                                <a href="/app/setting.html?#/appid={{pageContext.appId}}"
+                                   style="margin-right: 5px;text-decoration:none;">
+                                    <img src="img/edit.png" class="i-20 cursor-pointer"
+                                         data-tooltip="tooltip" data-placement="bottom" title="修改项目基本信息"/>
                                 </a>
-                                <a ng-if="favoriteId" ng-click="deleteFavorite()"
-                                   data-tooltip="tooltip" data-placement="bottom" title="取消收藏">
-                                    <img src="img/like.png" class="i-20"/>
-                                </a>
+
+                                <img src="img/unlike.png" class="i-20 cursor-pointer"
+                                     ng-if="!favoriteId" ng-click="addFavorite()"
+                                     data-tooltip="tooltip" data-placement="bottom" title="收藏"/>
+
+                                <img src="img/like.png" class="i-20 cursor-pointer"
+                                     ng-if="favoriteId" ng-click="deleteFavorite()"
+                                     data-tooltip="tooltip" data-placement="bottom" title="取消收藏"/>
                             </span>
                     </header>
                     <div class="panel-body">
@@ -101,6 +107,9 @@
 
                 <!--operation entrance-->
                 <section>
+                    <apolloentrance apollo-title="'管理项目'" apollo-img-src="'project-manage'"
+                                    apollo-href="'/app/setting.html?#/appid=' + pageContext.appId"></apolloentrance>
+
                     <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
                         <div class="row icon-text icon-plus-orange">
                             <p class="btn-title ng-binding">补缺环境</p>
@@ -129,9 +138,7 @@
                         </div>
                     </div>
 
-                    <apolloentrance apollo-title="'项目权限'" apollo-img-src="'user-manage'"
-                                    apollo-href="'/app/role.html?#/appid=' + pageContext.appId"
-                                    ng-show="hasAssignUserPermission"></apolloentrance>
+
                 </section>
 
             </div>
@@ -169,14 +176,14 @@
                 <span ng-bind="pageContext.clusterName"></span>
                 集群的实例只会使用
                 <span ng-bind="pageContext.clusterName"></span>
-                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置！
+                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置。
             </div>
 
         </div>
 
         <div class="alert alert-info"
              ng-if="hasNotPublishNamespace">
-            <p><b>注意:</b>以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
+            <p><b>注意:</b> 以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
             <p>
                 <mark ng-bind="namespacePublishInfo.join('，')"></mark>
             </p>

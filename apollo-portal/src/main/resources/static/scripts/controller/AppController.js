@@ -51,7 +51,7 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
         // owner
         var owner = $('.ownerSelector').select2('data')[0];
         if (!owner) {
-            toastr.warning("请输入应用负责人");
+            toastr.warning("请选择应用负责人");
             return;
         }
         $scope.app.ownerName = owner.id;

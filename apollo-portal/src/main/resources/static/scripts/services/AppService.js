@@ -11,7 +11,7 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
             url: '/apps/by-owner'
         },
         load_navtree: {
-            methode: 'GET',
+            method: 'GET',
             isArray: false,
             url: '/apps/:appId/navtree'
         },
@@ -22,6 +22,10 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
         create_app: {
             method: 'POST',
             url: '/apps'
+        },
+        update_app: {
+            method: 'PUT',
+            url: '/apps/:appId'
         },
         create_app_remote: {
             method: 'POST',
@@ -72,6 +76,17 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
         create: function (app) {
             var d = $q.defer();
             app_resource.create_app({}, app, function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        update: function (app) {
+            var d = $q.defer();
+            app_resource.update_app({
+                                        appId: app.appId
+                                    }, app, function (result) {
                 d.resolve(result);
             }, function (result) {
                 d.reject(result);

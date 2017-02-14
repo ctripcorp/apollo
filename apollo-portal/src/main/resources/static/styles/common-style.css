@@ -144,6 +144,7 @@ pre {
 .footer {
     width: 100%;
     height: 75px;
+    margin-top: 50px;
     padding-top: 25px;
 }
 
@@ -494,13 +495,14 @@ table th {
     margin: 0;
 }
 
-.list-group-item .icon-plus-orange {
-    background: url(../img/plus-orange.png) no-repeat;
+.list-group-item .icon-project-manage {
+    background: url(../img/manage.png) no-repeat;
 }
 
-.list-group-item .icon-user-manage {
-    background: url(../img/user_manage.png) no-repeat;
+.list-group-item .icon-plus-orange {
+    background: url(../img/add.png) no-repeat;
 }
+
 
 .list-group-item .icon-text {
     background-size: 20px;
@@ -788,5 +790,41 @@ table th {
 .search-focus {
     width: 165px;
     background: #fff;
+}
+
+.project-setting .panel {
+    min-height: 560px
+}
+
+.project-setting .panel-body {
+    padding-top: 35px
+}
+
+.project-setting .panel-body .project-setting-side-bar {
+    min-height: 560px;
+    position: relative;
+    padding-left: 0;
+    border-right: 1px solid #f1f2f7;
+}
+
+.project-setting .panel-body .project-setting-side-bar .nav-li {
+    height: 30px;
+    padding: 5px 10px;
+}
+
+.project-setting .panel-body .project-setting-side-bar .nav-li:hover {
+    color: #505050;
+}
+.project-setting .panel-body .project-setting-side-bar .not-selected {
+    color: #9c9c9c;
+}
+
+.project-setting .panel-body .project-setting-side-bar .selected {
+    color: #505050;
+    border-left: 5px solid #999999;
+}
+
+.project-setting .panel-body .context {
+    padding-left: 30px;
 }
 

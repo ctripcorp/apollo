@@ -1,4 +1,7 @@
-app_module.config(function (valdrProvider) {
+app_module.config(appValdr);
+setting_module.config(appValdr);
+
+function appValdr(valdrProvider) {
     valdrProvider.addConstraints({
                                      'App': {
                                          'appId': {
@@ -21,7 +24,7 @@ app_module.config(function (valdrProvider) {
                                          }
                                      }
                                  })
-});
+}
 
 cluster_module.config(function (valdrProvider) {
     valdrProvider.addConstraints({
