@@ -33,7 +33,7 @@ CREATE TABLE `App` (
   PRIMARY KEY (`Id`),
   KEY `AppId` (`AppId`(191)),
   KEY `DataChange_LastTime` (`DataChange_LastTime`),
-  KEY `Name` (`Name`)
+  KEY `IX_Name` (`Name`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用表';
 
 
@@ -243,7 +243,8 @@ CREATE TABLE `Namespace` (
   `DataChange_LastTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
   PRIMARY KEY (`Id`),
   KEY `AppId_ClusterName_NamespaceName` (`AppId`(191),`ClusterName`(191),`NamespaceName`(191)),
-  KEY `DataChange_LastTime` (`DataChange_LastTime`)
+  KEY `DataChange_LastTime` (`DataChange_LastTime`),
+  KEY `IX_NamespaceName` (`NamespaceName`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='命名空间';
 
 

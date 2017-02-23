@@ -213,7 +213,7 @@ directive_module.directive('apollorequiredfield', function ($compile, $window) {
 });
 
 /**  确认框 */
-directive_module.directive('apolloconfirmdialog', function ($compile, $window) {
+directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/confirm-dialog.html',
@@ -225,15 +225,26 @@ directive_module.directive('apolloconfirmdialog', function ($compile, $window) {
             detail: '=apolloDetail',
             showCancelBtn: '=apolloShowCancelBtn',
             doConfirm: '=apolloConfirm',
+            confirmBtnText: '=?',
             cancel: '='
         },
         link: function (scope, element, attrs) {
 
+            scope.$watch("detail", function () {
+                scope.detailAsHtml = $sce.trustAsHtml(scope.detail);
+            });
+
+            if (!scope.confirmBtnText) {
+                scope.confirmBtnText = '确认';
+            }
+            
             scope.confirm = function () {
                 if (scope.doConfirm) {
                     scope.doConfirm();
                 }
-            }
+            };
+            
+
 
         }
     }
@@ -264,13 +275,14 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
         transclude: true,
         replace: true,
         scope: {
-            id: '=apolloId'
+            id: '=apolloId',
+            disabled: '='
         },
         link: function (scope, element, attrs) {
 
             scope.$watch("id", initSelect2);
 
-            var searchUsersAjax = {
+            var select2Options = {
                 ajax: {
                     url: '/users',
                     dataType: 'json',
@@ -300,8 +312,9 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
             };
 
             function initSelect2() {
-                $('.' + scope.id).select2(searchUsersAjax);
+                $('.' + scope.id).select2(select2Options);
             }
+            
 
         }
     }

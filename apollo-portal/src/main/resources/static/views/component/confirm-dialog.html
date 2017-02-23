@@ -6,15 +6,14 @@
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">{{title}}</h4>
             </div>
-            <div class="modal-body">
-                {{detail}}
+            <div class="modal-body" ng-bind-html="detailAsHtml">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"
                         ng-show="showCancelBtn" ng-click="cancel()">取消</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal"
                         ng-click="confirm()">
-                    确定
+                    {{confirmBtnText}}
                 </button>
             </div>
         </div>

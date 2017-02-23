@@ -33,7 +33,7 @@ CREATE TABLE `App` (
   PRIMARY KEY (`Id`),
   KEY `AppId` (`AppId`(191)),
   KEY `DataChange_LastTime` (`DataChange_LastTime`),
-  KEY `Name` (`Name`)
+  KEY `IX_Name` (`Name`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用表';
 
 

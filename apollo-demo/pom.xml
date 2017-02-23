@@ -4,20 +4,78 @@
 	<parent>
 		<artifactId>apollo</artifactId>
 		<groupId>com.ctrip.framework.apollo</groupId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>0.6.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>apollo-demo</artifactId>
 	<name>Apollo Demo</name>
 	<packaging>jar</packaging>
 	<properties>
+		<java.version>1.7</java.version>
 		<github.path>${project.artifactId}</github.path>
+        <!-- apollo spring integration requires Spring 3.1.1+ -->
+		<spring-demo.version>3.1.1.RELEASE</spring-demo.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring-demo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring-demo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring-demo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-demo.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${spring-demo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-asm</artifactId>
+				<version>${spring-demo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.ctrip.framework.apollo</groupId>
 			<artifactId>apollo-client</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<!-- for spring demo -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+        <!-- required for spring 3.1.0 -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -37,6 +95,4 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 	</dependencies>
-
-
 </project>

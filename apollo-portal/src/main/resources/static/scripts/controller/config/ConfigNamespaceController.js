@@ -337,6 +337,36 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     }
 
+    EventManager.subscribe(EventManager.EventType.DELETE_NAMESPACE_FAILED, function (context) {
+        $scope.deleteNamespaceContext = context;
+
+        if (context.reason == 'master_instance') {
+            AppUtil.showModal('#deleteNamespaceDenyForMasterInstanceDialog');
+        } else if (context.reason == 'branch_instance') {
+            AppUtil.showModal('#deleteNamespaceDenyForBranchInstanceDialog');
+        } else if (context.reason == 'public_namespace') {
+            var otherAppAssociatedNamespaces = context.otherAppAssociatedNamespaces;
+            var namespaceTips = [];
+            otherAppAssociatedNamespaces.forEach(function (namespace) {
+                var appId = namespace.appId;
+                var clusterName = namespace.clusterName;
+                var url = '/config.html?#/appid=' + appId + '&env=' + $scope.pageContext.env + '&cluster='
+                          + clusterName;
+
+                namespaceTips.push("<a target='_blank' href=\'" + url + "\'>AppId = " + appId + ", 集群 = " + clusterName
+                                   + ", Namespace = " + namespace.namespaceName + "</a>");
+            });
+
+            $scope.deleteNamespaceContext.detailReason =
+                "以下应用已关联此公共Namespace，必须先删除全部已关联的Namespace才能删除公共Namespace。<br>"
+                + namespaceTips.join("<br>");
+
+            AppUtil.showModal('#deleteNamespaceDenyForPublicNamespaceDialog');
+        }
+
+    });
+
+
     new Clipboard('.clipboard');
 
 }

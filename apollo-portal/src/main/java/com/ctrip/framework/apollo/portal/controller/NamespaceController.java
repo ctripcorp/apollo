@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -45,7 +46,7 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class NamespaceController {
 
-  Logger logger = LoggerFactory.getLogger(NamespaceController.class);
+  private static final Logger logger = LoggerFactory.getLogger(NamespaceController.class);
 
   @Autowired
   private AppService appService;
@@ -130,11 +131,13 @@ public class NamespaceController {
     return ResponseEntity.ok().build();
   }
 
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+  @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appId)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteNamespace(@PathVariable String appId, @PathVariable String env,
                                               @PathVariable String clusterName, @PathVariable String namespaceName) {
+
     namespaceService.deleteNamespace(appId, Env.valueOf(env), clusterName, namespaceName);
+
     return ResponseEntity.ok().build();
   }
 
@@ -181,6 +184,16 @@ public class NamespaceController {
   @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {
     return namespaceService.getNamespacesPublishInfo(appId);
+  }
+
+  @RequestMapping(value = "/envs/{env}/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)
+  public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(@PathVariable String env,
+                                                               @PathVariable String publicNamespaceName,
+                                                               @RequestParam(name = "page", defaultValue = "0") int page,
+                                                               @RequestParam(name = "size", defaultValue = "10") int size) {
+
+    return namespaceService.getPublicAppNamespaceAllNamespaces(Env.fromString(env), publicNamespaceName, page, size);
+
   }
 
 }

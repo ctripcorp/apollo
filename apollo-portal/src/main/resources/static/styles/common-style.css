@@ -144,6 +144,7 @@ pre {
 .footer {
     width: 100%;
     height: 75px;
+    margin-top: 50px;
     padding-top: 25px;
 }
 
@@ -494,13 +495,14 @@ table th {
     margin: 0;
 }
 
-.list-group-item .icon-plus-orange {
-    background: url(../img/plus-orange.png) no-repeat;
+.list-group-item .icon-project-manage {
+    background: url(../img/manage.png) no-repeat;
 }
 
-.list-group-item .icon-user-manage {
-    background: url(../img/user_manage.png) no-repeat;
+.list-group-item .icon-plus-orange {
+    background: url(../img/add.png) no-repeat;
 }
+
 
 .list-group-item .icon-text {
     background-size: 20px;
@@ -788,5 +790,13 @@ table th {
 .search-focus {
     width: 165px;
     background: #fff;
+}
+
+.project-setting .panel-body {
+    padding-top: 35px
+}
+
+.project-setting .panel-body .context {
+    padding-left: 30px;
 }
 

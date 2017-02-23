@@ -34,7 +34,7 @@
                 <!--env list-->
                 <section class="panel">
                     <header class="panel-heading">
-                        <img src="img/env.png" class="i-20">&nbsp;环境列表
+                        环境列表
                         <span class="pull-right"
                               data-tooltip="tooltip" data-placement="bottom" title="通过切换环境、集群来管理不同环境、集群的配置">
                                     <img src="img/question.png" class="i-20"/>
@@ -47,16 +47,22 @@
                 <!--app info-->
                 <section class="panel">
                     <header class="panel-heading">
-                        <img src="img/info.png" class="i-25-20"/> 项目信息
-                            <span class="pull-right cursor-pointer">
-                                <a ng-if="!favoriteId" ng-click="addFavorite()"
-                                   data-tooltip="tooltip" data-placement="bottom" title="收藏">
-                                    <img src="img/unlike.png" class="i-20"/>
+                        项目信息
+                            <span class="pull-right">
+
+                                <a href="/app/setting.html?#/appid={{pageContext.appId}}"
+                                   style="margin-right: 5px;text-decoration:none;">
+                                    <img src="img/edit.png" class="i-20 cursor-pointer"
+                                         data-tooltip="tooltip" data-placement="bottom" title="修改项目基本信息"/>
                                 </a>
-                                <a ng-if="favoriteId" ng-click="deleteFavorite()"
-                                   data-tooltip="tooltip" data-placement="bottom" title="取消收藏">
-                                    <img src="img/like.png" class="i-20"/>
-                                </a>
+
+                                <img src="img/unlike.png" class="i-20 cursor-pointer"
+                                     ng-if="!favoriteId" ng-click="addFavorite()"
+                                     data-tooltip="tooltip" data-placement="bottom" title="收藏"/>
+
+                                <img src="img/like.png" class="i-20 cursor-pointer"
+                                     ng-if="favoriteId" ng-click="deleteFavorite()"
+                                     data-tooltip="tooltip" data-placement="bottom" title="取消收藏"/>
                             </span>
                     </header>
                     <div class="panel-body">
@@ -81,7 +87,7 @@
                                 <td ng-bind="appBaseInfo.ownerName"></td>
                             </tr>
                             <tr>
-                                <th>Email:</th>
+                                <th>邮箱:</th>
                                 <td>
                                     <small ng-bind="appBaseInfo.ownerEmail"></small>
                                 </td>
@@ -101,6 +107,9 @@
 
                 <!--operation entrance-->
                 <section>
+                    <apolloentrance apollo-title="'管理项目'" apollo-img-src="'project-manage'"
+                                    apollo-href="'/app/setting.html?#/appid=' + pageContext.appId"></apolloentrance>
+
                     <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
                         <div class="row icon-text icon-plus-orange">
                             <p class="btn-title ng-binding">补缺环境</p>
@@ -129,9 +138,7 @@
                         </div>
                     </div>
 
-                    <apolloentrance apollo-title="'项目权限'" apollo-img-src="'user-manage'"
-                                    apollo-href="'/app/role.html?#/appid=' + pageContext.appId"
-                                    ng-show="hasAssignUserPermission"></apolloentrance>
+
                 </section>
 
             </div>
@@ -169,14 +176,14 @@
                 <span ng-bind="pageContext.clusterName"></span>
                 集群的实例只会使用
                 <span ng-bind="pageContext.clusterName"></span>
-                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置！
+                集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置。
             </div>
 
         </div>
 
         <div class="alert alert-info"
              ng-if="hasNotPublishNamespace">
-            <p><b>注意:</b>以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
+            <p><b>注意:</b> 以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。</p>
             <p>
                 <mark ng-bind="namespacePublishInfo.join('，')"></mark>
             </p>
@@ -231,6 +238,8 @@
 
         <publishdenymodal env="pageContext.env"></publishdenymodal>
 
+        <deletenamespacemodal env="pageContext.env"></deletenamespacemodal>
+
         <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
                              apollo-detail="'确定要删除配置吗?'"
                              apollo-show-cancel-btn="true" apollo-confirm="deleteItem"></apolloconfirmdialog>
@@ -272,6 +281,31 @@
 
         <apolloconfirmdialog apollo-dialog-id="'grayReleaseWithoutRulesTips'" apollo-title="'缺失灰度规则提示'"
                              apollo-detail="'灰度版本还没有配置任何灰度规则，请配置灰度规则'">
+        </apolloconfirmdialog>
+
+        <apolloconfirmdialog apollo-dialog-id="'deleteNamespaceDenyForMasterInstanceDialog'"
+                             apollo-title="'删除Namespace警告信息'"
+                             apollo-detail="'发现有 <b>' + deleteNamespaceContext.namespace.instancesCount +
+                             '</b> 个实例正在使用Namespace(' + deleteNamespaceContext.namespace.baseInfo.namespaceName +
+                             ')，删除Namespace将导致实例获取不到配置。<br>
+                             请到 <ins>“实例列表”</ins> 确认实例信息，如已确认删除Namespace将不会导致实例异常，
+                             请联系Apollo相关负责人删除Namespace'"
+                             apollo-confirm="continueDeleteNamespace">
+        </apolloconfirmdialog>
+
+        <apolloconfirmdialog apollo-dialog-id="'deleteNamespaceDenyForBranchInstanceDialog'"
+                             apollo-title="'删除Namespace警告信息'"
+                             apollo-detail="'发现有 <b>' + deleteNamespaceContext.namespace.branch.latestReleaseInstances.total
+                             + '</b> 个实例正在使用Namespace(' + deleteNamespaceContext.namespace.baseInfo.namespaceName +
+                             ')灰度版本的配置，删除Namespace将导致实例获取不到配置。<br>
+                             请到 <ins>“灰度版本” => “实例列表”</ins> 确认实例信息，如已确认删除Namespace将不会导致实例异常，
+                             请联系Apollo相关负责人删除Namespace'"
+                             apollo-confirm="continueDeleteNamespace">
+        </apolloconfirmdialog>
+
+        <apolloconfirmdialog apollo-dialog-id="'deleteNamespaceDenyForPublicNamespaceDialog'"
+                             apollo-title="'删除Namespace失败提示'"
+                             apollo-detail="deleteNamespaceContext.detailReason">
         </apolloconfirmdialog>
 
 
@@ -375,6 +409,7 @@
 <script type="application/javascript" src="scripts/directive/gray-release-rules-modal-directive.js"></script>
 <script type="application/javascript" src="scripts/directive/merge-and-publish-modal-directive.js"></script>
 <script type="application/javascript" src="scripts/directive/publish-deny-modal-directive.js"></script>
+<script type="application/javascript" src="scripts/directive/delete-namespace-modal-directive.js"></script>
 
 <!--controller-->
 <script type="application/javascript" src="scripts/controller/config/ConfigNamespaceController.js"></script>

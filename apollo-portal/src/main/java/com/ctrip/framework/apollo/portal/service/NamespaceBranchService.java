@@ -9,7 +9,6 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.ItemsComparator;
-import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.constant.CatEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -37,8 +36,6 @@ public class NamespaceBranchService {
   private AdminServiceAPI.NamespaceBranchAPI namespaceBranchAPI;
   @Autowired
   private ReleaseService releaseService;
-  @Autowired
-  private PermissionValidator permissionValidator;
 
 
   @Transactional

@@ -1,3 +1,5 @@
+package com.ctrip.framework.apollo.demo.api;
+
 import com.google.common.base.Charsets;
 
 import com.ctrip.framework.apollo.Config;

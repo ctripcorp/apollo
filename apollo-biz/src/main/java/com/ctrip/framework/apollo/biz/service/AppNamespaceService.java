@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
+import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -54,12 +55,13 @@ public class AppNamespaceService {
     return appNamespaceRepository.findByNameInAndIsPublicTrue(namespaceNames);
   }
 
-  public List<AppNamespace> findPrivateAppNamespace(String appId){
+  public List<AppNamespace> findPrivateAppNamespace(String appId) {
     return appNamespaceRepository.findByAppIdAndIsPublic(appId, false);
   }
 
-  public AppNamespace findOne(String appId, String namespaceName){
-    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId or Namespace must not be null");
+  public AppNamespace findOne(String appId, String namespaceName) {
+    Preconditions
+        .checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId or Namespace must not be null");
     return appNamespaceRepository.findByAppIdAndName(appId, namespaceName);
   }
 
@@ -90,7 +92,7 @@ public class AppNamespaceService {
   }
 
   @Transactional
-  public AppNamespace createAppNamespace(AppNamespace appNamespace){
+  public AppNamespace createAppNamespace(AppNamespace appNamespace) {
     String createBy = appNamespace.getDataChangeCreatedBy();
     if (!isAppNamespaceNameUnique(appNamespace.getAppId(), appNamespace.getName())) {
       throw new ServiceException("appnamespace not unique");
@@ -109,12 +111,13 @@ public class AppNamespaceService {
     return appNamespace;
   }
 
-  public AppNamespace update(AppNamespace appNamespace){
+  public AppNamespace update(AppNamespace appNamespace) {
     AppNamespace managedNs = appNamespaceRepository.findByAppIdAndName(appNamespace.getAppId(), appNamespace.getName());
     BeanUtils.copyEntityProperties(appNamespace, managedNs);
     managedNs = appNamespaceRepository.save(managedNs);
 
-    auditService.audit(AppNamespace.class.getSimpleName(), managedNs.getId(), Audit.OP.UPDATE, managedNs.getDataChangeLastModifiedBy());
+    auditService.audit(AppNamespace.class.getSimpleName(), managedNs.getId(), Audit.OP.UPDATE,
+                       managedNs.getDataChangeLastModifiedBy());
 
     return managedNs;
   }

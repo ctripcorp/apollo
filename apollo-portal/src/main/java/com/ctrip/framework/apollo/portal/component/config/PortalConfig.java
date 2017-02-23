@@ -215,5 +215,8 @@ public class PortalConfig extends RefreshableConfig {
     return getValue("clogging.server.port");
   }
 
+  public String hermesServerAddress() {
+    return getValue("hermes.server.address");
+  }
 
 }

@@ -177,7 +177,7 @@ public class ReleaseMessageServiceWithCacheTest {
     when(releaseMessageRepository.findFirst500ByIdGreaterThanOrderByIdAsc(someMessageId)).thenReturn(Lists
         .newArrayList(newMessage));
 
-    scanIntervalTimeUnit.sleep(scanInterval * 3);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
 
     ReleaseMessage newLatestReleaseMsg =
         releaseMessageServiceWithCache

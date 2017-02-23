@@ -21,14 +21,16 @@ public class PermissionValidator {
     return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
         PermissionType.MODIFY_NAMESPACE,
         RoleUtils.buildNamespaceTargetId(appId, namespaceName));
-
   }
 
   public boolean hasReleaseNamespacePermission(String appId, String namespaceName) {
     return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
         PermissionType.RELEASE_NAMESPACE,
         RoleUtils.buildNamespaceTargetId(appId, namespaceName));
+  }
 
+  public boolean hasDeleteNamespacePermission(String appId) {
+    return hasAssignRolePermission(appId) || isSuperAdmin();
   }
 
   public boolean hasOperateNamespacePermission(String appId, String namespaceName){
@@ -61,6 +63,10 @@ public class PermissionValidator {
     } else {
       return rolePermissionService.isSuperAdmin(userInfoHolder.getUser().getUserId());
     }
+  }
+
+  public boolean isAppAdmin(String appId) {
+    return isSuperAdmin() || hasAssignRolePermission(appId);
   }
 
   public boolean isSuperAdmin() {

@@ -18,12 +18,14 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -117,7 +119,46 @@ public class NamespaceService {
     //and default cluster's namespace exist but never published.
     //return custom cluster's namespace
     return namespace;
+  }
 
+  public List<Namespace> findPublicAppNamespaceAllNamespaces(String namespaceName, Pageable page) {
+    AppNamespace publicAppNamespace = appNamespaceService.findPublicNamespaceByName(namespaceName);
+
+    if (publicAppNamespace == null) {
+      throw new BadRequestException(
+          String.format("Public appNamespace not exists. NamespaceName = %s", namespaceName));
+    }
+
+    List<Namespace> namespaces = namespaceRepository.findByNamespaceName(namespaceName, page);
+
+    return filterChildNamespace(namespaces);
+  }
+
+  private List<Namespace> filterChildNamespace(List<Namespace> namespaces) {
+    List<Namespace> result = new LinkedList<>();
+
+    if (CollectionUtils.isEmpty(namespaces)) {
+      return result;
+    }
+
+    for (Namespace namespace : namespaces) {
+      if (!isChildNamespace(namespace)) {
+        result.add(namespace);
+      }
+    }
+
+    return result;
+  }
+
+  public int countPublicAppNamespaceAssociatedNamespaces(String publicNamespaceName) {
+    AppNamespace publicAppNamespace = appNamespaceService.findPublicNamespaceByName(publicNamespaceName);
+
+    if (publicAppNamespace == null) {
+      throw new BadRequestException(
+          String.format("Public appNamespace not exists. NamespaceName = %s", publicNamespaceName));
+    }
+
+    return namespaceRepository.countByNamespaceNameAndAppIdNot(publicNamespaceName, publicAppNamespace.getAppId());
   }
 
   public List<Namespace> findNamespaces(String appId, String clusterName) {

@@ -21,14 +21,14 @@
         <div class="col-md-8 pull-left">
             <ul class="nav nav-tabs">
                 <li role="presentation">
-                    <a ng-class="{'node_active': namespace.currentOperateBranch == 'master'}"
+                    <a ng-class="{'node_active': namespace.displayControl.currentOperateBranch == 'master'}"
                        ng-click="switchBranch('master')">
                         <img src="img/branch.png">
                         主版本
                     </a>
                 </li>
                 <li role="presentation">
-                    <a ng-class="{'node_active': namespace.currentOperateBranch != 'master'}"
+                    <a ng-class="{'node_active': namespace.displayControl.currentOperateBranch != 'master'}"
                        ng-click="switchBranch(namespace.branchName)">
                         <img src="img/branch.png">
                         灰度版本

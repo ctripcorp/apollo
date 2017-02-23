@@ -225,7 +225,7 @@ public class RemoteConfigLongPollServiceTest extends ComponentTestCase {
     remoteConfigLongPollService.submit(anotherNamespace, anotherRepository);
     submitAnotherNamespaceFinish.set(true);
 
-    onAnotherRepositoryNotified.get(500, TimeUnit.MILLISECONDS);
+    onAnotherRepositoryNotified.get(5000, TimeUnit.MILLISECONDS);
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 

@@ -28,6 +28,12 @@ appUtil.service('AppUtil', ['toastr', '$window', function (toastr, $window) {
             if (query.indexOf('/') == 0) {
                 query = query.substring(1, query.length);
             }
+
+            var anchorIndex = query.indexOf('#');
+            if (anchorIndex >= 0) {
+                query = query.substring(0, anchorIndex);
+            }
+
             var params = query.split("&");
             var result = {};
             params.forEach(function (param) {

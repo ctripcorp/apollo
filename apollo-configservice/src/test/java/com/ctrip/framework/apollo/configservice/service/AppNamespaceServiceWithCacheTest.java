@@ -74,6 +74,8 @@ public class AppNamespaceServiceWithCacheTest {
     String anotherPrivateNamespace = "anotherPrivateNamespace";
     long anotherPrivateNamespaceId = 3;
 
+    int sleepInterval = scanInterval * 10;
+
     AppNamespace somePrivateAppNamespace = assembleAppNamespace(somePrivateNamespaceId,
         someAppId, somePrivateNamespace, false);
     AppNamespace somePublicAppNamespace = assembleAppNamespace(somePublicNamespaceId,
@@ -116,7 +118,7 @@ public class AppNamespaceServiceWithCacheTest {
         somePublicNamespaceId))).thenReturn(Lists.newArrayList(somePrivateAppNamespace,
         somePublicAppNamespace));
 
-    scanIntervalTimeUnit.sleep(scanInterval * 3);
+    scanIntervalTimeUnit.sleep(sleepInterval);
 
     check(Lists.newArrayList(somePrivateAppNamespace), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, someAppIdNamespaces));
@@ -131,7 +133,7 @@ public class AppNamespaceServiceWithCacheTest {
             anotherPublicAppNamespace));
     when(appNamespaceRepository.findAll(appNamespaceIds)).thenReturn(allAppNamespaces);
 
-    scanIntervalTimeUnit.sleep(scanInterval * 3);
+    scanIntervalTimeUnit.sleep(sleepInterval);
 
     check(Lists.newArrayList(somePrivateAppNamespace, yetAnotherPrivateAppNamespace,
         anotherPublicAppNamespace), appNamespaceServiceWithCache.findByAppIdAndNamespaces
@@ -169,7 +171,7 @@ public class AppNamespaceServiceWithCacheTest {
     when(appNamespaceRepository.findAll(appNamespaceIds)).thenReturn(Lists.newArrayList
         (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
 
-    scanIntervalTimeUnit.sleep(scanInterval * 3);
+    scanIntervalTimeUnit.sleep(sleepInterval);
 
     check(Collections.emptyList(), appNamespaceServiceWithCache
         .findByAppIdAndNamespaces(someAppId, someAppIdNamespaces));

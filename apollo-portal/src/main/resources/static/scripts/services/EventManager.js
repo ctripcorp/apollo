@@ -133,7 +133,10 @@ appService.service('EventManager', [function () {
             EDIT_GRAY_RELEASE_RULES: 'edit_gray_release_rules',
             UPDATE_GRAY_RELEASE_RULES: 'update_gray_release_rules',
             PUBLISH_DENY: 'publish_deny',
-            EMERGENCY_PUBLISH: 'emergency_publish'
+            EMERGENCY_PUBLISH: 'emergency_publish',
+            PRE_DELETE_NAMESPACE: 'pre_delete_namespace',
+            DELETE_NAMESPACE: 'delete_namespace',
+            DELETE_NAMESPACE_FAILED: 'delete_namespace_failed'
         }
 
     }

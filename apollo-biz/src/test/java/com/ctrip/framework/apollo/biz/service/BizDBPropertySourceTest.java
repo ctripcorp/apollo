@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.biz.service;
 import com.google.common.collect.Lists;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
+import com.ctrip.framework.apollo.biz.MockBeanFactory;
 import com.ctrip.framework.apollo.biz.entity.ServerConfig;
 import com.ctrip.framework.apollo.biz.repository.ServerConfigRepository;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -45,19 +46,19 @@ public class BizDBPropertySourceTest extends AbstractUnitTest {
 
     //cluster config
     String cluster = "cluster";
-    configs.add(createServerConfig(clusterConfigKey, clusterConfigValue, cluster));
+    configs.add(MockBeanFactory.mockServerConfig(clusterConfigKey, clusterConfigValue, cluster));
     String dc = "dc";
-    configs.add(createServerConfig(clusterConfigKey, clusterConfigValue + "dc", dc));
-    configs.add(createServerConfig(clusterConfigKey, clusterConfigValue + ConfigConsts.CLUSTER_NAME_DEFAULT,
+    configs.add(MockBeanFactory.mockServerConfig(clusterConfigKey, clusterConfigValue + "dc", dc));
+    configs.add(MockBeanFactory.mockServerConfig(clusterConfigKey, clusterConfigValue + ConfigConsts.CLUSTER_NAME_DEFAULT,
                                    ConfigConsts.CLUSTER_NAME_DEFAULT));
 
     //dc config
-    configs.add(createServerConfig(dcConfigKey, dcConfigValue, dc));
-    configs.add(createServerConfig(dcConfigKey, dcConfigValue + ConfigConsts.CLUSTER_NAME_DEFAULT,
+    configs.add(MockBeanFactory.mockServerConfig(dcConfigKey, dcConfigValue, dc));
+    configs.add(MockBeanFactory.mockServerConfig(dcConfigKey, dcConfigValue + ConfigConsts.CLUSTER_NAME_DEFAULT,
                                    ConfigConsts.CLUSTER_NAME_DEFAULT));
 
     //default config
-    configs.add(createServerConfig(defaultKey, defaultValue, ConfigConsts.CLUSTER_NAME_DEFAULT));
+    configs.add(MockBeanFactory.mockServerConfig(defaultKey, defaultValue, ConfigConsts.CLUSTER_NAME_DEFAULT));
 
     System.setProperty(ConfigConsts.APOLLO_CLUSTER_KEY, cluster);
 
@@ -99,14 +100,5 @@ public class BizDBPropertySourceTest extends AbstractUnitTest {
     assertNull(propertySource.getProperty("noKey"));
   }
 
-  private ServerConfig createServerConfig(String key, String value, String cluster) {
-    ServerConfig config = new ServerConfig();
-
-    config.setKey(key);
-    config.setValue(value);
-    config.setCluster(cluster);
-
-    return config;
-  }
 
 }

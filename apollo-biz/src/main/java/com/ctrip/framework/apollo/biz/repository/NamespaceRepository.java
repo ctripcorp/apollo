@@ -2,6 +2,8 @@ package com.ctrip.framework.apollo.biz.repository;
 
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -19,4 +21,9 @@ public interface NamespaceRepository extends PagingAndSortingRepository<Namespac
   int batchDelete(String appId, String clusterName, String operator);
 
   List<Namespace> findByAppIdAndNamespaceName(String appId, String namespaceName);
+
+  List<Namespace> findByNamespaceName(String namespaceName, Pageable page);
+
+  int countByNamespaceNameAndAppIdNot(String namespaceName, String appId);
+
 }
