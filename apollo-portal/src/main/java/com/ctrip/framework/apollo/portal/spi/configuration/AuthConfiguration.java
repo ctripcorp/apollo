@@ -1,8 +1,8 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
+import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -11,11 +11,8 @@ import com.ctrip.framework.apollo.portal.spi.ctrip.CtripLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.ctrip.CtripSsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.ctrip.CtripUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.ctrip.CtripUserService;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultLogoutHandler;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultSsoHeartbeatHandler;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
-
+import com.ctrip.framework.apollo.portal.spi.defaultimpl.*;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -24,10 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import javax.servlet.Filter;
 import java.util.EventListener;
 import java.util.Map;
-
-import javax.servlet.Filter;
 
 
 @Configuration
@@ -168,6 +164,16 @@ public class AuthConfiguration {
     public SsoHeartbeatHandler ctripSsoHeartbeatHandler() {
       return new CtripSsoHeartbeatHandler();
     }
+
+    @Bean
+    public RoleInitializationService roleInitializationService() {
+      return new DefaultRoleInitializationService();
+    }
+
+    @Bean
+    public RolePermissionService rolePermissionService() {
+      return new DefaultRolePermissionService();
+    }
   }
 
 
@@ -200,6 +206,18 @@ public class AuthConfiguration {
     @ConditionalOnMissingBean(UserService.class)
     public UserService defaultUserService() {
       return new DefaultUserService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RoleInitializationService.class)
+    public RoleInitializationService roleInitializationService() {
+      return new DefaultRoleInitializationService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RolePermissionService.class)
+    public RolePermissionService rolePermissionService() {
+      return new DefaultRolePermissionService();
     }
   }
 

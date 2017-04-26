@@ -1,5 +1,6 @@
-package com.ctrip.framework.apollo.portal.service;
+package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
+import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 
