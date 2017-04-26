@@ -13,8 +13,8 @@ import com.ctrip.framework.apollo.portal.service.AppNamespaceServiceTest;
 import com.ctrip.framework.apollo.portal.service.ConfigServiceTest;
 import com.ctrip.framework.apollo.portal.service.FavoriteServiceTest;
 import com.ctrip.framework.apollo.portal.service.NamespaceServiceTest;
-import com.ctrip.framework.apollo.portal.service.RoleInitializationServiceTest;
-import com.ctrip.framework.apollo.portal.service.RolePermissionServiceTest;
+import com.ctrip.framework.apollo.portal.spi.defaultImpl.RoleInitializationServiceTest;
+import com.ctrip.framework.apollo.portal.spi.defaultImpl.RolePermissionServiceTest;
 import com.ctrip.framework.apollo.portal.spi.ctrip.CtripUserServiceTest;
 
 import org.junit.runner.RunWith;

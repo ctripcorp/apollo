@@ -1,16 +1,16 @@
-package com.ctrip.framework.apollo.portal.service;
-
-import com.google.common.collect.Sets;
+package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
-import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
+import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultRoleInitializationService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
+import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,9 +18,7 @@ import org.mockito.Mock;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RoleInitializationServiceTest extends AbstractUnitTest {
 
@@ -35,7 +33,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   @Mock
   private UserInfoHolder userInfoHolder;
   @InjectMocks
-  private RoleInitializationService roleInitializationService;
+  private DefaultRoleInitializationService roleInitializationService;
 
 
   @Test
