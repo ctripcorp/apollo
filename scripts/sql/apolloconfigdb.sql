@@ -45,8 +45,8 @@ DROP TABLE IF EXISTS `AppNamespace`;
 
 CREATE TABLE `AppNamespace` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `Name` varchar(32) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
-  `AppId` varchar(32) NOT NULL DEFAULT '' COMMENT 'app id',
+  `Name` varchar(500) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
+  `AppId` varchar(500) NOT NULL DEFAULT '' COMMENT 'app id',
   `Format` varchar(32) NOT NULL DEFAULT 'properties' COMMENT 'namespace的format类型',
   `IsPublic` bit(1) NOT NULL DEFAULT b'0' COMMENT 'namespace是否为公共',
   `Comment` varchar(64) NOT NULL DEFAULT '' COMMENT '注释',
@@ -92,8 +92,8 @@ DROP TABLE IF EXISTS `Cluster`;
 
 CREATE TABLE `Cluster` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `Name` varchar(32) NOT NULL DEFAULT '' COMMENT '集群名字',
-  `AppId` varchar(32) NOT NULL DEFAULT '' COMMENT 'App id',
+  `Name` varchar(500) NOT NULL DEFAULT '' COMMENT '集群名字',
+  `AppId` varchar(500) NOT NULL DEFAULT '' COMMENT 'App id',
   `ParentClusterId` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '父cluster',
   `IsDeleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) NOT NULL DEFAULT '' COMMENT '创建人邮箱前缀',
@@ -139,10 +139,10 @@ DROP TABLE IF EXISTS `GrayReleaseRule`;
 
 CREATE TABLE `GrayReleaseRule` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `AppId` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'AppID',
-  `ClusterName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'Cluster Name',
-  `NamespaceName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'Namespace Name',
-  `BranchName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'branch name',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `ClusterName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'Cluster Name',
+  `NamespaceName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'Namespace Name',
+  `BranchName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'branch name',
   `Rules` varchar(16000) DEFAULT '[]' COMMENT '灰度规则',
   `ReleaseId` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '灰度对应的release',
   `BranchStatus` tinyint(2) DEFAULT '1' COMMENT '灰度分支状态: 0:删除分支,1:正在使用的规则 2：全量发布',
@@ -164,8 +164,8 @@ DROP TABLE IF EXISTS `Instance`;
 
 CREATE TABLE `Instance` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `AppId` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'AppID',
-  `ClusterName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'ClusterName',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `ClusterName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'ClusterName',
   `DataCenter` varchar(64) NOT NULL DEFAULT 'default' COMMENT 'Data Center Name',
   `Ip` varchar(32) NOT NULL DEFAULT '' COMMENT 'instance ip',
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -186,9 +186,9 @@ DROP TABLE IF EXISTS `InstanceConfig`;
 CREATE TABLE `InstanceConfig` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
   `InstanceId` int(11) unsigned DEFAULT NULL COMMENT 'Instance Id',
-  `ConfigAppId` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'Config App Id',
-  `ConfigClusterName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'Config Cluster Name',
-  `ConfigNamespaceName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'Config Namespace Name',
+  `ConfigAppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'Config App Id',
+  `ConfigClusterName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'Config Cluster Name',
+  `ConfigNamespaceName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'Config Namespace Name',
   `ReleaseKey` varchar(64) NOT NULL DEFAULT '' COMMENT '发布的Key',
   `ReleaseDeliveryTime` timestamp NULL DEFAULT NULL COMMENT '配置获取时间',
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -303,10 +303,10 @@ DROP TABLE IF EXISTS `ReleaseHistory`;
 
 CREATE TABLE `ReleaseHistory` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `AppId` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'AppID',
-  `ClusterName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'ClusterName',
-  `NamespaceName` varchar(32) NOT NULL DEFAULT 'default' COMMENT 'namespaceName',
-  `BranchName` varchar(32) NOT NULL DEFAULT 'default' COMMENT '发布分支名',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `ClusterName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'ClusterName',
+  `NamespaceName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'namespaceName',
+  `BranchName` varchar(500) NOT NULL DEFAULT 'default' COMMENT '发布分支名',
   `ReleaseId` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '关联的Release Id',
   `PreviousReleaseId` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '前一次发布的ReleaseId',
   `Operation` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '发布类型，0: 普通发布，1: 回滚，2: 灰度发布，3: 灰度规则更新，4: 灰度合并回主分支发布，5: 主分支发布灰度自动发布，6: 主分支回滚灰度自动发布，7: 放弃灰度',
@@ -347,7 +347,7 @@ DROP TABLE IF EXISTS `ServerConfig`;
 CREATE TABLE `ServerConfig` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
   `Key` varchar(64) NOT NULL DEFAULT 'default' COMMENT '配置项Key',
-  `Cluster` varchar(32) NOT NULL DEFAULT 'default' COMMENT '配置对应的集群，default为不针对特定的集群',
+  `Cluster` varchar(500) NOT NULL DEFAULT 'default' COMMENT '配置对应的集群，default为不针对特定的集群',
   `Value` varchar(2048) NOT NULL DEFAULT 'default' COMMENT '配置项值',
   `Comment` varchar(1024) DEFAULT '' COMMENT '注释',
   `IsDeleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '1: deleted, 0: normal',
