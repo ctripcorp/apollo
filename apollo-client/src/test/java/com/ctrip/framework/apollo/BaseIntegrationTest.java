@@ -191,6 +191,11 @@ public abstract class BaseIntegrationTest{
     public TimeUnit getOnErrorRetryIntervalTimeUnit() {
       return TimeUnit.MILLISECONDS;
     }
+
+    @Override
+    public long getLongPollingInitialDelayInMills() {
+      return 0;
+    }
   }
 
   /**

@@ -32,6 +32,7 @@ public class ConfigUtil {
   private long maxConfigCacheSize = 500;//500 cache key
   private long configCacheExpireTime = 1;//1 minute
   private TimeUnit configCacheExpireTimeUnit = TimeUnit.MINUTES;//1 minute
+  private long longPollingInitialDelayInMills = 2000;//2 seconds
 
   public ConfigUtil() {
     initRefreshInterval();
@@ -40,6 +41,7 @@ public class ConfigUtil {
     initCluster();
     initQPS();
     initMaxConfigCacheSize();
+    initLongPollingInitialDelayInMills();
   }
 
   /**
@@ -245,5 +247,20 @@ public class ConfigUtil {
 
   public TimeUnit getConfigCacheExpireTimeUnit() {
     return configCacheExpireTimeUnit;
+  }
+
+  private void initLongPollingInitialDelayInMills() {
+    String customizedLongPollingInitialDelay = System.getProperty("apollo.longPollingInitialDelayInMills");
+    if (!Strings.isNullOrEmpty(customizedLongPollingInitialDelay)) {
+      try {
+        longPollingInitialDelayInMills = Long.valueOf(customizedLongPollingInitialDelay);
+      } catch (Throwable ex) {
+        logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}", customizedLongPollingInitialDelay);
+      }
+    }
+  }
+
+  public long getLongPollingInitialDelayInMills() {
+    return longPollingInitialDelayInMills;
   }
 }

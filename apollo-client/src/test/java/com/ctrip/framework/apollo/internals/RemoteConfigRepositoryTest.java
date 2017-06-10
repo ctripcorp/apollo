@@ -250,6 +250,11 @@ public class RemoteConfigRepositoryTest {
     public TimeUnit getOnErrorRetryIntervalTimeUnit() {
       return TimeUnit.MILLISECONDS;
     }
+
+    @Override
+    public long getLongPollingInitialDelayInMills() {
+      return 0;
+    }
   }
 
   public static class MockHttpUtil extends HttpUtil {

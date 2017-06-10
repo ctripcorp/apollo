@@ -103,9 +103,18 @@ public class RemoteConfigLongPollService {
       final String appId = m_configUtil.getAppId();
       final String cluster = m_configUtil.getCluster();
       final String dataCenter = m_configUtil.getDataCenter();
+      final long longPollingInitialDelayInMills = m_configUtil.getLongPollingInitialDelayInMills();
       m_longPollingService.submit(new Runnable() {
         @Override
         public void run() {
+          if (longPollingInitialDelayInMills > 0) {
+            try {
+              logger.debug("Long polling will start in {} ms.", longPollingInitialDelayInMills);
+              TimeUnit.MILLISECONDS.sleep(longPollingInitialDelayInMills);
+            } catch (InterruptedException e) {
+              //ignore
+            }
+          }
           doLongPollingRefresh(appId, cluster, dataCenter);
         }
       });
