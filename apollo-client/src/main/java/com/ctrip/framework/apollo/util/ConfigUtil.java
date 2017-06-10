@@ -18,7 +18,6 @@ import com.google.common.base.Strings;
  */
 public class ConfigUtil {
   private static final Logger logger = LoggerFactory.getLogger(ConfigUtil.class);
-  private static final String TOOLING_CLUSTER = "tooling";
   private int refreshInterval = 5;
   private TimeUnit refreshIntervalTimeUnit = TimeUnit.MINUTES;
   private int connectTimeout = 1000; //1 second
@@ -71,19 +70,6 @@ public class ConfigUtil {
     //Load data center from system property
     cluster = System.getProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
 
-    String env = Foundation.server().getEnvType();
-    //LPT and DEV will be treated as a cluster(lower case)
-    if (Strings.isNullOrEmpty(cluster) &&
-        (Env.DEV.name().equalsIgnoreCase(env) || Env.LPT.name().equalsIgnoreCase(env))
-        ) {
-      cluster = env.toLowerCase();
-    }
-
-    //Use TOOLING cluster if tooling=true in server.properties
-    if (Strings.isNullOrEmpty(cluster) && isToolingZone()) {
-      cluster = TOOLING_CLUSTER;
-    }
-
     //Use data center as cluster
     if (Strings.isNullOrEmpty(cluster)) {
       cluster = getDataCenter();
@@ -93,11 +79,6 @@ public class ConfigUtil {
     if (Strings.isNullOrEmpty(cluster)) {
       cluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
-  }
-
-  private boolean isToolingZone() {
-    //do not use the new isTooling method since it might not be available in the client side
-    return "true".equalsIgnoreCase(Foundation.server().getProperty("tooling", "false").trim());
   }
 
   /**
