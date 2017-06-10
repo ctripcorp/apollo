@@ -4,7 +4,9 @@
 	<property name="LOG_FILE"
 		value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}apollo-adminservice.log}" />
 	<include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 	<root level="INFO">
 		<appender-ref ref="FILE" />
+		<appender-ref ref="CONSOLE" />
 	</root>
 </configuration>
