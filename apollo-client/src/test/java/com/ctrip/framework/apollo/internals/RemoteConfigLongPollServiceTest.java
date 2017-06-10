@@ -62,6 +62,7 @@ public class RemoteConfigLongPollServiceTest {
 
     MockInjector.setInstance(HttpUtil.class, httpUtil);
 
+    someServerUrl = "http://someServer";
     ServiceDTO serviceDTO = mock(ServiceDTO.class);
     when(serviceDTO.getHomepageUrl()).thenReturn(someServerUrl);
     when(configServiceLocator.getConfigServices()).thenReturn(Lists.newArrayList(serviceDTO));
@@ -74,7 +75,6 @@ public class RemoteConfigLongPollServiceTest {
     responseType =
         (Type) ReflectionTestUtils.getField(remoteConfigLongPollService, "m_responseType");
 
-    someServerUrl = "http://someServer";
     someAppId = "someAppId";
     someCluster = "someCluster";
   }
@@ -366,6 +366,11 @@ public class RemoteConfigLongPollServiceTest {
     @Override
     public int getLongPollQPS() {
       return 200;
+    }
+
+    @Override
+    public long getLongPollingInitialDelayInMills() {
+      return 0;
     }
   }
 

@@ -50,7 +50,7 @@ public class AppNamespaceServiceWithCacheTest {
         appNamespaceRepository);
     ReflectionTestUtils.setField(appNamespaceServiceWithCache, "bizConfig", bizConfig);
 
-    scanInterval = 10;
+    scanInterval = 50;
     scanIntervalTimeUnit = TimeUnit.MILLISECONDS;
     when(bizConfig.appNamespaceCacheRebuildInterval()).thenReturn(scanInterval);
     when(bizConfig.appNamespaceCacheRebuildIntervalTimeUnit()).thenReturn(scanIntervalTimeUnit);
