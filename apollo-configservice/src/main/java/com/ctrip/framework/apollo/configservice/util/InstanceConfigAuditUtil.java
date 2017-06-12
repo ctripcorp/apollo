@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Service
 public class InstanceConfigAuditUtil implements InitializingBean {
-  private static final int INSTANCE_CONFIG_AUDIT_MAX_SIZE = 2000;
+  private static final int INSTANCE_CONFIG_AUDIT_MAX_SIZE = 10000;
   private static final int INSTANCE_CACHE_MAX_SIZE = 10000;
   private static final int INSTANCE_CONFIG_CACHE_MAX_SIZE = 10000;
   private static final long OFFER_TIME_LAST_MODIFIED_TIME_THRESHOLD_IN_MILLI = TimeUnit.MINUTES.toMillis(10);//10 minutes

@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.biz.service;
 import com.google.common.collect.Lists;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
-import com.ctrip.framework.apollo.biz.MockBeanFactory;
+import com.ctrip.framework.apollo.biz.utils.MockBeanFactory;
 import com.ctrip.framework.apollo.biz.entity.ServerConfig;
 import com.ctrip.framework.apollo.biz.repository.ServerConfigRepository;
 import com.ctrip.framework.apollo.core.ConfigConsts;

@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.service.ItemService;
 import com.ctrip.framework.apollo.biz.service.NamespaceService;
 import com.ctrip.framework.apollo.biz.service.ReleaseService;
+import com.ctrip.framework.apollo.biz.utils.MockBeanFactory;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,15 +34,19 @@ public class NamespaceUnlockAspectTest {
   @InjectMocks
   private NamespaceUnlockAspect namespaceUnlockAspect;
 
+  private String testAppId = "testAppId";
+  private String testParentAppId = "testParentAppId";
+  private String testCluster = "testCluster";
+  private String testNamespace = "testNamespace";
 
   @Test
   public void testNamespaceHasNoNormalItemsAndRelease() {
 
     long namespaceId = 1;
-    Namespace namespace = createNamespace(namespaceId);
+    Namespace namespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
 
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(null);
-    when(itemService.findItemsWithOrdered(namespaceId)).thenReturn(Collections.singletonList(createItem("", "")));
+    when(itemService.findItemsWithOrdered(namespaceId)).thenReturn(Collections.singletonList(MockBeanFactory.mockItem("", "")));
 
     boolean isModified = namespaceUnlockAspect.isModified(namespace);
 
@@ -51,10 +56,10 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testNamespaceAddItem() {
     long namespaceId = 1;
-    Namespace namespace = createNamespace(namespaceId);
+    Namespace namespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
 
     Release release = createRelease("{\"k1\":\"v1\"}");
-    List<Item> items = Arrays.asList(createItem("k1", "v1"), createItem("k2", "v2"));
+    List<Item> items = Arrays.asList(MockBeanFactory.mockItem("k1", "v1"), MockBeanFactory.mockItem("k2", "v2"));
 
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
     when(itemService.findItemsWithOrdered(namespaceId)).thenReturn(items);
@@ -68,10 +73,10 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testNamespaceModifyItem() {
     long namespaceId = 1;
-    Namespace namespace = createNamespace(namespaceId);
+    Namespace namespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
 
     Release release = createRelease("{\"k1\":\"v1\"}");
-    List<Item> items = Arrays.asList(createItem("k1", "v2"));
+    List<Item> items = Arrays.asList(MockBeanFactory.mockItem("k1", "v2"));
 
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
     when(itemService.findItemsWithOrdered(namespaceId)).thenReturn(items);
@@ -85,10 +90,10 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testNamespaceDeleteItem() {
     long namespaceId = 1;
-    Namespace namespace = createNamespace(namespaceId);
+    Namespace namespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
 
     Release release = createRelease("{\"k1\":\"v1\"}");
-    List<Item> items = Arrays.asList(createItem("k2", "v2"));
+    List<Item> items = Arrays.asList(MockBeanFactory.mockItem("k2", "v2"));
 
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
     when(itemService.findItemsWithOrdered(namespaceId)).thenReturn(items);
@@ -102,11 +107,13 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testChildNamespaceModified() {
     long childNamespaceId = 1, parentNamespaceId = 2;
-    Namespace childNamespace = createNamespace(childNamespaceId);
-    Namespace parentNamespace = createNamespace(parentNamespaceId);
+    Namespace childNamespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
+    childNamespace.setId(childNamespaceId);
+    Namespace parentNamespace = MockBeanFactory.mockNamespace(2, testParentAppId, testCluster, testNamespace);
+    parentNamespace.setId(parentNamespaceId);
 
     Release childRelease = createRelease("{\"k1\":\"v1\", \"k2\":\"v2\"}");
-    List<Item> childItems = Arrays.asList(createItem("k1", "v3"));
+    List<Item> childItems = Arrays.asList(MockBeanFactory.mockItem("k1", "v3"));
     Release parentRelease = createRelease("{\"k1\":\"v1\", \"k2\":\"v2\"}");
 
     when(releaseService.findLatestActiveRelease(childNamespace)).thenReturn(childRelease);
@@ -122,12 +129,16 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testChildNamespaceNotModified() {
     long childNamespaceId = 1, parentNamespaceId = 2;
-    Namespace childNamespace = createNamespace(childNamespaceId);
-    Namespace parentNamespace = createNamespace(parentNamespaceId);
+    Namespace childNamespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
+    childNamespace.setId(childNamespaceId);
+    Namespace parentNamespace = MockBeanFactory.mockNamespace(2, testParentAppId, testCluster, testNamespace);
+    parentNamespace.setId(parentNamespaceId);
 
     Release childRelease = createRelease("{\"k1\":\"v3\", \"k2\":\"v2\"}");
-    List<Item> childItems = Arrays.asList(createItem("k1", "v3"));
+    childRelease.setId(1111);
+    List<Item> childItems = Arrays.asList(MockBeanFactory.mockItem("k1", "v3"));
     Release parentRelease = createRelease("{\"k1\":\"v1\", \"k2\":\"v2\"}");
+    parentRelease.setId(2222);
 
     when(releaseService.findLatestActiveRelease(childNamespace)).thenReturn(childRelease);
     when(releaseService.findLatestActiveRelease(parentNamespace)).thenReturn(parentRelease);
@@ -142,11 +153,13 @@ public class NamespaceUnlockAspectTest {
   @Test
   public void testParentNamespaceNotReleased() {
     long childNamespaceId = 1, parentNamespaceId = 2;
-    Namespace childNamespace = createNamespace(childNamespaceId);
-    Namespace parentNamespace = createNamespace(parentNamespaceId);
+    Namespace childNamespace = MockBeanFactory.mockNamespace(1, testAppId, testCluster, testNamespace);
+    childNamespace.setId(childNamespaceId);
+    Namespace parentNamespace = MockBeanFactory.mockNamespace(2, testParentAppId, testCluster, testNamespace);
+    parentNamespace.setId(parentNamespaceId);
 
     Release childRelease = createRelease("{\"k1\":\"v3\", \"k2\":\"v2\"}");
-    List<Item> childItems = Arrays.asList(createItem("k1", "v2"), createItem("k2", "v2"));
+    List<Item> childItems = Arrays.asList(MockBeanFactory.mockItem("k1", "v2"), MockBeanFactory.mockItem("k2", "v2"));
 
     when(releaseService.findLatestActiveRelease(childNamespace)).thenReturn(childRelease);
     when(releaseService.findLatestActiveRelease(parentNamespace)).thenReturn(null);
@@ -158,19 +171,6 @@ public class NamespaceUnlockAspectTest {
     Assert.assertTrue(isModified);
   }
 
-
-  private Namespace createNamespace(long namespaceId) {
-    Namespace namespace = new Namespace();
-    namespace.setId(namespaceId);
-    return namespace;
-  }
-
-  private Item createItem(String key, String value) {
-    Item item = new Item();
-    item.setKey(key);
-    item.setValue(value);
-    return item;
-  }
 
   private Release createRelease(String configuration) {
     Release release = new Release();

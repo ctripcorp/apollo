@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
-import com.ctrip.framework.apollo.biz.MockBeanFactory;
+import com.ctrip.framework.apollo.biz.utils.MockBeanFactory;
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.repository.ReleaseRepository;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;

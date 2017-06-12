@@ -11,6 +11,7 @@ import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.Topics;
 import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
+import com.ctrip.framework.apollo.configservice.internal.ConfigCache;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
@@ -61,6 +62,8 @@ public class NotificationControllerV2Test {
   private WatchKeysUtil watchKeysUtil;
   @Mock
   private BizConfig bizConfig;
+  @Mock
+  private ConfigCache configCache;
 
   private Gson gson;
 
@@ -81,6 +84,7 @@ public class NotificationControllerV2Test {
     ReflectionTestUtils.setField(controller, "watchKeysUtil", watchKeysUtil);
     ReflectionTestUtils.setField(controller, "gson", gson);
     ReflectionTestUtils.setField(controller, "bizConfig", bizConfig);
+    ReflectionTestUtils.setField(controller, "configCache", configCache);
 
     someAppId = "someAppId";
     someCluster = "someCluster";

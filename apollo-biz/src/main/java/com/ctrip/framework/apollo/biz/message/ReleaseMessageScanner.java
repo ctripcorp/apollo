@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.biz.message;
 
 import com.google.common.collect.Lists;
 
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
@@ -12,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,12 +25,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class ReleaseMessageScanner implements InitializingBean {
   private static final Logger logger = LoggerFactory.getLogger(ReleaseMessageScanner.class);
-  private static final int DEFAULT_SCAN_INTERVAL_IN_MS = 1000;
-  @Autowired
-  private Environment env;
+
   @Autowired
   private ReleaseMessageRepository releaseMessageRepository;
-  private int databaseScanInterval;
+  @Autowired
+  private BizConfig bizConfig;
+
   private List<ReleaseMessageListener> listeners;
   private ScheduledExecutorService executorService;
   private long maxIdScanned;
@@ -44,7 +43,7 @@ public class ReleaseMessageScanner implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    populateDataBaseInterval();
+    int releaseMessageScanInterval = bizConfig.releaseMessageScanInterval();
     maxIdScanned = loadLargestMessageId();
     executorService.scheduleWithFixedDelay((Runnable) () -> {
       Transaction transaction = Tracer.newTransaction("Apollo.ReleaseMessageScanner", "scanMessage");
@@ -57,7 +56,7 @@ public class ReleaseMessageScanner implements InitializingBean {
       } finally {
         transaction.complete();
       }
-    }, getDatabaseScanIntervalMs(), getDatabaseScanIntervalMs(), TimeUnit.MILLISECONDS);
+    }, releaseMessageScanInterval, releaseMessageScanInterval, TimeUnit.MILLISECONDS);
 
   }
 
@@ -125,20 +124,4 @@ public class ReleaseMessageScanner implements InitializingBean {
     }
   }
 
-  private void populateDataBaseInterval() {
-    databaseScanInterval = DEFAULT_SCAN_INTERVAL_IN_MS;
-    try {
-      String interval = env.getProperty("apollo.message-scan.interval");
-      if (!Objects.isNull(interval)) {
-        databaseScanInterval = Integer.parseInt(interval);
-      }
-    } catch (Throwable ex) {
-      Tracer.logError(ex);
-      logger.error("Load apollo message scan interval from system property failed", ex);
-    }
-  }
-
-  private int getDatabaseScanIntervalMs() {
-    return databaseScanInterval;
-  }
 }

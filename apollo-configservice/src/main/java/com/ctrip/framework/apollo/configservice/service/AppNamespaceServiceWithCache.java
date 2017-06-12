@@ -12,6 +12,7 @@ import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 
@@ -69,6 +70,11 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
         .create("AppNamespaceServiceWithCache", true));
   }
 
+  public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
+    Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
+    return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
+  }
+
   public List<AppNamespace> findByAppIdAndNamespaces(String appId, Set<String> namespaceNames) {
     Preconditions.checkArgument(!Strings.isNullOrEmpty(appId), "appId must not be null");
     if (namespaceNames == null || namespaceNames.isEmpty()) {
@@ -83,6 +89,11 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
       }
     }
     return result;
+  }
+
+  public AppNamespace findPublicNamespaceByName(String namespaceName) {
+    Preconditions.checkArgument(!StringUtils.isContainEmpty(namespaceName), "namespaceName must not be empty");
+    return publicAppNamespaceCache.get(namespaceName);
   }
 
   public List<AppNamespace> findPublicNamespacesByNames(Set<String> namespaceNames) {

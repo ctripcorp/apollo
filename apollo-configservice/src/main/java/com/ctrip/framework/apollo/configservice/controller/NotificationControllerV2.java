@@ -18,6 +18,7 @@ import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
 import com.ctrip.framework.apollo.biz.message.Topics;
 import com.ctrip.framework.apollo.biz.utils.EntityManagerUtil;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.configservice.internal.ConfigCache;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
 import com.ctrip.framework.apollo.configservice.util.NamespaceUtil;
 import com.ctrip.framework.apollo.configservice.util.WatchKeysUtil;
@@ -70,21 +71,18 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
   @Autowired
   private WatchKeysUtil watchKeysUtil;
-
   @Autowired
   private ReleaseMessageServiceWithCache releaseMessageService;
-
   @Autowired
   private EntityManagerUtil entityManagerUtil;
-
   @Autowired
   private NamespaceUtil namespaceUtil;
-
   @Autowired
   private Gson gson;
-
   @Autowired
   private BizConfig bizConfig;
+  @Autowired
+  private ConfigCache configCache;
 
   public NotificationControllerV2() {
     largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
@@ -224,6 +222,17 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       return;
     }
 
+    doInvalidateCache(message);
+    
+    doNotify(changedNamespace, message);
+  }
+
+  private void doInvalidateCache(ReleaseMessage message) {
+    configCache.invalidate(message.getMessage());
+  }
+
+  private void doNotify(String changedNamespace, ReleaseMessage message) {
+    String content = message.getMessage();
     ResponseEntity<List<ApolloConfigNotification>> notification =
         new ResponseEntity<>(
             Lists.newArrayList(new ApolloConfigNotification(changedNamespace, message.getId())),
@@ -240,7 +249,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     if (results.size() > bizConfig.releaseMessageNotificationBatch()) {
       largeNotificationBatchExecutorService.submit(() -> {
         logger.debug("Async notify {} clients for key {} with batch {}", results.size(), content,
-            bizConfig.releaseMessageNotificationBatch());
+                     bizConfig.releaseMessageNotificationBatch());
         for (int i = 0; i < results.size(); i++) {
           if (i > 0 && i % bizConfig.releaseMessageNotificationBatch() == 0) {
             try {

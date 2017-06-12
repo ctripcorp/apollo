@@ -38,7 +38,7 @@ public class BizConfigTest {
 
   @Test
   public void testReleaseMessageNotificationBatchWithDefaultValue() throws Exception {
-    int defaultBatch = 100;
+    int defaultBatch = BizConfig.DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH;
 
     assertEquals(defaultBatch, bizConfig.releaseMessageNotificationBatch());
   }
@@ -46,7 +46,7 @@ public class BizConfigTest {
   @Test
   public void testReleaseMessageNotificationBatchWithInvalidNumber() throws Exception {
     int someBatch = -20;
-    int defaultBatch = 100;
+    int defaultBatch = BizConfig.DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH;
     when(environment.getProperty("apollo.release-message.notification.batch")).thenReturn(String.valueOf(someBatch));
 
     assertEquals(defaultBatch, bizConfig.releaseMessageNotificationBatch());
@@ -55,7 +55,7 @@ public class BizConfigTest {
   @Test
   public void testReleaseMessageNotificationBatchWithNAN() throws Exception {
     String someNAN = "someNAN";
-    int defaultBatch = 100;
+    int defaultBatch = BizConfig.DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH;
     when(environment.getProperty("apollo.release-message.notification.batch")).thenReturn(someNAN);
 
     assertEquals(defaultBatch, bizConfig.releaseMessageNotificationBatch());

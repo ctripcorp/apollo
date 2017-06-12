@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.biz.service;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
-import com.ctrip.framework.apollo.biz.MockBeanFactory;
+import com.ctrip.framework.apollo.biz.utils.MockBeanFactory;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.repository.NamespaceRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
@@ -52,11 +52,11 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     when(appNamespaceService.findPublicNamespaceByName(testPublicAppNamespace)).thenReturn(publicAppNamespace);
 
     Namespace firstParentNamespace =
-        MockBeanFactory.mockNamespace("app", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
+        MockBeanFactory.mockNamespace(0, "app", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
     Namespace secondParentNamespace =
-        MockBeanFactory.mockNamespace("app1", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
+        MockBeanFactory.mockNamespace(1, "app1", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
     Namespace childNamespace =
-        MockBeanFactory.mockNamespace("app2", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
+        MockBeanFactory.mockNamespace(2, "app2", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
 
 
     Pageable page = new PageRequest(0, 10);

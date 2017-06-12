@@ -2,11 +2,13 @@ package com.ctrip.framework.apollo.configservice.integration;
 
 import com.google.common.base.Joiner;
 
+import com.ctrip.framework.apollo.configservice.internal.ConfigCache;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
@@ -32,6 +34,8 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   private String someDefaultCluster;
   private String someClientIp;
   private ExecutorService executorService;
+  @Autowired
+  private ConfigCache configCache;
 
   @Before
   public void setUp() throws Exception {
@@ -44,6 +48,7 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
     someDefaultCluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     someClientIp = "1.1.1.1";
     executorService = Executors.newSingleThreadExecutor();
+    configCache.clear();
   }
 
   @Test
@@ -222,6 +227,7 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryPublicConfigWithDataCenterNotFoundAndNoOverride() throws Exception {
+    TimeUnit.SECONDS.sleep(1);
     String someDCNotFound = "someDCNotFound";
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",
@@ -242,6 +248,7 @@ public class ConfigControllerIntegrationTest extends AbstractBaseIntegrationTest
   @Sql(scripts = "/integration-test/test-release-public-default-override.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testQueryPublicConfigWithDataCenterNotFoundAndOverride() throws Exception {
+    TimeUnit.SECONDS.sleep(1);
     String someDCNotFound = "someDCNotFound";
     ResponseEntity<ApolloConfig> response = restTemplate
         .getForEntity("{baseurl}/configs/{appId}/{clusterName}/{namespace}?dataCenter={dateCenter}",

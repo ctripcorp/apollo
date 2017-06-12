@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz.entity;
 
+import com.ctrip.framework.apollo.biz.utils.ReleaseMessageKeyGenerator;
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
 
 import org.hibernate.annotations.SQLDelete;
@@ -56,6 +57,37 @@ public class Namespace extends BaseEntity {
 
   public void setNamespaceName(String namespaceName) {
     this.namespaceName = namespaceName;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Namespace namespace = (Namespace) o;
+
+    if (namespace.getId() == getId()) {
+      return true;
+    }
+    if (appId != null ? !appId.equals(namespace.appId) : namespace.appId != null) {
+      return false;
+    }
+    if (clusterName != null ? !clusterName.equals(namespace.clusterName) : namespace.clusterName != null) {
+      return false;
+    }
+    return namespaceName != null ? namespaceName.equals(namespace.namespaceName) : namespace.namespaceName == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = appId != null ? appId.hashCode() : 0;
+    result = 31 * result + (clusterName != null ? clusterName.hashCode() : 0);
+    result = 31 * result + (namespaceName != null ? namespaceName.hashCode() : 0);
+    return result;
   }
 
   public String toString() {

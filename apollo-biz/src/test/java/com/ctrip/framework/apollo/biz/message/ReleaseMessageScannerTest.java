@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.SettableFuture;
 
 import com.ctrip.framework.apollo.biz.AbstractUnitTest;
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
 
@@ -26,17 +27,14 @@ public class ReleaseMessageScannerTest extends AbstractUnitTest {
   @Mock
   private ReleaseMessageRepository releaseMessageRepository;
   @Mock
-  private Environment env;
-  private int databaseScanInterval;
+  private BizConfig bizConfig;
 
   @Before
   public void setUp() throws Exception {
     releaseMessageScanner = new ReleaseMessageScanner();
-    ReflectionTestUtils
-        .setField(releaseMessageScanner, "releaseMessageRepository", releaseMessageRepository);
-    ReflectionTestUtils.setField(releaseMessageScanner, "env", env);
-    databaseScanInterval = 100; //100 ms
-    when(env.getProperty("apollo.message-scan.interval")).thenReturn(String.valueOf(databaseScanInterval));
+    ReflectionTestUtils.setField(releaseMessageScanner, "releaseMessageRepository", releaseMessageRepository);
+    ReflectionTestUtils.setField(releaseMessageScanner, "bizConfig", bizConfig);
+    when(bizConfig.releaseMessageScanInterval()).thenReturn(100);
     releaseMessageScanner.afterPropertiesSet();
   }
 

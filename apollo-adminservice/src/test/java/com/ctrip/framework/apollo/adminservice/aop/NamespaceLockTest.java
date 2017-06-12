@@ -2,11 +2,10 @@ package com.ctrip.framework.apollo.adminservice.aop;
 
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
-import com.ctrip.framework.apollo.biz.entity.Namespace;
-import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
 import com.ctrip.framework.apollo.biz.service.ItemService;
 import com.ctrip.framework.apollo.biz.service.NamespaceLockService;
 import com.ctrip.framework.apollo.biz.service.NamespaceService;
+import com.ctrip.framework.apollo.biz.utils.MockBeanFactory;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 
@@ -58,7 +57,8 @@ public class NamespaceLockTest {
   public void acquireLockWithNotLockedAndSwitchOFF() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
-    when(namespaceService.findOne(APP, CLUSTER, NAMESPACE)).thenReturn(mockNamespace());
+    when(namespaceService.findOne(APP, CLUSTER, NAMESPACE))
+        .thenReturn(MockBeanFactory.mockNamespace(NAMESPACE_ID, APP, CLUSTER, NAMESPACE));
     when(namespaceLockService.findLock(anyLong())).thenReturn(null);
 
     namespaceLockAspect.acquireLock(APP, CLUSTER, NAMESPACE, CURRENT_USER);
@@ -74,8 +74,10 @@ public class NamespaceLockTest {
   public void acquireLockWithAlreadyLockedByOtherGuy() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
-    when(namespaceService.findOne(APP, CLUSTER, NAMESPACE)).thenReturn(mockNamespace());
-    when(namespaceLockService.findLock(NAMESPACE_ID)).thenReturn(mockNamespaceLock(ANOTHER_USER));
+    when(namespaceService.findOne(NAMESPACE_ID))
+        .thenReturn(MockBeanFactory.mockNamespace(NAMESPACE_ID, APP, CLUSTER, NAMESPACE));
+    when(namespaceLockService.findLock(NAMESPACE_ID))
+        .thenReturn(MockBeanFactory.mockNamespaceLock(NAMESPACE_ID, ANOTHER_USER));
 
     namespaceLockAspect.acquireLock(APP, CLUSTER, NAMESPACE, CURRENT_USER);
 
@@ -88,8 +90,10 @@ public class NamespaceLockTest {
   public void acquireLockWithAlreadyLockedBySelf() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
-    when(namespaceService.findOne(APP, CLUSTER, NAMESPACE)).thenReturn(mockNamespace());
-    when(namespaceLockService.findLock(NAMESPACE_ID)).thenReturn(mockNamespaceLock(CURRENT_USER));
+    when(namespaceService.findOne(APP, CLUSTER, NAMESPACE))
+        .thenReturn(MockBeanFactory.mockNamespace(NAMESPACE_ID, APP, CLUSTER, NAMESPACE));
+    when(namespaceLockService.findLock(NAMESPACE_ID))
+        .thenReturn(MockBeanFactory.mockNamespaceLock(NAMESPACE_ID, CURRENT_USER));
 
     namespaceLockAspect.acquireLock(APP, CLUSTER, NAMESPACE, CURRENT_USER);
 
@@ -99,10 +103,11 @@ public class NamespaceLockTest {
   }
 
   @Test
-  public void acquireLockWithNamespaceIdSwitchOn(){
+  public void acquireLockWithNamespaceIdSwitchOn() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
-    when(namespaceService.findOne(NAMESPACE_ID)).thenReturn(mockNamespace());
+    when(namespaceService.findOne(NAMESPACE_ID))
+        .thenReturn(MockBeanFactory.mockNamespace(NAMESPACE_ID, APP, CLUSTER, NAMESPACE));
     when(namespaceLockService.findLock(NAMESPACE_ID)).thenReturn(null);
 
     namespaceLockAspect.acquireLock(NAMESPACE_ID, CURRENT_USER);
@@ -114,10 +119,11 @@ public class NamespaceLockTest {
   }
 
   @Test(expected = ServiceException.class)
-  public void testDuplicateLock(){
+  public void testDuplicateLock() {
 
     when(bizConfig.isNamespaceLockSwitchOff()).thenReturn(false);
-    when(namespaceService.findOne(NAMESPACE_ID)).thenReturn(mockNamespace());
+    when(namespaceService.findOne(NAMESPACE_ID))
+        .thenReturn(MockBeanFactory.mockNamespace(NAMESPACE_ID, APP, CLUSTER, NAMESPACE));
     when(namespaceLockService.findLock(NAMESPACE_ID)).thenReturn(null);
     when(namespaceLockService.tryLock(any())).thenThrow(DataIntegrityViolationException.class);
 
@@ -129,22 +135,5 @@ public class NamespaceLockTest {
     verify(namespaceLockService).tryLock(any());
 
   }
-
-  private Namespace mockNamespace() {
-    Namespace namespace = new Namespace();
-    namespace.setId(NAMESPACE_ID);
-    namespace.setAppId(APP);
-    namespace.setClusterName(CLUSTER);
-    namespace.setNamespaceName(NAMESPACE);
-    return namespace;
-  }
-
-  private NamespaceLock mockNamespaceLock(String locedUser) {
-    NamespaceLock lock = new NamespaceLock();
-    lock.setNamespaceId(NAMESPACE_ID);
-    lock.setDataChangeCreatedBy(locedUser);
-    return lock;
-  }
-
 
 }
