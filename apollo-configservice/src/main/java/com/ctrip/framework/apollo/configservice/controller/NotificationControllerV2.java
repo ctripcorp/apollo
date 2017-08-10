@@ -159,17 +159,17 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       }
 
       deferredResult
-          .onTimeout(() -> logWatchedKeysToCat(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
+          .onTimeout(() -> logWatchedKeysToMonitor(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
       deferredResult.onCompletion(() -> {
         //unregister all keys
         for (String key : watchedKeys) {
           deferredResults.remove(key, deferredResult);
         }
-        logWatchedKeysToCat(watchedKeys, "Apollo.LongPoll.CompletedKeys");
+        logWatchedKeysToMonitor(watchedKeys, "Apollo.LongPoll.CompletedKeys");
       });
 
-      logWatchedKeysToCat(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
+      logWatchedKeysToMonitor(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
       logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
           watchedKeys, appId, cluster, namespaces, dataCenter);
     }
@@ -278,7 +278,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         return keys.get(2);
       };
 
-  private void logWatchedKeysToCat(Set<String> watchedKeys, String eventName) {
+  private void logWatchedKeysToMonitor(Set<String> watchedKeys, String eventName) {
     for (String watchedKey : watchedKeys) {
       Tracer.logEvent(eventName, watchedKey);
     }
