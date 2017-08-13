@@ -161,6 +161,10 @@ public class ConfigFileController implements ReleaseMessageListener {
                      String namespace, String dataCenter, String clientIp,
                      HttpServletRequest request,
                      HttpServletResponse response) throws IOException {
+    if(Strings.isNullOrEmpty(namespace)) {
+      return null;
+    }
+    
     //strip out .properties suffix
     namespace = namespaceUtil.filterNamespaceName(namespace);
 
