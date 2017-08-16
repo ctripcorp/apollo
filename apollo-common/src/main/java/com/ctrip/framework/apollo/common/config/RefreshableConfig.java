@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.common.config;
 
 import com.google.common.base.Splitter;
 
+import com.ctrip.framework.apollo.common.event.ServerConfigRefreshedEvent;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
@@ -9,6 +10,7 @@ import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.CollectionUtils;
 
@@ -32,6 +34,8 @@ public abstract class RefreshableConfig {
 
   @Autowired
   private ConfigurableEnvironment environment;
+  @Autowired
+  private ApplicationEventPublisher publisher;
 
   private List<RefreshablePropertySource> propertySources;
 

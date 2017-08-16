@@ -30,7 +30,8 @@
                     <h5>创建项目</h5>
                 </div>
             </div>
-            <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps" ng-click="goToAppHomePage(app.appId)">
+            <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps"
+                 ng-click="goToAppHomePage(app.appId)">
                 <div href="#" class="thumbnail hover cursor-pointer">
                     <h4 ng-bind="app.appId"></h4>
                     <h5 ng-bind="app.name"></h5>

@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
+import com.google.common.collect.Maps;
+
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
@@ -11,9 +13,10 @@ import com.ctrip.framework.apollo.portal.spi.ctrip.CtripUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.ctrip.CtripUserService;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultSsoHeartbeatHandler;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
-import com.google.common.collect.Maps;
+import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
+
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -21,6 +24,7 @@ import org.springframework.boot.context.embedded.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 import javax.servlet.Filter;
 import java.util.EventListener;
@@ -184,20 +188,28 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public DefaultUserInfoHolder notCtripUserInfoHolder() {
-      return new DefaultUserInfoHolder();
+    public UserInfoHolder springSecurityUserInfoHolder() {
+      return new SpringSecurityUserInfoHolder();
     }
 
     @Bean
     @ConditionalOnMissingBean(LogoutHandler.class)
-    public DefaultLogoutHandler logoutHandler() {
+    public LogoutHandler logoutHandler() {
       return new DefaultLogoutHandler();
     }
 
     @Bean
+    public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource datasource) {
+      JdbcUserDetailsManager userDetailsService = new JdbcUserDetailsManager();
+      userDetailsService.setDataSource(datasource);
+
+      return userDetailsService;
+    }
+
+    @Bean
     @ConditionalOnMissingBean(UserService.class)
-    public UserService defaultUserService() {
-      return new DefaultUserService();
+    public UserService springSecurityUserService() {
+      return new SpringSecurityUserService();
     }
 
   }
