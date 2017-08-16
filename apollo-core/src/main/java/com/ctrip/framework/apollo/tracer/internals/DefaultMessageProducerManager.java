@@ -11,12 +11,15 @@ import com.ctrip.framework.apollo.tracer.spi.MessageProducerManager;
  */
 public class DefaultMessageProducerManager implements MessageProducerManager {
   private static MessageProducer producer;
+  
+  private static final MessageProducerManager NULL_MESSAGE_PRODUCER_MANAGER =
+      new NullMessageProducerManager();
 
   public DefaultMessageProducerManager() {
     if (ClassLoaderUtil.isClassPresent(CatNames.CAT_CLASS)) {
       producer = new CatMessageProducer();
     } else {
-      producer = new NullMessageProducerManager().getProducer();
+      producer = NULL_MESSAGE_PRODUCER_MANAGER.getProducer();
     }
   }
 
