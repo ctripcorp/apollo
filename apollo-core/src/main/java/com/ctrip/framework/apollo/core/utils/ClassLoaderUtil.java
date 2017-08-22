@@ -37,7 +37,6 @@ public class ClassLoaderUtil {
       }
     } catch (Throwable ex) {
       classPath = System.getProperty("user.dir");
-      ex.printStackTrace();
     }
   }
 
