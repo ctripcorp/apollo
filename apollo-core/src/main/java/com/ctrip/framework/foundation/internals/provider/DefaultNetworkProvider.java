@@ -3,24 +3,24 @@ package com.ctrip.framework.foundation.internals.provider;
 import com.ctrip.framework.foundation.internals.NetworkInterfaceManager;
 import com.ctrip.framework.foundation.spi.provider.NetworkProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
+import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 public class DefaultNetworkProvider implements NetworkProvider {
+  
+  private Map<String,String> m_netWorkProperties = Maps.newHashMap();
+  
   @Override
   public String getProperty(String name, String defaultValue) {
-    if ("host.address".equalsIgnoreCase(name)) {
-      String val = getHostAddress();
-      return val == null ? defaultValue : val;
-    } else if ("host.name".equalsIgnoreCase(name)) {
-      String val = getHostName();
-      return val == null ? defaultValue : val;
-    } else {
-      return defaultValue;
-    }
+    String val = m_netWorkProperties.get(name);
+    return val == null ? defaultValue : val;
   }
 
   @Override
   public void initialize() {
-
+     m_netWorkProperties.put("host.address", getHostAddress());
+     m_netWorkProperties.put("host.name", getHostName());
   }
 
   @Override
