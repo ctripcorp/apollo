@@ -31,9 +31,7 @@ public class DefaultConfigFactory implements ConfigFactory {
 
   @Override
   public Config create(String namespace) {
-    DefaultConfig defaultConfig =
-        new DefaultConfig(namespace, createLocalConfigRepository(namespace));
-    return defaultConfig;
+    return new DefaultConfig(namespace, createLocalConfigRepository(namespace));
   }
 
   @Override
