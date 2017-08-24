@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
  */
 public class ApolloConfigDemo {
   private static final Logger logger = LoggerFactory.getLogger(ApolloConfigDemo.class);
-  private String DEFAULT_VALUE = "undefined";
   private Config config;
   private Config publicConfig;
   private ConfigFile applicationConfigFile;
@@ -49,7 +48,7 @@ public class ApolloConfigDemo {
     publicConfig = ConfigService.getConfig("FX.apollo");
     publicConfig.addChangeListener(changeListener);
     applicationConfigFile = ConfigService.getConfigFile("application", ConfigFileFormat.Properties);
-    xmlConfigFile = ConfigService.getConfigFile("datasources", ConfigFileFormat.XML);
+    xmlConfigFile = ConfigService.getConfigFile("dataSources", ConfigFileFormat.XML);
     xmlConfigFile.addChangeListener(new ConfigFileChangeListener() {
       @Override
       public void onChange(ConfigFileChangeEvent changeEvent) {
@@ -59,6 +58,7 @@ public class ApolloConfigDemo {
   }
 
   private String getConfig(String key) {
+    String DEFAULT_VALUE = "undefined";
     String result = config.getProperty(key, DEFAULT_VALUE);
     if (DEFAULT_VALUE.equals(result)) {
       result = publicConfig.getProperty(key, DEFAULT_VALUE);
@@ -74,7 +74,6 @@ public class ApolloConfigDemo {
         return;
       case "xml":
         print(xmlConfigFile);
-        return;
     }
   }
 
