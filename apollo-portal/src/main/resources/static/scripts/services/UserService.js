@@ -7,6 +7,10 @@ appService.service('UserService', ['$resource', '$q', function ($resource, $q) {
         find_users: {
             method: 'GET',
             url: '/users'
+        },
+        create_or_update_user: {
+            method: 'POST',
+            url: '/users'
         }
     });
     return {
@@ -36,6 +40,17 @@ appService.service('UserService', ['$resource', '$q', function ($resource, $q) {
                                          d.reject(result);
                                      });
             return d.promise;
+        },
+        createOrUpdateUser: function (user) {
+            var d = $q.defer();
+            user_resource.create_or_update_user({}, user,
+                                     function (result) {
+                                         d.resolve(result);
+                                     },
+                                     function (result) {
+                                         d.reject(result);
+                                     });
+            return d.promise;   
         }
     }
 }]);
