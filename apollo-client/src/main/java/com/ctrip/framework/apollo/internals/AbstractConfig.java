@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,11 @@ public abstract class AbstractConfig implements Config {
     if (!m_listeners.contains(listener)) {
       m_listeners.add(listener);
     }
+  }
+
+  @Override
+  public String getPlainTextConfig(String defaultValue) {
+    return getProperty(ConfigConsts.CONFIG_FILE_CONTENT_KEY, defaultValue);
   }
 
   @Override

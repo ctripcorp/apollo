@@ -79,7 +79,7 @@ public class ConfigServiceLocator {
   }
 
   private void schedulePeriodicRefresh() {
-    this.m_executorService.scheduleAtFixedRate(
+    this.m_executorService.scheduleWithFixedDelay(
         new Runnable() {
           @Override
           public void run() {

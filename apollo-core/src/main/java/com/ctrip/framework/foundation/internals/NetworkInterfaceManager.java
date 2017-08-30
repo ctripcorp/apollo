@@ -97,27 +97,13 @@ public enum NetworkInterfaceManager {
     }
 
     try {
-      Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-      List<NetworkInterface> nis = interfaces == null ? Collections.<NetworkInterface>emptyList() : Collections.list(interfaces);
-      List<InetAddress> addresses = new ArrayList<InetAddress>();
-      InetAddress local = null;
-
-      try {
-        for (NetworkInterface ni : nis) {
-          if (ni.isUp() && !ni.isLoopback()) {
-            addresses.addAll(Collections.list(ni.getInetAddresses()));
-          }
-        }
-        local = findValidateIp(addresses);
-      } catch (Exception e) {
-        // ignore
-      }
-      if (local != null) {
-        m_local = local;
+      final InetAddress localHost = InetAddress.getLocalHost();
+      if (localHost != null) {
+        m_local = localHost;
         return;
       }
-    } catch (SocketException e) {
-      // ignore it
+    } catch (UnknownHostException e) {
+      // ignore
     }
 
     m_local = InetAddress.getLoopbackAddress();

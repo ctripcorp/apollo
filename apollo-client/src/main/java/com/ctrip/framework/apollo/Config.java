@@ -18,6 +18,13 @@ public interface Config {
   public String getProperty(String key, String defaultValue);
 
   /**
+   * Return the PlainText, such as xml. yml
+   * @param defaultValue
+   * @return
+   */
+  String getPlainTextConfig(String defaultValue);
+
+  /**
    * Return the integer property value with the given key, or {@code defaultValue} if the key
    * doesn't exist.
    *

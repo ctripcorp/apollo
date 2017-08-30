@@ -60,7 +60,7 @@ public class AdminServiceAddressLocator {
     refreshServiceAddressService =
         Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ServiceLocator", false));
 
-    refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
+    refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 0, TimeUnit.MILLISECONDS);
   }
 
   public List<ServiceDTO> getServiceList(Env env) {
