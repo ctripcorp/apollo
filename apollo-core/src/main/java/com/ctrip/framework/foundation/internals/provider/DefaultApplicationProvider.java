@@ -61,7 +61,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
 
   @Override
   public boolean isAppIdSet() {
-    return !Utils.isBlank(m_appId);
+    return Utils.isNotBlank(m_appId);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   private void initAppId() {
     // 1. Get app.id from System Property
     m_appId = System.getProperty("app.id");
-    if (!Utils.isBlank(m_appId)) {
+    if (Utils.isNotBlank(m_appId)) {
       m_appId = m_appId.trim();
       logger.info("App ID is set to {} by app.id property from System Property", m_appId);
       return;
@@ -91,7 +91,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
 
     // 2. Try to get app id from app.properties.
     m_appId = m_appProperties.getProperty("app.id");
-    if (!Utils.isBlank(m_appId)) {
+    if (Utils.isNotBlank(m_appId)) {
       m_appId = m_appId.trim();
       logger.info("App ID is set to {} by app.id property from {}", m_appId, APP_PROPERTIES_CLASSPATH);
       return;

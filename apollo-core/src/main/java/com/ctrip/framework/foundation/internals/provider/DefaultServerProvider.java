@@ -104,7 +104,7 @@ public class DefaultServerProvider implements ServerProvider {
   private void initEnvType() {
     // 1. Try to get environment from JVM system property
     m_env = System.getProperty("env");
-    if (!Utils.isBlank(m_env)) {
+    if (Utils.isNotBlank(m_env)) {
       m_env = m_env.trim();
       logger.info("Environment is set to [{}] by JVM system property 'env'.", m_env);
       return;
@@ -112,7 +112,7 @@ public class DefaultServerProvider implements ServerProvider {
 
     // 2. Try to get environment from OS environment variable
     m_env = System.getenv("ENV");
-    if (!Utils.isBlank(m_env)) {
+    if (Utils.isNotBlank(m_env)) {
       m_env = m_env.trim();
       logger.info("Environment is set to [{}] by OS env variable 'ENV'.", m_env);
       return;
@@ -120,7 +120,7 @@ public class DefaultServerProvider implements ServerProvider {
 
     // 3. Try to get environment from file "server.properties"
     m_env = m_serverProperties.getProperty("env");
-    if (!Utils.isBlank(m_env)) {
+    if (Utils.isNotBlank(m_env)) {
       m_env = m_env.trim();
       logger.info("Environment is set to [{}] by property 'env' in server.properties.", m_env);
       return;
@@ -134,7 +134,7 @@ public class DefaultServerProvider implements ServerProvider {
   private void initDataCenter() {
     // 1. Try to get environment from JVM system property
     m_dc = System.getProperty("idc");
-    if (!Utils.isBlank(m_dc)) {
+    if (Utils.isNotBlank(m_dc)) {
       m_dc = m_dc.trim();
       logger.info("Data Center is set to [{}] by JVM system property 'idc'.", m_dc);
       return;
@@ -142,7 +142,7 @@ public class DefaultServerProvider implements ServerProvider {
 
     // 2. Try to get idc from OS environment variable
     m_dc = System.getenv("IDC");
-    if (!Utils.isBlank(m_dc)) {
+    if (Utils.isNotBlank(m_dc)) {
       m_dc = m_dc.trim();
       logger.info("Data Center is set to [{}] by OS env variable 'IDC'.", m_dc);
       return;
@@ -150,7 +150,7 @@ public class DefaultServerProvider implements ServerProvider {
 
     // 3. Try to get idc from from file "server.properties"
     m_dc = m_serverProperties.getProperty("idc");
-    if (!Utils.isBlank(m_dc)) {
+    if (Utils.isNotBlank(m_dc)) {
       m_dc = m_dc.trim();
       logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
       return;
