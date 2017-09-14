@@ -8,6 +8,8 @@ var appService = angular.module('app.service', ['ngResource']);
 var directive_module = angular.module('apollo.directive', ['app.service', 'app.util', 'toastr']);
 
 /** page module 定义*/
+// 登陆页
+var login_module = angular.module('login', ['toastr']);
 // 首页
 var index_module = angular.module('index', ['toastr', 'app.service', 'apollo.directive', 'app.util', 'angular-loading-bar']);
 //项目主页
