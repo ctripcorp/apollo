@@ -803,3 +803,15 @@ table th {
     padding-left: 30px;
 }
 
+.container-small{
+    width: 30%;
+    margin: 0 auto;
+    margin-top: 15%;
+    text-align: center;
+}
+.container-small img{
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+

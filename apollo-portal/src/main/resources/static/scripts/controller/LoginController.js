@@ -1,16 +1,30 @@
-login_module.controller('LoginController',
-                       ['$scope', '$window', '$location', 'toastr', 'AppUtil',
-                        LoginController]);
+login_module.controller('LoginController', ['$scope', '$http', '$window', 'toastr',
+        LoginController]);
 
-function LoginController($scope, $window, $location, toastr, AppUtil) {
-    if ($location.$$url) {
-        var params = AppUtil.parseParams($location.$$url);
-        if (params.error) {
-            $scope.info = "用户名或密码错误";
-        }
-        if (params.logout) {
-            $scope.info = "登出成功";
-        }
+    function LoginController($scope, $http, $window, toastr){
+
+        $scope.postData = {};
+
+    $scope.loginIn = function(){
+        $http({
+            method: 'POST',
+            url: '/doLogin',
+            data: $scope.postData,
+            headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+            transformRequest: function(obj) {
+                var str = [];
+                for(var p in obj){
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                }
+                return str.join("&");
+            }
+        }).then(function successCallback(response) {
+            if(response.data.code == 100){
+                return toastr.error(response.data.message);
+            };
+            $window.location.href = '/';
+        }, function errorCallback(response) {
+        });
     }
 
-}
+}   
