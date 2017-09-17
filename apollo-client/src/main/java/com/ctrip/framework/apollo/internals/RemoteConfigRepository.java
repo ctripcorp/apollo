@@ -108,7 +108,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   private void schedulePeriodicRefresh() {
     logger.debug("Schedule periodic refresh with interval: {} {}",
         m_configUtil.getRefreshInterval(), m_configUtil.getRefreshIntervalTimeUnit());
-    m_executorService.scheduleAtFixedRate(
+    m_executorService.scheduleWithFixedDelay(
         new Runnable() {
           @Override
           public void run() {
