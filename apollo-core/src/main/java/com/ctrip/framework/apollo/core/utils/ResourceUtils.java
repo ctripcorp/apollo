@@ -7,10 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.Properties;
 
 public class ResourceUtils {
@@ -20,29 +18,18 @@ public class ResourceUtils {
 
   @SuppressWarnings("unchecked")
   public static Properties readConfigFile(String configPath, Properties defaults) {
-    InputStream in = loadConfigFileFromDefaultSearchLocations(configPath);
-    logger.debug("Reading config from resource {}", configPath);
     Properties props = new Properties();
-    try {
-      if (in == null) {
-        // load outside resource under current user path
-        Path path = new File(System.getProperty("user.dir") + configPath).toPath();
-        if (Files.isReadable(path)) {
-          in = new FileInputStream(path.toFile());
-          logger.debug("Reading config from file {} ", path);
-        } else {
-          logger.warn("Could not find available config file");
-        }
-      }
-      if (defaults != null) {
-        props.putAll(defaults);
-      }
+    if (defaults != null) {
+      props.putAll(defaults);
+    }
 
+    InputStream in = loadConfigFileFromDefaultSearchLocations(configPath);
+
+    try {
       if (in != null) {
         props.load(in);
-        in.close();
       }
-    } catch (Exception ex) {
+    } catch (IOException ex) {
       logger.warn("Reading config failed: {}", ex.getMessage());
     } finally {
       if (in != null) {
@@ -53,33 +40,48 @@ public class ResourceUtils {
         }
       }
     }
-    StringBuilder sb = new StringBuilder();
-    for (Enumeration<String> e = (Enumeration<String>) props.propertyNames(); e
-        .hasMoreElements();) {
-      String key = e.nextElement();
-      String val = (String) props.getProperty(key);
-      sb.append(key).append('=').append(val).append('\n');
-    }
-    if (sb.length() > 0) {
-      logger.debug("Reading properties: \n" + sb.toString());
-    } else {
-      logger.warn("No available properties");
+
+    if (logger.isDebugEnabled()) {
+      StringBuilder sb = new StringBuilder();
+      for (String sropertyName : props.stringPropertyNames()) {
+        sb.append(sropertyName).append('=').append(props.getProperty(sropertyName)).append('\n');
+
+      }
+      if (sb.length() > 0) {
+        logger.debug("Reading properties: \n" + sb.toString());
+      } else {
+        logger.warn("No available properties");
+      }
     }
     return props;
   }
 
   private static InputStream loadConfigFileFromDefaultSearchLocations(String configPath) {
-    for (String searchLocation : DEFAULT_FILE_SEARCH_LOCATIONS) {
-      try {
+    try {
+      for (String searchLocation : DEFAULT_FILE_SEARCH_LOCATIONS) {
         File candidate = Paths.get(searchLocation, configPath).toFile();
         if (candidate.exists() && candidate.isFile() && candidate.canRead()) {
+          logger.debug("Reading config from resource {}", candidate.getAbsolutePath());
           return new FileInputStream(candidate);
         }
-      } catch (Throwable ex) {
-        //ignore
       }
-    }
 
-    return ClassLoaderUtil.getLoader().getResourceAsStream(configPath);
+      InputStream in = ClassLoaderUtil.getLoader().getResourceAsStream(configPath);
+
+      if (in != null) {
+        logger.debug("Reading config from resource {}", ClassLoaderUtil.getLoader().getResource(configPath).getPath());
+        return in;
+      } else {
+        // load outside resource under current user path
+        File candidate = new File(System.getProperty("user.dir") + configPath);
+        if (candidate.exists() && candidate.isFile() && candidate.canRead()) {
+          logger.debug("Reading config from resource {}", candidate.getAbsolutePath());
+          return new FileInputStream(candidate);
+        }
+      }
+    } catch (FileNotFoundException e) {
+      //ignore
+    }
+    return null;
   }
 }
