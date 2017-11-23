@@ -13,7 +13,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Item")
 @SQLDelete(sql = "Update Item set isDeleted = 1 where id = ?")
-@Where(clause = "isDeleted = 0")
 public class Item extends BaseEntity {
 
   @Column(name = "NamespaceId", nullable = false)
