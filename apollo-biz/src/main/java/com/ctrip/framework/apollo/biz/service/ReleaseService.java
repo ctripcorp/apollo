@@ -32,6 +32,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -358,6 +359,10 @@ public class ReleaseService {
     if (release.isAbandoned()) {
       throw new BadRequestException("release is not active");
     }
+    Namespace namespace = namespaceService.findOne(release.getAppId(), release.getClusterName(), release.getNamespaceName());
+    if (namespace == null) {
+      throw new NotFoundException("namespace not found");
+    }
 
     String appId = release.getAppId();
     String clusterName = release.getClusterName();
@@ -377,6 +382,37 @@ public class ReleaseService {
     release.setDataChangeLastModifiedBy(operator);
 
     releaseRepository.save(release);
+
+    Release newestRelease = twoLatestActiveReleases.get(1);
+    Map<String, String> latestConfigMap = gson.fromJson(newestRelease.getConfigurations(), GsonType.CONFIG);
+    List<Item> dbItemList = itemService.findItemsWithoutOrdered(appId, clusterName, namespaceName);
+
+    Set<String> dbKeySet = new HashSet<>();
+    if (dbItemList != null) {
+      for (Item item : dbItemList) {
+        dbKeySet.add(item.getKey());
+
+        if (!latestConfigMap.containsKey(item.getKey())) {
+          itemService.delete(item.getId(), operator);
+        } else if (!latestConfigMap.get(item.getKey()).equals(item.getValue())) {
+          item.setValue(latestConfigMap.get(item.getKey()));
+          itemService.naiveSave(item);
+        }
+      }
+    }
+
+    if (latestConfigMap != null) {
+      for (Map.Entry<String, String> entry : latestConfigMap.entrySet()) {
+        if (!dbKeySet.contains(entry.getKey())) {
+          Item item = itemService.findFirst1ByKeyOrderByDataChangeLastModifiedTime(namespace.getId(), entry.getKey());
+          if (item != null) {
+            item.setValue(entry.getValue());
+            item.setDeleted(false);
+            itemService.naiveSave(item);
+          }
+        }
+      }
+    }
 
     releaseHistoryService.createReleaseHistory(appId, clusterName,
                                                namespaceName, clusterName, twoLatestActiveReleases.get(1).getId(),

@@ -12,6 +12,7 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +78,14 @@ public class ItemService {
   }
 
   public Item findLastOne(long namespaceId) {
-    return itemRepository.findFirst1ByNamespaceIdOrderByLineNumDesc(namespaceId);
+    PageRequest pageRequest = new PageRequest(0, 1);
+    List<Item> result = itemRepository.findFirst1ByNamespaceIdOrderByLineNumDesc(namespaceId, pageRequest);
+
+    if (result.size() > 0) {
+      return result.get(0);
+    } else {
+      return null;
+    }
   }
 
   public Item findOne(long itemId) {
@@ -123,6 +131,17 @@ public class ItemService {
     return itemRepository.findByNamespaceIdAndDataChangeLastModifiedTimeGreaterThan(namespaceId, date);
   }
 
+  public Item findFirst1ByKeyOrderByDataChangeLastModifiedTime(long namespaceId, String key) {
+    PageRequest page = new PageRequest(0, 1);
+    List<Item> itemList = itemRepository.findFirst1ByKeyOrderByDataChangeLastModifiedTime(namespaceId, key, page);
+
+    if (itemList.size() > 0) {
+      return itemList.get(0);
+    } else {
+      return null;
+    }
+  }
+
   @Transactional
   public Item save(Item entity) {
     checkItemKeyLength(entity.getKey());
@@ -140,6 +159,16 @@ public class ItemService {
 
     auditService.audit(Item.class.getSimpleName(), item.getId(), Audit.OP.INSERT,
                        item.getDataChangeCreatedBy());
+
+    return item;
+  }
+
+  @Transactional
+  public Item naiveSave(Item entity) {
+    Item item = itemRepository.save(entity);
+
+    auditService.audit(Item.class.getSimpleName(), item.getId(), Audit.OP.UPDATE,
+            item.getDataChangeCreatedBy());
 
     return item;
   }

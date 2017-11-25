@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz.service;
 
+import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -16,12 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,6 +42,8 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   private ItemSetService itemSetService;
   @InjectMocks
   private ReleaseService releaseService;
+  @Mock
+  private ItemService itemService;
 
   private String appId = "appId-test";
   private String clusterName = "cluster-test";
@@ -72,6 +77,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   public void testNamespaceNotExist() {
 
     when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
+    when(namespaceService.findOne(anyString(), anyString(), anyString())).thenReturn(new Namespace());
 
     releaseService.rollback(releaseId, user);
   }
@@ -79,6 +85,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   @Test(expected = BadRequestException.class)
   public void testHasNoRelease() {
 
+    when(namespaceService.findOne(anyString(), anyString(), anyString())).thenReturn(new Namespace());
     when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
     when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
                                                                                                      clusterName,
@@ -92,6 +99,8 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   @Test
   public void testRollback() {
 
+    when(namespaceService.findOne(anyString(), anyString(), anyString())).thenReturn(new Namespace());
+    when(itemService.findItemsWithOrdered(anyString(), anyString(), anyString())).thenReturn(new ArrayList<>());
     when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
     when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
                                                                                                      clusterName,
