@@ -70,6 +70,7 @@ public class HttpUtil {
   private <T> HttpResponse<T> doGetWithSerializeFunction(HttpRequest httpRequest,
                                                          Function<String, T> serializeFunction) {
     InputStreamReader isr = null;
+    InputStreamReader esr = null;
     int statusCode;
     try {
       HttpURLConnection conn = (HttpURLConnection) new URL(httpRequest.getUrl()).openConnection();
@@ -92,9 +93,14 @@ public class HttpUtil {
       conn.connect();
 
       statusCode = conn.getResponseCode();
+      try {
+        isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+        esr = new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8);
+      } catch (Exception e) {
+        // ignore
+      }
 
       if (statusCode == 200) {
-        isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
         String content = CharStreams.toString(isr);
         return new HttpResponse<>(statusCode, serializeFunction.apply(content));
       }
@@ -102,16 +108,25 @@ public class HttpUtil {
       if (statusCode == 304) {
         return new HttpResponse<>(statusCode, null);
       }
-
     } catch (Throwable ex) {
       throw new ApolloConfigException("Could not complete get operation", ex);
     } finally {
       if (isr != null) {
         try {
+          CharStreams.toString(isr);
           isr.close();
         } catch (IOException e) {
           // ignore
         }
+      }
+
+      if (esr != null) {
+          try {
+              CharStreams.toString(esr);
+              esr.close();
+          } catch (Exception e) {
+              // ignore
+          }
       }
     }
 
