@@ -5,63 +5,107 @@ import java.util.Set;
 
 public class AppModel {
 
-  private String name;
+    private String name;
 
-  private String appId;
+    private String appId;
 
-  private String orgId;
+    private String orgId;
 
-  private String orgName;
+    private String orgName;
 
-  private String ownerName;
+    private String ownerName;
 
-  private Set<String> admins;
+    private Set<String> admins;
 
-  public String getName() {
-    return name;
-  }
+    public static class Builder {
 
-  public void setName(String name) {
-    this.name = name;
-  }
+        private AppModel appModel = new AppModel();
 
-  public String getAppId() {
-    return appId;
-  }
+        public Builder withName(String name) {
+            appModel.setName(name);
+            return this;
+        }
 
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
+        public Builder withAppId(String appId) {
+            appModel.setAppId(appId);
+            return this;
+        }
 
-  public String getOrgId() {
-    return orgId;
-  }
+        public Builder withOrgId(String orgId) {
+            appModel.setOrgId(orgId);
+            return this;
+        }
 
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
-  }
+        public Builder withOrgName(String orgName) {
+            appModel.setOrgName(orgName);
+            return this;
+        }
 
-  public String getOrgName() {
-    return orgName;
-  }
+        public Builder withOwnerName(String ownerName) {
+            appModel.setOwnerName(ownerName);
+            return this;
+        }
 
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
-  }
+        public Builder withAdmins(Set<String> admins) {
+            appModel.setAdmins(admins);
+            return this;
+        }
 
-  public String getOwnerName() {
-    return ownerName;
-  }
+        public AppModel build() {
+            return appModel;
+        }
 
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
+    }
 
-  public Set<String> getAdmins() {
-    return admins;
-  }
+    public Builder builder() {
+        return new Builder();
+    }
 
-  public void setAdmins(Set<String> admins) {
-    this.admins = admins;
-  }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public Set<String> getAdmins() {
+        return admins;
+    }
+
+    public void setAdmins(Set<String> admins) {
+        this.admins = admins;
+    }
 }

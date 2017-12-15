@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
@@ -32,7 +34,7 @@ public class ClusterController {
   public ClusterDTO createCluster(@PathVariable String appId, @PathVariable String env,
                                   @RequestBody ClusterDTO cluster) {
 
-    checkModel(cluster != null);
+    checkModel(Objects.nonNull(cluster));
     RequestPrecondition.checkArgumentsNotEmpty(cluster.getAppId(), cluster.getName());
 
     if (!InputValidator.isValidClusterNamespace(cluster.getName())) {

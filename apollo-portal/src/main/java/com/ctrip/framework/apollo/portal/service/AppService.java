@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -46,7 +47,7 @@ public class AppService {
 
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();
-    if (apps == null) {
+    if (Objects.isNull(apps)) {
       return Collections.emptyList();
     }
     return Lists.newArrayList((apps));
@@ -82,12 +83,12 @@ public class AppService {
     String appId = app.getAppId();
     App managedApp = appRepository.findByAppId(appId);
 
-    if (managedApp != null) {
+    if (Objects.nonNull(managedApp)) {
       throw new BadRequestException(String.format("App already exists. AppId = %s", appId));
     }
 
     UserInfo owner = userService.findByUserId(app.getOwnerName());
-    if (owner == null) {
+    if (Objects.isNull(owner)) {
       throw new BadRequestException("Application's owner not exist.");
     }
     app.setOwnerEmail(owner.getEmail());
@@ -111,7 +112,7 @@ public class AppService {
     String appId = app.getAppId();
 
     App managedApp = appRepository.findByAppId(appId);
-    if (managedApp == null) {
+    if (Objects.isNull(managedApp)) {
       throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
     }
 
@@ -121,7 +122,7 @@ public class AppService {
 
     String ownerName = app.getOwnerName();
     UserInfo owner = userService.findByUserId(ownerName);
-    if (owner == null) {
+    if (Objects.isNull(owner)) {
       throw new BadRequestException(String.format("App's owner not exists. owner = %s", ownerName));
     }
     managedApp.setOwnerName(owner.getUserId());
