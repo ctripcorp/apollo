@@ -8,6 +8,7 @@ import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -93,20 +94,29 @@ public class HttpUtil {
       conn.connect();
 
       statusCode = conn.getResponseCode();
+      String response;
+
       try {
         isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-      } catch (Exception e) {
-        // ignore
-      }
-      try {
-        esr = new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8);
-      } catch (Exception e) {
-        // ignore
+        response = CharStreams.toString(isr);
+      } catch (IOException ex) {
+        /**
+         * according to https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html,
+         * we should clean up the connection by reading the response body so that the connection
+         * could be reused.
+         */
+        InputStream errorStream = conn.getErrorStream();
+
+        if (errorStream != null) {
+          esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8);
+          CharStreams.toString(esr);
+        }
+
+        throw ex;
       }
 
       if (statusCode == 200) {
-        String content = CharStreams.toString(isr);
-        return new HttpResponse<>(statusCode, serializeFunction.apply(content));
+        return new HttpResponse<>(statusCode, serializeFunction.apply(response));
       }
 
       if (statusCode == 304) {
@@ -117,20 +127,18 @@ public class HttpUtil {
     } finally {
       if (isr != null) {
         try {
-          CharStreams.toString(isr);
           isr.close();
-        } catch (IOException e) {
+        } catch (IOException ex) {
           // ignore
         }
       }
 
       if (esr != null) {
-          try {
-              CharStreams.toString(esr);
-              esr.close();
-          } catch (Exception e) {
-              // ignore
-          }
+        try {
+          esr.close();
+        } catch (IOException ex) {
+          // ignore
+        }
       }
     }
 
