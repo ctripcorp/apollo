@@ -169,9 +169,16 @@ public interface Config {
   public void addChangeListener(ConfigChangeListener listener);
 
   /**
+   * Add auto change listener to this config instance.
+   * @param listener the config change listener
+   */
+  public void addAutoChangeListener(AutoConfigChangeListener listener);
+
+  /**
    * Return a set of the property names
    *
    * @return the property names
    */
   public Set<String> getPropertyNames();
+
 }

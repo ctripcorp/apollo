@@ -1,18 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.ctrip.framework.apollo.AutoConfigChangeListener;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -33,6 +21,13 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -43,6 +38,7 @@ public abstract class AbstractConfig implements Config {
   private static ExecutorService m_executorService;
 
   private List<ConfigChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
+  private List<AutoConfigChangeListener> m_autoListeners = Lists.newCopyOnWriteArrayList();
   private ConfigUtil m_configUtil;
   private volatile Cache<String, Integer> m_integerCache;
   private volatile Cache<String, Long> m_longCache;
@@ -73,6 +69,12 @@ public abstract class AbstractConfig implements Config {
   public void addChangeListener(ConfigChangeListener listener) {
     if (!m_listeners.contains(listener)) {
       m_listeners.add(listener);
+    }
+  }
+  @Override
+  public void addAutoChangeListener(AutoConfigChangeListener listener) {
+    if (!m_autoListeners.contains(listener)) {
+      m_autoListeners.add(listener);
     }
   }
 
@@ -394,6 +396,7 @@ public abstract class AbstractConfig implements Config {
   }
 
   protected void fireConfigChange(final ConfigChangeEvent changeEvent) {
+    fireAutoConfigChange(changeEvent);
     for (final ConfigChangeListener listener : m_listeners) {
       m_executorService.submit(new Runnable() {
         @Override
@@ -407,6 +410,28 @@ public abstract class AbstractConfig implements Config {
             transaction.setStatus(ex);
             Tracer.logError(ex);
             logger.error("Failed to invoke config change listener {}", listenerName, ex);
+          } finally {
+            transaction.complete();
+          }
+        }
+      });
+    }
+  }
+
+  protected void fireAutoConfigChange(final ConfigChangeEvent changeEvent) {
+    for (final AutoConfigChangeListener listener : m_autoListeners) {
+      m_executorService.submit(new Runnable() {
+        @Override
+        public void run() {
+          String listenerName = listener.getClass().getName();
+          Transaction transaction = Tracer.newTransaction("Apollo.AutoConfigChangeListener", listenerName);
+          try {
+            listener.autoChange(changeEvent);
+            transaction.setStatus(Transaction.SUCCESS);
+          } catch (Throwable ex) {
+            transaction.setStatus(ex);
+            Tracer.logError(ex);
+            logger.error("Failed to invoke auto change listener {}", listenerName, ex);
           } finally {
             transaction.complete();
           }
