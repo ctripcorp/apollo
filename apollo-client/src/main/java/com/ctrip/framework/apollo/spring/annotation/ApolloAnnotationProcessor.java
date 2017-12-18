@@ -95,7 +95,7 @@ public class ApolloAnnotationProcessor implements BeanPostProcessor, PriorityOrd
                             ReflectionUtils.setField(field, bean, config.getBooleanProperty(field.getName(), null));
                             break;
                         default:
-                            break;
+                            throw new RuntimeException("The current data type does not support AutoRefresh");
                     }
                 }
             });
