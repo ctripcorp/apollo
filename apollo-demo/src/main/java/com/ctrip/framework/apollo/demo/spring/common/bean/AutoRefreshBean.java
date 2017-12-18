@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.demo.spring.common.bean;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableAutoResfresh;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,125 +11,68 @@ import java.util.Date;
  */
 @Component("autoRefreshBean")
 public class AutoRefreshBean {
-  private static final Logger logger = LoggerFactory.getLogger(AutoRefreshBean.class);
 
-  @Value("${stringValue}")
-  @EnableAutoResfresh("application")
-  private String stringValue;
+    @Value("${intValue:0}")
+    @EnableAutoResfresh
+    private int intValue;
 
-  @Value("${intValue}")
-  @EnableAutoResfresh
-  private int intValue;
+    @Value("${svalue:}")
+    @EnableAutoResfresh("application")
+    private String svalue;
 
-  @Value("${longValue}")
-  @EnableAutoResfresh("FX.apollo")
-  private long longValue;
+    @Value("${longValue:0}")
+    @EnableAutoResfresh("FX.apollo")
+    private long longValue;
 
-  @Value("${shortValue}")
-  @EnableAutoResfresh
-  private long shortValue;
+    @Value("${shortValue:0}")
+    @EnableAutoResfresh
+    private short shortValue;
 
-  @Value("${floatValue}")
-  @EnableAutoResfresh
-  private long floatValue;
+    @Value("${floatValue:0}")
+    @EnableAutoResfresh
+    private float floatValue;
 
-  @Value("${doubleValue}")
-  @EnableAutoResfresh
-  private long doubleValue;
+    @Value("${doubleValue:0}")
+    @EnableAutoResfresh
+    private double doubleValue;
 
-  @Value("${byteValue}")
-  @EnableAutoResfresh
-  private long byteValue;
+    @Value("${byteValue:0}")
+    @EnableAutoResfresh
+    private byte byteValue;
 
-  @Value("${booleanValue}")
-  @EnableAutoResfresh
-  private boolean booleanValue;
+    @Value("${booleanValue:false}")
+    @EnableAutoResfresh
+    private boolean booleanValue;
 
-  @Value("${arrayValue}")
-  @EnableAutoResfresh
-  private String[] arrayValue;
+    public int getIntValue() {
+        return intValue;
+    }
 
-  @Value("${dateValue}")
-  @EnableAutoResfresh
-  private Date dateValue;
+    public String getSvalue() {
+        return svalue;
+    }
 
-  public String getStringValue() {
-    return stringValue;
-  }
+    public long getLongValue() {
+        return longValue;
+    }
 
-  public void setStringValue(String stringValue) {
-    this.stringValue = stringValue;
-  }
+    public short getShortValue() {
+        return shortValue;
+    }
 
-  public int getIntValue() {
-    return intValue;
-  }
+    public float getFloatValue() {
+        return floatValue;
+    }
 
-  public void setIntValue(int intValue) {
-    this.intValue = intValue;
-  }
+    public double getDoubleValue() {
+        return doubleValue;
+    }
 
-  public long getLongValue() {
-    return longValue;
-  }
+    public byte getByteValue() {
+        return byteValue;
+    }
 
-  public void setLongValue(long longValue) {
-    this.longValue = longValue;
-  }
-
-  public long getShortValue() {
-    return shortValue;
-  }
-
-  public void setShortValue(long shortValue) {
-    this.shortValue = shortValue;
-  }
-
-  public long getFloatValue() {
-    return floatValue;
-  }
-
-  public void setFloatValue(long floatValue) {
-    this.floatValue = floatValue;
-  }
-
-  public long getDoubleValue() {
-    return doubleValue;
-  }
-
-  public void setDoubleValue(long doubleValue) {
-    this.doubleValue = doubleValue;
-  }
-
-  public long getByteValue() {
-    return byteValue;
-  }
-
-  public void setByteValue(long byteValue) {
-    this.byteValue = byteValue;
-  }
-
-  public boolean isBooleanValue() {
-    return booleanValue;
-  }
-
-  public void setBooleanValue(boolean booleanValue) {
-    this.booleanValue = booleanValue;
-  }
-
-  public String[] getArrayValue() {
-    return arrayValue;
-  }
-
-  public void setArrayValue(String[] arrayValue) {
-    this.arrayValue = arrayValue;
-  }
-
-  public Date getDateValue() {
-    return dateValue;
-  }
-
-  public void setDateValue(Date dateValue) {
-    this.dateValue = dateValue;
-  }
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
 }

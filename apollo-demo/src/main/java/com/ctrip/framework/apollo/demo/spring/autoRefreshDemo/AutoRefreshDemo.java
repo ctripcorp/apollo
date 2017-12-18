@@ -1,9 +1,9 @@
-package com.ctrip.framework.apollo.demo.spring.AutoRefreshDemo;
+package com.ctrip.framework.apollo.demo.spring.autoRefreshDemo;
 
+import com.ctrip.framework.apollo.demo.spring.common.bean.AnnotatedBean;
 import com.ctrip.framework.apollo.demo.spring.common.bean.AutoRefreshBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.util.ReflectionUtils;
 
 import java.util.Scanner;
 
@@ -21,42 +21,33 @@ public class AutoRefreshDemo {
     while(true){
       AutoRefreshBean bean=(AutoRefreshBean)appContext.getBean("autoRefreshBean");
       System.out.println(
-              "Please enter the following parameters to observe the changes in the configuration");
-      System.out.println("1.String 2.int 3.long 4.short 5.float 6.double 7.byte 8.boolean 9.array 10.date");
+              "Please enter the following number to observe the changes in the configuration");
+      System.out.println("1.String 2.int 3.long 4.short 5.float 6.double 7.byte 8.boolean");
       String type =new Scanner(System.in).nextLine();
       switch (type) {
-        case "String":
-          System.out.println("String:"+bean.getStringValue());
+        case "1":
+          System.out.println("String:"+bean.getSvalue());
           break;
-        case "int":
+        case "2":
           System.out.println("int:"+bean.getIntValue());
           break;
-        case "long":
+        case "3":
           System.out.println("long:"+bean.getLongValue());
           break;
-        case "short":
+        case "4":
           System.out.println("short:"+bean.getShortValue());
           break;
-        case "float":
+        case "5":
           System.out.println("float:"+bean.getFloatValue());
           break;
-        case "double":
+        case "6":
           System.out.println("double:"+bean.getDoubleValue());
           break;
-        case "byte":
+        case "7":
           System.out.println("byte:"+bean.getByteValue());
           break;
-        case "boolean":
+        case "8":
           System.out.println("boolean:"+bean.isBooleanValue());
-          break;
-        case "array":
-          System.out.println("array:");
-          for (String t:bean.getArrayValue()) {
-            System.out.println(t);
-          }
-          break;
-        case "date":
-          System.out.println("date:"+bean.getDateValue());
           break;
         default:
           break;

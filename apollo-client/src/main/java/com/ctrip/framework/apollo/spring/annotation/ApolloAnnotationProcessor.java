@@ -94,12 +94,6 @@ public class ApolloAnnotationProcessor implements BeanPostProcessor, PriorityOrd
                         case "boolean":
                             ReflectionUtils.setField(field, bean, config.getBooleanProperty(field.getName(), null));
                             break;
-                        case "array":
-                            ReflectionUtils.setField(field, bean, config.getArrayProperty(field.getName(),null, null));
-                            break;
-                        case "data":
-                            ReflectionUtils.setField(field, bean, config.getDateProperty(field.getName(), null));
-                            break;
                         default:
                             break;
                     }
