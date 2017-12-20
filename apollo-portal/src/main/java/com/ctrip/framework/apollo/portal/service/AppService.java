@@ -4,25 +4,38 @@ import com.google.common.collect.Lists;
 
 import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
+import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
+import com.ctrip.framework.apollo.portal.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.portal.repository.AppRepository;
+import com.ctrip.framework.apollo.portal.repository.FavoriteRepository;
+import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
+import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
+import com.ctrip.framework.apollo.portal.repository.RoleRepository;
+import com.ctrip.framework.apollo.portal.repository.UserRoleRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -42,7 +55,22 @@ public class AppService {
   private RoleInitializationService roleInitializationService;
   @Autowired
   private UserService userService;
+  @Autowired
+  private AppNamespaceRepository appNamespaceRepository;
+  @Autowired
+  private FavoriteRepository favoriteRepository;
+  @Autowired
+  private PermissionRepository permissionRepository;
+  @Autowired
+  private RolePermissionRepository rolePermissionRepository;
+  @Autowired
+  private RoleRepository roleRepository;
+  @Autowired
+  private UserRoleRepository userRoleRepository;
+  @Autowired
+  private ConsumerRoleRepository consumerRoleRepository;
 
+  private static Logger logger = LoggerFactory.getLogger(AppService.class);
 
   public List<App> findAll() {
     Iterable<App> apps = appRepository.findAll();
@@ -95,7 +123,6 @@ public class AppService {
     String operator = userInfoHolder.getUser().getUserId();
     app.setDataChangeCreatedBy(operator);
     app.setDataChangeLastModifiedBy(operator);
-
     App createdApp = appRepository.save(app);
 
     appNamespaceService.createDefaultAppNamespace(appId);
@@ -139,4 +166,46 @@ public class AppService {
     return node;
   }
 
+  @Transactional
+  public void deleteByAppId(String appId) {
+    logger.info("get appid :{}",appId);
+    App app = appRepository.findByAppId(appId);
+    Assert.notNull(app, "app not exist");
+    logger.info("find app:{}",app);
+    //1 逻辑删除app
+    logger.info("delete app");
+    appRepository.deleteByAppId(appId);
+
+    //2.逻辑删除appNamespace
+    AppNamespace appNamespace = appNamespaceRepository.findByAppId(appId);
+    if (Objects.nonNull(appNamespace)) {
+      logger.info("delete app name space");
+      appNamespaceRepository.delete(appNamespace.getId());
+    }
+    //3.逻辑删除favorite
+    Favorite favorite = favoriteRepository.findByAppId(appId);
+    if (Objects.nonNull(favorite)) {
+      logger.info("delete favourite");
+      favoriteRepository.delete(favorite.getId());
+    }
+
+    List<Integer> permissionIds = permissionRepository.findPermissionId(appId);
+
+    //4.逻辑删除Permission
+    logger.info("delete permission");
+    permissionRepository.deleteById(permissionIds);
+    //5.逻辑删除RolePermission
+    logger.info("delete RolePermission");
+    rolePermissionRepository.deleteById(permissionIds);
+
+    List<Integer> roleIds = roleRepository.findByAppId(appId);
+
+    //6.删除UserRole
+    logger.info("delete UserRole");
+    userRoleRepository.deleteByRoleId(roleIds);
+
+    //7.删除ConsumerRole
+    logger.info("delete ConsumerRole");
+    consumerRoleRepository.deleteByRoleId(roleIds);
+  }
 }

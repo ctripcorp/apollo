@@ -2,6 +2,8 @@ package com.ctrip.framework.apollo.portal.repository;
 
 import com.ctrip.framework.apollo.portal.entity.po.UserRole;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Collection;
@@ -25,5 +27,9 @@ public interface UserRoleRepository extends PagingAndSortingRepository<UserRole,
    * find user roles by userIds and roleId
    */
   List<UserRole> findByUserIdInAndRoleId(Collection<String> userId, long roleId);
+
+  @Modifying
+  @Query(value = "update UserRole set IsDeleted = 1 where RoleId in ?1",nativeQuery = true)
+  int deleteByRoleId(List<Integer> roleIds);
 
 }

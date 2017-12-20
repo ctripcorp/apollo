@@ -16,4 +16,6 @@ public interface FavoriteRepository extends PagingAndSortingRepository<Favorite,
   Favorite findFirstByUserIdOrderByPositionAscDataChangeCreatedTimeAsc(String userId);
 
   Favorite findByUserIdAndAppId(String userId, String appId);
+
+  Favorite findByAppId(String appId);
 }
