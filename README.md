@@ -138,3 +138,5 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![锤子科技](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/smartisan.png) 
 ![头等仓](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/toodc.png) 
 ![吉祥航空](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/juneyaoair.png) 
+![263移动通信](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/263mobile.png) 
+![投投金融](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/toutoujinrong.png) 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 /**
@@ -31,14 +33,14 @@ public class ServerConfigController {
   @RequestMapping(value = "/server/config", method = RequestMethod.POST)
   public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
 
-    checkModel(serverConfig != null);
+    checkModel(Objects.nonNull(serverConfig));
     RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
 
     String modifiedBy = userInfoHolder.getUser().getUserId();
 
     ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
 
-    if (storedConfig == null) {//create
+    if (Objects.isNull(storedConfig)) {//create
       serverConfig.setDataChangeCreatedBy(modifiedBy);
       serverConfig.setDataChangeLastModifiedBy(modifiedBy);
       return serverConfigRepository.save(serverConfig);
