@@ -23,6 +23,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.headers().frameOptions().sameOrigin();
   }
 
+  /**
+   * Although the authentication below is useless, we may not remove them for backward compatibility.
+   * Because if we remove them and the old clients(before 0.9.0) still send the authentication
+   * information, the server will return 401, which should cause big problems.
+   *
+   * We may remove the following once we remove spring security from Apollo.
+   */
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.inMemoryAuthentication().withUser("user").password("").roles("USER").and()

@@ -19,6 +19,9 @@ pro_meta=http://yetAnotherIp:8080
 META_SERVERS_OPTS="-Ddev_meta=$dev_meta -Dfat_meta=$fat_meta -Duat_meta=$uat_meta -Dpro_meta=$pro_meta"
 
 # =============== Please do not modify the following content =============== #
+# go to script directory
+cd "${0%/*}"
+
 cd ..
 
 # package config-service and admin-service

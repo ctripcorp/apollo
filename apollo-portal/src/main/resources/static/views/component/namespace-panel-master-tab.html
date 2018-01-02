@@ -239,23 +239,23 @@
                             <span class="label label-warning no-radius cursor-pointer" ng-if="config.isModified"
                                   data-tooltip="tooltip" data-placement="bottom" title="点击查看已发布的值"
                                   ng-click="showText(config.oldValue?config.oldValue:'新增的配置,无发布的值')">未发布</span>
-                            <span class="label label-default-light no-radius"
-                                  data-tooltip="tooltip" data-placement="bottom" title="已生效的配置"
-                                  ng-if="!config.isModified">已发布</span>
+                                <span class="label label-default-light no-radius"
+                                      data-tooltip="tooltip" data-placement="bottom" title="已生效的配置"
+                                      ng-if="!config.isModified">已发布</span>
                             </td>
                             <td width="15%" class="cursor-pointer" title="点击查看" ng-click="showText(config.item.key)">
                                 <span ng-bind="config.item.key | limitTo: 250"></span>
                                 <span ng-bind="config.item.key.length > 250 ? '...' :''"></span>
-                            <span class="label label-default cursor-pointer" ng-if="config.hasBranchValue"
-                                  data-tooltip="tooltip" data-placement="bottom" title="该配置有灰度配置,点击查看灰度的值"
-                                  ng-click="namespace.displayControl.currentOperateBranch=namespace.branchName;namespace.branch.viewType='table'">灰</span>
-                            <span class="label label-success" ng-if="config.isModified && !config.oldValue"
-                                  data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
-                            <span class="label label-info"
-                                  ng-if="config.isModified && config.oldValue && !config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
-                            <span class="label label-danger" ng-if="config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
+                                <span class="label label-default cursor-pointer" ng-if="config.hasBranchValue"
+                                      data-tooltip="tooltip" data-placement="bottom" title="该配置有灰度配置,点击查看灰度的值"
+                                      ng-click="namespace.displayControl.currentOperateBranch=namespace.branchName;namespace.branch.viewType='table'">灰</span>
+                                <span class="label label-success" ng-if="config.isModified && !config.oldValue"
+                                      data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
+                                <span class="label label-info"
+                                      ng-if="config.isModified && config.oldValue && !config.isDeleted"
+                                      data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
+                                <span class="label label-danger" ng-if="config.isDeleted"
+                                      data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
                             </td>
                             <td width="30%" class="cursor-pointer" title="点击查看" ng-click="showText(config.item.value)">
                                 <span ng-bind="config.item.value | limitTo: 250"></span>
@@ -348,23 +348,23 @@
                             <span class="label label-warning no-radius cursor-pointer" ng-if="config.isModified"
                                   data-tooltip="tooltip" data-placement="bottom" title="点击查看已发布的值"
                                   ng-click="showText(config.oldValue?config.oldValue:'新增的配置,无发布的值')">未发布</span>
-                            <span class="label label-default-light no-radius"
-                                  data-tooltip="tooltip" data-placement="bottom" title="已生效的配置"
-                                  ng-if="!config.isModified">已发布</span>
+                                <span class="label label-default-light no-radius"
+                                      data-tooltip="tooltip" data-placement="bottom" title="已生效的配置"
+                                      ng-if="!config.isModified">已发布</span>
                             </td>
                             <td width="15%" class="cursor-pointer" title="点击查看" ng-click="showText(config.item.key)">
                                 <span ng-bind="config.item.key | limitTo: 250"></span>
                                 <span ng-bind="config.item.key.length > 250 ? '...' :''"></span>
-                            <span class="label label-default cursor-pointer" ng-if="config.hasBranchValue"
-                                  data-tooltip="tooltip" data-placement="bottom" title="该配置有灰度配置,点击查看灰度的值"
-                                  ng-click="namespace.displayControl.currentOperateBranch=namespace.branchName;namespace.branch.viewType='table'">灰</span>
-                            <span class="label label-success" ng-if="config.isModified && !config.oldValue"
-                                  data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
-                            <span class="label label-info"
-                                  ng-if="config.isModified && config.oldValue && !config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
-                            <span class="label label-danger" ng-if="config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
+                                <span class="label label-default cursor-pointer" ng-if="config.hasBranchValue"
+                                      data-tooltip="tooltip" data-placement="bottom" title="该配置有灰度配置,点击查看灰度的值"
+                                      ng-click="namespace.displayControl.currentOperateBranch=namespace.branchName;namespace.branch.viewType='table'">灰</span>
+                                <span class="label label-success" ng-if="config.isModified && !config.oldValue"
+                                      data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
+                                <span class="label label-info"
+                                      ng-if="config.isModified && config.oldValue && !config.isDeleted"
+                                      data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
+                                <span class="label label-danger" ng-if="config.isDeleted"
+                                      data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
                             </td>
                             <td width="30%" class="cursor-pointer" title="点击查看" ng-click="showText(config.item.value)">
                                 <span ng-bind="config.item.value | limitTo: 250"></span>
@@ -566,13 +566,13 @@
                                     ng-click="showText(config.item.key)">
                                     <span ng-bind="config.item.key | limitTo: 250"></span>
                                     <span ng-bind="config.item.key.length > 250 ? '...' :''"></span>
-                            <span class="label label-success" ng-if="config.isModified && !config.oldValue"
-                                  data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
-                            <span class="label label-info"
-                                  ng-if="config.isModified && config.oldValue && !config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
-                            <span class="label label-danger" ng-if="config.isDeleted"
-                                  data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
+                                    <span class="label label-success" ng-if="config.isModified && !config.oldValue"
+                                          data-tooltip="tooltip" data-placement="bottom" title="新增的配置">新</span>
+                                    <span class="label label-info"
+                                          ng-if="config.isModified && config.oldValue && !config.isDeleted"
+                                          data-tooltip="tooltip" data-placement="bottom" title="修改的配置">改</span>
+                                    <span class="label label-danger" ng-if="config.isDeleted"
+                                          data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
                                 </td>
                                 <td width="25%" class="cursor-pointer" title="点击查看"
                                     ng-click="showText(config.oldValue)">
@@ -622,18 +622,19 @@
 
             <!--text view-->
             <!--只读模式下的文本内容,不替换换行符-->
-        <textarea class="form-control no-radius"
-                  rows="{{namespace.itemCnt < 10 ? 10: namespace.itemCnt>20 ? 20:namespace.itemCnt}}"
-                  ng-show="namespace.viewType == 'text' && !namespace.isTextEditing"
-                  ng-disabled="!namespace.isTextEditing"
-                  ng-bind="namespace.text">
-            </textarea>
+            <div ui-ace="aceConfig" readonly="true"
+                 class="form-control no-radius"
+                 rows="{{namespace.itemCnt < 10 ? 10: namespace.itemCnt>20 ? 20:namespace.itemCnt}}"
+                 ng-show="namespace.viewType == 'text' && !namespace.isTextEditing"
+                 ng-model="namespace.text">
+            </div>
             <!--编辑状态下的文本内容,会过滤掉换行符-->
-        <textarea class="form-control no-radius"
-                  rows="{{namespace.itemCnt < 10 ? 10: namespace.itemCnt>20 ? 20:namespace.itemCnt}}"
-                  ng-show="namespace.viewType == 'text' && namespace.isTextEditing"
-                  ng-disabled="!namespace.isTextEditing" ng-model="namespace.editText">
-            </textarea>
+            <div ui-ace="aceConfig"
+                 class="form-control no-radius"
+                 rows="{{namespace.itemCnt < 10 ? 10: namespace.itemCnt>20 ? 20:namespace.itemCnt}}"
+                 ng-show="namespace.viewType == 'text' && namespace.isTextEditing"
+                 ng-disabled="!namespace.isTextEditing" ng-model="namespace.editText">
+            </div>
 
             <!--history view-->
             <div class="J_historyview history-view" ng-show="namespace.viewType == 'history'">
@@ -790,8 +791,8 @@
                                 <button type="button" class="btn btn-default"
                                         ng-class="{'btn-primary':namespace.instanceViewType == 'not_latest_release'}"
                                         ng-click="switchInstanceViewType(namespace, 'not_latest_release')">使用非最新配置的实例
-                        <span class="badge"
-                              ng-bind="namespace.instancesCount - namespace.latestReleaseInstances.total"></span>
+                                    <span class="badge"
+                                          ng-bind="namespace.instancesCount - namespace.latestReleaseInstances.total"></span>
                                 </button>
                                 <button type="button" class="btn btn-default"
                                         ng-class="{'btn-primary':namespace.instanceViewType == 'all'}"

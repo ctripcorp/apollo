@@ -63,7 +63,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             scope.editRuleItem = editRuleItem;
 
             scope.deleteNamespace = deleteNamespace;
-            
+
             var subscriberId = EventManager.subscribe(EventManager.EventType.UPDATE_GRAY_RELEASE_RULES,
                                                       function (context) {
                                                           useRules(context.branch);
@@ -208,9 +208,9 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 }
 
                 function generateNamespaceId(namespace) {
-                    namespace.id = Math.random().toString(36).substr(2);  
+                    namespace.id = Math.random().toString(36).substr(2);
                 }
-                
+
                 function initPermission(namespace) {
 
                     PermissionService.has_modify_namespace_permission(
@@ -415,7 +415,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             }
 
             function loadInstanceInfo(namespace) {
-                
+
                 var size = 20;
                 if (namespace.isBranch) {
                     size = 2000;
@@ -604,7 +604,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                                              scope.namespace.baseInfo.namespaceName,
                                                              branch.baseInfo.clusterName,
                                                              branch.rules
-                    )
+                )
                     .then(function (result) {
                         toastr.success('灰度规则更新成功');
 
@@ -798,14 +798,32 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             function rollback(namespace) {
                 EventManager.emit(EventManager.EventType.PRE_ROLLBACK_NAMESPACE, {namespace: namespace});
             }
-            
+
             function deleteNamespace(namespace) {
-                EventManager.emit(EventManager.EventType.PRE_DELETE_NAMESPACE, {namespace: namespace});    
+                EventManager.emit(EventManager.EventType.PRE_DELETE_NAMESPACE, {namespace: namespace});
             }
+
+            //theme: https://github.com/ajaxorg/ace-builds/tree/ba3b91e04a5aa559d56ac70964f9054baa0f4caf/src-min
+            scope.aceConfig = {
+                $blockScrolling: Infinity,
+                showPrintMargin: false,
+                theme: 'eclipse',
+                mode: scope.namespace.format === 'yml' ? 'yaml' : scope.namespace.format,
+                onLoad: function (_editor) {
+                    _editor.$blockScrolling = Infinity;
+                    _editor.setOptions({
+                                           fontSize: 13,
+                                           minLines: 10,
+                                           maxLines: 20
+                                       })
+                }
+            };
 
             setTimeout(function () {
                 scope.namespace.show = true;
             }, 70);
+
+
         }
     }
 }

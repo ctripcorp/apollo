@@ -46,7 +46,7 @@ public abstract class AbstractBaseIntegrationTest {
 
   private Gson gson = new Gson();
 
-  RestTemplate restTemplate = new TestRestTemplate("user", "");
+  RestTemplate restTemplate = new TestRestTemplate();
 
   @PostConstruct
   private void postConstruct() {

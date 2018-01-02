@@ -2,17 +2,19 @@
 # Build with:
 # docker build -t apollo-portal .
 # Run with:
-# docker run -p 9090:8080 -d --name apollo-portal apollo-portal
+# docker run -p 8080:8080 -d -v /tmp/logs:/opt/logs --name apollo-portal apollo-portal
+# Or if 8080 was taken:
+# docker run -p 8070:8080 -d -v /tmp/logs:/opt/logs --name apollo-portal apollo-portal
 
 FROM openjdk:8-jre-alpine
 MAINTAINER ameizi <sxyx2008@163.com>
 
-ENV VERSION 0.8.0
+ENV VERSION 0.9.0
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.6/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.6/community" >> /etc/apk/repositories \
     && apk update upgrade \
-    && apk add --no-cache unzip curl bash tzdata \
+    && apk add --no-cache procps unzip curl bash tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 

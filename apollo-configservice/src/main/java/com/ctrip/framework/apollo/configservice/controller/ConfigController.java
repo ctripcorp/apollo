@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,10 +27,8 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloNotificationMessages;
 import com.ctrip.framework.apollo.tracer.Tracer;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -56,7 +55,6 @@ public class ConfigController {
 
   private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
       }.getType();
-  private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
 
   @RequestMapping(value = "/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
   public ApolloConfig queryConfig(@PathVariable String appId, @PathVariable String clusterName,
@@ -113,8 +111,8 @@ public class ConfigController {
 
     auditReleases(appId, clusterName, dataCenter, clientIp, releases);
 
-    String mergedReleaseKey = FluentIterable.from(releases).transform(
-        input -> input.getReleaseKey()).join(STRING_JOINER);
+    String mergedReleaseKey = releases.stream().map(Release::getReleaseKey)
+            .collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
 
     if (mergedReleaseKey.equals(clientSideReleaseKey)) {
       // Client side configuration is the same with server side, return 304
@@ -186,7 +184,7 @@ public class ConfigController {
     if (!Strings.isNullOrEmpty(dataCenter)) {
       keyParts.add(dataCenter);
     }
-    return STRING_JOINER.join(keyParts);
+    return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
   }
 
   private void auditReleases(String appId, String cluster, String dataCenter, String clientIp,

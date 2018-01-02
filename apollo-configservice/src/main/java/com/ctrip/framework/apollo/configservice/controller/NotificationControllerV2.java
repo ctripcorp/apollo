@@ -150,11 +150,6 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     if (!CollectionUtils.isEmpty(newNotifications)) {
       deferredResultWrapper.setResult(newNotifications);
     } else {
-      //register all keys
-      for (String key : watchedKeys) {
-        this.deferredResults.put(key, deferredResultWrapper);
-      }
-
       deferredResultWrapper
           .onTimeout(() -> logWatchedKeys(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
 
@@ -165,6 +160,11 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
         }
         logWatchedKeys(watchedKeys, "Apollo.LongPoll.CompletedKeys");
       });
+
+      //register all keys
+      for (String key : watchedKeys) {
+        this.deferredResults.put(key, deferredResultWrapper);
+      }
 
       logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
       logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",

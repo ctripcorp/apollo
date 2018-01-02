@@ -53,7 +53,7 @@ public class ConsumerController {
 
     Consumer createdConsumer = consumerService.createConsumer(consumer);
 
-    if (expires == null) {
+    if (Objects.isNull(expires)) {
       expires = DEFAULT_EXPIRES;
     }
 

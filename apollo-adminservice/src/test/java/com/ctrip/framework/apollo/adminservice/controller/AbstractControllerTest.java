@@ -23,7 +23,7 @@ public abstract class AbstractControllerTest {
   @Autowired
   private HttpMessageConverters httpMessageConverters;
   
-  RestTemplate restTemplate = new TestRestTemplate("apollo", "");
+  RestTemplate restTemplate = new TestRestTemplate();
 
   @PostConstruct
   private void postConstruct() {

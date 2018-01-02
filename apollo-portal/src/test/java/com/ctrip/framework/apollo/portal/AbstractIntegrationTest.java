@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 @WebIntegrationTest(randomPort = true)
 public abstract class AbstractIntegrationTest {
 
-  RestTemplate restTemplate = new TestRestTemplate("apollo", "");
+  RestTemplate restTemplate = new TestRestTemplate();
  
   @PostConstruct
   private void postConstruct() {

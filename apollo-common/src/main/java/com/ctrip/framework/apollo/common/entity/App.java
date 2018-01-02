@@ -86,4 +86,53 @@ public class App extends BaseEntity {
         .add("ownerName", ownerName)
         .add("ownerEmail", ownerEmail).toString();
   }
+
+  public static class Builder {
+
+    public Builder() {
+    }
+
+    private App app = new App();
+
+    public Builder name(String name) {
+      app.setName(name);
+      return this;
+    }
+
+    public Builder appId(String appId) {
+      app.setAppId(appId);
+      return this;
+    }
+
+    public Builder orgId(String orgId) {
+      app.setOrgId(orgId);
+      return this;
+    }
+
+    public Builder orgName(String orgName) {
+      app.setOrgName(orgName);
+      return this;
+    }
+
+    public Builder ownerName(String ownerName) {
+      app.setOwnerName(ownerName);
+      return this;
+    }
+
+    public Builder ownerEmail(String ownerEmail) {
+      app.setOwnerEmail(ownerEmail);
+      return this;
+    }
+
+    public App build() {
+      return app;
+    }
+
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+
 }

@@ -10,7 +10,7 @@ Apollo（配置中心）
 </a>
 [![codecov.io](https://codecov.io/github/ctripcorp/apollo/coverage.svg?branch=master)](https://codecov.io/github/ctripcorp/apollo?branch=master)
 
-Apollo（阿波罗）是携程框架部门研发的配置管理平台，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性。
+Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置场景。
 
 服务端基于Spring Boot和Spring Cloud开发，打包后可以直接运行，不需要额外安装Tomcat等应用容器。
 
@@ -121,4 +121,23 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![首展科技](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/fshows.jpg) 
 ![易微行](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/feezu.png) 
 ![人才加](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/rencaijia.png) 
+![凯京集团](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/keking.png) 
 ![乐刻运动](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/leoao.png) 
+![大疆](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/dji.png) 
+![快看漫画](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/kkmh.png) 
+![我来贷](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/wolaidai.png) 
+![虚实软件](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/xsrj.png) 
+![网易严选](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/yanxuan.png) 
+![视觉中国](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/sjzg.png) 
+![资产360](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/zc360.png) 
+![亿咖通](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/ecarx.png) 
+![5173](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/5173.png) 
+![沪江](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/hujiang.png) 
+![网易云基础服务](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/163yun.png) 
+![现金巴士](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/cash-bus.png) 
+![锤子科技](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/smartisan.png) 
+![头等仓](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/toodc.png) 
+![吉祥航空](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/juneyaoair.png) 
+![263移动通信](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/263mobile.png) 
+![投投金融](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/toutoujinrong.png) 
+![每天健康](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/mytijian.png) 

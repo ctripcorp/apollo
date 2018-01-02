@@ -58,7 +58,7 @@ public class AdminServiceAddressLocator {
     restTemplate = restTemplateFactory.getObject();
 
     refreshServiceAddressService =
-        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ServiceLocator", false));
+        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ServiceLocator", true));
 
     refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
   }

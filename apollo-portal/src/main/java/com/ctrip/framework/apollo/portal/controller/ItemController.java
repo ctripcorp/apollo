@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
@@ -128,7 +129,7 @@ public class ItemController {
   @RequestMapping(value = "/namespaces/{namespaceName}/diff", method = RequestMethod.POST, consumes = {
       "application/json"})
   public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model) {
-    checkModel(model != null && !model.isInvalid());
+    checkModel(Objects.nonNull(model) && !model.isInvalid());
 
     return configService.compare(model.getSyncToNamespaces(), model.getSyncItems());
   }
@@ -138,14 +139,14 @@ public class ItemController {
       "application/json"})
   public ResponseEntity<Void> update(@PathVariable String appId, @PathVariable String namespaceName,
                                      @RequestBody NamespaceSyncModel model) {
-    checkModel(model != null && !model.isInvalid());
+    checkModel(Objects.nonNull(model) && !model.isInvalid());
 
     configService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   private boolean isValidItem(ItemDTO item) {
-    return item != null && !StringUtils.isContainEmpty(item.getKey());
+    return Objects.nonNull(item) && !StringUtils.isContainEmpty(item.getKey());
   }
 
 

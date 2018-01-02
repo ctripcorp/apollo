@@ -58,7 +58,7 @@ public abstract class RefreshableConfig {
     //task to update configs
     ScheduledExecutorService
         executorService =
-        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ConfigRefresher", false));
+        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("ConfigRefresher", true));
 
     executorService
         .scheduleWithFixedDelay(() -> {

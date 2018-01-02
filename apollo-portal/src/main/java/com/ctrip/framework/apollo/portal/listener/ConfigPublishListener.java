@@ -48,7 +48,7 @@ public class ConfigPublishListener {
 
   @PostConstruct
   public void init() {
-    executorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("ConfigPublishNotify", false));
+    executorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("ConfigPublishNotify", true));
   }
 
   @EventListener

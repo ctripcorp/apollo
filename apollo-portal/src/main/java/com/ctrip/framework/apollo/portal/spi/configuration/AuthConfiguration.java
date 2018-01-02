@@ -248,9 +248,8 @@ public class AuthConfiguration {
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable();
       http.headers().frameOptions().sameOrigin();
-      http.authorizeRequests()
-          .antMatchers("/openapi/*").permitAll()
-          .antMatchers("/*").hasAnyRole(USER_ROLE);
+      http.authorizeRequests().antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
+      .antMatchers("/**").hasAnyRole(USER_ROLE);
       http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
       http.logout().invalidateHttpSession(true).clearAuthentication(true).logoutSuccessUrl("/signin?#/logout");
       http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));

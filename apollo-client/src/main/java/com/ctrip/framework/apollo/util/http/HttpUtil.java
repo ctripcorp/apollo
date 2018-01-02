@@ -1,21 +1,18 @@
 package com.ctrip.framework.apollo.util.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigStatusCodeException;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Function;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -24,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 public class HttpUtil {
   private ConfigUtil m_configUtil;
   private Gson gson;
-  private String basicAuth;
 
   /**
    * Constructor.
@@ -32,11 +28,6 @@ public class HttpUtil {
   public HttpUtil() {
     m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
     gson = new Gson();
-    try {
-      basicAuth = "Basic " + BaseEncoding.base64().encode("user:".getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException ex) {
-      ex.printStackTrace();
-    }
   }
 
   /**
@@ -80,12 +71,12 @@ public class HttpUtil {
   private <T> HttpResponse<T> doGetWithSerializeFunction(HttpRequest httpRequest,
                                                          Function<String, T> serializeFunction) {
     InputStreamReader isr = null;
+    InputStreamReader esr = null;
     int statusCode;
     try {
       HttpURLConnection conn = (HttpURLConnection) new URL(httpRequest.getUrl()).openConnection();
 
       conn.setRequestMethod("GET");
-      conn.setRequestProperty("Authorization", basicAuth);
 
       int connectTimeout = httpRequest.getConnectTimeout();
       if (connectTimeout < 0) {
@@ -103,24 +94,53 @@ public class HttpUtil {
       conn.connect();
 
       statusCode = conn.getResponseCode();
+      String response;
+
+      try {
+        isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+        response = CharStreams.toString(isr);
+      } catch (IOException ex) {
+        /**
+         * according to https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html,
+         * we should clean up the connection by reading the response body so that the connection
+         * could be reused.
+         */
+        InputStream errorStream = conn.getErrorStream();
+
+        if (errorStream != null) {
+          esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8);
+          try {
+            CharStreams.toString(esr);
+          } catch (IOException ioe) {
+            //ignore
+          }
+        }
+
+        throw ex;
+      }
 
       if (statusCode == 200) {
-        isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-        String content = CharStreams.toString(isr);
-        return new HttpResponse<>(statusCode, serializeFunction.apply(content));
+        return new HttpResponse<>(statusCode, serializeFunction.apply(response));
       }
 
       if (statusCode == 304) {
         return new HttpResponse<>(statusCode, null);
       }
-
     } catch (Throwable ex) {
       throw new ApolloConfigException("Could not complete get operation", ex);
     } finally {
       if (isr != null) {
         try {
           isr.close();
-        } catch (IOException e) {
+        } catch (IOException ex) {
+          // ignore
+        }
+      }
+
+      if (esr != null) {
+        try {
+          esr.close();
+        } catch (IOException ex) {
           // ignore
         }
       }

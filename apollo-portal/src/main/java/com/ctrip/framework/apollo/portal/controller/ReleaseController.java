@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
@@ -41,7 +42,7 @@ public class ReleaseController {
                                   @PathVariable String env, @PathVariable String clusterName,
                                   @PathVariable String namespaceName, @RequestBody NamespaceReleaseModel model) {
 
-    checkModel(model != null);
+    checkModel(Objects.nonNull(model));
     model.setAppId(appId);
     model.setEnv(env);
     model.setClusterName(clusterName);
@@ -74,7 +75,7 @@ public class ReleaseController {
                                       @PathVariable String namespaceName, @PathVariable String branchName,
                                       @RequestBody NamespaceReleaseModel model) {
 
-    checkModel(model != null);
+    checkModel(Objects.nonNull(model));
     model.setAppId(appId);
     model.setEnv(env);
     model.setClusterName(branchName);
@@ -142,7 +143,7 @@ public class ReleaseController {
                        @PathVariable long releaseId) {
     releaseService.rollback(Env.valueOf(env), releaseId);
     ReleaseDTO release = releaseService.findReleaseById(Env.valueOf(env), releaseId);
-    if (release == null) {
+    if (Objects.isNull(release)) {
       return;
     }
 

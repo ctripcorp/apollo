@@ -47,7 +47,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets itemSet = new ItemChangeSets();
     itemSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdTemplate = new TestRestTemplate("created", "");
+    RestTemplate createdTemplate = new TestRestTemplate();
     createdTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -96,7 +96,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets createChangeSet = new ItemChangeSets();
     createChangeSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdRestTemplate = new TestRestTemplate("created", "");
+    RestTemplate createdRestTemplate = new TestRestTemplate();
     createdRestTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -123,7 +123,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
     ItemChangeSets updateChangeSet = new ItemChangeSets();
     updateChangeSet.setDataChangeLastModifiedBy("updated");
 
-    RestTemplate updatedRestTemplate = new TestRestTemplate("updated", "");
+    RestTemplate updatedRestTemplate = new TestRestTemplate();
     updatedRestTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int updatedSize = 2;
@@ -170,7 +170,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets createChangeSet = new ItemChangeSets();
     createChangeSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdTemplate = new TestRestTemplate("created", "");
+    RestTemplate createdTemplate = new TestRestTemplate();
     createdTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -196,7 +196,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets deleteChangeSet = new ItemChangeSets();
     deleteChangeSet.setDataChangeLastModifiedBy("deleted");
-    RestTemplate deletedTemplate = new TestRestTemplate("deleted", "");
+    RestTemplate deletedTemplate = new TestRestTemplate();
     deletedTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int deletedSize = 1;

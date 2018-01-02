@@ -19,6 +19,9 @@ set pro_meta="http://yetAnotherIp:8080"
 set META_SERVERS_OPTS=-Ddev_meta=%dev_meta% -Dfat_meta=%fat_meta% -Duat_meta=%uat_meta% -Dpro_meta=%pro_meta%
 
 rem =============== Please do not modify the following content =============== 
+rem go to script directory
+cd "%~dp0"
+
 cd ..
 
 rem package config-service and admin-service

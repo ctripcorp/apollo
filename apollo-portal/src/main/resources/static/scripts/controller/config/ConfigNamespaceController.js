@@ -369,6 +369,7 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     new Clipboard('.clipboard');
 
+
 }
 
 

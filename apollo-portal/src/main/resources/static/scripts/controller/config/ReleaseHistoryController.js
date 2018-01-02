@@ -71,7 +71,10 @@ function releaseHistoryController($scope, $location, AppUtil,
                         if ($scope.pageContext.releaseHistoryId == history.id) {
                             defaultToShowReleaseHistory = history;
                         } else if ($scope.pageContext.releaseId == history.releaseId) {
-                            history.viewType = CONFIG_VIEW_TYPE.ALL;
+                            // text namespace doesn't support ALL view
+                            if (!$scope.isTextNamespace) {
+                              history.viewType = CONFIG_VIEW_TYPE.ALL;
+                            }
                             defaultToShowReleaseHistory = history;
                         }
                     });
@@ -93,6 +96,9 @@ function releaseHistoryController($scope, $location, AppUtil,
                                      $scope.pageContext.namespaceName)
             .then(function (result) {
                 $scope.isTextNamespace = result.format != "properties";
+                if ($scope.isTextNamespace) {
+                  fixTextNamespaceViewType();
+                }
             })
     }
 
@@ -105,6 +111,15 @@ function releaseHistoryController($scope, $location, AppUtil,
             getReleaseDiffConfiguration(history);
         }
 
+    }
+
+    function fixTextNamespaceViewType() {
+      $scope.releaseHistories.forEach(function (history) {
+          // text namespace doesn't support ALL view
+          if (history.viewType == CONFIG_VIEW_TYPE.ALL) {
+            switchConfigViewType(history, CONFIG_VIEW_TYPE.DIFF);
+          }
+      });
     }
 
     function switchConfigViewType(history, viewType) {
