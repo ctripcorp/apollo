@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.ctrip.framework.apollo.boot.ApolloAutoConfiguration
+org.springframework.boot.SpringApplicationRunListener=\
+com.ctrip.framework.apollo.boot.ApolloSpringApplicationRunListener
