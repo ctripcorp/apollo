@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
@@ -11,16 +12,19 @@ import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RoleRepository;
 import com.ctrip.framework.apollo.portal.repository.UserRoleRepository;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -218,6 +222,22 @@ public class DefaultRolePermissionService implements RolePermissionService {
 
         Iterable<Permission> results = permissionRepository.save(permissions);
         return FluentIterable.from(results).toSet();
+    }
+
+    /**
+     * get appIds that userId has permissions
+     */
+    @Transactional
+    public Set<String> getPermissionMaterApps(String userId) {
+        //get roleIds by UserId
+        List<Long> roleIds = userRoleRepository.findAllByUserIdAndIsDeletedFalse(userId)
+                .stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        //get appIds by roleIds
+        Set<String> appIds = roleRepository.findAllByIdInAndRoleNameStartingWith(roleIds, RoleType.MASTER)
+                .stream().map(item -> item.getRoleName().split("[+]")[1])
+                .distinct()
+                .collect(Collectors.toSet());
+        return appIds;
     }
 
 }
