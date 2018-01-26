@@ -60,6 +60,10 @@ public class AppService {
     return appRepository.findByOwnerName(ownerName, page);
   }
 
+  public List<App> findByAppIdsByPermission(Set<String> appIds) {
+    return appRepository.findByAppIdIn(appIds);
+  }
+
   public App load(String appId) {
     return appRepository.findByAppId(appId);
   }
