@@ -26,4 +26,8 @@ public interface UserRoleRepository extends PagingAndSortingRepository<UserRole,
    */
   List<UserRole> findByUserIdInAndRoleId(Collection<String> userId, long roleId);
 
+  /**
+   * find not deleted user roles by userId
+   */
+  List<UserRole> findAllByUserIdAndIsDeletedFalse(String userId);
 }
