@@ -59,7 +59,7 @@ public class ApolloSpringApplicationRunListener implements SpringApplicationRunL
       logger.debug("Apollo bootstrap config is not enabled for context {}, see property: ${{}}", context, PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED);
       return;
     }
-    logger.debug("Apollo bootstrap config is enabled for context {}", context, PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED);
+    logger.debug("Apollo bootstrap config is enabled for context {}, see property: ${{}}", context, PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED);
 
     if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
       //already initialized
