@@ -8,12 +8,14 @@ import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
+@ConditionalOnProperty("redis.cache.enabled")
 @Component
 public class SpringBootApolloRefreshConfig {
   private static final Logger logger = LoggerFactory.getLogger(SpringBootApolloRefreshConfig.class);

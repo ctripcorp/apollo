@@ -37,6 +37,19 @@ public abstract class AbstractSpringIntegrationTest {
 
   @Before
   public void setUp() throws Exception {
+    doSetUp();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    doTearDown();
+  }
+
+  protected static void mockConfig(String namespace, Config config) {
+    CONFIG_REGISTRY.put(namespace, config);
+  }
+
+  protected static void doSetUp() {
     //as PropertySourcesProcessor has some static states, so we must manually clear its state
     ReflectionUtils.invokeMethod(PROPERTY_SOURCES_PROCESSOR_CLEAR, null);
     //as ConfigService is singleton, so we must manually clear its container
@@ -45,13 +58,8 @@ public abstract class AbstractSpringIntegrationTest {
     MockInjector.setInstance(ConfigManager.class, new MockConfigManager());
   }
 
-  @After
-  public void tearDown() throws Exception {
+  protected static void doTearDown() {
     CONFIG_REGISTRY.clear();
-  }
-
-  protected void mockConfig(String namespace, Config config) {
-    CONFIG_REGISTRY.put(namespace, config);
   }
 
   public static class MockConfigManager implements ConfigManager {

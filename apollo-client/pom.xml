@@ -38,6 +38,12 @@
 			<artifactId>spring-context</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- optional spring boot dependency -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- test -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
