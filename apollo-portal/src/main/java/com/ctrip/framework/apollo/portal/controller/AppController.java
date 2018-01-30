@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -58,17 +60,26 @@ public class AppController {
 
   @RequestMapping(value = "", method = RequestMethod.GET)
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
-    if (StringUtils.isEmpty(appIds)) {
-      return appService.findAll();
-    } else {
-      return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
-    }
-
+      if (StringUtils.isEmpty(appIds)) {
+          //search bar list
+          HashSet<App> appSet = new HashSet<>(appService.findByOwnerName(userInfoHolder.getUser().getUserId(),null));
+          Set<String> appIdLists = rolePermissionService.getPermissionMaterApps(userInfoHolder.getUser().getUserId());
+          List<App> permissionApps = appService.findByAppIdsByPermission(appIdLists);
+          appSet.addAll(permissionApps);
+          return new ArrayList<>(appSet);
+      } else {
+          return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
+      }
   }
 
   @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
   public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
-    return appService.findByOwnerName(owner, page);
+      //use HashSet to avoid producing duplication AppInfo.
+      Set<App> appSet = new HashSet<>(appService.findByOwnerName(owner, page));
+      Set<String> appIds = rolePermissionService.getPermissionMaterApps(userInfoHolder.getUser().getUserId());
+      List<App> permissionApps = appService.findByAppIdsByPermission(appIds);
+      appSet.addAll(permissionApps);
+      return new ArrayList<>(appSet);
   }
 
   @RequestMapping(value = "", method = RequestMethod.POST)
