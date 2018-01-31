@@ -11,6 +11,7 @@ import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
 import com.ctrip.framework.apollo.portal.listener.AppCreationEvent;
@@ -148,8 +149,14 @@ public class AppController {
 
   @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
   public App load(@PathVariable String appId) {
-
-    return appService.load(appId);
+    App app = appService.load(appId);
+    Set<UserInfo> masterUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildAppMasterRoleName(appId));
+    for (UserInfo userInfo : masterUsers) {
+      if (userInfo.getUserId().equals(userInfoHolder.getUser().getUserId())) {
+        return app;
+      }
+    }
+    throw new RuntimeException("你没有权限访问该项目");
   }
 
   @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
