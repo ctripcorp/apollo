@@ -1,5 +1,12 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
+import com.ctrip.framework.apollo.spring.annotation.ApolloValue;
+import com.ctrip.framework.apollo.spring.annotation.ApolloValueProcessor;
+import com.ctrip.framework.apollo.spring.auto.SpringValue;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multimap;
@@ -16,9 +23,11 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
@@ -59,7 +68,25 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       int order = iterator.next();
       for (String namespace : NAMESPACE_NAMES.get(order)) {
         Config config = ConfigService.getConfig(namespace);
-
+        config.addChangeListener(new ConfigChangeListener() {
+          @Override
+          public void onChange(ConfigChangeEvent changeEvent) {
+            Set<String> keys = changeEvent.changedKeys();
+            if (CollectionUtils.isEmpty(keys)){
+              return;
+            }
+            for (String k:keys){
+              ConfigChange configChange = changeEvent.getChange(k);
+              Collection<SpringValue> targetValues = ApolloValueProcessor.monitor().get(k);
+              if (targetValues==null||targetValues.isEmpty()){
+                return;
+              }
+              for (SpringValue val:targetValues){
+                val.updateVal(configChange.getNewValue());
+              }
+            }
+          }
+        });
         composite.addPropertySource(new ConfigPropertySource(namespace, config));
       }
     }
