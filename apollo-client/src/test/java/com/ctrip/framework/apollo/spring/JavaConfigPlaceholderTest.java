@@ -1,11 +1,17 @@
 package com.ctrip.framework.apollo.spring;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.internals.ConfigRepository;
+import com.ctrip.framework.apollo.internals.DefaultConfig;
+import com.ctrip.framework.apollo.spring.annotation.*;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,7 +21,9 @@ import org.springframework.stereotype.Component;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -26,6 +34,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   private static final String BATCH_PROPERTY = "batch";
   private static final int DEFAULT_BATCH = 200;
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
+  private static final String JSON_PROPERTY = "jsonProperty";
 
   @Test
   public void testPropertySourceWithNoNamespace() throws Exception {
@@ -133,6 +142,104 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     assertEquals(someBatch, bean.getBatch());
   }
 
+  @Test
+  public void testJsonDeserialization(){
+    String someJson = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(JSON_PROPERTY),anyString())).thenReturn(String.valueOf(someJson));
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig6.class);
+
+    TestJavaConfigBean3 testJavaConfigBean3 = context.getBean(TestJavaConfigBean3.class);
+    assertEquals(2, testJavaConfigBean3.getJsonBeanList().size());
+    assertEquals("astring", testJavaConfigBean3.getJsonBeanList().get(0).a);
+  }
+
+  @Test
+  public void testSpringValueAutoUpdate() throws InterruptedException {
+    String timeoutKey = "timeout";
+    String timeoutValue = "500";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(timeoutKey, timeoutValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig1.class);
+
+    TestJavaConfigBean testJavaConfigBean = context.getBean(TestJavaConfigBean.class);
+    assertEquals(500, testJavaConfigBean.getTimeout());
+
+    String timeoutNewValue = "1000";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(timeoutKey, timeoutNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals(1000, testJavaConfigBean.getTimeout());
+
+  }
+
+  @Test
+  public void testApolloValueAutoUpdate() throws InterruptedException {
+    String jsonPropertyKey = "jsonProperty";
+    String jsonPropertyValue = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig6.class);
+
+    TestJavaConfigBean3 testJavaConfigBean = context.getBean(TestJavaConfigBean3.class);
+    assertEquals("astring", testJavaConfigBean.getJsonBeanList().get(0).a);
+
+    String jsonPropertyNewValue = "[{\"a\":\"newString\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals("newString", testJavaConfigBean.getJsonBeanList().get(0).a);
+
+  }
+
+  @Test
+  public void testDisableAutoUpdate() throws InterruptedException {
+    String jsonPropertyKey = "jsonProperty";
+    String jsonPropertyValue = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    String timeoutKey = "timeout";
+    String timeoutValue = "100";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyValue,timeoutKey, timeoutValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig7.class);
+
+    TestJavaConfigBean4 testJavaConfigBean = context.getBean(TestJavaConfigBean4.class);
+    assertEquals("astring", testJavaConfigBean.getJsonBeanList().get(0).a);
+    assertEquals(100, testJavaConfigBean.getTimeout());
+
+    String jsonPropertyNewValue = "[{\"a\":\"newString\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    String timeoutNewValue = "200";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyNewValue,timeoutKey, timeoutNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals("astring", testJavaConfigBean.getJsonBeanList().get(0).a);
+    assertEquals(100, testJavaConfigBean.getTimeout());
+
+
+  }
+
+
   private void check(int expectedTimeout, int expectedBatch, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
 
@@ -188,6 +295,24 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     }
   }
 
+  @Configuration
+  @EnableApolloConfig
+  static class AppConfig6 {
+    @Bean
+    TestJavaConfigBean3 testJavaConfigBean3() {
+      return new TestJavaConfigBean3();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig
+  static class AppConfig7{
+    @Bean
+    TestJavaConfigBean4 testJavaConfigBean4(){
+      return new TestJavaConfigBean4();
+    }
+  }
+
   @Component
   static class TestJavaConfigBean {
     @Value("${timeout:100}")
@@ -226,6 +351,68 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
     public void setBatch(int batch) {
       this.batch = batch;
+    }
+  }
+
+  static class TestJavaConfigBean3{
+
+    @ApolloValue("${jsonProperty}")
+    private List<JsonBean> jsonBeanList;
+
+    public List<JsonBean> getJsonBeanList() {
+      return jsonBeanList;
+    }
+
+    public void setJsonBeanList(List<JsonBean> jsonBeanList) {
+      this.jsonBeanList = jsonBeanList;
+    }
+
+  }
+
+  static class TestJavaConfigBean4{
+    @Value("${timeout:1000}")
+    @DisableAutoUpdate
+    private int timeout;
+
+    @ApolloValue("${jsonProperty}")
+    @DisableAutoUpdate
+    private List<JsonBean> jsonBeanList;
+
+    public int getTimeout() {
+      return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+      this.timeout = timeout;
+    }
+
+    public List<JsonBean> getJsonBeanList() {
+      return jsonBeanList;
+    }
+
+    public void setJsonBeanList(List<JsonBean> jsonBeanList) {
+      this.jsonBeanList = jsonBeanList;
+    }
+  }
+
+  static class JsonBean{
+    String a;
+    int b;
+
+    public String getA() {
+      return a;
+    }
+
+    public void setA(String a) {
+      this.a = a;
+    }
+
+    public int getB() {
+      return b;
+    }
+
+    public void setB(int b) {
+      this.b = b;
     }
   }
 }

@@ -30,5 +30,11 @@ public class ApolloConfigRegistrar implements ImportBeanDefinitionRegistrar {
 
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloAnnotationProcessor.class.getName(),
         ApolloAnnotationProcessor.class);
+
+    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloValueProcessor.class.getName(),
+            ApolloValueProcessor.class);
+
+    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueProcessor.class.getName(),
+            SpringValueProcessor.class);
   }
 }
