@@ -20,4 +20,8 @@ public interface ApplicationProvider extends Provider {
    * Initialize the application provider with the specified input stream
    */
   public void initialize(InputStream in);
+  /**
+   * @return whether update the field or method which has '@Value' automatically
+   */
+  public boolean isAutoUpdateEnable();
 }

@@ -59,6 +59,11 @@ public class NullProvider implements ApplicationProvider, NetworkProvider, Serve
   }
 
   @Override
+  public boolean isAutoUpdateEnable() {
+    return false;
+  }
+
+  @Override
   public String getHostAddress() {
     return null;
   }

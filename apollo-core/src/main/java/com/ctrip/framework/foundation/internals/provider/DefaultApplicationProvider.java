@@ -19,6 +19,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   private Properties m_appProperties = new Properties();
 
   private String m_appId;
+  private boolean m_enableAutoUpdate;
 
   @Override
   public void initialize() {
@@ -49,9 +50,18 @@ public class DefaultApplicationProvider implements ApplicationProvider {
       }
 
       initAppId();
+      initEnableAutoUpdate();
     } catch (Throwable ex) {
       logger.error("Initialize DefaultApplicationProvider failed.", ex);
     }
+  }
+
+  /**
+   * @return whether update the field or method which has '@Value' automatically
+   */
+  @Override
+  public boolean isAutoUpdateEnable() {
+    return m_enableAutoUpdate;
   }
 
   @Override
@@ -101,8 +111,29 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     logger.warn("app.id is not available from System Property and {}. It is set to null", APP_PROPERTIES_CLASSPATH);
   }
 
+  private void initEnableAutoUpdate(){
+    // 1. Get app.autoupdate.enabled from System Property
+    String enabeAutoUpdate = System.getProperty("app.autoupdate.enabled");
+    if (!Utils.isBlank(enabeAutoUpdate)) {
+      m_enableAutoUpdate = Boolean.parseBoolean(enabeAutoUpdate.trim());
+      logger.info("App update value automatically is {} by app.autoupdate property from System Property", m_enableAutoUpdate);
+      return;
+    }
+
+    // 2. Try to get app.autoupdate.enabled from app.properties.
+    enabeAutoUpdate = m_appProperties.getProperty("app.autoupdate.enabled");
+    if (!Utils.isBlank(enabeAutoUpdate)) {
+      m_enableAutoUpdate = Boolean.parseBoolean(enabeAutoUpdate.trim());
+      logger.info("App update value automatically is {} by app.autoupdate property from {}", m_enableAutoUpdate, APP_PROPERTIES_CLASSPATH);
+      return;
+    }
+
+    // default true, update field automatically
+    m_enableAutoUpdate = true;
+  }
+
   @Override
   public String toString() {
-    return "appId [" + getAppId() + "] properties: " + m_appProperties + " (DefaultApplicationProvider)";
+    return "appId [" + getAppId() + "],enableAutoUpdate["+isAutoUpdateEnable()+"] properties: " + m_appProperties + " (DefaultApplicationProvider)";
   }
 }

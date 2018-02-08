@@ -61,4 +61,34 @@ public class DefaultApplicationProviderTest {
     assertEquals(null, defaultApplicationProvider.getAppId());
     assertFalse(defaultApplicationProvider.isAppIdSet());
   }
+
+  @Test
+  public void testLoadAutoUpdateSwitchFromSystemProperty(){
+    String notEnable = "false";
+    System.setProperty("app.autoupdate.enabled", notEnable);
+    defaultApplicationProvider.initialize();
+    System.clearProperty("app.autoupdate.enabled");
+
+    assertFalse(defaultApplicationProvider.isAutoUpdateEnable());
+  }
+
+  @Test
+  public void testLoadAutoUpdateSwitchFormConfigFile() throws Exception {
+    File baseDir = new File("src/test/resources/META-INF");
+    File appProperties = new File(baseDir, "some-invalid-app.properties");
+
+    defaultApplicationProvider.initialize(new FileInputStream(appProperties));
+
+    assertFalse(defaultApplicationProvider.isAutoUpdateEnable());
+  }
+
+  @Test
+  public void testLoadAutoUpdateSwitchByDefault()  throws Exception {
+    File baseDir = new File("src/test/resources/META-INF");
+    File appProperties = new File(baseDir, "app.properties");
+
+    defaultApplicationProvider.initialize(new FileInputStream(appProperties));
+
+    assertTrue(defaultApplicationProvider.isAutoUpdateEnable());
+  }
 }
