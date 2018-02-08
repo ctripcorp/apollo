@@ -31,7 +31,6 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
     private static Multimap<String, SpringValue> monitor = LinkedListMultimap.create();
     private Logger logger = LoggerFactory.getLogger(ApolloValueProcessor.class);
 
-    private static Boolean isAutoUpdate  = true;
 
     private Environment environment;
 
@@ -54,8 +53,8 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
         if(!Utils.isBlank(propertyValue)){
             springValue.updateVal(propertyValue);
         }
-
-        if(isAutoUpdate){
+        DisableAutoUpdate disableAutoUpdate = AnnotationUtils.getAnnotation(field, DisableAutoUpdate.class);
+        if(disableAutoUpdate==null){
             monitor.put(key, SpringValue.create(bean, field));
             logger.info("Listening apollo key = {}", key);
         }
@@ -79,7 +78,8 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
         if(!Utils.isBlank(propertyValue)){
             springValue.updateVal(propertyValue);
         }
-        if(isAutoUpdate){
+        DisableAutoUpdate disableAutoUpdate = AnnotationUtils.getAnnotation(method, DisableAutoUpdate.class);
+        if(disableAutoUpdate==null){
             monitor.put(key, SpringValue.create(bean, method));
             logger.info("Listening apollo key = {}", key);
         }
@@ -92,11 +92,4 @@ public class ApolloValueProcessor extends ApolloProcessor implements Environment
         this.environment = environment;
     }
 
-    public Boolean getAutoUpdate() {
-        return isAutoUpdate;
-    }
-
-    public static void setAutoUpdate(Boolean autoUpdate) {
-        isAutoUpdate = autoUpdate;
-    }
 }

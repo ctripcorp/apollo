@@ -5,13 +5,12 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.internals.ConfigRepository;
 import com.ctrip.framework.apollo.internals.DefaultConfig;
-import com.ctrip.framework.apollo.spring.annotation.ApolloValue;
-import com.ctrip.framework.apollo.spring.annotation.ApolloValueProcessor;
-import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
+import com.ctrip.framework.apollo.spring.annotation.*;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 
 import java.util.List;
 import java.util.Properties;
@@ -162,8 +160,6 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   @Test
   public void testSpringValueAutoUpdate() throws InterruptedException {
-    SpringValueProcessor.setAutoUpdate(true);
-
     String timeoutKey = "timeout";
     String timeoutValue = "500";
     Properties someProperties = new Properties();
@@ -189,8 +185,6 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   @Test
   public void testApolloValueAutoUpdate() throws InterruptedException {
-    ApolloValueProcessor.setAutoUpdate(true);
-
     String jsonPropertyKey = "jsonProperty";
     String jsonPropertyValue = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
     Properties someProperties = new Properties();
@@ -211,6 +205,37 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
     Thread.sleep(500);//更新是在异步的线程中
     assertEquals("newString", testJavaConfigBean.getJsonBeanList().get(0).a);
+
+  }
+
+  @Test
+  public void testDisableAutoUpdate() throws InterruptedException {
+    String jsonPropertyKey = "jsonProperty";
+    String jsonPropertyValue = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    String timeoutKey = "timeout";
+    String timeoutValue = "100";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyValue,timeoutKey, timeoutValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig7.class);
+
+    TestJavaConfigBean4 testJavaConfigBean = context.getBean(TestJavaConfigBean4.class);
+    assertEquals("astring", testJavaConfigBean.getJsonBeanList().get(0).a);
+    assertEquals(100, testJavaConfigBean.getTimeout());
+
+    String jsonPropertyNewValue = "[{\"a\":\"newString\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    String timeoutNewValue = "200";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(jsonPropertyKey, jsonPropertyNewValue,timeoutKey, timeoutNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals("astring", testJavaConfigBean.getJsonBeanList().get(0).a);
+    assertEquals(100, testJavaConfigBean.getTimeout());
+
 
   }
 
@@ -279,6 +304,15 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     }
   }
 
+  @Configuration
+  @EnableApolloConfig
+  static class AppConfig7{
+    @Bean
+    TestJavaConfigBean4 testJavaConfigBean4(){
+      return new TestJavaConfigBean4();
+    }
+  }
+
   @Component
   static class TestJavaConfigBean {
     @Value("${timeout:100}")
@@ -333,6 +367,32 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
       this.jsonBeanList = jsonBeanList;
     }
 
+  }
+
+  static class TestJavaConfigBean4{
+    @Value("${timeout:1000}")
+    @DisableAutoUpdate
+    private int timeout;
+
+    @ApolloValue("${jsonProperty}")
+    @DisableAutoUpdate
+    private List<JsonBean> jsonBeanList;
+
+    public int getTimeout() {
+      return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+      this.timeout = timeout;
+    }
+
+    public List<JsonBean> getJsonBeanList() {
+      return jsonBeanList;
+    }
+
+    public void setJsonBeanList(List<JsonBean> jsonBeanList) {
+      this.jsonBeanList = jsonBeanList;
+    }
   }
 
   static class JsonBean{

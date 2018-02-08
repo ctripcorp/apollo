@@ -23,11 +23,11 @@ public class SpringValueProcessor extends ApolloProcessor{
     private Pattern pattern = Pattern.compile("\\$\\{(.*?)(:(.*?))?}");
     private Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
-    private static Boolean isAutoUpdate = true;//自动更新开关
 
     @Override
     protected void processField(Object bean, Field field) {
-        if(!isAutoUpdate){
+        DisableAutoUpdate disableAutoUpdate = AnnotationUtils.getAnnotation(field, DisableAutoUpdate.class);
+        if(disableAutoUpdate!=null){
             return;
         }
         Value value = AnnotationUtils.getAnnotation(field, Value.class);
@@ -47,7 +47,8 @@ public class SpringValueProcessor extends ApolloProcessor{
 
     @Override
     protected void processMethod(Object bean, Method method) {
-        if(!isAutoUpdate){
+        DisableAutoUpdate disableAutoUpdate = AnnotationUtils.getAnnotation(method, DisableAutoUpdate.class);
+        if(disableAutoUpdate!=null){
             return;
         }
         Value value = AnnotationUtils.getAnnotation(method, Value.class);
@@ -67,8 +68,4 @@ public class SpringValueProcessor extends ApolloProcessor{
     }
 
 
-
-    public static void setAutoUpdate(Boolean autoUpdate) {
-        isAutoUpdate = autoUpdate;
-    }
 }
