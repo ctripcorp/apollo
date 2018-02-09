@@ -56,4 +56,8 @@ public interface RolePermissionService {
    */
   public Set<Permission> createPermissions(Set<Permission> permissions);
 
+  /**
+   * get appIds that userId has permissions
+   */
+  public Set<String> getPermissionMaterApps(String userId);
 }

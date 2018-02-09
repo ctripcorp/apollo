@@ -11,6 +11,7 @@ import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
 import com.ctrip.framework.apollo.portal.listener.AppCreationEvent;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -58,17 +61,26 @@ public class AppController {
 
   @RequestMapping(value = "", method = RequestMethod.GET)
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
-    if (StringUtils.isEmpty(appIds)) {
-      return appService.findAll();
-    } else {
-      return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
-    }
-
+      if (StringUtils.isEmpty(appIds)) {
+          //search bar list
+          HashSet<App> appSet = new HashSet<>(appService.findByOwnerName(userInfoHolder.getUser().getUserId(),null));
+          Set<String> appIdLists = rolePermissionService.getPermissionMaterApps(userInfoHolder.getUser().getUserId());
+          List<App> permissionApps = appService.findByAppIdsByPermission(appIdLists);
+          appSet.addAll(permissionApps);
+          return new ArrayList<>(appSet);
+      } else {
+          return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
+      }
   }
 
   @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
   public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
-    return appService.findByOwnerName(owner, page);
+      //use HashSet to avoid producing duplication AppInfo.
+      Set<App> appSet = new HashSet<>(appService.findByOwnerName(owner, page));
+      Set<String> appIds = rolePermissionService.getPermissionMaterApps(userInfoHolder.getUser().getUserId());
+      List<App> permissionApps = appService.findByAppIdsByPermission(appIds);
+      appSet.addAll(permissionApps);
+      return new ArrayList<>(appSet);
   }
 
   @RequestMapping(value = "", method = RequestMethod.POST)
@@ -137,8 +149,14 @@ public class AppController {
 
   @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
   public App load(@PathVariable String appId) {
-
-    return appService.load(appId);
+    App app = appService.load(appId);
+    Set<UserInfo> masterUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildAppMasterRoleName(appId));
+    for (UserInfo userInfo : masterUsers) {
+      if (userInfo.getUserId().equals(userInfoHolder.getUser().getUserId())) {
+        return app;
+      }
+    }
+    throw new RuntimeException("你没有权限访问该项目");
   }
 
   @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
