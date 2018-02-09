@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.spring.config;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.ctrip.framework.apollo.Config;
@@ -31,7 +31,7 @@ import java.util.Iterator;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
-  private static final Multimap<Integer, String> NAMESPACE_NAMES = HashMultimap.create();
+  private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
 
   private ConfigurableEnvironment environment;
 
