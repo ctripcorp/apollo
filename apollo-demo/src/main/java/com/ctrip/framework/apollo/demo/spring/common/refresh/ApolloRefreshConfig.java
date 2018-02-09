@@ -27,7 +27,8 @@ public class ApolloRefreshConfig {
 
   @ApolloConfigChangeListener({"application", "FX.apollo"})
   private void onChange(ConfigChangeEvent changeEvent) {
-    if (changeEvent.isChanged("timeout") || changeEvent.isChanged("batch")) {
+    if (changeEvent.isChanged("timeout") || changeEvent.isChanged("batch")
+        || changeEvent.isChanged("objectList")) {
       logger.info("before refresh {}", annotatedBean.toString());
       //could also call refreshScope.refreshAll();
       refreshScope.refresh("annotatedBean");

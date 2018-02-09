@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValueProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -22,5 +23,9 @@ public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor
         PropertySourcesPlaceholderConfigurer.class);
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloAnnotationProcessor.class.getName(),
         ApolloAnnotationProcessor.class);
+
+    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloJSONValueProcessor.class.getName(),
+            ApolloJSONValueProcessor.class);
+
   }
 }
