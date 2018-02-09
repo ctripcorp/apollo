@@ -34,19 +34,21 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
   }
 
   /**
-   * subclass should implement this method to process
+   * subclass should implement this method to process field
    * @param bean
    * @param field
    */
   protected void processField(Object bean, Field field) {
+    //empty method
   }
 
   /**
-   *
+   * subclass should implement this method to process method
    * @param bean
    * @param method
    */
   protected void processMethod(Object bean, Method method) {
+    //empty method
   }
 
 

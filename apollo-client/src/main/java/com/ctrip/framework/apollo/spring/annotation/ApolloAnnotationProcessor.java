@@ -7,8 +7,6 @@ import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.base.Preconditions;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -18,9 +16,6 @@ import org.springframework.util.ReflectionUtils;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ApolloAnnotationProcessor extends ApolloProcessor {
-
-  private Logger logger = LoggerFactory.getLogger(ApolloAnnotationProcessor.class);
-
 
   @Override
   protected void processField(Object bean, Field field) {
