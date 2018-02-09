@@ -1,14 +1,17 @@
 package com.ctrip.framework.apollo.spring;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
+import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.google.common.annotations.VisibleForTesting;
+import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -18,16 +21,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
-
-import java.util.List;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
+
   private static final String TIMEOUT_PROPERTY = "timeout";
   private static final int DEFAULT_TIMEOUT = 100;
   private static final String BATCH_PROPERTY = "batch";
@@ -41,7 +39,8 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config config = mock(Config.class);
-    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
     when(config.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
 
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
@@ -62,7 +61,8 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config config = mock(Config.class);
-    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
     when(config.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
 
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
@@ -76,11 +76,13 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config application = mock(Config.class);
-    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
 
     Config fxApollo = mock(Config.class);
-    when(application.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    when(application.getProperty(eq(BATCH_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someBatch));
     mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
 
     check(someTimeout, someBatch, AppConfig3.class);
@@ -93,12 +95,15 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config application = mock(Config.class);
-    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
-    when(application.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
+    when(application.getProperty(eq(BATCH_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someBatch));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
 
     Config fxApollo = mock(Config.class);
-    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
+    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(anotherTimeout));
     mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
 
     check(someTimeout, someBatch, AppConfig3.class);
@@ -111,12 +116,15 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config application = mock(Config.class);
-    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
-    when(application.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
+    when(application.getProperty(eq(BATCH_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someBatch));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
 
     Config fxApollo = mock(Config.class);
-    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
+    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(anotherTimeout));
     mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
 
     check(anotherTimeout, someBatch, AppConfig2.class, AppConfig4.class);
@@ -128,12 +136,14 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
 
     Config config = mock(Config.class);
-    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someTimeout));
     when(config.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
 
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
 
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig5.class);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+        AppConfig5.class);
 
     TestJavaConfigBean2 bean = context.getBean(TestJavaConfigBean2.class);
 
@@ -142,14 +152,15 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   @Test
-  public void testJsonDeserialization(){
+  public void testJsonDeserialization() {
     String someJson = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
 
     Config config = mock(Config.class);
-    when(config.getProperty(eq(JSON_PROPERTY),anyString())).thenReturn(String.valueOf(someJson));
+    when(config.getProperty(eq(JSON_PROPERTY), anyString())).thenReturn(String.valueOf(someJson));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
 
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig6.class);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+        AppConfig6.class);
 
     TestJavaConfigBean3 testJavaConfigBean3 = context.getBean(TestJavaConfigBean3.class);
     assertEquals(2, testJavaConfigBean3.getJsonBeanList().size());
@@ -157,18 +168,21 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   @Test
-  public void testJsonValueRefresh(){
+  public void testJsonValueRefresh() {
     String someJson = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
     Config config = mock(Config.class);
-    when(config.getProperty(eq(JSON_PROPERTY),anyString())).thenReturn(String.valueOf(someJson));
+    when(config.getProperty(eq(JSON_PROPERTY), anyString())).thenReturn(String.valueOf(someJson));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig7.class, RefreshAutoConfiguration.class);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+        AppConfig7.class, RefreshAutoConfiguration.class);
     TestJavaConfigBean3 bean1 = context.getBean(TestJavaConfigBean3.class);
     assertEquals("astring", bean1.getJsonBeanList().get(0).a);
 
     String someNewJson = "[{\"a\":\"newstring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
-    when(config.getProperty(eq(JSON_PROPERTY),anyString())).thenReturn(String.valueOf(someNewJson));
-    org.springframework.cloud.context.scope.refresh.RefreshScope refreshScope = context.getBean(org.springframework.cloud.context.scope.refresh.RefreshScope.class);
+    when(config.getProperty(eq(JSON_PROPERTY), anyString()))
+        .thenReturn(String.valueOf(someNewJson));
+    org.springframework.cloud.context.scope.refresh.RefreshScope refreshScope = context
+        .getBean(org.springframework.cloud.context.scope.refresh.RefreshScope.class);
     refreshScope.refresh("testJavaConfigBean3");
     TestJavaConfigBean3 bean2 = context.getBean(TestJavaConfigBean3.class);
     assertEquals("newstring", bean2.getJsonBeanList().get(0).a);
@@ -183,7 +197,8 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   private void check(int expectedTimeout, int expectedBatch, Class<?>... annotatedClasses) {
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+        annotatedClasses);
 
     TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
 
@@ -194,6 +209,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   @Configuration
   @EnableApolloConfig
   static class AppConfig1 {
+
     @Bean
     TestJavaConfigBean testJavaConfigBean() {
       return new TestJavaConfigBean();
@@ -203,6 +219,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   @Configuration
   @EnableApolloConfig("application")
   static class AppConfig2 {
+
     @Bean
     TestJavaConfigBean testJavaConfigBean() {
       return new TestJavaConfigBean();
@@ -212,6 +229,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   @Configuration
   @EnableApolloConfig({"application", "FX.apollo"})
   static class AppConfig3 {
+
     @Bean
     TestJavaConfigBean testJavaConfigBean() {
       return new TestJavaConfigBean();
@@ -221,13 +239,16 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   @Configuration
   @EnableApolloConfig(value = "FX.apollo", order = 10)
   static class AppConfig4 {
+
   }
 
   @Configuration
   @EnableApolloConfig
   static class AppConfig5 {
+
     @Bean
-    TestJavaConfigBean2 testJavaConfigBean2(@Value("${timeout:100}") int timeout, @Value("${batch:200}") int batch) {
+    TestJavaConfigBean2 testJavaConfigBean2(@Value("${timeout:100}") int timeout,
+        @Value("${batch:200}") int batch) {
       TestJavaConfigBean2 bean = new TestJavaConfigBean2();
 
       bean.setTimeout(timeout);
@@ -260,6 +281,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   @Component
   static class TestJavaConfigBean {
+
     @Value("${timeout:100}")
     private int timeout;
     private int batch;
@@ -279,6 +301,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   static class TestJavaConfigBean2 {
+
     private int timeout;
     private int batch;
 
@@ -299,7 +322,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     }
   }
 
-  static class TestJavaConfigBean3{
+  static class TestJavaConfigBean3 {
 
     @ApolloJSONValue("${jsonProperty}")
     private List<JsonBean> jsonBeanList;
@@ -316,9 +339,10 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
 
-  static class JsonBean{
-    String a;
-    int b;
+  static class JsonBean {
+
+    private String a;
+    private int b;
 
     public String getA() {
       return a;

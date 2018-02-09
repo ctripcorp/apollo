@@ -13,7 +13,7 @@ import org.springframework.util.ReflectionUtils;
 /**
  * Create by zhangzheng on 2018/2/6
  */
-public class ApolloProcessor implements BeanPostProcessor, PriorityOrdered {
+public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrdered {
 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName)
@@ -33,9 +33,19 @@ public class ApolloProcessor implements BeanPostProcessor, PriorityOrdered {
     return bean;
   }
 
+  /**
+   * subclass should implement this method to process
+   * @param bean
+   * @param field
+   */
   protected void processField(Object bean, Field field) {
   }
 
+  /**
+   *
+   * @param bean
+   * @param method
+   */
   protected void processMethod(Object bean, Method method) {
   }
 

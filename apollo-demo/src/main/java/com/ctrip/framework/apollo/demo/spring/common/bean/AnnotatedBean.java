@@ -45,8 +45,8 @@ public class AnnotatedBean {
   }
 
   static class JsonBean{
-    String a;
-    int b;
+    private String a;
+    private int b;
 
     public String getA() {
       return a;
