@@ -20,4 +20,5 @@ public interface ApplicationProvider extends Provider {
    * Initialize the application provider with the specified input stream
    */
   public void initialize(InputStream in);
+
 }

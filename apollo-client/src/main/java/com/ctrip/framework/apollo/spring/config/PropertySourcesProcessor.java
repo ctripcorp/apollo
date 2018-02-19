@@ -1,12 +1,15 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.ConfigService;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigService;
-
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -16,9 +19,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
@@ -32,11 +32,18 @@ import java.util.Iterator;
  */
 public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
   private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
+  private static final List<Config> ALL_CONFIG = Lists.newLinkedList();
 
   private ConfigurableEnvironment environment;
 
   public static boolean addNamespaces(Collection<String> namespaces, int order) {
     return NAMESPACE_NAMES.putAll(order, namespaces);
+  }
+
+  public static void registerListener(ConfigChangeListener configChangeListener){
+    for(Config config:ALL_CONFIG){
+      config.addChangeListener(configChangeListener);
+    }
   }
 
   @Override
@@ -59,7 +66,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       int order = iterator.next();
       for (String namespace : NAMESPACE_NAMES.get(order)) {
         Config config = ConfigService.getConfig(namespace);
-
+        ALL_CONFIG.add(config);
         composite.addPropertySource(new ConfigPropertySource(namespace, config));
       }
     }

@@ -6,16 +6,20 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.internals.ConfigRepository;
+import com.ctrip.framework.apollo.internals.DefaultConfig;
+import com.ctrip.framework.apollo.spring.annotation.DisableAutoUpdate;
+import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.google.common.collect.ImmutableMap;
+import java.util.Properties;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -153,6 +157,59 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     assertEquals(someBatch, bean.getBatch());
   }
 
+  @Test
+  public void testSpringValueAutoUpdate() throws InterruptedException {
+    String timeoutKey = "timeout";
+    String timeoutValue = "500";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(timeoutKey, timeoutValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig1.class);
+
+    TestJavaConfigBean testJavaConfigBean = context.getBean(TestJavaConfigBean.class);
+    assertEquals(500, testJavaConfigBean.getTimeout());
+
+    String timeoutNewValue = "1000";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(timeoutKey, timeoutNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals(1000, testJavaConfigBean.getTimeout());
+
+  }
+  @Test
+  public void testSpringValueAutoUpdateWithDisableAutoUpdate() throws InterruptedException {
+    String timeoutKey = "timeout";
+    String timeoutValue = "500";
+    String batchKey = "batch";
+    String batchValue = "500";
+    Properties someProperties = new Properties();
+    someProperties.putAll(ImmutableMap.of(timeoutKey, timeoutValue, batchKey, batchValue));
+    ConfigRepository configRepository = mock(ConfigRepository.class);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    Config config = new DefaultConfig(ConfigConsts.NAMESPACE_APPLICATION, configRepository);
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig7.class);
+
+    TestJavaConfigBean3 testJavaConfigBean = context.getBean(TestJavaConfigBean3.class);
+    assertEquals(500, testJavaConfigBean.getTimeout());
+
+    String timeoutNewValue = "1000";
+    String batchNewValue = "1000";
+    Properties newProperties = new Properties();
+    newProperties.putAll(ImmutableMap.of(timeoutKey, timeoutNewValue,batchKey, batchNewValue));
+    ((DefaultConfig)config).onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    Thread.sleep(500);//更新是在异步的线程中
+    assertEquals(500, testJavaConfigBean.getTimeout());
+    assertEquals(500, testJavaConfigBean.getBatch());
+
+  }
+
   private void check(int expectedTimeout, int expectedBatch, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
 
@@ -217,6 +274,15 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     }
   }
 
+  @Configuration
+  @EnableApolloConfig
+  static class AppConfig7{
+    @Bean
+    TestJavaConfigBean3 testJavaConfigBean3(){
+      return new TestJavaConfigBean3();
+    }
+  }
+
   @Component
   static class TestJavaConfigBean {
     @Value("${timeout:100}")
@@ -255,6 +321,27 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
     public void setBatch(int batch) {
       this.batch = batch;
+    }
+  }
+
+  static class TestJavaConfigBean3{
+    @Value("${timeout:100}")
+    @DisableAutoUpdate
+    private int timeout;
+    private int batch;
+
+    @Value("${batch:200}")
+    @DisableAutoUpdate
+    public void setBatch(int batch) {
+      this.batch = batch;
+    }
+
+    public int getTimeout() {
+      return timeout;
+    }
+
+    public int getBatch() {
+      return batch;
     }
   }
 }
