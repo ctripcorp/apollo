@@ -20,6 +20,8 @@ import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
+import com.ctrip.framework.apollo.portal.entity.po.ServerConfig;
+import com.ctrip.framework.apollo.portal.repository.ServerConfigRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
@@ -55,6 +57,14 @@ public class NamespaceService {
   private InstanceService instanceService;
   @Autowired
   private NamespaceBranchService branchService;
+  @Autowired
+  private PermissionService permissionService;
+  @Autowired
+  private RolePermissionService rolePermissionService;
+  @Autowired
+  private RoleService roleService;
+  @Autowired
+  private ServerConfigRepository serverConfigRepository;
 
 
   public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {
@@ -70,35 +80,54 @@ public class NamespaceService {
     return createdNamespace;
   }
 
-
   @Transactional
   public void deleteNamespace(String appId, Env env, String clusterName, String namespaceName) {
-
-    //1. check private namespace
+	
+	String operator = userInfoHolder.getUser().getUserId();	  
+	
     AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
-    if (appNamespace != null && !appNamespace.isPublic()) {
-      throw new BadRequestException("Private namespace can not be deleted");
+    // check namespace private or public
+    if (appNamespace != null && appNamespace.isPublic()) {
+	    //1. check parent namespace has not instances
+	    if (namespaceHasInstances(appId, env, clusterName, namespaceName)) {
+	      throw new BadRequestException("Can not delete namespace because namespace has active instances");
+	    }
+	
+	    //2. check child namespace has not instances
+	    NamespaceDTO childNamespace = branchService.findBranchBaseInfo(appId, env, clusterName, namespaceName);
+	    if (childNamespace != null &&
+	        namespaceHasInstances(appId, env, childNamespace.getClusterName(), namespaceName)) {
+	      throw new BadRequestException("Can not delete namespace because namespace's branch has active instances");
+	    }
+	
+	    //3. check public namespace has not associated namespace
+	    if (appNamespace != null && publicAppNamespaceHasAssociatedNamespace(namespaceName, env)) {
+	      throw new BadRequestException("Can not delete public namespace which has associated namespaces");
+	    }
+	    
     }
-
-    //2. check parent namespace has not instances
-    if (namespaceHasInstances(appId, env, clusterName, namespaceName)) {
-      throw new BadRequestException("Can not delete namespace because namespace has active instances");
+    //get other env list
+    ServerConfig serverConfig = serverConfigRepository.findByKey(ServerConfig.ENV_KEY);
+    String envTrans = "," + env.toString() + "|" + env.toString() + "," + "|" + env.toString();
+    String envStr = serverConfig.getValue().toLowerCase().replaceAll(envTrans.toLowerCase(), "");
+    String[] envList = envStr.split(","); 
+    	
+    boolean canDelete = true;
+    boolean isExisted = true;
+    if(envList != null && envList.length != 0 && !envList[0].equals("")){
+    	for(String enviroment : envList){
+        	isExisted = namespaceAPI.selectExistAppNamespace(Env.fromString(enviroment), appId, clusterName, namespaceName);
+        	if(isExisted){
+        		canDelete = false;
+        		break;
+        	}
+        }
     }
-
-    //3. check child namespace has not instances
-    NamespaceDTO childNamespace = branchService.findBranchBaseInfo(appId, env, clusterName, namespaceName);
-    if (childNamespace != null &&
-        namespaceHasInstances(appId, env, childNamespace.getClusterName(), namespaceName)) {
-      throw new BadRequestException("Can not delete namespace because namespace's branch has active instances");
-    }
-
-    //4. check public namespace has not associated namespace
-    if (appNamespace != null && publicAppNamespaceHasAssociatedNamespace(namespaceName, env)) {
-      throw new BadRequestException("Can not delete public namespace which has associated namespaces");
-    }
-
-    String operator = userInfoHolder.getUser().getUserId();
-
+	if(canDelete){
+	    //delete PortalDB
+	    deletePortalDB(appId, namespaceName, operator);
+	}
+    
     namespaceAPI.deleteNamespace(env, appId, clusterName, namespaceName, operator);
   }
 
@@ -156,6 +185,24 @@ public class NamespaceService {
 
   public boolean publicAppNamespaceHasAssociatedNamespace(String publicNamespaceName, Env env) {
     return namespaceAPI.countPublicAppNamespaceAssociatedNamespaces(env, publicNamespaceName) > 0;
+  }
+  
+  
+  @Transactional
+  public void deletePortalDB(String appId, String namespaceName, String operator){
+	  appNamespaceService.batchDelete(appId, namespaceName, operator);
+	  List<String> permissionIds = permissionService.findIdsByTargetId(appId, namespaceName);
+	  if(permissionIds != null){
+		  permissionService.batchDelete(permissionIds, operator);
+		  rolePermissionService.batchDelete(permissionIds, operator);
+	  }
+	  
+	  List<String> roleIds = roleService.findIdsByRoleName(appId, namespaceName);
+	  if(roleIds != null){
+		  roleService.batchDeleteRole(roleIds, operator);
+		  roleService.batchDeleteUserRole(roleIds, operator);
+		  roleService.batchDeleteConsumerRole(roleIds, operator);
+	  }
   }
 
   public NamespaceBO findPublicNamespaceForAssociatedNamespace(Env env, String appId,

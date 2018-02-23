@@ -130,8 +130,7 @@ public class NamespaceService {
     AppNamespace publicAppNamespace = appNamespaceService.findPublicNamespaceByName(namespaceName);
 
     if (publicAppNamespace == null) {
-      throw new BadRequestException(
-          String.format("Public appNamespace not exists. NamespaceName = %s", namespaceName));
+    	return null;
     }
 
     List<Namespace> namespaces = namespaceRepository.findByNamespaceName(namespaceName, page);
@@ -260,10 +259,14 @@ public class NamespaceService {
     String clusterName = namespace.getClusterName();
     String namespaceName = namespace.getNamespaceName();
 
+    appNamespaceService.batchDelete(appId, namespaceName, operator);
+    //delete item
     itemService.batchDelete(namespace.getId(), operator);
+    //delete commit
     commitService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
 
     if (!isChildNamespace(namespace)) {
+      //delete release
       releaseService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
     }
 
@@ -276,10 +279,13 @@ public class NamespaceService {
       releaseService.batchDelete(appId, childNamespace.getClusterName(), namespaceName, operator);
     }
 
+    //delete releaseHistory
     releaseHistoryService.batchDelete(appId, clusterName, namespaceName, operator);
 
+    //delete instance
     instanceService.batchDeleteInstanceConfig(appId, clusterName, namespaceName);
 
+    //delete namespaceLock
     namespaceLockService.unlock(namespace.getId());
 
     namespace.setDeleted(true);
@@ -395,5 +401,13 @@ public class NamespaceService {
     return false;
   }
 
+  public boolean findNamespaceExited(String appId, String clusterName, String namespaceName){
+	  Namespace namespace = namespaceRepository.findByAppIdAndClusterNameAndNamespaceName(appId, clusterName, namespaceName);
+	  boolean isExisted = false;
+	  if(namespace != null){
+		  isExisted = true;
+	  }
+	  return isExisted;
+  }
 
 }

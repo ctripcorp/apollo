@@ -19,9 +19,9 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
                 scope.toDeleteNamespace = toDeleteNamespace;
 
                 //1. check namespace is not private
-                if (!checkNotPrivateNamespace(toDeleteNamespace)) {
-                    return;
-                }
+                //if (!checkNotPrivateNamespace(toDeleteNamespace)) {
+                //    return;
+                //}
 
                 //2. check operator has master permission
                 checkPermission(toDeleteNamespace).then(function () {

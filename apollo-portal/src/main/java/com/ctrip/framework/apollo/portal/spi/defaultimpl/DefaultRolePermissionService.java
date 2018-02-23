@@ -219,5 +219,10 @@ public class DefaultRolePermissionService implements RolePermissionService {
         Iterable<Permission> results = permissionRepository.save(permissions);
         return FluentIterable.from(results).toSet();
     }
+    
+	@Transactional
+	public int batchDelete(List<String> ids, String operator) {
+	    return rolePermissionRepository.batchDelete(ids,operator);
+	}
 
 }
