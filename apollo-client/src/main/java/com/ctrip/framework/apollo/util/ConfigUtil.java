@@ -33,6 +33,7 @@ public class ConfigUtil {
   private long configCacheExpireTime = 1;//1 minute
   private TimeUnit configCacheExpireTimeUnit = TimeUnit.MINUTES;//1 minute
   private long longPollingInitialDelayInMills = 2000;//2 seconds
+  private boolean autoUpdateInjectedSpringProperties = true;
 
   public ConfigUtil() {
     initRefreshInterval();
@@ -42,6 +43,7 @@ public class ConfigUtil {
     initQPS();
     initMaxConfigCacheSize();
     initLongPollingInitialDelayInMills();
+    initAutoUpdateInjectedSpringProperties();
   }
 
   /**
@@ -262,5 +264,21 @@ public class ConfigUtil {
 
   public long getLongPollingInitialDelayInMills() {
     return longPollingInitialDelayInMills;
+  }
+
+  private void initAutoUpdateInjectedSpringProperties() {
+    // 1. Get from System Property
+    String enableAutoUpdate = System.getProperty("apollo.autoUpdateInjectedSpringProperties");
+    if (Strings.isNullOrEmpty(enableAutoUpdate)) {
+      // 2. Get from app.properties
+      enableAutoUpdate = Foundation.app().getProperty("apollo.autoUpdateInjectedSpringProperties", null);
+    }
+    if (!Strings.isNullOrEmpty(enableAutoUpdate)) {
+      autoUpdateInjectedSpringProperties = Boolean.parseBoolean(enableAutoUpdate.trim());
+    }
+  }
+
+  public boolean isAutoUpdateInjectedSpringPropertiesEnabled() {
+    return autoUpdateInjectedSpringProperties;
   }
 }

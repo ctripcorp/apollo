@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
+import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -22,5 +24,19 @@ public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor
         PropertySourcesPlaceholderConfigurer.class);
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloAnnotationProcessor.class.getName(),
         ApolloAnnotationProcessor.class);
+    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueProcessor.class.getName(), SpringValueProcessor.class);
+
+    processSpringValueDefinition(registry);
+  }
+
+  /**
+   * For Spring 3.x versions, the BeanDefinitionRegistryPostProcessor would not be
+   * instantiated if it is added in postProcessBeanDefinitionRegistry phase, so we have to manually
+   * call the postProcessBeanDefinitionRegistry method of SpringValueDefinitionProcessor here...
+   */
+  private void processSpringValueDefinition(BeanDefinitionRegistry registry) {
+    SpringValueDefinitionProcessor springValueDefinitionProcessor = new SpringValueDefinitionProcessor();
+
+    springValueDefinitionProcessor.postProcessBeanDefinitionRegistry(registry);
   }
 }

@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo.spring.config;
 
-import com.google.common.collect.HashMultimap;
+import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.ctrip.framework.apollo.Config;
@@ -31,9 +32,10 @@ import java.util.Iterator;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
-  private static final String APOLLO_PROPERTY_SOURCE_NAME = "ApolloPropertySources";
-  private static final Multimap<Integer, String> NAMESPACE_NAMES = HashMultimap.create();
+  private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
 
+  private final ConfigPropertySourceFactory configPropertySourceFactory = ApolloInjector
+      .getInstance(ConfigPropertySourceFactory.class);
   private ConfigurableEnvironment environment;
 
   public static boolean addNamespaces(Collection<String> namespaces, int order) {
@@ -46,11 +48,11 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   }
 
   protected void initializePropertySources() {
-    if (environment.getPropertySources().contains(APOLLO_PROPERTY_SOURCE_NAME)) {
+    if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME)) {
       //already initialized
       return;
     }
-    CompositePropertySource composite = new CompositePropertySource(APOLLO_PROPERTY_SOURCE_NAME);
+    CompositePropertySource composite = new CompositePropertySource(PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME);
 
     //sort by order asc
     ImmutableSortedSet<Integer> orders = ImmutableSortedSet.copyOf(NAMESPACE_NAMES.keySet());
@@ -61,10 +63,18 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       for (String namespace : NAMESPACE_NAMES.get(order)) {
         Config config = ConfigService.getConfig(namespace);
 
-        composite.addPropertySource(new ConfigPropertySource(namespace, config));
+        composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
       }
     }
-    environment.getPropertySources().addFirst(composite);
+
+    // add after the bootstrap property source or to the first
+    if (environment.getPropertySources()
+        .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+      environment.getPropertySources()
+          .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
+    } else {
+      environment.getPropertySources().addFirst(composite);
+    }
   }
 
   @Override

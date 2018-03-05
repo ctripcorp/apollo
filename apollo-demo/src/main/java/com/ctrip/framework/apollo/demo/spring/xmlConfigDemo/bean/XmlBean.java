@@ -29,4 +29,9 @@ public class XmlBean {
   public int getBatch() {
     return batch;
   }
+
+  @Override
+  public String toString() {
+    return String.format("[XmlBean] timeout: %d, batch: %d", timeout, batch);
+  }
 }

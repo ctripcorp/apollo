@@ -7,15 +7,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -96,6 +100,26 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     check(someTimeout, someBatch, AppConfig3.class);
   }
 
+
+  @Test
+  public void testMultiplePropertySourcesCoverWithSameProperties() throws Exception {
+    //Multimap does not maintain the strict input order of namespace.
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+
+    Config fxApollo = mock(Config.class);
+    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(fxApollo.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
+
+    Config application = mock(Config.class);
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
+
+    check(someTimeout, someBatch, AppConfig6.class);
+  }
+
   @Test
   public void testMultiplePropertySourcesWithSamePropertiesWithWeight() throws Exception {
     int someTimeout = 1000;
@@ -132,6 +156,131 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     assertEquals(someTimeout, bean.getTimeout());
     assertEquals(someBatch, bean.getBatch());
   }
+
+  @Test
+  public void testApplicationPropertySourceWithValueInjectedAsConstructorArgs() throws Exception {
+    int someTimeout = 1000;
+    int someBatch = 2000;
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(config.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig7.class);
+
+    TestJavaConfigBean3 bean = context.getBean(TestJavaConfigBean3.class);
+
+    assertEquals(someTimeout, bean.getTimeout());
+    assertEquals(someBatch, bean.getBatch());
+  }
+
+  @Test
+  public void testNestedProperty() throws Exception {
+    String a = "a";
+    String b = "b";
+    int someValue = 1234;
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(a), anyString())).thenReturn(a);
+    when(config.getProperty(eq(b), anyString())).thenReturn(b);
+    when(config.getProperty(eq(String.format("%s.%s", a, b)), anyString()))
+        .thenReturn(String.valueOf(someValue));
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NestedPropertyConfig1.class);
+
+    TestNestedPropertyBean bean = context.getBean(TestNestedPropertyBean.class);
+
+    assertEquals(someValue, bean.getNestedProperty());
+  }
+
+  @Test
+  public void testNestedPropertyWithDefaultValue() throws Exception {
+    String a = "a";
+    String b = "b";
+    String c = "c";
+    int someValue = 1234;
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(a), anyString())).thenReturn(a);
+    when(config.getProperty(eq(b), anyString())).thenReturn(b);
+    when(config.getProperty(eq(c), anyString())).thenReturn(String.valueOf(someValue));
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NestedPropertyConfig1.class);
+
+    TestNestedPropertyBean bean = context.getBean(TestNestedPropertyBean.class);
+
+    assertEquals(someValue, bean.getNestedProperty());
+  }
+
+  @Test
+  public void testNestedPropertyWithNestedDefaultValue() throws Exception {
+    String a = "a";
+    String b = "b";
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(a), anyString())).thenReturn(a);
+    when(config.getProperty(eq(b), anyString())).thenReturn(b);
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NestedPropertyConfig1.class);
+
+    TestNestedPropertyBean bean = context.getBean(TestNestedPropertyBean.class);
+
+    assertEquals(100, bean.getNestedProperty());
+  }
+
+  @Test
+  public void testMultipleNestedProperty() throws Exception {
+    String a = "a";
+    String b = "b";
+    String nestedKey = "c.d";
+    String nestedProperty = String.format("${%s}", nestedKey);
+    int someValue = 1234;
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(a), anyString())).thenReturn(a);
+    when(config.getProperty(eq(b), anyString())).thenReturn(b);
+    when(config.getProperty(eq(String.format("%s.%s", a, b)), anyString())).thenReturn(nestedProperty);
+    when(config.getProperty(eq(nestedKey), anyString())).thenReturn(String.valueOf(someValue));
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NestedPropertyConfig1.class);
+
+    TestNestedPropertyBean bean = context.getBean(TestNestedPropertyBean.class);
+
+    assertEquals(someValue, bean.getNestedProperty());
+  }
+
+  @Test
+  public void testMultipleNestedPropertyWithDefaultValue() throws Exception {
+    String a = "a";
+    String b = "b";
+    String nestedKey = "c.d";
+    int someValue = 1234;
+    String nestedProperty = String.format("${%s:%d}", nestedKey, someValue);
+
+    Config config = mock(Config.class);
+    when(config.getProperty(eq(a), anyString())).thenReturn(a);
+    when(config.getProperty(eq(b), anyString())).thenReturn(b);
+    when(config.getProperty(eq(String.format("%s.%s", a, b)), anyString())).thenReturn(nestedProperty);
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(NestedPropertyConfig1.class);
+
+    TestNestedPropertyBean bean = context.getBean(TestNestedPropertyBean.class);
+
+    assertEquals(someValue, bean.getNestedProperty());
+  }
+
 
   private void check(int expectedTimeout, int expectedBatch, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
@@ -188,7 +337,32 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     }
   }
 
-  @Component
+  @Configuration
+  @EnableApolloConfig({"FX.apollo", "application"})
+  static class AppConfig6 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
+    }
+  }
+
+  @Configuration
+  @ComponentScan(
+      includeFilters = {@Filter(type = FilterType.ANNOTATION, value = {Component.class})},
+      excludeFilters = {@Filter(type = FilterType.ANNOTATION, value = {Configuration.class})})
+  @EnableApolloConfig
+  static class AppConfig7 {
+  }
+
+  @Configuration
+  @EnableApolloConfig
+  static class NestedPropertyConfig1 {
+    @Bean
+    TestNestedPropertyBean testNestedPropertyBean() {
+      return new TestNestedPropertyBean();
+    }
+  }
+
   static class TestJavaConfigBean {
     @Value("${timeout:100}")
     private int timeout;
@@ -228,4 +402,36 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
       this.batch = batch;
     }
   }
+
+  @Component
+  static class TestJavaConfigBean3 {
+    private final int timeout;
+    private final int batch;
+
+    @Autowired
+    public TestJavaConfigBean3(@Value("${timeout:100}") int timeout,
+        @Value("${batch:200}") int batch) {
+      this.timeout = timeout;
+      this.batch = batch;
+    }
+
+    public int getTimeout() {
+      return timeout;
+    }
+
+    public int getBatch() {
+      return batch;
+    }
+  }
+
+  static class TestNestedPropertyBean {
+
+    @Value("${${a}.${b}:${c:100}}")
+    private int nestedProperty;
+
+    public int getNestedProperty() {
+      return nestedProperty;
+    }
+  }
+
 }
