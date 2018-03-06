@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSO Heartbeat</title>
+    <script type="text/javascript">
+        var reloading = false;
+        setInterval(function () {
+            if (reloading) {
+                return;
+            }
+            reloading = true;
+            location.reload(true);
+        }, 60000);
+    </script>
+</head>
+<body>
+</body>
+</html>

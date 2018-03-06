@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class CtripSsoHeartbeatHandler implements SsoHeartbeatHandler {
+
   @Override
   public void doHeartbeat(HttpServletRequest request, HttpServletResponse response) {
     try {
@@ -18,4 +19,5 @@ public class CtripSsoHeartbeatHandler implements SsoHeartbeatHandler {
     } catch (IOException e) {
     }
   }
+
 }

@@ -46,7 +46,7 @@ public class ApolloConfigDemo {
     };
     config = ConfigService.getAppConfig();
     config.addChangeListener(changeListener);
-    publicConfig = ConfigService.getConfig("FX.apollo");
+    publicConfig = ConfigService.getConfig("TEST1.apollo");
     publicConfig.addChangeListener(changeListener);
     applicationConfigFile = ConfigService.getConfigFile("application", ConfigFileFormat.Properties);
     xmlConfigFile = ConfigService.getConfigFile("datasources", ConfigFileFormat.XML);

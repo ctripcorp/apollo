@@ -21,6 +21,7 @@
             <div class="panel">
                 <header class="panel-heading">
                     应用配置
+                    <small>（维护ServerConfig表数据，如果已存在配置项则会覆盖，否则会创建配置项。配置更新后，一分钟后自动生效）</small>
                 </header>
 
                 <div class="panel-body">
@@ -53,7 +54,7 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
 
-                                <button type="submit" class="btn btn-default">提交</button>
+                                <button type="submit" class="btn btn-primary">提交</button>
                             </div>
                         </div>
                     </form>
@@ -86,6 +87,7 @@
 <script type="application/javascript" src="scripts/services/UserService.js"></script>
 <script type="application/javascript" src="scripts/services/CommonService.js"></script>
 <script type="application/javascript" src="scripts/services/ServerConfigService.js"></script>
+<script type="application/javascript" src="scripts/services/PermissionService.js"></script>
 
 <script type="application/javascript" src="scripts/controller/ServerConfigController.js"></script>
 </body>

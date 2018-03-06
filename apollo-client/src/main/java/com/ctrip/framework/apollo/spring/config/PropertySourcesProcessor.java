@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -33,6 +34,8 @@ import java.util.Iterator;
 public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
   private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
 
+  private final ConfigPropertySourceFactory configPropertySourceFactory = ApolloInjector
+      .getInstance(ConfigPropertySourceFactory.class);
   private ConfigurableEnvironment environment;
 
   public static boolean addNamespaces(Collection<String> namespaces, int order) {
@@ -60,7 +63,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       for (String namespace : NAMESPACE_NAMES.get(order)) {
         Config config = ConfigService.getConfig(namespace);
 
-        composite.addPropertySource(new ConfigPropertySource(namespace, config));
+        composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
       }
     }
 

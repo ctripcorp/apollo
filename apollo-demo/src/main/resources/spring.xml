@@ -7,18 +7,12 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.ctrip.com/schema/apollo http://www.ctrip.com/schema/apollo.xsd">
     <apollo:config order="10"/>
-    <apollo:config namespaces="FX.apollo" order="11"/>
+    <apollo:config namespaces="TEST1.apollo" order="11"/>
 
     <bean class="com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.bean.XmlBean">
         <property name="timeout" value="${timeout:200}"/>
         <property name="batch" value="${batch:100}"/>
     </bean>
 
-    <bean class="com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.refresh.ManualRefreshUtil"/>
-
-    <!-- to support RefreshScope -->
-    <bean class="org.springframework.cloud.autoconfigure.RefreshAutoConfiguration"/>
-
-    <context:component-scan
-            base-package="com.ctrip.framework.apollo.demo.spring.common.bean,com.ctrip.framework.apollo.demo.spring.common.refresh"/>
+    <context:annotation-config />
 </beans>

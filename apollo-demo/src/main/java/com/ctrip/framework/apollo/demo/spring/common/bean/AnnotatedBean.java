@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
@@ -19,25 +17,22 @@ import javax.annotation.PostConstruct;
 public class AnnotatedBean {
   private static final Logger logger = LoggerFactory.getLogger(AnnotatedBean.class);
 
-  @Value("${timeout:200}")
   private int timeout;
   private int batch;
-
   @ApolloJSONValue("${objectList}")
   private List<JsonBean> jsonBeans;
 
-  @PostConstruct
-  void initialize() {
-    logger.info("timeout is initialized as {}", timeout);
-    logger.info("batch is initialized as {}", batch);
-    logger.info("jsonBeans is initialized as {}", new Gson().toJson(jsonBeans));
-  }
-
   @Value("${batch:100}")
   public void setBatch(int batch) {
+    logger.info("updating batch, old value: {}, new value: {}", this.batch, batch);
     this.batch = batch;
   }
 
+  @Value("${timeout:200}")
+  public void setTimeout(int timeout) {
+    logger.info("updating timeout, old value: {}, new value: {}", this.timeout, timeout);
+    this.timeout = timeout;
+  }
 
   @Override
   public String toString() {

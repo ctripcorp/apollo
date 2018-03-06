@@ -1,6 +1,7 @@
 /** navbar */
 directive_module.directive('apollonav',
-                           function ($compile, $window, toastr, AppUtil, AppService, EnvService, UserService, CommonService) {
+                           function ($compile, $window, toastr, AppUtil, AppService, EnvService,
+                           UserService, CommonService, PermissionService) {
                                return {
                                    restrict: 'E',
                                    templateUrl: '../../views/common/nav.html',
@@ -82,7 +83,7 @@ directive_module.directive('apollonav',
                                            }
                                            //强制刷新
                                            scope.$apply(function () {
-                                               scope.copyedApps = scope.copyedApps;
+                                               scope.copiedApps = scope.copiedApps;
                                            });
                                        });
 
@@ -97,7 +98,7 @@ directive_module.directive('apollonav',
                                        });
 
                                        function clearAppsSelectedStatus() {
-                                           scope.copyedApps.forEach(function (app) {
+                                           scope.copiedApps.forEach(function (app) {
                                                app.selected = false;
                                            })
 
@@ -117,6 +118,10 @@ directive_module.directive('apollonav',
                                        }, function (result) {
 
                                        });
+
+                                       PermissionService.has_root_permission().then(function(result) {
+                                           scope.hasRootPermission = result.hasPermission;
+                                       })
                                    }
                                }
 
