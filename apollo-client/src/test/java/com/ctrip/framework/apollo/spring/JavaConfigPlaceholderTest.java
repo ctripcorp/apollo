@@ -10,7 +10,6 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
-import com.sun.xml.internal.xsom.XSWildcard.Other;
 import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
