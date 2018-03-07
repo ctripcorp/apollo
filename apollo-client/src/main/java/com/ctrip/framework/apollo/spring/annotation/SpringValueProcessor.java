@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
+import com.ctrip.framework.apollo.spring.config.AutoUpdateConfigChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -52,46 +53,26 @@ import com.google.common.collect.Multimap;
  * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
  * @since 2017/12/20.
  */
-public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered, EnvironmentAware,
-    BeanFactoryAware, BeanFactoryPostProcessor {
+public class SpringValueProcessor extends ApolloProcessor implements  BeanFactoryPostProcessor {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
-  private final Multimap<String, SpringValue> monitor = LinkedListMultimap.create();
   private final ConfigUtil configUtil;
   private final PlaceholderHelper placeholderHelper;
-  private final ConfigPropertySourceFactory configPropertySourceFactory;
-  private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;
-
-  private Environment environment;
-  private ConfigurableBeanFactory beanFactory;
-  private TypeConverter typeConverter;
 
   private static Multimap<String, SpringValueDefinition> beanName2SpringValueDefinitions = LinkedListMultimap.create();
 
   public SpringValueProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
     placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
-    configPropertySourceFactory = ApolloInjector.getInstance(ConfigPropertySourceFactory.class);
-    typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
   }
 
-  @Override
-  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-    this.beanFactory = (ConfigurableBeanFactory) beanFactory;
-    this.typeConverter = this.beanFactory.getTypeConverter();
-  }
 
-  @Override
-  public void setEnvironment(Environment env) {
-    this.environment = env;
-  }
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
       beanName2SpringValueDefinitions = SpringValueDefinitionProcessor.getBeanName2SpringValueDefinitions();
-      registerConfigChangeListener();
     }
   }
 
@@ -99,70 +80,64 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
   public Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
     if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
-      Class clazz = bean.getClass();
-      processFields(bean, beanName, findAllField(clazz));
-      processMethods(bean, beanName, findAllMethod(clazz));
+      super.postProcessBeforeInitialization(bean, beanName);
       processBeanPropertyValues(bean, beanName);
     }
     return bean;
   }
 
+
   @Override
-  public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-    return bean;
-  }
+  protected void processField(Object bean, String beanName, Field field) {
+    // register @Value on field
+    Value value = field.getAnnotation(Value.class);
+    if (value == null) {
+      return;
+    }
+    Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
 
-  private void processFields(Object bean, String beanName, List<Field> declaredFields) {
-    for (Field field : declaredFields) {
-      // register @Value on field
-      Value value = field.getAnnotation(Value.class);
-      if (value == null) {
-        continue;
-      }
-      Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
+    if (keys.isEmpty()) {
+      return;
+    }
 
-      if (keys.isEmpty()) {
-        continue;
-      }
-
-      for (String key : keys) {
-        SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field);
-        monitor.put(key, springValue);
-        logger.debug("Monitoring {}", springValue);
-      }
+    for (String key : keys) {
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
+      AutoUpdateConfigChangeListener.monitor.put(key, springValue);
+      logger.debug("Monitoring {}", springValue);
     }
   }
 
-  private void processMethods(final Object bean, String beanName, List<Method> declaredMethods) {
-    for (final Method method : declaredMethods) {
-      //register @Value on method
-      Value value = method.getAnnotation(Value.class);
-      if (value == null) {
-        continue;
-      }
-      //skip Configuration bean methods
-      if (method.getAnnotation(Bean.class) != null) {
-        continue;
-      }
-      if (method.getParameterTypes().length != 1) {
-        logger.error("Ignore @Value setter {}.{}, expecting 1 parameter, actual {} parameters",
-            bean.getClass().getName(), method.getName(), method.getParameterTypes().length);
-        continue;
-      }
+  @Override
+  protected void processMethod(Object bean, String beanName, Method method) {
+    //register @Value on method
+    Value value = method.getAnnotation(Value.class);
+    if (value == null) {
+      return;
+    }
+    //skip Configuration bean methods
+    if (method.getAnnotation(Bean.class) != null) {
+      return;
+    }
+    if (method.getParameterTypes().length != 1) {
+      logger.error("Ignore @Value setter {}.{}, expecting 1 parameter, actual {} parameters",
+          bean.getClass().getName(), method.getName(), method.getParameterTypes().length);
+      return;
+    }
 
-      Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
+    Set<String> keys = placeholderHelper.extractPlaceholderKeys(value.value());
 
-      if (keys.isEmpty()) {
-        continue;
-      }
+    if (keys.isEmpty()) {
+      return;
+    }
 
-      for (String key : keys) {
-        SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method);
-        monitor.put(key, springValue);
-        logger.debug("Monitoring {}", springValue);
-      }
+    for (String key : keys) {
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
+      AutoUpdateConfigChangeListener.monitor.put(key, springValue);
+      logger.debug("Monitoring {}", springValue);
     }
   }
+
+
 
   private void processBeanPropertyValues(Object bean, String beanName) {
     Collection<SpringValueDefinition> propertySpringValues = beanName2SpringValueDefinitions
@@ -180,8 +155,8 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
           continue;
         }
         SpringValue springValue = new SpringValue(definition.getKey(), definition.getPlaceholder(),
-            bean, beanName, method);
-        monitor.put(definition.getKey(), springValue);
+            bean, beanName, method, false);
+        AutoUpdateConfigChangeListener.monitor.put(definition.getKey(), springValue);
         logger.debug("Monitoring {}", springValue);
       } catch (Throwable ex) {
         logger.error("Failed to enable auto update feature for {}.{}", bean.getClass(),
@@ -193,125 +168,4 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
     beanName2SpringValueDefinitions.removeAll(beanName);
   }
 
-  private List<Field> findAllField(Class clazz) {
-    final List<Field> res = new LinkedList<>();
-    ReflectionUtils.doWithFields(clazz, new ReflectionUtils.FieldCallback() {
-      @Override
-      public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-        res.add(field);
-      }
-    });
-    return res;
-  }
-
-  private List<Method> findAllMethod(Class clazz) {
-    final List<Method> res = new LinkedList<>();
-    ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
-      @Override
-      public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-        res.add(method);
-      }
-    });
-    return res;
-  }
-
-  private void registerConfigChangeListener() {
-    ConfigChangeListener changeListener = new ConfigChangeListener() {
-      @Override
-      public void onChange(ConfigChangeEvent changeEvent) {
-        Set<String> keys = changeEvent.changedKeys();
-        if (CollectionUtils.isEmpty(keys)) {
-          return;
-        }
-        for (String key : keys) {
-          // 1. check whether the changed key is relevant
-          Collection<SpringValue> targetValues = monitor.get(key);
-          if (targetValues == null || targetValues.isEmpty()) {
-            continue;
-          }
-
-          // 2. check whether the value is really changed or not (since spring property sources have hierarchies)
-          ConfigChange configChange = changeEvent.getChange(key);
-          if (!Objects.equals(environment.getProperty(key), configChange.getNewValue())) {
-            continue;
-          }
-
-          // 3. update the value
-          for (SpringValue val : targetValues) {
-            updateSpringValue(val);
-          }
-        }
-      }
-    };
-
-    List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
-
-    for (ConfigPropertySource configPropertySource : configPropertySources) {
-      configPropertySource.addChangeListener(changeListener);
-    }
-  }
-
-  private void updateSpringValue(SpringValue springValue) {
-    try {
-      Object value = resolvePropertyValue(springValue);
-      springValue.update(value);
-
-      logger.debug("Auto update apollo changed value successfully, new value: {}, {}", value,
-          springValue.toString());
-    } catch (Throwable ex) {
-      logger.error("Auto update apollo changed value failed, {}", springValue.toString(), ex);
-    }
-  }
-
-  /**
-   * Logic transplanted from DefaultListableBeanFactory
-   * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#doResolveDependency(org.springframework.beans.factory.config.DependencyDescriptor, java.lang.String, java.util.Set, org.springframework.beans.TypeConverter)
-   */
-  private Object resolvePropertyValue(SpringValue springValue) {
-    String strVal = beanFactory.resolveEmbeddedValue(springValue.getPlaceholder());
-    Object value;
-
-    BeanDefinition bd = (beanFactory.containsBean(springValue.getBeanName()) ? beanFactory
-        .getMergedBeanDefinition(springValue.getBeanName()) : null);
-    value = evaluateBeanDefinitionString(strVal, bd);
-
-    if (springValue.isField()) {
-      // org.springframework.beans.TypeConverter#convertIfNecessary(java.lang.Object, java.lang.Class, java.lang.reflect.Field) is available from Spring 3.2.0+
-      if (typeConverterHasConvertIfNecessaryWithFieldParameter) {
-        value = this.typeConverter
-            .convertIfNecessary(value, springValue.getTargetType(), springValue.getField());
-      } else {
-        value = this.typeConverter.convertIfNecessary(value, springValue.getTargetType());
-      }
-    } else {
-      value = this.typeConverter.convertIfNecessary(value, springValue.getTargetType(),
-          springValue.getMethodParameter());
-    }
-
-    return value;
-  }
-
-  private Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
-    if (beanFactory.getBeanExpressionResolver() == null) {
-      return value;
-    }
-    Scope scope = (beanDefinition != null ? beanFactory.getRegisteredScope(beanDefinition.getScope()) : null);
-    return beanFactory.getBeanExpressionResolver().evaluate(value, new BeanExpressionContext(beanFactory, scope));
-  }
-
-  private boolean testTypeConverterHasConvertIfNecessaryWithFieldParameter() {
-    try {
-      TypeConverter.class.getMethod("convertIfNecessary", Object.class, Class.class, Field.class);
-    } catch (Throwable ex) {
-      return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  public int getOrder() {
-    //make it as late as possible
-    return Ordered.LOWEST_PRECEDENCE;
-  }
 }

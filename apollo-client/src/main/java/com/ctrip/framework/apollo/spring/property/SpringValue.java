@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.spring.property;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import org.springframework.core.MethodParameter;
 
 /**
@@ -20,17 +21,23 @@ public class SpringValue {
   private String key;
   private String placeholder;
   private Class<?> targetType;
+  private Type genericType;
+  private boolean isJson;
 
-  public SpringValue(String key, String placeholder, Object bean, String beanName, Field field) {
+  public SpringValue(String key, String placeholder, Object bean, String beanName, Field field, boolean isJson) {
     this.bean = bean;
     this.beanName = beanName;
     this.field = field;
     this.key = key;
     this.placeholder = placeholder;
     this.targetType = field.getType();
+    if(isJson){
+      this.genericType = field.getGenericType();
+      this.isJson = isJson;
+    }
   }
 
-  public SpringValue(String key, String placeholder, Object bean, String beanName, Method method) {
+  public SpringValue(String key, String placeholder, Object bean, String beanName, Method method, boolean isJson) {
     this.bean = bean;
     this.beanName = beanName;
     this.methodParameter = new MethodParameter(method, 0);
@@ -38,6 +45,10 @@ public class SpringValue {
     this.placeholder = placeholder;
     Class<?>[] paramTps = method.getParameterTypes();
     this.targetType = paramTps[0];
+    if(isJson){
+      this.genericType = method.getGenericParameterTypes()[0];
+      this.isJson = isJson;
+    }
   }
 
   public void update(Object newVal) throws IllegalAccessException, InvocationTargetException {
@@ -82,6 +93,14 @@ public class SpringValue {
 
   public Field getField() {
     return field;
+  }
+
+  public Type getGenericType() {
+    return genericType;
+  }
+
+  public boolean isJson() {
+    return isJson;
   }
 
   @Override

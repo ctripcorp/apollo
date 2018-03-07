@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
+import com.ctrip.framework.apollo.spring.config.AutoUpdateConfigChangeListener;
+import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.foundation.internals.Utils;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -29,7 +31,7 @@ public class ApolloJSONValueProcessor extends ApolloProcessor implements Environ
 
 
   @Override
-  protected void processField(Object bean, Field field) {
+  protected void processField(Object bean,String beanName, Field field) {
     ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(field, ApolloJSONValue.class);
     if (apolloJSONValue == null) {
       return;
@@ -46,17 +48,19 @@ public class ApolloJSONValueProcessor extends ApolloProcessor implements Environ
         field.setAccessible(true);
         field.set(bean, gson.fromJson(propertyValue, field.getGenericType()));
         field.setAccessible(accessible);
+
+        SpringValue springValue = new SpringValue(key, apolloJSONValue.value(), bean, beanName, field, true);
+        AutoUpdateConfigChangeListener.monitor.put(key, springValue);
+        logger.debug("Monitoring ", springValue);
       } catch (Exception e) {
         logger.error("set json value exception", e);
       }
     }
 
-    super.processField(bean, field);
-
   }
 
   @Override
-  protected void processMethod(Object bean, Method method) {
+  protected void processMethod(Object bean, String beanName, Method method) {
 
     ApolloJSONValue apolloJSONValue = AnnotationUtils.getAnnotation(method, ApolloJSONValue.class);
     if (apolloJSONValue == null) {
@@ -73,14 +77,18 @@ public class ApolloJSONValueProcessor extends ApolloProcessor implements Environ
         boolean accessible = method.isAccessible();
         method.setAccessible(true);
         Type[] types = method.getGenericParameterTypes();
-        Preconditions.checkArgument(types.length == 1, String.format("the "));
+        Preconditions.checkArgument(types.length == 1, "Ignore @Value setter {}.{}, expecting 1 parameter, actual {} parameters",
+            bean.getClass().getName(), method.getName(), method.getParameterTypes().length);
         method.invoke(bean, gson.fromJson(propertyValue, types[0]));
         method.setAccessible(accessible);
+
+        SpringValue springValue = new SpringValue(key, apolloJSONValue.value(), bean, beanName, method, true);
+        AutoUpdateConfigChangeListener.monitor.put(key, springValue);
+        logger.debug("Monitoring ", springValue);
       } catch (Exception e) {
         logger.error("set json value exception", e);
       }
     }
-    super.processMethod(bean, method);
   }
 
 

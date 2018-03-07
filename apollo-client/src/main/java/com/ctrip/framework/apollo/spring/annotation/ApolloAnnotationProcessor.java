@@ -18,7 +18,7 @@ import org.springframework.util.ReflectionUtils;
 public class ApolloAnnotationProcessor extends ApolloProcessor {
 
   @Override
-  protected void processField(Object bean, Field field) {
+  protected void processField(Object bean, String beanName, Field field) {
     ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
     if (annotation == null) {
       return;
@@ -36,7 +36,7 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
   }
 
   @Override
-  protected void processMethod(final Object bean, final Method method) {
+  protected void processMethod(final Object bean, String beanName, final Method method) {
 
     ApolloConfigChangeListener annotation = AnnotationUtils
         .findAnnotation(method, ApolloConfigChangeListener.class);

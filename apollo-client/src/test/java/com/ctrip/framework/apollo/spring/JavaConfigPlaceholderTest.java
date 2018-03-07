@@ -10,6 +10,7 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.annotation.ApolloJSONValue;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.sun.xml.internal.xsom.XSWildcard.Other;
 import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   private static final int DEFAULT_BATCH = 200;
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
   private static final String JSON_PROPERTY = "jsonProperty";
+  private static final String OTHER_JSON_PROPERTY = "otherJsonProperty";
 
   @Test
   public void testPropertySourceWithNoNamespace() throws Exception {
@@ -287,17 +289,21 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   @Test
   public void testJsonDeserialization() {
     String someJson = "[{\"a\":\"astring\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
+    String otherJson = "[{\"a\":\"otherString\", \"b\":10},{\"a\":\"astring2\", \"b\":20}]";
 
     Config config = mock(Config.class);
     when(config.getProperty(eq(JSON_PROPERTY), anyString())).thenReturn(String.valueOf(someJson));
+    when(config.getProperty(eq(OTHER_JSON_PROPERTY), anyString())).thenReturn(String.valueOf(otherJson));
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, config);
 
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
         AppConfig8.class);
 
-    TestJavaConfigBean4 testJavaConfigBean4 = context.getBean(TestJavaConfigBean4.class);
-    assertEquals(2, testJavaConfigBean4.getJsonBeanList().size());
-    assertEquals("astring", testJavaConfigBean4.getJsonBeanList().get(0).a);
+    TestJsonPropertyBean testJsonPropertyBean = context.getBean(TestJsonPropertyBean.class);
+    assertEquals(2, testJsonPropertyBean.getJsonBeanList().size());
+    assertEquals("astring", testJsonPropertyBean.getJsonBeanList().get(0).a);
+    assertEquals("otherString", testJsonPropertyBean.getOtherJsonBeanList().get(0).a);
+
   }
 
 
@@ -388,8 +394,8 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   static class AppConfig8 {
 
     @Bean
-    TestJavaConfigBean4 testJavaConfigBean4() {
-      return new TestJavaConfigBean4();
+    TestJsonPropertyBean testJavaConfigBean4() {
+      return new TestJsonPropertyBean();
     }
   }
 
@@ -467,20 +473,27 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
 
-  static class TestJavaConfigBean4 {
+  static class TestJsonPropertyBean {
 
     @ApolloJSONValue("${jsonProperty}")
     private List<JsonBean> jsonBeanList;
+
+    private List<JsonBean> otherJsonBeanList;
 
 
     public List<JsonBean> getJsonBeanList() {
       return jsonBeanList;
     }
 
-    public void setJsonBeanList(List<JsonBean> jsonBeanList) {
-      this.jsonBeanList = jsonBeanList;
+    @ApolloJSONValue("${otherJsonProperty}")
+    public void setOtherJsonBeanList(
+        List<JsonBean> otherJsonBeanList) {
+      this.otherJsonBeanList = otherJsonBeanList;
     }
 
+    public List<JsonBean> getOtherJsonBeanList() {
+      return otherJsonBeanList;
+    }
   }
 
 

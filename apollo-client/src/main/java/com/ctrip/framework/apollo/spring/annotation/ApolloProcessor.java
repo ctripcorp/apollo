@@ -20,10 +20,10 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
       throws BeansException {
     Class clazz = bean.getClass();
     for (Field field : findAllField(clazz)) {
-      processField(bean, field);
+      processField(bean, beanName, field);
     }
     for (Method method : findAllMethod(clazz)) {
-      processMethod(bean, method);
+      processMethod(bean, beanName, method);
     }
     return bean;
   }
@@ -38,18 +38,14 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
    * @param bean
    * @param field
    */
-  protected void processField(Object bean, Field field) {
-    //empty method
-  }
+  protected abstract void processField(Object bean, String beanName, Field field);
 
   /**
    * subclass should implement this method to process method
    * @param bean
    * @param method
    */
-  protected void processMethod(Object bean, Method method) {
-    //empty method
-  }
+  protected abstract void processMethod(Object bean, String beanName, Method method);
 
 
   @Override

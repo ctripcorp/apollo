@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.spring.config;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -8,6 +9,7 @@ import com.google.common.collect.Multimap;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 
+import java.util.List;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -36,6 +38,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
 
   private final ConfigPropertySourceFactory configPropertySourceFactory = ApolloInjector
       .getInstance(ConfigPropertySourceFactory.class);
+  private final ConfigUtil configUtil = ApolloInjector.getInstance(ConfigUtil.class);
   private ConfigurableEnvironment environment;
 
   public static boolean addNamespaces(Collection<String> namespaces, int order) {
@@ -45,6 +48,12 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     initializePropertySources();
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
+      List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
+      for (ConfigPropertySource configPropertySource : configPropertySources) {
+        configPropertySource.addChangeListener(new AutoUpdateConfigChangeListener(environment, beanFactory));
+      }
+    }
   }
 
   protected void initializePropertySources() {
