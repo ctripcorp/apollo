@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.internals.ConfigRepository;
+import com.ctrip.framework.apollo.internals.DefaultInjector;
 import com.ctrip.framework.apollo.internals.SimpleConfig;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.ctrip.framework.apollo.util.ConfigUtil;
@@ -122,6 +123,7 @@ public abstract class AbstractSpringIntegrationTest {
     ReflectionUtils.invokeMethod(CONFIG_SERVICE_RESET, null);
     MockInjector.reset();
     MockInjector.setInstance(ConfigManager.class, new MockConfigManager());
+    MockInjector.setDelegate(new DefaultInjector());
   }
 
   protected static void doTearDown() {
