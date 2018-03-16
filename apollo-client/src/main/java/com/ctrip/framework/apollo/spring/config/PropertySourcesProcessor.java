@@ -182,6 +182,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   private static void reset() {
     NAMESPACE_NAMES.clear();
     INITIALIZED.set(false);
+    AUTO_UPDATE_INITIALIZED.set(false);
   }
 
   @Override
