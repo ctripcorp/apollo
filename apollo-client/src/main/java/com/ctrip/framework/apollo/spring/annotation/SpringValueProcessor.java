@@ -4,6 +4,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -38,10 +41,13 @@ import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySource;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
+import com.ctrip.framework.apollo.spring.processor.ValueMappingProcessor;
 import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
 import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
+import com.ctrip.framework.apollo.spring.property.ValueMappingElement;
+import com.ctrip.framework.apollo.spring.property.ValueMappingHolder;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -53,19 +59,23 @@ import com.google.common.collect.Multimap;
  * @since 2017/12/20.
  */
 public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered, EnvironmentAware,
-    BeanFactoryAware, BeanFactoryPostProcessor {
+    BeanFactoryAware, BeanFactoryPostProcessor, InstantiationAwareBeanPostProcessor {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
   private final Multimap<String, SpringValue> monitor = LinkedListMultimap.create();
+  // namespace-SpringValue
+  private final Multimap<String, SpringValue> namespaceMonitor = LinkedListMultimap.create();
   private final ConfigUtil configUtil;
   private final PlaceholderHelper placeholderHelper;
   private final ConfigPropertySourceFactory configPropertySourceFactory;
   private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;
+  private final ValueMappingProcessor valueMappingProcessor;
 
   private Environment environment;
   private ConfigurableBeanFactory beanFactory;
   private TypeConverter typeConverter;
+  private ConfigChangeListener changeListener;
 
   private static Multimap<String, SpringValueDefinition> beanName2SpringValueDefinitions = LinkedListMultimap.create();
 
@@ -74,6 +84,7 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
     placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
     configPropertySourceFactory = ApolloInjector.getInstance(ConfigPropertySourceFactory.class);
     typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
+    valueMappingProcessor = ApolloInjector.getInstance(ValueMappingProcessor.class);
   }
 
   @Override
@@ -215,14 +226,20 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
     return res;
   }
 
-  private void registerConfigChangeListener() {
-    ConfigChangeListener changeListener = new ConfigChangeListener() {
+  private synchronized void registerConfigChangeListener() {
+    if (changeListener != null) {
+      // registered listener
+      return;
+    }
+    
+    changeListener = new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
         Set<String> keys = changeEvent.changedKeys();
         if (CollectionUtils.isEmpty(keys)) {
           return;
         }
+        Set<SpringValue> valueMappingSet = new HashSet<>();
         for (String key : keys) {
           // 1. check whether the changed key is relevant
           Collection<SpringValue> targetValues = monitor.get(key);
@@ -238,6 +255,30 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
 
           // 3. update the value
           for (SpringValue val : targetValues) {
+            if(val.isValueMapping()) {
+              // collect valueMapping value at first, in case update repeatedly
+              valueMappingSet.add(val);
+            }else {
+              updateSpringValue(val);
+            }
+          }
+        }
+        
+        // collect valueMapping value by Apollo namespace
+        Collection<SpringValue> targetValues = namespaceMonitor.get(changeEvent.getNamespace());
+        if (!CollectionUtils.isEmpty(targetValues)) {
+          for (SpringValue val : targetValues) {
+            if (val.isValueMapping()) {
+              // collect valueMapping value at first, in case update repeatedly
+              valueMappingSet.add(val);
+            }
+          }
+        }
+        
+        // update valueMapping value
+        for (SpringValue val : valueMappingSet) {
+          if (valueMappingProcessor.isPropertyChanged(val.getValueMappingElement(), changeEvent,
+              environment)) {
             updateSpringValue(val);
           }
         }
@@ -253,11 +294,18 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
 
   private void updateSpringValue(SpringValue springValue) {
     try {
-      Object value = resolvePropertyValue(springValue);
-      springValue.update(value);
-
-      logger.debug("Auto update apollo changed value successfully, new value: {}, {}", value,
-          springValue.toString());
+      Object value;
+      if (springValue.isValueMapping()) {
+        value = valueMappingProcessor.updateProperty(springValue.getBean(),
+            springValue.getValueMappingElement(), environment);
+      } else {
+        value = resolvePropertyValue(springValue);
+        springValue.update(value);
+      }
+      if (logger.isDebugEnabled()) {
+        logger.debug("Auto update apollo changed value successfully, new value: {}, {}", value,
+            springValue.toString());
+      }
     } catch (Throwable ex) {
       logger.error("Auto update apollo changed value failed, {}", springValue.toString(), ex);
     }
@@ -307,6 +355,52 @@ public class SpringValueProcessor implements BeanPostProcessor, PriorityOrdered,
     }
 
     return true;
+  }
+
+  @Override
+  public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName)
+      throws BeansException {
+    return null;
+  }
+
+  @Override
+  public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+    return true;
+  }
+
+  @Override
+  public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds,
+      Object bean, String beanName) throws BeansException {
+    // handle the class element with valueMapping annotation
+    List<ValueMappingElement> elemList = valueMappingProcessor.createValueMappingElements(bean);
+    if (!CollectionUtils.isEmpty(elemList)) {
+      for (ValueMappingElement elem : elemList) {
+        SpringValue springValue = new SpringValue(bean, beanName, elem);
+        // set initial value
+        valueMappingProcessor.updateProperty(springValue.getBean(),
+            springValue.getValueMappingElement(), environment);
+
+        // register monitor
+        if (elem.isPropertyKeyExplicit()) {
+          // property key is explicit, monitor on property key
+          for (ValueMappingHolder holder : elem.getHolders()) {
+            monitor.put(holder.getPropKey(), springValue);
+          }
+        } else {
+          // property key is ambiguous, monitor on config namespace
+          for (String namespace : elem.getNamespaces()) {
+            namespaceMonitor.put(namespace, springValue);
+          }
+        }
+      }
+
+      // Since ValueMapping element could be rather complex, it must be able to update automatically, ignore this switch
+      if (!configUtil.isAutoUpdateInjectedSpringPropertiesEnabled() && changeListener == null) {
+        registerConfigChangeListener();
+      }
+    }
+    
+    return pvs;
   }
 
   @Override

@@ -1,6 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
@@ -23,6 +25,11 @@ public class DefaultConfigManager implements ConfigManager {
     m_factoryManager = ApolloInjector.getInstance(ConfigFactoryManager.class);
   }
 
+  @Override
+  public Set<String> getAllNamespaces() {
+    return Collections.unmodifiableSet(m_configs.keySet());
+  }
+  
   @Override
   public Config getConfig(String namespace) {
     Config config = m_configs.get(namespace);

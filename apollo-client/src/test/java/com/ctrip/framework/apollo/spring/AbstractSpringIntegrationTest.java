@@ -10,10 +10,13 @@ import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
 import java.util.Properties;
+import java.util.Set;
+
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.util.ReflectionUtils;
@@ -127,6 +130,11 @@ public abstract class AbstractSpringIntegrationTest {
 
   private static class MockConfigManager implements ConfigManager {
 
+    @Override
+    public Set<String> getAllNamespaces() {
+      return Collections.unmodifiableSet(CONFIG_REGISTRY.keySet());
+    }
+    
     @Override
     public Config getConfig(String namespace) {
       return CONFIG_REGISTRY.get(namespace);

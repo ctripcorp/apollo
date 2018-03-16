@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo;
 
+import java.util.Set;
+
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
@@ -42,6 +44,15 @@ public class ConfigService {
     return m_configRegistry;
   }
 
+  /**
+   * Get all the config namespace
+   * 
+   * @return
+   */
+  public static Set<String> getAllNamespaces() {
+    return s_instance.getManager().getAllNamespaces();
+  }
+  
   /**
    * Get Application's config instance.
    *

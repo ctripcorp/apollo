@@ -20,6 +20,7 @@ public class SpringValue {
   private String key;
   private String placeholder;
   private Class<?> targetType;
+  private ValueMappingElement valueMappingElement;
 
   public SpringValue(String key, String placeholder, Object bean, String beanName, Field field) {
     this.bean = bean;
@@ -40,6 +41,12 @@ public class SpringValue {
     this.targetType = paramTps[0];
   }
 
+  public SpringValue(Object bean, String beanName, ValueMappingElement valueMappingElement) {
+    this.bean = bean;
+    this.beanName = beanName;
+    this.valueMappingElement = valueMappingElement;
+  }
+  
   public void update(Object newVal) throws IllegalAccessException, InvocationTargetException {
     if (isField()) {
       injectField(newVal);
@@ -60,6 +67,10 @@ public class SpringValue {
     methodParameter.getMethod().invoke(bean, newVal);
   }
 
+  public Object getBean() {
+    return bean;
+  }
+
   public String getBeanName() {
     return beanName;
   }
@@ -76,6 +87,14 @@ public class SpringValue {
     return methodParameter;
   }
 
+  public boolean isValueMapping() {
+    return this.valueMappingElement != null;
+  }
+  
+  public ValueMappingElement getValueMappingElement() {
+    return valueMappingElement;
+  }
+
   public boolean isField() {
     return this.field != null;
   }
@@ -86,6 +105,12 @@ public class SpringValue {
 
   @Override
   public String toString() {
+    if (isValueMapping()) {
+      return String.format("mappingKey: %s, beanName: %s, %s: %s.%s",
+          valueMappingElement.getPropKeyDesc(), beanName,
+          valueMappingElement.isField() ? "field" : "method", bean.getClass().getName(),
+          valueMappingElement.getElement().getName());
+    }
     if (isField()) {
       return String
           .format("key: %s, beanName: %s, field: %s.%s", key, beanName, bean.getClass().getName(), field.getName());
