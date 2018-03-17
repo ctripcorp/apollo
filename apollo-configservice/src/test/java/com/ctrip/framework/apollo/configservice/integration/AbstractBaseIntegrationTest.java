@@ -114,7 +114,8 @@ public abstract class AbstractBaseIntegrationTest {
   private static class TestBizConfig extends BizConfig {
     @Override
     public int appNamespaceCacheScanInterval() {
-      return 50;
+      //should be short enough to update the AppNamespace cache in time
+      return 1;
     }
 
     @Override

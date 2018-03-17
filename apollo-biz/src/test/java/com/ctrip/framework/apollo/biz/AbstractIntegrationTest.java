@@ -12,6 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @WebIntegrationTest(randomPort = true)
 @SpringApplicationConfiguration(classes = BizTestConfiguration.class)
-public class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest {
 
 }
