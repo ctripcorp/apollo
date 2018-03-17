@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.spring.processor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 import org.springframework.util.ReflectionUtils.MethodCallback;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -153,40 +152,16 @@ public class ValueMappingProcessor {
       return null;
     }
 
-    ValueMappingCollector collector = getCollector(mappingAnno);
-
-    // check if a collection property is valid
-    Class<?> type = field.getType();
-    Type genType = field.getGenericType();
-    if (collector != null && !isCollectPropType(type)) {
-      logger.error(
-          "[op:createValueMappingField] invalid config, the field type is not Collection or Array. type={} field={}, class={}",
-          type, field.getName(), beanClass.getName());
+    // create value mapping holder
+    ValueMappingHolder holder = createValueMappingHolder(field, field.getType(),
+        field.getGenericType(), mappingAnno, beanClass);
+    if (holder == null) {
+      // invalid annotation
       return null;
     }
 
-    // parse property key
-    boolean hasCollector = collector != null;
-    String keyExpr = mappingAnno.value();
-    PropertyKey propKey = parseMappingPropKey(keyExpr, hasCollector);
-    if (propKey == null) {
-      logger.error(
-          "[op:createValueMappingField] invalid property key. keyExpr={} field={} class={}",
-          keyExpr, field.getName(), beanClass.getName());
-      return null;
-    }
-
-    // get parser instance
-    ValueMappingParser parser = ApolloInjector.getInstance(mappingAnno.parser());
-    if (parser == null) {
-      logger.error("[op:createValueMappingField] invalid parser. parserClass={} field={} class={}",
-          mappingAnno.parser().getName(), field.getName(), beanClass.getName());
-      return null;
-    }
-
-    ValueMappingHolder holder = createValueMappingHolder(propKey, type, genType, parser, collector);
-    String[] namespaces = getConfigNamespaces(beanClass);
-    return new ValueMappingElement(namespaces, field, holder);
+    // create value mapping element of field
+    return createValueMappingElement(field, beanClass, holder);
   }
 
   /**
@@ -215,42 +190,16 @@ public class ValueMappingProcessor {
       return null;
     }
 
-    ValueMappingCollector collector = getCollector(mappingAnno);
-
-    // check if a collection property is valid
-    Class<?> type = paramTypes[0];
-    Type genType = paramGenTypes[0];
-    if (collector != null && !isCollectPropType(type)) {
-      logger.error(
-          "[op:createValueMappingMethod] invalid config, argument type is not Collection or Array. type={} method={}, class={}",
-          type, method.getName(), beanClass.getName());
+    // create value mapping holder
+    ValueMappingHolder holder =
+        createValueMappingHolder(method, paramTypes[0], paramGenTypes[0], mappingAnno, beanClass);
+    if (holder == null) {
+      // invalid annotation
       return null;
     }
 
-    // parse property key
-    boolean hasCollector = collector != null;
-    String keyExpr = mappingAnno.value();
-    PropertyKey propKey = parseMappingPropKey(keyExpr, hasCollector);
-    if (propKey == null) {
-      logger.error(
-          "[op:createValueMappingMethod] invalid property key. keyExpr={} method={} class={}",
-          keyExpr, method.getName(), beanClass.getName());
-      return null;
-    }
-
-    // get parser instance
-    ValueMappingParser parser = ApolloInjector.getInstance(mappingAnno.parser());
-    if (parser == null) {
-      logger.error(
-          "[op:createValueMappingMethod] invalid parser. parserClass={} method={} class={}",
-          mappingAnno.parser().getName(), method.getName(), beanClass.getName());
-      return null;
-    }
-
-    ValueMappingHolder holder = createValueMappingHolder(propKey, type, genType, parser, collector);
-
-    String[] namespaces = getConfigNamespaces(beanClass);
-    return new ValueMappingElement(namespaces, method, holder);
+    // create value mapping element of method
+    return createValueMappingElement(method, beanClass, holder);
   }
 
   /**
@@ -294,53 +243,35 @@ public class ValueMappingProcessor {
     ValueMappingHolder[] holders = new ValueMappingHolder[paramAnnos.length];
     for (int i = 0; i < paramAnnos.length; i++) {
       // handle annotation config
-      String keyExpr;
-      ValueMappingParser parser = null;
-      ValueMappingCollector collector = null;
       Annotation anno = paramAnnos[i][0];
-      if (anno instanceof Value) {
-        Value valueAnno = (Value) anno;
-        keyExpr = valueAnno.value();
-      } else {
-        ValueMapping mappingAnno = (ValueMapping) anno;
-        keyExpr = mappingAnno.value();
-        parser = ApolloInjector.getInstance(mappingAnno.parser());
-        if (parser == null) {
-          logger.error(
-              "[op:createValueMappingMethodParams] invalid parser. parserClass={} argIdx={} method={} class={}",
-              mappingAnno.parser().getName(), i, method.getName(), beanClass.getName());
-          return null;
-        }
-        collector = getCollector(mappingAnno);
-      }
-
-      // check if a collection property is valid
       Class<?> type = paramTypes[i];
       Type genType = paramGenTypes[i];
-      if (collector != null && !isCollectPropType(type)) {
-        logger.error(
-            "[op:createValueMappingMethodParams] invalid config, the type of argument {} is not Collection or Array. type={} method={}, class={}",
-            i, type, method.getName(), beanClass.getName());
+
+      // create value mapping holder
+      if (anno instanceof Value) {
+        Value valueAnno = (Value) anno;
+        String keyExpr = valueAnno.value();
+        PropertyKey propKey = parseMappingPropKey(keyExpr, false);
+        holders[i] = createValueMappingHolder(propKey, type, genType, null, null);
+      } else {
+        ValueMapping mappingAnno = (ValueMapping) anno;
+        holders[i] = createValueMappingHolder(method, type, genType, mappingAnno, beanClass);
+      }
+      if (holders[i] == null) {
+        // invalid annotation
         return null;
       }
-
-      // parse property key
-      boolean hasCollector = collector != null;
-      PropertyKey propKey = parseMappingPropKey(keyExpr, hasCollector);
-      if (propKey == null) {
-        logger.error(
-            "[op:createValueMappingMethodParams] invalid property key. keyExpr={} method={} class={}",
-            keyExpr, method.getName(), beanClass.getName());
-        return null;
-      }
-
-      holders[i] = createValueMappingHolder(propKey, type, genType, parser, collector);
     }
 
+    // create value mapping element of method
+    return createValueMappingElement(method, beanClass, holders);
+  }
+
+  private ValueMappingElement createValueMappingElement(Member method, final Class<?> beanClass,
+      ValueMappingHolder... holders) {
     String[] namespaces = getConfigNamespaces(beanClass);
     return new ValueMappingElement(namespaces, method, holders);
   }
-
 
   /**
    * Get the namespaces of config bean
@@ -366,6 +297,41 @@ public class ValueMappingProcessor {
       namespaces = allNamespaces;
     }
     return namespaces;
+  }
+
+  private ValueMappingHolder createValueMappingHolder(Member mappingElem, Class<?> valType,
+      Type valGenType, ValueMapping mappingAnno, Class<?> beanClass) {
+
+    // check if a collection property is valid
+    ValueMappingCollector collector = getCollector(mappingAnno);
+    if (collector != null && !isCollectPropType(valType)) {
+      logger.error(
+          "[op:createValueMappingHolder] invalid config, the mapping type is not Collection or Array. valType={} element={}, class={}",
+          valType, mappingElem.getName(), beanClass.getName());
+      return null;
+    }
+
+    // parse property key
+    boolean hasCollector = collector != null;
+    String keyExpr = mappingAnno.value();
+    PropertyKey propKey = parseMappingPropKey(keyExpr, hasCollector);
+    if (propKey == null) {
+      logger.error(
+          "[op:createValueMappingHolder] invalid property key. keyExpr={} element={} class={}",
+          keyExpr, mappingElem.getName(), beanClass.getName());
+      return null;
+    }
+
+    // get parser instance
+    ValueMappingParser parser = ApolloInjector.getInstance(mappingAnno.parser());
+    if (parser == null) {
+      logger.error(
+          "[op:createValueMappingHolder] invalid parser. parserClass={} element={} class={}",
+          mappingAnno.parser().getName(), mappingElem.getName(), beanClass.getName());
+      return null;
+    }
+
+    return createValueMappingHolder(propKey, valType, valGenType, parser, collector);
   }
 
   private ValueMappingHolder createValueMappingHolder(PropertyKey propKey, Class<?> type,
@@ -488,28 +454,13 @@ public class ValueMappingProcessor {
    */
   private Object updateFieldProperty(Object bean, ValueMappingElement elem,
       Environment environment) {
-    ValueMappingHolder holder = elem.getFirstHolder();
-    Field field = (Field) elem.getElement();
 
     // get type converted property value
-    Object value = resolvePropertyValue(holder, elem.getNamespaces(), environment);
-
-    Object fieldVal;
-    if (holder.hasCollector()) {
-      // collection property
-      @SuppressWarnings("unchecked")
-      Map<String, String> propMap = (Map<String, String>) value;
-      fieldVal = convertCollectValue(propMap, holder, elem);
-    } else if (holder.isValueMapping()) {
-      // normal value mapping property
-      String valStr = (String) value;
-      fieldVal = parseMappingPropValue(valStr, holder);
-    } else {
-      // normal property
-      fieldVal = value;
-    }
+    ValueMappingHolder holder = elem.getFirstHolder();
+    Object fieldVal = resolvePropertyValue(holder, elem, environment);
 
     // set property value to field
+    Field field = (Field) elem.getElement();
     setFieldValue(bean, elem, field, fieldVal);
 
     if (logger.isDebugEnabled()) {
@@ -529,33 +480,17 @@ public class ValueMappingProcessor {
    */
   private Object updateMethodProperty(Object bean, ValueMappingElement elem,
       Environment environment) {
-    ValueMappingHolder[] holders = elem.getHolders();
-    Method method = (Method) elem.getElement();
 
     // create method argument values
+    ValueMappingHolder[] holders = elem.getHolders();
     Object[] argVals = new Object[holders.length];
     for (int i = 0; i < holders.length; i++) {
-      ValueMappingHolder holder = holders[i];
-
       // get type converted property value
-      Object value = resolvePropertyValue(holder, elem.getNamespaces(), environment);
-
-      if (holder.hasCollector()) {
-        // collection property
-        @SuppressWarnings("unchecked")
-        Map<String, String> propMap = (Map<String, String>) value;
-        argVals[i] = convertCollectValue(propMap, holder, elem);
-      } else if (holder.isValueMapping()) {
-        // normal value mapping property
-        String valStr = (String) value;
-        argVals[i] = parseMappingPropValue(valStr, holder);
-      } else {
-        // normal property
-        argVals[i] = value;
-      }
+      argVals[i] = resolvePropertyValue(holders[i], elem, environment);
     }
 
     // invoke method to update property value
+    Method method = (Method) elem.getElement();
     invokeMethod(bean, elem, method, argVals);
 
     if (logger.isDebugEnabled()) {
@@ -569,11 +504,11 @@ public class ValueMappingProcessor {
    * get type converted property value
    * 
    * @param holder
-   * @param namespaces
+   * @param elem
    * @param environment
    * @return
    */
-  private Object resolvePropertyValue(ValueMappingHolder holder, String[] namespaces,
+  private Object resolvePropertyValue(ValueMappingHolder holder, ValueMappingElement elem,
       Environment environment) {
     String propKey = holder.getPropKey();
     Object value;
@@ -581,20 +516,22 @@ public class ValueMappingProcessor {
       // mapping multiple properties
       Map<String, String> propMap = new LinkedHashMap<>();
       ValueMappingCollector collector = holder.getCollector();
-      Set<String> allPropKeys = getAllProperyKeys(namespaces);
+      Set<String> allPropKeys = getAllProperyKeys(elem.getNamespaces());
       for (String remoteKey : allPropKeys) {
         String propValue = environment.getProperty(remoteKey);
         if (collector.filter(propKey, remoteKey, propValue)) {
           propMap.put(remoteKey, propValue);
         }
       }
-      value = propMap;
+      value = convertCollectValue(propMap, holder, elem);
     } else {
       // mapping single property
-      value = environment.getProperty(propKey, holder.getDefaultValue());
-      if (!holder.isValueMapping()) {
+      String valStr = environment.getProperty(propKey, holder.getDefaultValue());
+      if (holder.isValueMapping()) {
+        value = parseMappingPropValue(valStr, holder);
+      } else {
         // for the basic type
-        value = resolvePropertyValue((String) value, holder.getType(), holder.getGenericType());
+        value = resolvePropertyValue(valStr, holder.getType(), holder.getGenericType());
       }
     }
     return value;

@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.spring.processor;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import com.ctrip.framework.apollo.util.ThreadPoolUtils;
 
 /**
@@ -70,7 +69,8 @@ public class ValueMappingCollectorTest {
 
     // test thread safe
     long time = System.currentTimeMillis();
-    ThreadPoolUtils.concurrentExecute(32, 100000, task);
+    boolean succ = ThreadPoolUtils.concurrentExecute(32, 100000, task);
+    Assert.assertTrue(succ);
     time = System.currentTimeMillis() - time;
     return time;
   }

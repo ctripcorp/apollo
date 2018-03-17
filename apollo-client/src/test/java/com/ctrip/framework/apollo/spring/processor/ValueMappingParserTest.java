@@ -23,7 +23,6 @@ import com.google.gson.Gson;
  */
 public class ValueMappingParserTest {
 
-
   @Test
   public void testJsonParser() throws Exception {
 
@@ -71,7 +70,7 @@ public class ValueMappingParserTest {
 
     // test thread safe
     long time = System.currentTimeMillis();
-    ThreadPoolUtils.concurrentExecute(32, 100000, new Runnable() {
+    boolean succ = ThreadPoolUtils.concurrentExecute(16, 10000, new Runnable() {
 
       @Override
       public void run() {
@@ -80,6 +79,7 @@ public class ValueMappingParserTest {
       }
 
     });
+    Assert.assertTrue(succ);
 
     time = System.currentTimeMillis() - time;
     System.out.println("JSON parse time: " + time);
@@ -132,7 +132,7 @@ public class ValueMappingParserTest {
     
     // test thread safe
     long time = System.currentTimeMillis();
-    ThreadPoolUtils.concurrentExecute(16, 10000, new Runnable() {
+    boolean succ = ThreadPoolUtils.concurrentExecute(16, 10000, new Runnable() {
 
       @Override
       public void run() {
@@ -141,7 +141,8 @@ public class ValueMappingParserTest {
       }
 
     });
-
+    Assert.assertTrue(succ);
+    
     final Gson gson = new Gson();
     time = System.currentTimeMillis() - time;
     System.out.println("XML parse time: " + time);

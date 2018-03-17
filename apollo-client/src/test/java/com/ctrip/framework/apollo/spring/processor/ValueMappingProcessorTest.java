@@ -111,7 +111,7 @@ public class ValueMappingProcessorTest extends AbstractSpringIntegrationTest {
   
   @SuppressWarnings("unchecked")
   @Test
-  public void testProcessorMethod() throws Exception {
+  public void testProcessorMethod(){
     
     ValueMappingProcessor processor = ApolloInjector.getInstance(ValueMappingProcessor.class);
 
@@ -138,7 +138,13 @@ public class ValueMappingProcessorTest extends AbstractSpringIntegrationTest {
     ValueMappingParser parser = holder.getParser();
     Assert.assertNotNull(parser);
 
-    Field userField = bean.getClass().getDeclaredField("user");
+    Field userField = null;
+    try {
+      userField = bean.getClass().getDeclaredField("user");
+    } catch (NoSuchFieldException | SecurityException e) {
+      e.printStackTrace();
+    }
+    Assert.assertNotNull(userField);
     userField.setAccessible(true);
     Assert.assertEquals(userField.getType(), holder.getType());
     Assert.assertEquals(userField.getGenericType(), holder.getGenericType());
@@ -250,19 +256,15 @@ public class ValueMappingProcessorTest extends AbstractSpringIntegrationTest {
     // test thread safe
     logEnable = false;
     long time = System.currentTimeMillis();
-    ThreadPoolUtils.concurrentExecute(8, 1000, new Runnable() {
+    boolean succ = ThreadPoolUtils.concurrentExecute(8, 1000, new Runnable() {
 
       @Override
       public void run() {
-        try {
-          testProcessorMethod();
-        } catch (Exception e) {
-          e.printStackTrace();
-          throw new RuntimeException(e);
-        }
+        testProcessorMethod();
       }
 
     });
+    Assert.assertTrue(succ);
 
     time = System.currentTimeMillis() - time;
     System.out.println("Time: " + time);

@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import com.ctrip.framework.apollo.spring.processor.ValueMappingAntMatchCollector;
 import com.ctrip.framework.apollo.spring.processor.ValueMappingCollector;
 import com.ctrip.framework.apollo.spring.processor.ValueMappingJsonParser;
@@ -59,28 +58,29 @@ import com.google.gson.Gson;
  *          "            &lt;/map&gt;\n" + 
  *          "        &lt;/property&gt;\n" + 
  *          "    &lt;/bean&gt;\n" + 
- *          "&lt;/beans&gt;}", processor = ValueMappingXmlBeanParser.class)
+ *          "&lt;/beans&gt;}", parser = ValueMappingXmlBeanParser.class)
  *      private User xmlUser;
  *     
  *      // Collect property whose key matches the ant path pattern specified in the placeholder.
  *      // Only collect property from the someNamespace that EnableApolloConfig specified, otherwise it will collect from all config namespaces.
+ *      // Not support to define default value, which may create ambiguous to the parser that targets at the type of collection element.
  *      &#064;ValueMapping(value = "${key.userM?pS*}", collector = ValueMappingAntMatchCollector.class)
  *      private List&lt;Map&lt;String, Object&gt;&gt; userMapList;
  *      
  *      // Collect property whose key matches the regular expression specified in the placeholder
- *      &#064;ValueMapping(value = "${userXmlS[tr]{2}}", collector = ValueMappingRegMatchCollector.class, processor = ValueMappingXmlBeanProcessor.class)
+ *      &#064;ValueMapping(value = "${userXmlS[tr]{2}}", collector = ValueMappingRegMatchCollector.class, parser = ValueMappingXmlBeanParser.class)
  *      private User[] xmlUserArray;
  *      
- *      // Support to annotated on method with only one parameter of complex type, and invoke automatically if property updated
+ *      // Support to annotate on method with only one parameter of complex type, and invoke automatically if property updated
  *      &#064;ValueMapping("${userMapStr}")
  *      private void setUserMap(Map&lt;String, Object&gt; userMap){
  *      }
  *      
- *      // Support to annotated on method parameters, and invoke automatically if one or more properties updated.
+ *      // Support to annotate on method parameters, and invoke automatically if one or more properties updated.
  *      private void setAll(&#064;Value("${customName:zxh}") String customName,
  *          &#064;ValueMapping("${key.userMapStr}") Map&lt;String, Object&gt; userMap,
  *          &#064;ValueMapping("${key.ipListStr}") List&lt;String&gt; ipList,
- *          &#064;ValueMapping(value = "${userXmlStr}", processor = ValueMappingXmlBeanProcessor.class) User xmlUser) {
+ *          &#064;ValueMapping(value = "${userXmlStr}", parser = ValueMappingXmlBeanParser.class) User xmlUser) {
  *          
  *      }
  *      

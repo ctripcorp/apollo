@@ -20,8 +20,9 @@ public class ThreadPoolUtils {
    * @param threadNum The number of thread to execute the task
    * @param executeNum The number of execution
    * @param task The task to execute
+   * @param boolean true:execute succeed, false: execute failed
    */
-  public static void concurrentExecute(int threadNum, int executeNum, final Runnable task) {
+  public static boolean concurrentExecute(int threadNum, int executeNum, final Runnable task) {
 
     ExecutorService executor = Executors.newFixedThreadPool(threadNum);
     try {
@@ -36,9 +37,10 @@ public class ThreadPoolUtils {
           future.get();
         } catch (InterruptedException | ExecutionException e) {
           e.printStackTrace();
-          throw new RuntimeException(e.getMessage(), e);
+          return false;
         }
       }
+      return true;
     } finally {
       executor.shutdown();
     }
