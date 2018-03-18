@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 import org.springframework.util.ReflectionUtils.MethodCallback;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -392,12 +394,6 @@ public class ValueMappingProcessor {
     notNull(elem, "elem may not be null");
     notNull(environment, "environment may not be null");
 
-    // check whether the mapping properties exists
-    if (!isPropertyExists(elem, environment)) {
-      logger.info(createLog("updateProperty", "Not exists property", elem));
-      return null;
-    }
-
     if (elem.isField()) {
       // update field property
       return updateFieldProperty(bean, elem, environment);
@@ -754,53 +750,6 @@ public class ValueMappingProcessor {
   }
 
   /**
-   * Judge if all the value mapping properties exists
-   * 
-   * @param elem The value mapping annotated class element
-   * @param environment Property environment
-   * @return boolean true: exists, false: not exists
-   */
-  private boolean isPropertyExists(ValueMappingElement elem, Environment environment) {
-    // holders array cann't be empty
-    for (ValueMappingHolder holder : elem.getHolders()) {
-      if (!isPropertyExists(holder, elem.getNamespaces(), environment)) {
-        // Not all properties exists
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Judge if all the value mapping properties exists
-   * 
-   * @param holder Value mapping holder
-   * @param namespaces The namespaces of the config bean
-   * @return boolean true: exists, false: not exists
-   */
-  private boolean isPropertyExists(ValueMappingHolder holder, String[] namespaces,
-      Environment environment) {
-
-    // normal property, the property key is explicit
-    if (!holder.hasCollector()) {
-      return environment.getProperty(holder.getPropKey(), holder.getDefaultValue()) != null;
-    }
-
-    // collection property , the property key is ambiguous.
-    String localKey = holder.getPropKey();
-    ValueMappingCollector collector = holder.getCollector();
-    Set<String> allPropKeys = getAllProperyKeys(namespaces);
-    for (String remoteKey : allPropKeys) {
-      String propVal = environment.getProperty(remoteKey);
-      if (collector.filter(localKey, remoteKey, propVal)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * Judge if the value mapping properties are changed
    * 
    * @param elem The value mapping annotated class element
@@ -838,8 +787,9 @@ public class ValueMappingProcessor {
           String propVal = environment.getProperty(remoteKey);
           ConfigChange configChange = changeEvent.getChange(remoteKey);
           // check whether the value is really changed and filtered
+          // when the property is deleted, propVal is null, assume the collection property is changed
           if (Objects.equals(propVal, configChange.getNewValue())
-              && collector.filter(localKey, remoteKey, propVal)) {
+              && (propVal == null || collector.filter(localKey, remoteKey, propVal))) {
             return true;
           }
         }
