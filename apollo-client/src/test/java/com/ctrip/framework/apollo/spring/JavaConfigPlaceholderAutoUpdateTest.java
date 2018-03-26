@@ -302,6 +302,36 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
   }
 
   @Test
+  public void testAutoUpdateWithMultipleNamespacesWithSamePropertiesDeleted() throws Exception {
+    int someTimeout = 1000;
+    int someBatch = 2000;
+    int anotherBatch = 3000;
+
+    Properties applicationProperties = assembleProperties(BATCH_PROPERTY, String.valueOf(someBatch));
+    Properties fxApolloProperties =
+        assembleProperties(TIMEOUT_PROPERTY, String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
+
+    SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationProperties);
+    SimpleConfig fxApolloConfig = prepareConfig(FX_APOLLO_NAMESPACE, fxApolloProperties);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig2.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(someTimeout, bean.getTimeout());
+    assertEquals(someBatch, bean.getBatch());
+
+    Properties newProperties = new Properties();
+
+    applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    TimeUnit.MILLISECONDS.sleep(50);
+
+    assertEquals(someTimeout, bean.getTimeout());
+    assertEquals(anotherBatch, bean.getBatch());
+  }
+
+  @Test
   public void testAutoUpdateWithDeletedPropertiesWithNoDefaultValue() throws Exception {
     int initialTimeout = 1000;
     int initialBatch = 2000;

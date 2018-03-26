@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.spring.property;
 
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
@@ -57,8 +58,7 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
       }
 
       // 2. check whether the value is really changed or not (since spring property sources have hierarchies)
-      ConfigChange configChange = changeEvent.getChange(key);
-      if (!Objects.equals(environment.getProperty(key), configChange.getNewValue())) {
+      if (!shouldTriggerAutoUpdate(changeEvent, key)) {
         continue;
       }
 
@@ -69,13 +69,30 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
     }
   }
 
+  /**
+   * Check whether we should trigger the auto update or not.
+   * <br />
+   * For added or modified keys, we should trigger auto update if the current value in Spring equals to the new value.
+   * <br />
+   * For deleted keys, we will trigger auto update anyway.
+   */
+  private boolean shouldTriggerAutoUpdate(ConfigChangeEvent changeEvent, String changedKey) {
+    ConfigChange configChange = changeEvent.getChange(changedKey);
+
+    if (configChange.getChangeType() == PropertyChangeType.DELETED) {
+      return true;
+    }
+
+    return Objects.equals(environment.getProperty(changedKey), configChange.getNewValue());
+  }
+
   private void updateSpringValue(SpringValue springValue) {
     try {
       Object value = resolvePropertyValue(springValue);
       springValue.update(value);
 
       logger.debug("Auto update apollo changed value successfully, new value: {}, {}", value,
-          springValue.toString());
+          springValue);
     } catch (Throwable ex) {
       logger.error("Auto update apollo changed value failed, {}", springValue.toString(), ex);
     }
