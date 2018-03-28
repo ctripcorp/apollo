@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -43,8 +44,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
 
   public SpringValueProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-    placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
-    springValueRegistry = ApolloInjector.getInstance(SpringValueRegistry.class);
+    placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
+    springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
   }
 
   @Override

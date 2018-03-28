@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.spring.config;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
@@ -39,7 +40,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
   private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
-  private final ConfigPropertySourceFactory configPropertySourceFactory = ApolloInjector
+  private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
       .getInstance(ConfigPropertySourceFactory.class);
   private final ConfigUtil configUtil = ApolloInjector.getInstance(ConfigUtil.class);
   private ConfigurableEnvironment environment;

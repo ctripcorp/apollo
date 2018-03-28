@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.google.common.base.Splitter;
 import java.util.List;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class ApolloApplicationContextInitializer implements
   private static final Logger logger = LoggerFactory.getLogger(ApolloApplicationContextInitializer.class);
   private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
-  private final ConfigPropertySourceFactory configPropertySourceFactory = ApolloInjector
+  private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
       .getInstance(ConfigPropertySourceFactory.class);
 
   @Override

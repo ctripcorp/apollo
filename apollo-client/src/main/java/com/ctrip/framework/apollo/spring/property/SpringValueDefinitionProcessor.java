@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.spring.property;
 
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class SpringValueDefinitionProcessor implements BeanDefinitionRegistryPos
 
   public SpringValueDefinitionProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-    placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
+    placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
   }
 
   @Override

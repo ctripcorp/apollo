@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener
 import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
 import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -37,8 +38,8 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
 
   public ApolloJsonValueProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-    placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
-    springValueRegistry = ApolloInjector.getInstance(SpringValueRegistry.class);
+    placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
+    springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
   }
 
   @Override

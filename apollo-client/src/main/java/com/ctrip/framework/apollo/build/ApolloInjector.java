@@ -10,7 +10,7 @@ import com.ctrip.framework.foundation.internals.ServiceBootstrap;
  */
 public class ApolloInjector {
   private static volatile Injector s_injector;
-  private static Object lock = new Object();
+  private static final Object lock = new Object();
 
   private static Injector getInjector() {
     if (s_injector == null) {

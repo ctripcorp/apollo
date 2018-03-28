@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
+import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -39,8 +40,8 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
     this.beanFactory = beanFactory;
     this.typeConverter = this.beanFactory.getTypeConverter();
     this.environment = environment;
-    this.placeholderHelper = ApolloInjector.getInstance(PlaceholderHelper.class);
-    this.springValueRegistry = ApolloInjector.getInstance(SpringValueRegistry.class);
+    this.placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
+    this.springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
     this.gson = new Gson();
   }
 

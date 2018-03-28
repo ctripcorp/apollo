@@ -65,7 +65,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(newBatch, bean.getBatch());
@@ -98,7 +98,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, javaConfigBean.getTimeout());
     assertEquals(newBatch, javaConfigBean.getBatch());
@@ -135,7 +135,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -165,7 +165,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newApplicationProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -174,7 +174,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     fxApolloConfig.onRepositoryChange(FX_APOLLO_NAMESPACE, newFxApolloProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(newBatch, bean.getBatch());
@@ -192,7 +192,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
     Properties fxApolloProperties =
         assembleProperties(TIMEOUT_PROPERTY, String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
 
-    SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationProperties);
+    prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationProperties);
     SimpleConfig fxApolloConfig = prepareConfig(FX_APOLLO_NAMESPACE, fxApolloProperties);
 
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig2.class);
@@ -207,7 +207,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     fxApolloConfig.onRepositoryChange(FX_APOLLO_NAMESPACE, newFxApolloProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someNewTimeout, bean.getTimeout());
     assertEquals(someBatch, bean.getBatch());
@@ -235,7 +235,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newApplicationProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(newBatch, bean.getBatch());
@@ -268,7 +268,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newApplicationProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(DEFAULT_BATCH, bean.getBatch());
@@ -295,7 +295,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(DEFAULT_TIMEOUT, bean.getTimeout());
     assertEquals(DEFAULT_BATCH, bean.getBatch());
@@ -312,7 +312,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
         assembleProperties(TIMEOUT_PROPERTY, String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
 
     SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationProperties);
-    SimpleConfig fxApolloConfig = prepareConfig(FX_APOLLO_NAMESPACE, fxApolloProperties);
+    prepareConfig(FX_APOLLO_NAMESPACE, fxApolloProperties);
 
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig2.class);
 
@@ -325,7 +325,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someTimeout, bean.getTimeout());
     assertEquals(anotherBatch, bean.getBatch());
@@ -353,7 +353,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -383,7 +383,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -413,7 +413,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // Does not support this scenario
     assertEquals(initialTimeout, bean.getTimeout());
@@ -444,7 +444,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // Does not support this scenario
     assertEquals(initialTimeout, bean.getTimeout());
@@ -475,7 +475,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // Does not support this scenario
     assertEquals(initialTimeout, bean.getTimeout());
@@ -506,7 +506,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // Does not support this scenario
     assertEquals(initialTimeout, bean.getTimeout());
@@ -537,7 +537,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someNewValue, bean.getNestedProperty());
   }
@@ -565,7 +565,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // Does not support this scenario
     assertEquals(someValue, bean.getNestedProperty());
@@ -594,7 +594,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someNewValue, bean.getNestedProperty());
   }
@@ -631,7 +631,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someNewValue, bean.getNestedProperty());
   }
@@ -713,7 +713,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     assertEquals(someNewInt, bean.getIntProperty());
     assertArrayEquals(someNewIntArray, bean.getIntArrayProperty());
@@ -751,7 +751,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // should not change anything
     assertTrue(jsonBean == bean.getJsonBean());
@@ -778,7 +778,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     // should not change anything
     assertTrue(jsonBean == bean.getJsonBean());
@@ -805,7 +805,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(50);
+    TimeUnit.MILLISECONDS.sleep(100);
 
     JsonBean newJsonBean = bean.getJsonBean();
 
