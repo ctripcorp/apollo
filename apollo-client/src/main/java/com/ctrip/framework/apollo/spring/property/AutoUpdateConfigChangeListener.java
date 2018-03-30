@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.spring.property;
 
 import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
@@ -18,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
@@ -34,8 +35,10 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
   private final PlaceholderHelper placeholderHelper;
   private final SpringValueRegistry springValueRegistry;
   private final Gson gson;
+  private final ApplicationContext applicationContext;
 
-  public AutoUpdateConfigChangeListener(Environment environment, ConfigurableListableBeanFactory beanFactory){
+  public AutoUpdateConfigChangeListener(Environment environment, ConfigurableListableBeanFactory beanFactory,
+                                        ApplicationContext applicationContext){
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
     this.beanFactory = beanFactory;
     this.typeConverter = this.beanFactory.getTypeConverter();
@@ -43,6 +46,7 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
     this.placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
     this.springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
     this.gson = new Gson();
+    this.applicationContext = applicationContext;
   }
 
   @Override
@@ -68,6 +72,10 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
         updateSpringValue(val);
       }
     }
+
+    //update ConfigurationProperties
+    //it can also update the logging.level this way
+    applicationContext.publishEvent(new EnvironmentChangeEvent(changeEvent.changedKeys()));
   }
 
   /**

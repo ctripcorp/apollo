@@ -1,18 +1,19 @@
 package com.ctrip.framework.apollo.demo.spring.springBootDemo;
 
+import com.ctrip.framework.apollo.demo.spring.common.bean.AnnotatedBean;
 import com.ctrip.framework.apollo.demo.spring.springBootDemo.config.SampleRedisConfig;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 
-import com.ctrip.framework.apollo.demo.spring.common.bean.AnnotatedBean;
-import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -21,6 +22,8 @@ import com.google.common.base.Strings;
     "com.ctrip.framework.apollo.demo.spring.springBootDemo"
 })
 public class SpringBootSampleApplication {
+
+  private static final Logger logger = LoggerFactory.getLogger(SpringBootSampleApplication.class);
 
   public static void main(String[] args) throws IOException {
     ApplicationContext context = new SpringApplicationBuilder(SpringBootSampleApplication.class).run(args);
@@ -38,6 +41,15 @@ public class SpringBootSampleApplication {
       String input = new BufferedReader(new InputStreamReader(System.in, Charsets.UTF_8)).readLine();
       if (!Strings.isNullOrEmpty(input) && input.trim().equalsIgnoreCase("quit")) {
         System.exit(0);
+      }
+
+      if ("log".equals(input)) {
+        //key=logging.level.com.ctrip.framework.apollo.demo
+        //value=debug/info/warn/error
+        logger.debug("logging.level : debug");
+        logger.info("logging.level : info");
+        logger.warn("logging.level : warn");
+        logger.error("logging.level : error");
       }
 
       System.out.println(annotatedBean.toString());
