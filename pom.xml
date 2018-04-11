@@ -562,6 +562,12 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<version>0.7.6.201602180812</version>
+						<configuration>
+							<excludes>
+								<exclude>com/ctrip/framework/apollo/demo/**/*</exclude>
+								<exclude>com/ctrip/framework/apollo/assembly/**/*</exclude>
+							</excludes>
+						</configuration>
 						<executions>
 							<execution>
 								<id>prepare-agent</id>

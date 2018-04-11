@@ -1,0 +1,4 @@
+# files and folders that will be removed during processing
+ignore:
+    - "apollo-assembly/**/*"
+    - "apollo-demo/**/*"
