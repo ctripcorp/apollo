@@ -21,11 +21,10 @@ function showTextModalDirective() {
 
             function isJsonText(text) {
                 try {
-                    JSON.parse(text);
+                    return typeof JSON.parse(text) === "object";
                 } catch (e) {
                     return false;
                 }
-                return true;
             }
         }
     }

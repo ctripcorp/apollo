@@ -155,3 +155,4 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![蘑菇租房](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/mgzf.png) 
 ![狐狸金服](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/huli-logo.png) 
 ![漫道集团](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/mandao.png) 
+![怪兽充电](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/enmonster.png) 
