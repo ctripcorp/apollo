@@ -164,3 +164,5 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![新新贷](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/xinxindai.png) 
 ![中国华戎科技集团](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/chrtc.png) 
 ![涂鸦智能](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/tuya_logo.png) 
+![立创商城](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/szlcsc.jpg) 
+![乐赚金服](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/hairongyi.png) 
