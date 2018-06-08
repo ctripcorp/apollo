@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.core;
 
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.utils.NetUtil;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 
 import java.util.HashMap;
@@ -38,6 +39,8 @@ public class MetaDomainConsts {
   }
 
   public static String getDomain(Env env) {
-    return String.valueOf(domains.get(env));
+    String metaAddress = String.valueOf(domains.get(env));
+    String validAddress = NetUtil.getValidAddress( metaAddress );
+    return validAddress;
   }
 }
