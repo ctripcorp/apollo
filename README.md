@@ -74,7 +74,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 # Design
   * [Apollo配置中心设计](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1)
   * [Apollo核心概念之“Namespace”](https://github.com/ctripcorp/apollo/wiki/Apollo%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B9%8B%E2%80%9CNamespace%E2%80%9D)
-  * [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)
+  * [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)（据说Apollo非常适合作为初学者第一个通读源码学习的分布式中间件产品）
 
 # Development
   * [Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
@@ -166,3 +166,6 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![涂鸦智能](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/tuya_logo.png) 
 ![立创商城](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/szlcsc.jpg) 
 ![乐赚金服](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/hairongyi.png) 
+![开心汽车](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/kxqc.png) 
+![乐赚金服](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/ppcredit.png) 
+![普元信息](https://github.com/ctripcorp/apollo/blob/master/doc/images/known-users/primeton.png) 
