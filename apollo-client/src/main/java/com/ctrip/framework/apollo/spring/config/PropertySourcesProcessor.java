@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
@@ -36,7 +38,7 @@ import java.util.Iterator;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
+public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, ApplicationContextAware, PriorityOrdered {
   private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
   private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
@@ -44,6 +46,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       .getInstance(ConfigPropertySourceFactory.class);
   private final ConfigUtil configUtil = ApolloInjector.getInstance(ConfigUtil.class);
   private ConfigurableEnvironment environment;
+  private ApplicationContext applicationContext;
 
   public static boolean addNamespaces(Collection<String> namespaces, int order) {
     return NAMESPACE_NAMES.putAll(order, namespaces);
@@ -94,7 +97,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     }
 
     AutoUpdateConfigChangeListener autoUpdateConfigChangeListener = new AutoUpdateConfigChangeListener(
-        environment, beanFactory);
+        environment, beanFactory, applicationContext);
 
     List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
     for (ConfigPropertySource configPropertySource : configPropertySources) {
@@ -118,5 +121,10 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   public int getOrder() {
     //make it as early as possible
     return Ordered.HIGHEST_PRECEDENCE;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }

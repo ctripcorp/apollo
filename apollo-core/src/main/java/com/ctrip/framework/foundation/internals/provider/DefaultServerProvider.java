@@ -104,6 +104,9 @@ public class DefaultServerProvider implements ServerProvider {
   private void initEnvType() {
     // 1. Try to get environment from JVM system property
     m_env = System.getProperty("env");
+    if (Utils.isBlank(m_env)) {
+      m_env = System.getProperty("spring.profiles.active");
+    }
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
       logger.info("Environment is set to [{}] by JVM system property 'env'.", m_env);
