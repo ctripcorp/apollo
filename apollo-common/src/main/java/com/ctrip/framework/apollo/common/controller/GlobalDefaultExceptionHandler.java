@@ -43,25 +43,25 @@ public class GlobalDefaultExceptionHandler {
   //处理系统内置的Exception
   @ExceptionHandler(Throwable.class)
   public ResponseEntity<Map<String, Object>> exception(HttpServletRequest request, Throwable ex) {
-    return handleError(request, INTERNAL_SERVER_ERROR, ex);
+    return handleError(request, INTERNAL_SERVER_ERROR, ex, false);
   }
 
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class})
   public ResponseEntity<Map<String, Object>> badRequest(HttpServletRequest request,
                                                         ServletException ex) {
-    return handleError(request, BAD_REQUEST, ex);
+    return handleError(request, BAD_REQUEST, ex, true);
   }
 
   @ExceptionHandler(HttpStatusCodeException.class)
   public ResponseEntity<Map<String, Object>> restTemplateException(HttpServletRequest request,
                                                                    HttpStatusCodeException ex) {
-    return handleError(request, ex.getStatusCode(), ex);
+    return handleError(request, ex.getStatusCode(), ex, false);
   }
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<Map<String, Object>> accessDeny(HttpServletRequest request,
                                                         AccessDeniedException ex) {
-    return handleError(request, FORBIDDEN, ex);
+    return handleError(request, FORBIDDEN, ex, false);
   }
 
   //处理自定义Exception
@@ -73,15 +73,16 @@ public class GlobalDefaultExceptionHandler {
 
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
                                                           AbstractApolloHttpException ex) {
-    return handleError(request, ex.getHttpStatus(), ex);
+    return handleError(request, ex.getHttpStatus(), ex, false);
   }
 
 
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
-                                                          HttpStatus status, Throwable ex) {
+                                                          HttpStatus status, Throwable ex, boolean isWarn) {
     String message = ex.getMessage();
 
-    logger.error(message, ex);
+    if(isWarn)	logger.warn(message, ex);
+    else 		logger.error(message, ex);
     Tracer.logError(ex);
 
 
