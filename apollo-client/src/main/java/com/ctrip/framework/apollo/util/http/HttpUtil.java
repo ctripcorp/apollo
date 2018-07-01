@@ -116,7 +116,13 @@ public class HttpUtil {
           }
         }
 
-        throw ex;
+        // 200 and 304 should not trigger IOException, thus we must throw the original exception out
+        if (statusCode == 200 || statusCode == 304) {
+          throw ex;
+        } else {
+          // for status codes like 404, IOException is expected when calling conn.getInputStream()
+          throw new ApolloConfigStatusCodeException(statusCode, ex);
+        }
       }
 
       if (statusCode == 200) {
@@ -126,6 +132,8 @@ public class HttpUtil {
       if (statusCode == 304) {
         return new HttpResponse<>(statusCode, null);
       }
+    } catch (ApolloConfigStatusCodeException ex) {
+      throw ex;
     } catch (Throwable ex) {
       throw new ApolloConfigException("Could not complete get operation", ex);
     } finally {
