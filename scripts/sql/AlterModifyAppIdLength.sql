@@ -1,0 +1,44 @@
+/**
+  更改AppId字段长度为191，Name字段长度为191;
+  1、AppId创建时允许的最大长度为191-22（DELETED_${AppId}_timestamp）=169,而前端创建时限制为32.
+  2、Name前端创建时限制最大长度为169.
+ */
+ALTER TABLE ApolloConfigDB.App
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.App
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloConfigDB.AppNamespace
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.AppNamespace
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloConfigDB.Cluster
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.Cluster
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloConfigDB.`Commit`
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.GrayReleaseRule
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.Instance
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.Namespace
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.`Release`
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloConfigDB.ReleaseHistory
+  MODIFY COLUMN AppId VARCHAR(191);
+
+ALTER TABLE ApolloPortalDB.App
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloPortalDB.App
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloPortalDB.AppNamespace
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloPortalDB.AppNamespace
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloPortalDB.Consumer
+  MODIFY COLUMN AppId VARCHAR(191);
+ALTER TABLE ApolloPortalDB.Consumer
+  MODIFY COLUMN Name VARCHAR(191);
+ALTER TABLE ApolloPortalDB.Favorite
+  MODIFY COLUMN AppId VARCHAR(191);
