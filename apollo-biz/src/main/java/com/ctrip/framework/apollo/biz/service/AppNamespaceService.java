@@ -137,4 +137,11 @@ public class AppNamespaceService {
       namespaceService.save(namespace);
     }
   }
+
+  @Transactional
+  public void deleteApp(String oldAppId, String newAppId, String operator) {
+    if (appNamespaceRepository.countByAppId(oldAppId) > 0) {
+      appNamespaceRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }

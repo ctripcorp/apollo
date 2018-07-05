@@ -118,4 +118,9 @@ public class AppNamespaceService {
     return createdAppNamespace;
   }
 
+  public void deleteApp(String oldAppId, String newAppId, String operator) {
+    if (appNamespaceRepository.countByAppId(oldAppId) > 0) {
+      appNamespaceRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }

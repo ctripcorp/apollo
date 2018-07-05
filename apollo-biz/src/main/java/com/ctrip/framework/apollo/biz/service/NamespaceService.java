@@ -395,5 +395,10 @@ public class NamespaceService {
     return false;
   }
 
-
+  @Transactional
+  public void deleteApp(String oldAppId, String newAppId, String operator) {
+    if (namespaceRepository.countByAppId(oldAppId) > 0) {
+      namespaceRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }

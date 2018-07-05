@@ -220,4 +220,10 @@ public class DefaultRolePermissionService implements RolePermissionService {
         return FluentIterable.from(results).toSet();
     }
 
+    @Transactional
+    @Override
+    public void deleteRolePermissionsByAppId(String appId, String operator) {
+        permissionRepository.batchDeleteByDeleteApp(appId, operator);
+        roleRepository.batchDeleteByDeleteApp(appId, operator);
+    }
 }

@@ -61,6 +61,11 @@ public class AdminServiceAPI {
     public void updateApp(Env env, AppDTO app) {
       restTemplate.put(env, "apps/{appId}", app, app.getAppId());
     }
+
+    public void deleteApp(Env env, String appId, String newAppId, String operator) {
+      restTemplate.delete(env, "/apps?appId={appId}&newAppId={newAppId}&operator={operator}", appId,
+          newAppId, operator);
+    }
   }
 
 

@@ -56,4 +56,8 @@ public interface RolePermissionService {
    */
   public Set<Permission> createPermissions(Set<Permission> permissions);
 
+  /**
+   * delete permissions when delete app.
+   */
+  public void deleteRolePermissionsByAppId(String appId, String operator);
 }

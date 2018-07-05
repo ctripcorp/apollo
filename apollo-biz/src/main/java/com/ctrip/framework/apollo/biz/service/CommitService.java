@@ -31,4 +31,10 @@ public class CommitService {
     return commitRepository.batchDelete(appId, clusterName, namespaceName, operator);
   }
 
+  @Transactional
+  public void deleteApp(String oldAppId, String newAppId, String operator) {
+    if (commitRepository.countByAppId(oldAppId) > 0) {
+      commitRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }

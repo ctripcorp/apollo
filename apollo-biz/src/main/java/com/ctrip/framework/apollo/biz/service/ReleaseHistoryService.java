@@ -76,4 +76,11 @@ public class ReleaseHistoryService {
   public int batchDelete(String appId, String clusterName, String namespaceName, String operator) {
     return releaseHistoryRepository.batchDelete(appId, clusterName, namespaceName, operator);
   }
+
+  @Transactional
+  public void batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator) {
+    if (releaseHistoryRepository.countByAppId(oldAppId) > 0) {
+      releaseHistoryRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }

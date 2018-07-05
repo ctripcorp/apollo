@@ -137,4 +137,10 @@ public class ClusterService {
     return clusterRepository.findByParentClusterId(parentCluster.getId());
   }
 
+  @Transactional
+  public void deleteApp(String oldAppId, String newAppId, String operator) {
+    if (clusterRepository.countByAppId(oldAppId) > 0) {
+      clusterRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+    }
+  }
 }
