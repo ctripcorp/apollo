@@ -1,7 +1,9 @@
 package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
 import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
@@ -14,6 +16,9 @@ import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
@@ -32,6 +37,8 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   private RolePermissionService rolePermissionService;
   @Mock
   private UserInfoHolder userInfoHolder;
+  @Mock
+  private PortalConfig portalConfig;
   @InjectMocks
   private DefaultRoleInitializationService roleInitializationService;
 
@@ -53,6 +60,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     when(rolePermissionService.findRoleByRoleName(anyString())).thenReturn(null);
     when(userInfoHolder.getUser()).thenReturn(mockUser());
     when(rolePermissionService.createPermission(any())).thenReturn(mockPermission());
+    when(portalConfig.portalSupportedEnvs()).thenReturn(mockPortalSupportedEnvs());
 
     roleInitializationService.initAppRoles(mockApp());
 
@@ -153,5 +161,11 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     return permission;
   }
 
+  private List<Env> mockPortalSupportedEnvs(){
+    List<Env> envArray = new ArrayList<>();
+    envArray.add(Env.DEV);
+    envArray.add(Env.FAT);
+    return envArray;
+  }
 
 }
