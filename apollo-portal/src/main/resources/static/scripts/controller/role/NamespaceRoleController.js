@@ -13,7 +13,7 @@ role_module.controller('NamespaceRoleController',
 
             $scope.modifyRoleSubmitBtnDisabled = false;
             $scope.ReleaseRoleSubmitBtnDisabled = false;
-            $scope.isEnvPermission = (params.env !== undefined && params.env !== '');
+            $scope.isEnvPermission = (params.env !== undefined && params.env !== "");
 
             $scope.releaseRoleWidgetId = 'releaseRoleWidgetId';
             $scope.modifyRoleWidgetId = 'modifyRoleWidgetId';
@@ -29,7 +29,7 @@ role_module.controller('NamespaceRoleController',
             var serviceFunc = {
                 "get_role_users": {
                     "default": PermissionService.get_namespace_role_users,
-                    "env": function (appId, namespaceName) {
+                    "env": function(appId, namespaceName) {
                         return PermissionService.get_namespace_env_role_users(appId, $scope.pageContext.env, namespaceName);
                     }
                 },

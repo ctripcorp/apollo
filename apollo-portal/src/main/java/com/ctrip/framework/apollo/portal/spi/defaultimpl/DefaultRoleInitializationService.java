@@ -93,13 +93,13 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   @Transactional
   public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator) {
-    String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceEnvRoleName(appId, namespaceName, env.toString());
+    String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceEnvRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceEnvRoleName) == null) {
       createNamespaceEnvRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE_ENV, env,
           modifyNamespaceEnvRoleName, operator);
     }
 
-    String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceEnvRoleName(appId, namespaceName, env.toString());
+    String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceEnvRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceEnvRoleName) == null) {
       createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE_ENV, env,
           releaseNamespaceEnvRoleName, operator);
