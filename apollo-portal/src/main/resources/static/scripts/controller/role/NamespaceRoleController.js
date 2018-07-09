@@ -13,7 +13,8 @@ role_module.controller('NamespaceRoleController',
 
             $scope.modifyRoleSubmitBtnDisabled = false;
             $scope.ReleaseRoleSubmitBtnDisabled = false;
-            $scope.isEnvPermission = (params.env !== undefined && params.env !== "");
+
+            $scope.isEnvPermission = ((params.env ? true : false) && params.env !== "");
 
             $scope.releaseRoleWidgetId = 'releaseRoleWidgetId';
             $scope.modifyRoleWidgetId = 'modifyRoleWidgetId';
@@ -25,40 +26,48 @@ role_module.controller('NamespaceRoleController',
 
                 });
 
-            var funcIndex = $scope.isEnvPermission ? "env" : "default";
+            var funcIndex = $scope.isEnvPermission ? "env" : "namespace";
             var serviceFunc = {
                 "get_role_users": {
-                    "default": PermissionService.get_namespace_role_users,
-                    "env": function(appId, namespaceName) {
+                    namespace(appId, namespaceName) {
+                        return PermissionService.get_namespace_role_users(appId, namespaceName);
+                    },
+                    env(appId, namespaceName) {
                         return PermissionService.get_namespace_env_role_users(appId, $scope.pageContext.env, namespaceName);
                     }
                 },
                 "assign_release_role": {
-                    "default": PermissionService.assign_release_namespace_role,
-                    "env": function(appId, namespaceName, user) {
+                    namespace(appId, namespaceName, user) {
+                        return PermissionService.assign_release_namespace_role(appId, namespaceName, user);
+                    },
+                    env(appId, namespaceName, user) {
                         return PermissionService.assign_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
                 },
                 "assign_modify_role": {
-                    "default": PermissionService.assign_modify_namespace_role,
-                    "env": function(appId, namespaceName, user) {
+                    namespace(appId, namespaceName, user) {
+                        return PermissionService.assign_modify_namespace_role(appId, namespaceName, user)
+                    },
+                    env(appId, namespaceName, user) {
                         return PermissionService.assign_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
                 },
                 "remove_release_role": {
-                    "default": PermissionService.remove_release_namespace_role,
-                    "env": function(appId, namespaceName, user) {
+                    namespace(appId, namespaceName, user) {
+                        return PermissionService.remove_release_namespace_role(appId, namespaceName, user);
+                    },
+                    env(appId, namespaceName, user) {
                         return PermissionService.remove_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
                 },
                 "remove_modify_role": {
-                    "default": PermissionService.remove_modify_namespace_role,
-                    "env": function(appId, namespaceName, user) {
+                    namespace(appId, namespaceName, user) {
+                        return PermissionService.remove_modify_namespace_role(appId, namespaceName, user);
+                    },
+                    env (appId, namespaceName, user) {
                         return PermissionService.remove_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
-
                     }
                 }
-
             };
 
             serviceFunc.get_role_users[funcIndex]($scope.pageContext.appId,
