@@ -21,7 +21,11 @@ public interface PermissionType {
 
   String MODIFY_NAMESPACE = "ModifyNamespace";
 
+  String MODIFY_NAMESPACE_ENV = "ModifyNamespaceEnv";
+
   String RELEASE_NAMESPACE = "ReleaseNamespace";
+
+  String RELEASE_NAMESPACE_ENV = "ReleaseNamespaceEnv";
 
 
 }

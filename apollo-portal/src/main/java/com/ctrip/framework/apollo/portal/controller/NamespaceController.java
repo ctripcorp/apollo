@@ -101,6 +101,7 @@ public class NamespaceController {
     String operator = userInfoHolder.getUser().getUserId();
 
     roleInitializationService.initNamespaceRoles(appId, namespaceName, operator);
+    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, operator);
 
     for (NamespaceCreationModel model : models) {
       NamespaceDTO namespace = model.getNamespace();

@@ -21,6 +21,10 @@ public class RoleUtils {
     return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, namespaceName);
   }
 
+  public static String buildModifyNamespaceEnvRoleName(String appId, String namespaceName, String env) {
+    return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE_ENV, env, appId, namespaceName);
+  }
+
   public static String buildModifyDefaultNamespaceRoleName(String appId) {
     return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
@@ -29,8 +33,16 @@ public class RoleUtils {
     return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, namespaceName);
   }
 
+  public static String buildReleaseNamespaceEnvRoleName(String appId, String namespaceName, String env) {
+    return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE_ENV, env, appId, namespaceName);
+  }
+
   public static String buildNamespaceRoleName(String appId, String namespaceName, String roleType) {
     return STRING_JOINER.join(roleType, appId, namespaceName);
+  }
+
+  public static String buildNamespaceEnvRoleName(String appId, String namespaceName, String roleType, String env) {
+    return STRING_JOINER.join(roleType, env, appId, namespaceName);
   }
 
   public static String buildReleaseDefaultNamespaceRoleName(String appId) {
@@ -39,6 +51,10 @@ public class RoleUtils {
 
   public static String buildNamespaceTargetId(String appId, String namespaceName) {
     return STRING_JOINER.join(appId, namespaceName);
+  }
+
+  public static String buildNamespaceEnvTargetId(String appId, String namespaceName, String env) {
+    return STRING_JOINER.join(appId, namespaceName, env);
   }
 
   public static String buildDefaultNamespaceTargetId(String appId) {

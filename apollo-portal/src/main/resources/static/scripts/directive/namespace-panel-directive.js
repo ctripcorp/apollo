@@ -217,10 +217,26 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                         scope.appId,
                         namespace.baseInfo.namespaceName)
                         .then(function (result) {
+                            if (!result.hasPermission) {
+                                PermissionService.has_modify_namespace_env_permission(
+                                    scope.appId,
+                                    scope.env,
+                                    namespace.baseInfo.namespaceName
+                                    )
+                                    .then(function (result) {
+                                        //branch has same permission
+                                        namespace.hasModifyPermission = result.hasPermission;
+                                        if (namespace.branch) {
+                                            namespace.branch.hasModifyPermission = result.hasPermission;
+                                        }
+                                    });
+                            }
+                            else {
                             //branch has same permission
                             namespace.hasModifyPermission = result.hasPermission;
-                            if (namespace.branch) {
-                                namespace.branch.hasModifyPermission = result.hasPermission;
+                                if (namespace.branch) {
+                                    namespace.branch.hasModifyPermission = result.hasPermission;
+                                }
                             }
                         });
 
@@ -228,10 +244,26 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                         scope.appId,
                         namespace.baseInfo.namespaceName)
                         .then(function (result) {
-                            //branch has same permission
-                            namespace.hasReleasePermission = result.hasPermission;
-                            if (namespace.branch) {
-                                namespace.branch.hasReleasePermission = result.hasPermission;
+                            if (!result.hasPermission) {
+                                PermissionService.has_release_namespace_env_permission(
+                                    scope.appId,
+                                    scope.env,
+                                    namespace.baseInfo.namespaceName
+                                    )
+                                    .then(function (result) {
+                                        //branch has same permission
+                                        namespace.hasReleasePermission = result.hasPermission;
+                                        if (namespace.branch) {
+                                            namespace.branch.hasReleasePermission = result.hasPermission;
+                                        }
+                                    });
+                            }
+                            else {
+                                //branch has same permission
+                                namespace.hasReleasePermission = result.hasPermission;
+                                if (namespace.branch) {
+                                    namespace.branch.hasReleasePermission = result.hasPermission;
+                                }
                             }
                         });
                 }
