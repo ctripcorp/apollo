@@ -8,7 +8,7 @@
 	</appender>
 	<logger name="org.springframework.test" level="OFF" />
 
-	<root level="INFO">
+	<root level="WARN">
 		<appender-ref ref="CONSOLE" />
 	</root>
 

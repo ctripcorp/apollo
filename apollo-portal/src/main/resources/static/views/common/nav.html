@@ -53,7 +53,7 @@
                            ng-model="searchKey" ng-change="changeSearchKey()" ng-focus="changeSearchKey()">
 
                     <div class="row app-list" ng-show="shouldShowAppList">
-                        <div ng-repeat="app in copyedApps" class="app-item" ng-class="{'app-selected':app.selected}"
+                        <div ng-repeat="app in copiedApps" class="app-item" ng-class="{'app-selected':app.selected}"
                              ng-click="selectApp(app)">{{app.appId}} / {{app.name}}
                         </div>
                     </div>

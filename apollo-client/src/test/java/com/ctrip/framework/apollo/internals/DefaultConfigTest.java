@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -643,6 +645,39 @@ public class DefaultConfigTest {
     assertEquals(null, newKeyChange.getOldValue());
     assertEquals(newValue, newKeyChange.getNewValue());
     assertEquals(PropertyChangeType.ADDED, newKeyChange.getChangeType());
+  }
+
+  @Test
+  public void testGetPropertyNames() {
+    String someKeyPrefix = "someKey";
+    String someValuePrefix = "someValue";
+
+    //set up config repo
+    someProperties = new Properties();
+    for (int i = 0; i < 10; i++) {
+      someProperties.setProperty(someKeyPrefix + i, someValuePrefix + i);
+    }
+
+    when(configRepository.getConfig()).thenReturn(someProperties);
+
+    DefaultConfig defaultConfig =
+            new DefaultConfig(someNamespace, configRepository);
+
+    Set<String> propertyNames = defaultConfig.getPropertyNames();
+
+    assertEquals(10, propertyNames.size());
+    assertEquals(someProperties.stringPropertyNames(), propertyNames);
+  }
+
+  @Test
+  public void testGetPropertyNamesWithNullProp() {
+    when(configRepository.getConfig()).thenReturn(null);
+
+    DefaultConfig defaultConfig =
+            new DefaultConfig(someNamespace, configRepository);
+
+    Set<String> propertyNames = defaultConfig.getPropertyNames();
+    assertEquals(Collections.emptySet(), propertyNames);
   }
 
   private void checkDatePropertyWithFormat(Config config, Date expected, String propertyName, String format, Date

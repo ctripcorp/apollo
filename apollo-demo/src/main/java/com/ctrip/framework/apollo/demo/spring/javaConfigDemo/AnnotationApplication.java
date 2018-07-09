@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.Scanner;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

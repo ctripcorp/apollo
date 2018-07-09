@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.configservice.wrapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 
 import org.springframework.http.HttpStatus;

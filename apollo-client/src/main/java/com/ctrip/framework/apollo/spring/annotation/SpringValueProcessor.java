@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
 import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
 import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
@@ -114,7 +113,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
     for (String key : keys) {
       SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
       springValueRegistry.register(key, springValue);
-      logger.debug("Monitoring {}", springValue);
+      logger.info("Monitoring {}", springValue);
     }
   }
 

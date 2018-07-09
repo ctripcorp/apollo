@@ -11,6 +11,11 @@ public class ApolloConfigStatusCodeException extends RuntimeException{
     this.m_statusCode = statusCode;
   }
 
+  public ApolloConfigStatusCodeException(int statusCode, Throwable cause) {
+    super(cause);
+    this.m_statusCode = statusCode;
+  }
+
   public int getStatusCode() {
     return m_statusCode;
   }

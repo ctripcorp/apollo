@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

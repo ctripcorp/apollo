@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -101,7 +102,20 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       return Collections.emptySet();
     }
 
-    return properties.stringPropertyNames();
+    return stringPropertyNames(properties);
+  }
+
+  private Set<String> stringPropertyNames(Properties properties) {
+    //jdk9以下版本Properties#enumerateStringProperties方法存在性能问题，keys() + get(k) 重复迭代, jdk9之后改为entrySet遍历.
+    Map<String, String> h = new HashMap<>();
+    for (Map.Entry<Object, Object> e : properties.entrySet()) {
+      Object k = e.getKey();
+      Object v = e.getValue();
+      if (k instanceof String && v instanceof String) {
+        h.put((String) k, (String) v);
+      }
+    }
+    return h.keySet();
   }
 
   @Override
