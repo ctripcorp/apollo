@@ -29,43 +29,43 @@ role_module.controller('NamespaceRoleController',
             var serviceFunc;
             if (!$scope.isEnvPermission) {
                 serviceFunc = {
-                    get_role_users(appId, namespaceName) {
+                    getRoleUsers(appId, namespaceName) {
                         return PermissionService.get_namespace_role_users(appId, namespaceName);
                     },
-                    assign_release_role(appId, namespaceName, user) {
+                    assignReleaseRole(appId, namespaceName, user) {
                         return PermissionService.assign_release_namespace_role(appId, namespaceName, user);
                     },
-                    assign_modify_role(appId, namespaceName, user) {
+                    assignModifyRole(appId, namespaceName, user) {
                         return PermissionService.assign_modify_namespace_role(appId, namespaceName, user);
                     },
-                    remove_release_role(appId, namespaceName, user) {
+                    removeReleaseRole(appId, namespaceName, user) {
                         return PermissionService.remove_release_namespace_role(appId, namespaceName, user);
                     },
-                    remove_modify_role(appId, namespaceName, user) {
+                    removeModifyRole(appId, namespaceName, user) {
                         return PermissionService.remove_modify_namespace_role(appId, namespaceName, user);
                     }
                 };
             } else {
                 serviceFunc = {
-                    get_role_users(appId, namespaceName) {
+                    getRoleUsers(appId, namespaceName) {
                         return PermissionService.get_namespace_env_role_users(appId, $scope.pageContext.env, namespaceName);
                     },
-                    assign_release_role(appId, namespaceName, user) {
+                    assignReleaseRole(appId, namespaceName, user) {
                         return PermissionService.assign_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     },
-                    assign_modify_role(appId, namespaceName, user) {
+                    assignModifyRole(appId, namespaceName, user) {
                         return PermissionService.assign_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     },
-                    remove_release_role(appId, namespaceName, user) {
+                    removeReleaseRole(appId, namespaceName, user) {
                         return PermissionService.remove_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     },
-                    remove_modify_role(appId, namespaceName, user) {
+                    removeModifyRole(appId, namespaceName, user) {
                         return PermissionService.remove_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
                 };
             }
 
-            serviceFunc.get_role_users($scope.pageContext.appId,
+            serviceFunc.getRoleUsers($scope.pageContext.appId,
                 $scope.pageContext.namespaceName)
                 .then(function (result) {
                     $scope.rolesAssignedUsers = result;
@@ -82,7 +82,7 @@ role_module.controller('NamespaceRoleController',
                     }
                     $scope.ReleaseRoleSubmitBtnDisabled = true;
                     var toAssignReleaseNamespaceRoleUser = user.id;
-                    serviceFunc.assign_release_role($scope.pageContext.appId,
+                    serviceFunc.assignReleaseRole($scope.pageContext.appId,
                         $scope.pageContext.namespaceName,
                         toAssignReleaseNamespaceRoleUser)
                         .then(function (result) {
@@ -103,7 +103,7 @@ role_module.controller('NamespaceRoleController',
                     }
                     $scope.modifyRoleSubmitBtnDisabled = true;
                     var toAssignModifyNamespaceRoleUser = user.id;
-                    serviceFunc.assign_modify_role($scope.pageContext.appId,
+                    serviceFunc.assignModifyRole($scope.pageContext.appId,
                         $scope.pageContext.namespaceName,
                         toAssignModifyNamespaceRoleUser)
                         .then(function (result) {
@@ -121,7 +121,7 @@ role_module.controller('NamespaceRoleController',
 
             $scope.removeUserRole = function (roleType, user) {
                 if ('ReleaseNamespace' == roleType) {
-                    serviceFunc.remove_release_role($scope.pageContext.appId,
+                    serviceFunc.removeReleaseRole($scope.pageContext.appId,
                         $scope.pageContext.namespaceName,
                         user)
                         .then(function (result) {
@@ -131,7 +131,7 @@ role_module.controller('NamespaceRoleController',
                             toastr.error(AppUtil.errorMsg(result), "删除失败");
                         });
                 } else {
-                    serviceFunc.remove_modify_role($scope.pageContext.appId,
+                    serviceFunc.removeModifyRole($scope.pageContext.appId,
                         $scope.pageContext.namespaceName,
                         user)
                         .then(function (result) {
