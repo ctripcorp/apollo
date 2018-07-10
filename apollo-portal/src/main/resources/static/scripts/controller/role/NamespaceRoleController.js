@@ -14,7 +14,7 @@ role_module.controller('NamespaceRoleController',
             $scope.modifyRoleSubmitBtnDisabled = false;
             $scope.ReleaseRoleSubmitBtnDisabled = false;
 
-            $scope.isEnvPermission = ((params.env ? true : false) && params.env !== "");
+            $scope.isEnvPermission = (!!params.env && params.env !== "");
 
             $scope.releaseRoleWidgetId = 'releaseRoleWidgetId';
             $scope.modifyRoleWidgetId = 'modifyRoleWidgetId';
@@ -26,48 +26,48 @@ role_module.controller('NamespaceRoleController',
 
                 });
 
-            var funcIndex = $scope.isEnvPermission ? "env" : "namespace";
+            var funcIndex = $scope.isEnvPermission ? 1 : 0;
             var serviceFunc = {
-                "get_role_users": {
-                    namespace(appId, namespaceName) {
+                "get_role_users": [
+                    function(appId, namespaceName) {
                         return PermissionService.get_namespace_role_users(appId, namespaceName);
                     },
-                    env(appId, namespaceName) {
+                    function(appId, namespaceName) {
                         return PermissionService.get_namespace_env_role_users(appId, $scope.pageContext.env, namespaceName);
                     }
-                },
-                "assign_release_role": {
-                    namespace(appId, namespaceName, user) {
+                ],
+                "assign_release_role": [
+                    function(appId, namespaceName, user) {
                         return PermissionService.assign_release_namespace_role(appId, namespaceName, user);
                     },
-                    env(appId, namespaceName, user) {
+                    function(appId, namespaceName, user) {
                         return PermissionService.assign_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
-                },
-                "assign_modify_role": {
-                    namespace(appId, namespaceName, user) {
-                        return PermissionService.assign_modify_namespace_role(appId, namespaceName, user)
+                ],
+                "assign_modify_role": [
+                    function(appId, namespaceName, user) {
+                        return PermissionService.assign_modify_namespace_role(appId, namespaceName, user);
                     },
-                    env(appId, namespaceName, user) {
+                    function(appId, namespaceName, user) {
                         return PermissionService.assign_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
-                },
-                "remove_release_role": {
-                    namespace(appId, namespaceName, user) {
+                ],
+                "remove_release_role": [
+                    function(appId, namespaceName, user) {
                         return PermissionService.remove_release_namespace_role(appId, namespaceName, user);
                     },
-                    env(appId, namespaceName, user) {
+                    function(appId, namespaceName, user) {
                         return PermissionService.remove_release_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
-                },
-                "remove_modify_role": {
-                    namespace(appId, namespaceName, user) {
+                ],
+                "remove_modify_role": [
+                    function(appId, namespaceName, user) {
                         return PermissionService.remove_modify_namespace_role(appId, namespaceName, user);
                     },
-                    env (appId, namespaceName, user) {
+                    function (appId, namespaceName, user) {
                         return PermissionService.remove_modify_namespace_env_role(appId, $scope.pageContext.env, namespaceName, user);
                     }
-                }
+                ]
             };
 
             serviceFunc.get_role_users[funcIndex]($scope.pageContext.appId,
