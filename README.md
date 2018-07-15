@@ -182,3 +182,6 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![亲宝宝](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/qbb.png) 
 ![华为视频直播](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/huawei_logo.png) 
 ![微播易](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/weiboyi.png) 
+![欧飞](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/ofpay.png) 
+![迷说](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/mishuo.png) 
+![一下科技](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/yixia.png) 
