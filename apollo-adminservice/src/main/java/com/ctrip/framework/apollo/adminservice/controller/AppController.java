@@ -95,18 +95,17 @@ public class AppController {
 
   @RequestMapping(value = "/apps", method = RequestMethod.DELETE)
   public void deleteApp(@RequestParam("appId") String appId,
-      @RequestParam("newAppId") String newAppId,
-      @RequestParam("operator") String operator) {
+                        @RequestParam("operator") String operator) {
     App app = appService.findOne(appId);
     if (Objects.isNull(app)) {
       throw new NotFoundException("app not found for appId " + appId);
     }
 
     try {
-      adminService.deleteApp(appId, newAppId, operator);
+      adminService.deleteApp(appId, operator);
     } catch (Exception e) {
       String exc = String
-          .format("user:%s deleting app：%s,failure:%s", operator, app, e.getMessage());
+              .format("user:%s deleting app：%s,failure:%s", operator, app, e.getMessage());
       throw new ServiceException(exc);
     }
   }

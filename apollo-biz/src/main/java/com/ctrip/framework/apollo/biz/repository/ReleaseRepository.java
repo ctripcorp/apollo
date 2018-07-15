@@ -37,8 +37,8 @@ public interface ReleaseRepository extends PagingAndSortingRepository<Release, L
   List<Release> findByAppIdAndClusterNameAndNamespaceNameOrderByIdAsc(String appId, String clusterName, String namespaceName);
 
   @Modifying
-  @Query("UPDATE Release SET isdeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  Integer batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE Release SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String oldAppId, String operator);
 
-  Integer countByAppId(String appId);
+  int countByAppId(String appId);
 }

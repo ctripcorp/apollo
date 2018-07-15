@@ -20,8 +20,8 @@ public interface FavoriteRepository extends PagingAndSortingRepository<Favorite,
   Favorite findByUserIdAndAppId(String userId, String appId);
 
   @Modifying
-  @Query("UPDATE Favorite SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  Integer batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE Favorite SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId, String operator);
 
-  Integer countByAppId(String appId);
+  int countByAppId(String appId);
 }

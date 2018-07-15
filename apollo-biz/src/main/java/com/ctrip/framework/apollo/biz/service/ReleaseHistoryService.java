@@ -78,9 +78,9 @@ public class ReleaseHistoryService {
   }
 
   @Transactional
-  public void batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator) {
-    if (releaseHistoryRepository.countByAppId(oldAppId) > 0) {
-      releaseHistoryRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void batchDeleteByDeleteApp(String appId, String operator) {
+    if (releaseHistoryRepository.countByAppId(appId) > 0) {
+      releaseHistoryRepository.batchDeleteByDeleteApp(appId,operator);
     }
   }
 }

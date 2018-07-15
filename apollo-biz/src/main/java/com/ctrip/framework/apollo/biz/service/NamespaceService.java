@@ -396,9 +396,18 @@ public class NamespaceService {
   }
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (namespaceRepository.countByAppId(oldAppId) > 0) {
-      namespaceRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(Set<Namespace> namespaces, String operator) {
+    if (Objects.nonNull(namespaces)) {
+      String appId = namespaces.iterator().next().getAppId();
+
+      namespaceRepository.batchDeleteByDeleteApp(appId, operator);
+
+      //Publish release message
+      for (Namespace namespace : namespaces) {
+        messageSender.sendMessage(ReleaseMessageKeyGenerator
+                        .generate(appId, namespace.getClusterName(), namespace.getNamespaceName()),
+                Topics.APOLLO_RELEASE_TOPIC);
+      }
     }
   }
 }

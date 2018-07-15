@@ -20,8 +20,8 @@ public interface GrayReleaseRuleRepository extends PagingAndSortingRepository<Gr
   List<GrayReleaseRule> findFirst500ByIdGreaterThanOrderByIdAsc(Long id);
 
   @Modifying
-  @Query("UPDATE GrayReleaseRule SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  int batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE GrayReleaseRule SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId, String operator);
 
   int countByAppId(String appId);
 }

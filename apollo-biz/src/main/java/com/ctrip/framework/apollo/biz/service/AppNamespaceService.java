@@ -139,9 +139,9 @@ public class AppNamespaceService {
   }
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (appNamespaceRepository.countByAppId(oldAppId) > 0) {
-      appNamespaceRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(String appId,String operator) {
+    if (appNamespaceRepository.countByAppId(appId) > 0) {
+      appNamespaceRepository.batchDeleteByDeleteApp(appId, operator);
     }
   }
 }

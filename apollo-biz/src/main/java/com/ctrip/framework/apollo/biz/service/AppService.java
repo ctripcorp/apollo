@@ -94,9 +94,9 @@ public class AppService {
   }
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (appRepository.countByAppId(oldAppId) > 0) {
-      appRepository.deleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(String appId, String operator) {
+    if (appRepository.countByAppId(appId) > 0) {
+      appRepository.deleteApp(appId, operator);
     }
   }
 }

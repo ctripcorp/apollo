@@ -17,7 +17,6 @@ import com.ctrip.framework.apollo.portal.listener.AppInfoChangedEvent;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import com.ctrip.framework.apollo.portal.util.DeletedKeyGenerator;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
 import java.util.List;
@@ -146,17 +145,11 @@ public class AppController {
   @RequestMapping(value = "/{appId:.+}", method = RequestMethod.DELETE)
   public void deleteApp(@PathVariable String appId) {
 
-    String newAppId = "";
-
-    do {
-      newAppId = DeletedKeyGenerator.generate(appId);
-    } while (Objects.nonNull(appService.load(newAppId)));
-
     App app = appService.load(appId);
 
-    publisher.publishEvent(new AppDeletionEvent(app, newAppId));
+    publisher.publishEvent(new AppDeletionEvent(app));
 
-    appService.deleteAppInLocal(appId, newAppId);
+    appService.deleteAppInLocal(appId);
   }
 
   @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)

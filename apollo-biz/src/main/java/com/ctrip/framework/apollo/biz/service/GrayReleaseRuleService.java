@@ -12,9 +12,9 @@ public class GrayReleaseRuleService {
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (grayReleaseRuleRepository.countByAppId(oldAppId) > 0) {
-      grayReleaseRuleRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(String appId, String operator) {
+    if (grayReleaseRuleRepository.countByAppId(appId) > 0) {
+      grayReleaseRuleRepository.batchDeleteByDeleteApp(appId, operator);
     }
   }
 }

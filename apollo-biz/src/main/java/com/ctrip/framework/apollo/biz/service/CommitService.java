@@ -32,9 +32,9 @@ public class CommitService {
   }
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (commitRepository.countByAppId(oldAppId) > 0) {
-      commitRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(String appId,String operator) {
+    if (commitRepository.countByAppId(appId) > 0) {
+      commitRepository.batchDeleteByDeleteApp(appId, operator);
     }
   }
 }

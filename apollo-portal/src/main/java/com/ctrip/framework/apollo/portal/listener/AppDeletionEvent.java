@@ -6,15 +6,9 @@ import org.springframework.context.ApplicationEvent;
 
 public class AppDeletionEvent extends ApplicationEvent {
 
-  private String newAppId;
-
-  public AppDeletionEvent(Object source, String newAppId) {
+  public AppDeletionEvent(Object source) {
     super(source);
-    this.newAppId = newAppId;
-  }
 
-  public String getNewAppId() {
-    return newAppId;
   }
 
   public App getApp() {

@@ -20,8 +20,8 @@ public interface ClusterRepository extends PagingAndSortingRepository<Cluster, L
   List<Cluster> findByParentClusterId(Long parentClusterId);
 
   @Modifying
-  @Query("UPDATE Cluster SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  int batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE Cluster SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId, String operator);
 
   int countByAppId(String appId);
 }

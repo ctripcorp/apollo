@@ -19,8 +19,8 @@ DROP TABLE IF EXISTS `App`;
 
 CREATE TABLE `App` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `AppId` varchar(191) NOT NULL DEFAULT 'default' COMMENT 'AppID',
-  `Name` varchar(191) NOT NULL DEFAULT 'default' COMMENT '应用名',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `Name` varchar(500) NOT NULL DEFAULT 'default' COMMENT '应用名',
   `OrgId` varchar(32) NOT NULL DEFAULT 'default' COMMENT '部门Id',
   `OrgName` varchar(64) NOT NULL DEFAULT 'default' COMMENT '部门名字',
   `OwnerName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'ownerName',
@@ -45,8 +45,8 @@ DROP TABLE IF EXISTS `AppNamespace`;
 
 CREATE TABLE `AppNamespace` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-  `Name` varchar(191) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
-  `AppId` varchar(191) NOT NULL DEFAULT '' COMMENT 'app id',
+  `Name` varchar(32) NOT NULL DEFAULT '' COMMENT 'namespace名字，注意，需要全局唯一',
+  `AppId` varchar(32) NOT NULL DEFAULT '' COMMENT 'app id',
   `Format` varchar(32) NOT NULL DEFAULT 'properties' COMMENT 'namespace的format类型',
   `IsPublic` bit(1) NOT NULL DEFAULT b'0' COMMENT 'namespace是否为公共',
   `Comment` varchar(64) NOT NULL DEFAULT '' COMMENT '注释',
@@ -70,8 +70,8 @@ DROP TABLE IF EXISTS `Consumer`;
 
 CREATE TABLE `Consumer` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `AppId` varchar(191) NOT NULL DEFAULT 'default' COMMENT 'AppID',
-  `Name` varchar(191) NOT NULL DEFAULT 'default' COMMENT '应用名',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `Name` varchar(500) NOT NULL DEFAULT 'default' COMMENT '应用名',
   `OrgId` varchar(32) NOT NULL DEFAULT 'default' COMMENT '部门Id',
   `OrgName` varchar(64) NOT NULL DEFAULT 'default' COMMENT '部门名字',
   `OwnerName` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'ownerName',
@@ -157,7 +157,7 @@ DROP TABLE IF EXISTS `Favorite`;
 CREATE TABLE `Favorite` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `UserId` varchar(32) NOT NULL DEFAULT 'default' COMMENT '收藏的用户',
-  `AppId` varchar(191) NOT NULL DEFAULT 'default' COMMENT 'AppID',
+  `AppId` varchar(500) NOT NULL DEFAULT 'default' COMMENT 'AppID',
   `Position` int(32) NOT NULL DEFAULT '10000' COMMENT '收藏顺序',
   `IsDeleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '1: deleted, 0: normal',
   `DataChange_CreatedBy` varchar(32) NOT NULL DEFAULT 'default' COMMENT '创建人邮箱前缀',
@@ -307,16 +307,16 @@ CREATE TABLE `Authorities` (
 # ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Value`, `Comment`)
 VALUES
-    ('apollo.portal.envs', 'dev', '可支持的环境列表'),
-    ('organizations', '[{\"orgId\":\"TEST1\",\"orgName\":\"样例部门1\"},{\"orgId\":\"TEST2\",\"orgName\":\"样例部门2\"}]', '部门列表'),
-    ('superAdmin', 'apollo', 'Portal超级管理员'),
-    ('api.readTimeout', '10000', 'http接口read timeout'),
-    ('consumer.token.salt', 'someSalt', 'consumer token salt'),
-    ('admin.createPrivateNamespace.switch', 'false', '是否允许项目管理员创建私有namespace');
+  ('apollo.portal.envs', 'dev', '可支持的环境列表'),
+  ('organizations', '[{\"orgId\":\"TEST1\",\"orgName\":\"样例部门1\"},{\"orgId\":\"TEST2\",\"orgName\":\"样例部门2\"}]', '部门列表'),
+  ('superAdmin', 'apollo', 'Portal超级管理员'),
+  ('api.readTimeout', '10000', 'http接口read timeout'),
+  ('consumer.token.salt', 'someSalt', 'consumer token salt'),
+  ('admin.createPrivateNamespace.switch', 'false', '是否允许项目管理员创建私有namespace');
 
 INSERT INTO `Users` (`Username`, `Password`, `Email`, `Enabled`)
 VALUES
-	('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo@acme.com', 1);
+  ('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo@acme.com', 1);
 
 INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user');
 

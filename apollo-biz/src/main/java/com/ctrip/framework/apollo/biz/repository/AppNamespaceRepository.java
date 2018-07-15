@@ -27,8 +27,8 @@ public interface AppNamespaceRepository extends PagingAndSortingRepository<AppNa
   List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long id);
 
   @Modifying
-  @Query("UPDATE AppNamespace SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  Integer batchDeleteByDeleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE AppNamespace SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId, String operator);
 
-  Integer countByAppId(String appId);
+  int countByAppId(String appId);
 }

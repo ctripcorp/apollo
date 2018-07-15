@@ -17,8 +17,8 @@ public interface AppRepository extends PagingAndSortingRepository<App, Long> {
   App findByAppId(String appId);
 
   @Modifying
-  @Query("UPDATE App SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  int deleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE App SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int deleteApp(String appId, String operator);
 
   int countByAppId(String appId);
 }

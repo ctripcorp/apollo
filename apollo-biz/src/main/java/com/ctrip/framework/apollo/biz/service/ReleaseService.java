@@ -468,9 +468,9 @@ public class ReleaseService {
   }
 
   @Transactional
-  public void deleteApp(String oldAppId, String newAppId, String operator) {
-    if (releaseRepository.countByAppId(oldAppId) > 0) {
-      releaseRepository.batchDeleteByDeleteApp(oldAppId, newAppId, operator);
+  public void deleteApp(String appId, String operator) {
+    if (releaseRepository.countByAppId(appId) > 0) {
+      releaseRepository.batchDeleteByDeleteApp(appId, operator);
     }
   }
 }

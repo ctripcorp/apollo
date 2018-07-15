@@ -20,6 +20,6 @@ public interface AppRepository extends PagingAndSortingRepository<App, Long> {
   List<App> findByAppIdIn(Set<String> appIds);
 
   @Modifying
-  @Query("UPDATE App SET IsDeleted=1,AppId=?2,DataChange_LastModifiedBy = ?3 WHERE AppId=?1")
-  int deleteApp(String oldAppId, String newAppId, String operator);
+  @Query("UPDATE App SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int deleteApp(String appId, String operator);
 }
