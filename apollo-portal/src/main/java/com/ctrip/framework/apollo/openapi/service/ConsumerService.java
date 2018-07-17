@@ -120,9 +120,9 @@ public class ConsumerService {
     }
 
     Role namespaceModifyRole =
-        rolePermissionService.findRoleByRoleName(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName));
+        rolePermissionService.findRoleByRoleName(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, null));
     Role namespaceReleaseRole =
-        rolePermissionService.findRoleByRoleName(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName));
+        rolePermissionService.findRoleByRoleName(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, null));
 
     if (namespaceModifyRole == null || namespaceReleaseRole == null) {
       throw new BadRequestException("Namespace's role does not exist. Please check whether namespace has created.");

@@ -74,11 +74,11 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   @Test
   public void testInitNamespaceRoleHasExisted(){
 
-    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE);
+    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName)).
         thenReturn(mockRole(modifyNamespaceRoleName));
 
-    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE);
+    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName)).
         thenReturn(mockRole(releaseNamespaceRoleName));
 
@@ -92,11 +92,11 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   @Test
   public void testInitNamespaceRoleNotExisted(){
 
-    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE);
+    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName)).
         thenReturn(null);
 
-    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE);
+    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName)).
         thenReturn(null);
 
@@ -113,11 +113,11 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   @Test
   public void testInitNamespaceRoleModifyNSExisted(){
 
-    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE);
+    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName)).
         thenReturn(mockRole(modifyNamespaceRoleName));
 
-    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE);
+    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(APP_ID, NAMESPACE, null);
     when(rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName)).
         thenReturn(null);
 

@@ -17,24 +17,20 @@ public class RoleUtils {
     return STRING_JOINER.join(roleType, appId);
   }
 
-  public static String buildModifyNamespaceRoleName(String appId, String namespaceName) {
+  public static String buildModifyNamespaceRoleName(String appId, String namespaceName, String env) {
+    if (null != env && !"".equals(env))
+      return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, env, appId, namespaceName);
     return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, namespaceName);
-  }
-
-  public static String buildModifyNamespaceEnvRoleName(String appId, String namespaceName, String env) {
-    return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE_ENV, env, appId, namespaceName);
   }
 
   public static String buildModifyDefaultNamespaceRoleName(String appId) {
     return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
 
-  public static String buildReleaseNamespaceRoleName(String appId, String namespaceName) {
+  public static String buildReleaseNamespaceRoleName(String appId, String namespaceName, String env) {
+    if (null != env && !"".equals(env))
+      return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, env, appId, namespaceName);
     return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, namespaceName);
-  }
-
-  public static String buildReleaseNamespaceEnvRoleName(String appId, String namespaceName, String env) {
-    return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE_ENV, env, appId, namespaceName);
   }
 
   public static String buildNamespaceRoleName(String appId, String namespaceName, String roleType) {

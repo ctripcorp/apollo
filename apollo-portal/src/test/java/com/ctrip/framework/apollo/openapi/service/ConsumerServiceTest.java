@@ -176,8 +176,8 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     doReturn(consumerId).when(consumerService).getConsumerIdByToken(token);
 
     String testNamespace = "namespace";
-    String modifyRoleName = RoleUtils.buildModifyNamespaceRoleName(testAppId, testNamespace);
-    String releaseRoleName = RoleUtils.buildReleaseNamespaceRoleName(testAppId, testNamespace);
+    String modifyRoleName = RoleUtils.buildModifyNamespaceRoleName(testAppId, testNamespace, null);
+    String releaseRoleName = RoleUtils.buildReleaseNamespaceRoleName(testAppId, testNamespace, null);
     long modifyRoleId = 1;
     long releaseRoleId = 2;
     Role modifyRole = createRole(modifyRoleId, modifyRoleName);

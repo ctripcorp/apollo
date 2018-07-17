@@ -69,13 +69,13 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Transactional
   public void initNamespaceRoles(String appId, String namespaceName, String operator) {
 
-    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName);
+    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, null);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE,
           modifyNamespaceRoleName, operator);
     }
 
-    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName);
+    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, null);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE,
           releaseNamespaceRoleName, operator);
@@ -93,13 +93,13 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   @Transactional
   public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator) {
-    String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceEnvRoleName(appId, namespaceName, env);
+    String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceEnvRoleName) == null) {
       createNamespaceEnvRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE_ENV, env,
           modifyNamespaceEnvRoleName, operator);
     }
 
-    String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceEnvRoleName(appId, namespaceName, env);
+    String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceEnvRoleName) == null) {
       createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE_ENV, env,
           releaseNamespaceEnvRoleName, operator);

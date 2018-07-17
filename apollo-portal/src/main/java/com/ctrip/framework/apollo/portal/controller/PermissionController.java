@@ -99,11 +99,11 @@ public class PermissionController {
     assignedUsers.setEnv(Env.fromString(env));
 
     Set<UserInfo> releaseNamespaceUsers =
-        rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceEnvRoleName(appId, namespaceName, env));
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env));
     assignedUsers.setReleaseRoleUsers(releaseNamespaceUsers);
 
     Set<UserInfo> modifyNamespaceUsers =
-        rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceEnvRoleName(appId, namespaceName, env));
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
 
     return assignedUsers;
@@ -159,11 +159,11 @@ public class PermissionController {
     assignedUsers.setAppId(appId);
 
     Set<UserInfo> releaseNamespaceUsers =
-        rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName));
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, null));
     assignedUsers.setReleaseRoleUsers(releaseNamespaceUsers);
 
     Set<UserInfo> modifyNamespaceUsers =
-        rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName));
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, null));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
 
     return assignedUsers;
