@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
-import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

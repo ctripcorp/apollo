@@ -18,8 +18,6 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
     $scope.createConsumer = createConsumer;
     $scope.assignRoleToConsumer = assignRoleToConsumer;
 
-    init();
-
     function init() {
         initOrganization();
         initPermission();
@@ -71,7 +69,7 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
                             $scope.envsChecked.push(env.env);
                         }
                     }
-                }
+                };
             });
     }
 
@@ -144,5 +142,6 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
                 AppUtil.showErrorMsg(response, "赋权失败");
             })
     }
-    
+
+    init();
 }

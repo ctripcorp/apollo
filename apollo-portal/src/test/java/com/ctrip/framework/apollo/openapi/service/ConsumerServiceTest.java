@@ -191,8 +191,8 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     Role envReleaseRole = createRole(envReleaseRoleId, releaseRoleName);
     when(rolePermissionService.findRoleByRoleName(modifyRoleName)).thenReturn(modifyRole);
     when(rolePermissionService.findRoleByRoleName(releaseRoleName)).thenReturn(releaseRole);
-    when(rolePermissionService.findRoleByRoleName(modifyRoleName)).thenReturn(envModifyRole);
-    when(rolePermissionService.findRoleByRoleName(releaseRoleName)).thenReturn(envReleaseRole);
+    when(rolePermissionService.findRoleByRoleName(envModifyRoleName)).thenReturn(envModifyRole);
+    when(rolePermissionService.findRoleByRoleName(envReleaseRoleName)).thenReturn(envReleaseRole);
 
     when(consumerRoleRepository.findByConsumerIdAndRoleId(consumerId, modifyRoleId)).thenReturn(null);
 

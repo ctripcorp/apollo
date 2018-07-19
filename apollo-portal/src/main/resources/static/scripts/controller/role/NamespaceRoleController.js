@@ -36,7 +36,7 @@ role_module.controller('NamespaceRoleController',
             EnvService.find_all_envs()
                 .then(function (result){
                     $scope.envs = result;
-                    $scope.envRolesAssignedUsers = new Object();
+                    $scope.envRolesAssignedUsers = {};
                     for (var iLoop = 0; iLoop < result.length; iLoop++) {
                         var env = result[iLoop];
                         PermissionService.get_namespace_env_role_users($scope.pageContext.appId, env, $scope.pageContext.namespaceName)
@@ -66,7 +66,7 @@ role_module.controller('NamespaceRoleController',
                     $scope.ReleaseRoleSubmitBtnDisabled = true;
                     var toAssignReleaseNamespaceRoleUser = user.id;
 
-                    var assignReleaseNamespaceRoleFunc = $scope.releaseRoleSelectedEnv == "" ?
+                    var assignReleaseNamespaceRoleFunc = $scope.releaseRoleSelectedEnv === "" ?
                         PermissionService.assign_release_namespace_role :
                         function (appId, namespaceName, user) {
                             return PermissionService.assign_release_namespace_env_role(appId, $scope.releaseRoleSelectedEnv, namespaceName, user);
@@ -78,7 +78,7 @@ role_module.controller('NamespaceRoleController',
                         .then(function (result) {
                             toastr.success("添加成功");
                             $scope.ReleaseRoleSubmitBtnDisabled = false;
-                            if ($scope.releaseRoleSelectedEnv == "") {
+                            if ($scope.releaseRoleSelectedEnv === "") {
                                 $scope.rolesAssignedUsers.releaseRoleUsers.push(
                                     {userId: toAssignReleaseNamespaceRoleUser});
                             } else {
@@ -101,7 +101,7 @@ role_module.controller('NamespaceRoleController',
                     $scope.modifyRoleSubmitBtnDisabled = true;
                     var toAssignModifyNamespaceRoleUser = user.id;
 
-                    var assignModifyNamespaceRoleFunc = $scope.modifyRoleSelectedEnv == "" ?
+                    var assignModifyNamespaceRoleFunc = $scope.modifyRoleSelectedEnv === "" ?
                         PermissionService.assign_modify_namespace_role :
                         function (appId, namespaceName, user) {
                             return PermissionService.assign_modify_namespace_env_role(appId, $scope.modifyRoleSelectedEnv, namespaceName, user);
@@ -113,7 +113,7 @@ role_module.controller('NamespaceRoleController',
                         .then(function (result) {
                             toastr.success("添加成功");
                             $scope.modifyRoleSubmitBtnDisabled = false;
-                            if ($scope.modifyRoleSelectedEnv == "") {
+                            if ($scope.modifyRoleSelectedEnv === "") {
                                 $scope.rolesAssignedUsers.modifyRoleUsers.push(
                                     {userId: toAssignModifyNamespaceRoleUser});
                             } else {
@@ -130,7 +130,7 @@ role_module.controller('NamespaceRoleController',
             };
 
             $scope.removeUserRole = function (roleType, user, env) {
-                if ('ReleaseNamespace' == roleType) {
+                if ('ReleaseNamespace' === roleType) {
                     var removeReleaseNamespaceRoleFunc = !env ?
                         PermissionService.remove_release_namespace_role :
                         function (appId, namespaceName, user) {
@@ -176,7 +176,7 @@ role_module.controller('NamespaceRoleController',
             function removeUserFromList(list, user) {
                 var index = 0;
                 for (var i = 0; i < list.length; i++) {
-                    if (list[i].userId == user) {
+                    if (list[i].userId === user) {
                         index = i;
                         break;
                     }
