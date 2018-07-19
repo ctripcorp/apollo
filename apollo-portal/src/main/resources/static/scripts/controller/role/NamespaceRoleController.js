@@ -57,7 +57,7 @@ role_module.controller('NamespaceRoleController',
                 });
 
             $scope.assignRoleToUser = function (roleType) {
-                if ('ReleaseNamespace' == roleType) {
+                if ("ReleaseNamespace" === roleType) {
                     var user = $('.' + $scope.releaseRoleWidgetId).select2('data')[0];
                     if (!user) {
                         toastr.warning("请选择用户");
@@ -130,7 +130,7 @@ role_module.controller('NamespaceRoleController',
             };
 
             $scope.removeUserRole = function (roleType, user, env) {
-                if ('ReleaseNamespace' === roleType) {
+                if ("ReleaseNamespace" === roleType) {
                     var removeReleaseNamespaceRoleFunc = !env ?
                         PermissionService.remove_release_namespace_role :
                         function (appId, namespaceName, user) {

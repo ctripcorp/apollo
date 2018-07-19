@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,7 +32,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Autowired
   private RolePermissionService rolePermissionService;
   @Autowired
-  private PortalSettings portalSettings;
+  private PortalConfig portalConfig;
 
   @Transactional
   public void initAppRoles(App app) {
@@ -84,7 +84,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   @Transactional
   public void initNamespaceEnvRoles(String appId, String namespaceName, String operator) {
-    List<Env> portalEnvs = portalSettings.getActiveEnvs();
+    List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
 
     for (Env env : portalEnvs) {
       initNamespaceSpecificEnvRoles(appId, namespaceName, env.toString(), operator);
