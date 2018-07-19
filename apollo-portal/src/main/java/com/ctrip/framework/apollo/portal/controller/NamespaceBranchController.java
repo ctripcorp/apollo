@@ -46,7 +46,7 @@ public class NamespaceBranchController {
     return namespaceBranchService.findBranch(appId, Env.valueOf(env), clusterName, namespaceName);
   }
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasModifyNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.POST)
   public NamespaceDTO createBranch(@PathVariable String appId,
                                    @PathVariable String env,
@@ -63,9 +63,9 @@ public class NamespaceBranchController {
                            @PathVariable String namespaceName,
                            @PathVariable String branchName) {
 
-    boolean canDelete = permissionValidator.hasReleaseNamespacePermission(appId, namespaceName) ||
-            permissionValidator.hasReleaseNamespaceEnvPermission(appId, namespaceName, env) ||
-            ((permissionValidator.hasModifyNamespacePermission(appId, namespaceName) || permissionValidator.hasModifyNamespaceEnvPermission(appId, namespaceName, env)) &&
+    boolean canDelete = permissionValidator.hasReleaseNamespacePermission(appId, namespaceName, null) ||
+            permissionValidator.hasReleaseNamespacePermission(appId, namespaceName, env) ||
+            ((permissionValidator.hasModifyNamespacePermission(appId, namespaceName, null) || permissionValidator.hasModifyNamespacePermission(appId, namespaceName, env)) &&
                       releaseService.loadLatestRelease(appId, Env.valueOf(env), branchName, namespaceName) == null);
 
 
@@ -82,7 +82,7 @@ public class NamespaceBranchController {
 
 
 
-  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasReleaseNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/merge", method = RequestMethod.POST)
   public ReleaseDTO merge(@PathVariable String appId, @PathVariable String env,
                           @PathVariable String clusterName, @PathVariable String namespaceName,
@@ -121,7 +121,7 @@ public class NamespaceBranchController {
   }
 
 
-  @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasOperateNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasOperateNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules", method = RequestMethod.PUT)
   public void updateBranchRules(@PathVariable String appId, @PathVariable String env,
                                 @PathVariable String clusterName, @PathVariable String namespaceName,

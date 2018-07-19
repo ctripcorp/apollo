@@ -27,7 +27,7 @@ public class ConsumerPermissionValidator {
     }
     return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
         PermissionType.MODIFY_NAMESPACE,
-        RoleUtils.buildNamespaceTargetId(appId, namespaceName));
+        RoleUtils.buildNamespaceTargetId(appId, namespaceName, null));
 
   }
 
@@ -38,7 +38,7 @@ public class ConsumerPermissionValidator {
     }
     return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
         PermissionType.RELEASE_NAMESPACE,
-        RoleUtils.buildNamespaceTargetId(appId, namespaceName));
+        RoleUtils.buildNamespaceTargetId(appId, namespaceName, null));
 
   }
 

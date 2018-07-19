@@ -157,7 +157,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   private Permission mockPermission(){
     Permission permission = new Permission();
     permission.setPermissionType(PermissionType.MODIFY_NAMESPACE);
-    permission.setTargetId(RoleUtils.buildNamespaceTargetId(APP_ID, NAMESPACE));
+    permission.setTargetId(RoleUtils.buildNamespaceTargetId(APP_ID, NAMESPACE, null));
     return permission;
   }
 

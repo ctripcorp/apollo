@@ -182,10 +182,10 @@ public class NamespaceController {
     String operator = userInfoHolder.getUser().getUserId();
 
     rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE),
+        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE, null),
                            Sets.newHashSet(operator), operator);
     rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
+        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE, null),
                            Sets.newHashSet(operator), operator);
   }
 }

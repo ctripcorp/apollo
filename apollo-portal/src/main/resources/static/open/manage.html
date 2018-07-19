@@ -135,6 +135,17 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group" valdr-form-group ng-show="consumerRole.type=='NamespaceRole'">
+                        <label class="col-sm-2 control-label">
+                            环境（不选择则所有环境都有权限）
+                        </label>
+                        <div class="col-sm-3">
+                            <label class="checkbox-inline" ng-repeat="env in envs">
+                                <input type="checkbox" ng-checked="env.checked" ng-click="switchSelect(env)" />
+                                {{env.env}}
+                            </label>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-9">
                             <button type="submit" class="btn btn-primary"

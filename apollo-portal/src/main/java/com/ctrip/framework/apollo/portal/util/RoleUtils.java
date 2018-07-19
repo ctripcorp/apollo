@@ -19,7 +19,7 @@ public class RoleUtils {
 
   public static String buildModifyNamespaceRoleName(String appId, String namespaceName, String env) {
     if (null != env && !"".equals(env))
-      return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, env, appId, namespaceName);
+      return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, namespaceName, env);
     return STRING_JOINER.join(RoleType.MODIFY_NAMESPACE, appId, namespaceName);
   }
 
@@ -29,28 +29,24 @@ public class RoleUtils {
 
   public static String buildReleaseNamespaceRoleName(String appId, String namespaceName, String env) {
     if (null != env && !"".equals(env))
-      return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, env, appId, namespaceName);
+      return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, namespaceName, env);
     return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, namespaceName);
   }
 
-  public static String buildNamespaceRoleName(String appId, String namespaceName, String roleType) {
+  public static String buildNamespaceRoleName(String appId, String namespaceName, String roleType, String env) {
+    if (null != env && !"".equals(env))
+      return STRING_JOINER.join(roleType, appId, namespaceName, env);
     return STRING_JOINER.join(roleType, appId, namespaceName);
-  }
-
-  public static String buildNamespaceEnvRoleName(String appId, String namespaceName, String roleType, String env) {
-    return STRING_JOINER.join(roleType, env, appId, namespaceName);
   }
 
   public static String buildReleaseDefaultNamespaceRoleName(String appId) {
     return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
 
-  public static String buildNamespaceTargetId(String appId, String namespaceName) {
+  public static String buildNamespaceTargetId(String appId, String namespaceName, String env) {
+    if (null != env && !"".equals(env))
+      return STRING_JOINER.join(appId, namespaceName, env);
     return STRING_JOINER.join(appId, namespaceName);
-  }
-
-  public static String buildNamespaceEnvTargetId(String appId, String namespaceName, String env) {
-    return STRING_JOINER.join(appId, namespaceName, env);
   }
 
   public static String buildDefaultNamespaceTargetId(String appId) {

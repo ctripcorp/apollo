@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.enums.EnvUtils;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceEnvRolesAssignedUsers;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
@@ -40,6 +41,14 @@ public class PermissionController {
   private RolePermissionService rolePermissionService;
   @Autowired
   private UserService userService;
+  @Autowired
+  private RoleInitializationService roleInitializationService;
+
+  @RequestMapping(value = "/apps/{appId}/initPermission", method = RequestMethod.POST)
+  public ResponseEntity<Void> initAppPermission(@PathVariable String appId, @RequestBody String namespaceName) {
+    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, userInfoHolder.getUser().getUserId());
+    return ResponseEntity.ok().build();
+  }
 
   @RequestMapping(value = "/apps/{appId}/permissions/{permissionType}", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String permissionType) {
@@ -58,7 +67,7 @@ public class PermissionController {
 
     permissionCondition.setHasPermission(
         rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType,
-            RoleUtils.buildNamespaceTargetId(appId, namespaceName)));
+            RoleUtils.buildNamespaceTargetId(appId, namespaceName, null)));
 
     return ResponseEntity.ok().body(permissionCondition);
   }
@@ -70,7 +79,7 @@ public class PermissionController {
 
     permissionCondition.setHasPermission(
         rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType,
-            RoleUtils.buildNamespaceEnvTargetId(appId, namespaceName, env)));
+            RoleUtils.buildNamespaceTargetId(appId, namespaceName, env)));
 
     return ResponseEntity.ok().body(permissionCondition);
   }
@@ -86,7 +95,7 @@ public class PermissionController {
 
 
   @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
-  public NamespaceRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
+  public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
 
     // validate env parameter
     if (null == EnvUtils.transformEnv(env)) {
@@ -124,7 +133,7 @@ public class PermissionController {
     if (null == EnvUtils.transformEnv(env)) {
       throw new BadRequestException("env is illegal");
     }
-    Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceEnvRoleName(appId, namespaceName, roleType, env),
+    Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
       throw new BadRequestException(user + "已授权");
@@ -146,7 +155,7 @@ public class PermissionController {
     if (null == EnvUtils.transformEnv(env)) {
       throw new BadRequestException("env is illegal");
     }
-    rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceEnvRoleName(appId, namespaceName, roleType, env),
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }
@@ -179,7 +188,7 @@ public class PermissionController {
     if (!RoleType.isValidRoleType(roleType)) {
       throw new BadRequestException("role type is illegal");
     }
-    Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType),
+    Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, null),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
       throw new BadRequestException(user + "已授权");
@@ -197,7 +206,7 @@ public class PermissionController {
     if (!RoleType.isValidRoleType(roleType)) {
       throw new BadRequestException("role type is illegal");
     }
-    rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType),
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, null),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }

@@ -40,7 +40,7 @@ public class ItemController {
   @Autowired
   private PermissionValidator permissionValidator;
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasModifyNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.PUT, consumes = {
       "application/json"})
   public void modifyItemsByText(@PathVariable String appId, @PathVariable String env,
@@ -57,7 +57,7 @@ public class ItemController {
     configService.updateConfigItemByText(model);
   }
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasModifyNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.POST)
   public ItemDTO createItem(@PathVariable String appId, @PathVariable String env,
                             @PathVariable String clusterName, @PathVariable String namespaceName,
@@ -76,7 +76,7 @@ public class ItemController {
     return configService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, item);
   }
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasModifyNamespaceEnvPermission(#appId, #namespaceName, #env)")
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item", method = RequestMethod.PUT)
   public void updateItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
@@ -90,7 +90,7 @@ public class ItemController {
   }
 
 
-  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName) || @permissionValidator.hasModifyNamespaceEnvPermission(#appId, #namespaceName, #env) ")
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env) ")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}", method = RequestMethod.DELETE)
   public void deleteItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
@@ -146,7 +146,7 @@ public class ItemController {
   public ResponseEntity update(@PathVariable String appId, @PathVariable String namespaceName,
                                      @RequestBody NamespaceSyncModel model) {
     checkModel(Objects.nonNull(model) && !model.isInvalid());
-    boolean hasPermission = permissionValidator.hasModifyNamespacePermission(appId, namespaceName);
+    boolean hasPermission = permissionValidator.hasModifyNamespacePermission(appId, namespaceName, null);
     Env envNoPermission = null;
     // if uses has ModifyNamespace permission then he has permission
     if (!hasPermission) {
@@ -154,7 +154,7 @@ public class ItemController {
       hasPermission = true;
       for (NamespaceIdentifier namespaceIdentifier : model.getSyncToNamespaces()) {
         // once user has not one of the env's ModifyNamespace permission, then break the loop
-        hasPermission &= permissionValidator.hasModifyNamespaceEnvPermission(namespaceIdentifier.getAppId(), namespaceIdentifier.getNamespaceName(), namespaceIdentifier.getEnv().toString());
+        hasPermission &= permissionValidator.hasModifyNamespacePermission(namespaceIdentifier.getAppId(), namespaceIdentifier.getNamespaceName(), namespaceIdentifier.getEnv().toString());
         if (!hasPermission) {
           envNoPermission = namespaceIdentifier.getEnv();
           break;

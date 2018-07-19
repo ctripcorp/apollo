@@ -20,40 +20,24 @@ public class PermissionValidator {
   @Autowired
   private PortalConfig portalConfig;
 
-  public boolean hasModifyNamespacePermission(String appId, String namespaceName) {
+  public boolean hasModifyNamespacePermission(String appId, String namespaceName, String env) {
     return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
         PermissionType.MODIFY_NAMESPACE,
-        RoleUtils.buildNamespaceTargetId(appId, namespaceName));
+        RoleUtils.buildNamespaceTargetId(appId, namespaceName, env));
   }
 
-  public boolean hasModifyNamespaceEnvPermission(String appId, String namespaceName, String env) {
-    return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
-        PermissionType.MODIFY_NAMESPACE_ENV,
-        RoleUtils.buildNamespaceEnvTargetId(appId, namespaceName, env));
-  }
-
-  public boolean hasReleaseNamespacePermission(String appId, String namespaceName) {
+  public boolean hasReleaseNamespacePermission(String appId, String namespaceName, String env) {
     return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
         PermissionType.RELEASE_NAMESPACE,
-        RoleUtils.buildNamespaceTargetId(appId, namespaceName));
-  }
-
-  public boolean hasReleaseNamespaceEnvPermission(String appId, String namespaceName, String env) {
-    return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),
-        PermissionType.RELEASE_NAMESPACE_ENV,
-        RoleUtils.buildNamespaceEnvTargetId(appId, namespaceName, env));
+        RoleUtils.buildNamespaceTargetId(appId, namespaceName, env));
   }
 
   public boolean hasDeleteNamespacePermission(String appId) {
     return hasAssignRolePermission(appId) || isSuperAdmin();
   }
 
-  public boolean hasOperateNamespacePermission(String appId, String namespaceName) {
-    return hasModifyNamespacePermission(appId, namespaceName) || hasReleaseNamespacePermission(appId, namespaceName);
-  }
-
-  public boolean hasOperateNamespaceEnvPermission(String appId, String namespaceName, String env) {
-    return hasModifyNamespaceEnvPermission(appId, namespaceName, env) || hasReleaseNamespaceEnvPermission(appId, namespaceName, env);
+  public boolean hasOperateNamespacePermission(String appId, String namespaceName, String env) {
+    return hasModifyNamespacePermission(appId, namespaceName, env) || hasReleaseNamespacePermission(appId, namespaceName, env);
   }
 
   public boolean hasAssignRolePermission(String appId) {

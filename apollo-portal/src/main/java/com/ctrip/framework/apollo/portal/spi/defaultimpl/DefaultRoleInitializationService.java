@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -32,7 +33,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Autowired
   private RolePermissionService rolePermissionService;
   @Autowired
-  private PortalConfig portalConfig;
+  private PortalSettings portalSettings;
 
   @Transactional
   public void initAppRoles(App app) {
@@ -58,10 +59,10 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
     //assign modify、release namespace role to user
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE, null),
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE, null),
         Sets.newHashSet(operator), operator);
 
   }
@@ -84,7 +85,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   @Transactional
   public void initNamespaceEnvRoles(String appId, String namespaceName, String operator) {
-    List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
+    List<Env> portalEnvs = portalSettings.getActiveEnvs();
 
     for (Env env : portalEnvs) {
       initNamespaceSpecificEnvRoles(appId, namespaceName, env.toString(), operator);
@@ -95,13 +96,13 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator) {
     String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceEnvRoleName) == null) {
-      createNamespaceEnvRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE_ENV, env,
+      createNamespaceEnvRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE, env,
           modifyNamespaceEnvRoleName, operator);
     }
 
     String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceEnvRoleName) == null) {
-      createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE_ENV, env,
+      createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE, env,
           releaseNamespaceEnvRoleName, operator);
     }
   }
@@ -143,7 +144,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
                                    String roleName, String operator) {
 
     Permission permission =
-        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType, operator);
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName, null), permissionType, operator);
     Permission createdPermission = rolePermissionService.createPermission(permission);
 
     Role role = createRole(roleName, operator);
@@ -154,7 +155,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   private void createNamespaceEnvRole(String appId, String namespaceName, String permissionType, String env,
                                       String roleName, String operator) {
     Permission permission =
-        createPermission(RoleUtils.buildNamespaceEnvTargetId(appId, namespaceName, env), permissionType, operator);
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName, env), permissionType, operator);
     Permission createdPermission = rolePermissionService.createPermission(permission);
 
     Role role = createRole(roleName, operator);
