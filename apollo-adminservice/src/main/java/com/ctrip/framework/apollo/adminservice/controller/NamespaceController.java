@@ -101,5 +101,10 @@ public class NamespaceController {
     return namespaceService.namespacePublishInfo(appId);
   }
 
-
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/isExisted", method = RequestMethod.GET)
+  public boolean findExisted(@PathVariable("appId") String appId,
+		                     @PathVariable("clusterName") String clusterName,
+                             @PathVariable("namespaceName") String namespaceName) {  
+    return namespaceService.findNamespaceExited(appId, clusterName, namespaceName);
+  }
 }

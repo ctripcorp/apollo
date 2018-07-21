@@ -17,6 +17,9 @@ import javax.persistence.Table;
 @SQLDelete(sql = "Update ServerConfig set isDeleted = 1 where id = ?")
 @Where(clause = "isDeleted = 0")
 public class ServerConfig extends BaseEntity {
+	
+  public final static String ENV_KEY = "apollo.portal.envs";
+	
   @Column(name = "Key", nullable = false)
   private String key;
 

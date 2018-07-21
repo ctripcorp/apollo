@@ -131,6 +131,12 @@ public class AdminServiceAPI {
       return count == null ? 0 : count;
     }
 
+    public boolean selectExistAppNamespace(Env env, String appId, String clusterName, String namespaceName) {
+        boolean flag =
+            restTemplate.get(env, "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/isExisted",
+            		Boolean.class, appId, clusterName, namespaceName);
+        return flag;
+     }
   }
 
   @Service

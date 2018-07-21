@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,4 +57,8 @@ public interface RolePermissionService {
    */
   public Set<Permission> createPermissions(Set<Permission> permissions);
 
+  /**
+   * Delete rolePermissions By ids
+   */
+  public int batchDelete(List<String> ids, String operator);
 }

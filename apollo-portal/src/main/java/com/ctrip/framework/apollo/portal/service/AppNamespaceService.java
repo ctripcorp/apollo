@@ -1,5 +1,12 @@
 package com.ctrip.framework.apollo.portal.service;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
@@ -8,13 +15,6 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class AppNamespaceService {
@@ -118,4 +118,8 @@ public class AppNamespaceService {
     return createdAppNamespace;
   }
 
+  @Transactional
+  public int batchDelete(String appId, String namespaceName, String operator) {
+    return appNamespaceRepository.batchDelete(appId, namespaceName, operator);
+  }
 }
