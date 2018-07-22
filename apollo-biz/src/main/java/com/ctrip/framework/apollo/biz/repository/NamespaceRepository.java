@@ -25,4 +25,9 @@ public interface NamespaceRepository extends PagingAndSortingRepository<Namespac
 
   int countByNamespaceNameAndAppIdNot(String namespaceName, String appId);
 
+  @Modifying
+  @Query("UPDATE Namespace SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId,String operator);
+
+  int countByAppId(String appId);
 }

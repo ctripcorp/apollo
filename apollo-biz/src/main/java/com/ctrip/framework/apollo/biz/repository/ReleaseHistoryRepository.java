@@ -23,4 +23,9 @@ public interface ReleaseHistoryRepository extends PagingAndSortingRepository<Rel
   @Query("update ReleaseHistory set isdeleted=1,DataChange_LastModifiedBy = ?4 where appId=?1 and clusterName=?2 and namespaceName = ?3")
   int batchDelete(String appId, String clusterName, String namespaceName, String operator);
 
+  @Modifying
+  @Query("UPDATE ReleaseHistory SET IsDeleted=1,DataChange_LastModifiedBy = ?2 WHERE AppId=?1")
+  int batchDeleteByDeleteApp(String appId, String operator);
+
+  int countByAppId(String appId);
 }

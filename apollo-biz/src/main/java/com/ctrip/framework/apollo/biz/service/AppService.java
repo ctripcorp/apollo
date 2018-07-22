@@ -92,4 +92,11 @@ public class AppService {
         managedApp.getDataChangeLastModifiedBy());
     
   }
+
+  @Transactional
+  public void deleteApp(String appId, String operator) {
+    if (appRepository.countByAppId(appId) > 0) {
+      appRepository.deleteApp(appId, operator);
+    }
+  }
 }

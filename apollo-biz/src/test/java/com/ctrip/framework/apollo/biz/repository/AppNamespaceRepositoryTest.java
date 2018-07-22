@@ -27,4 +27,11 @@ public class AppNamespaceRepositoryTest extends AbstractIntegrationTest{
 
     assertNull(appNamespace);
   }
+
+  @Test
+  public void testDeleteAppNamespaceWhenDeleteApp() throws Exception{
+    String appId = "100003171";
+    int count = repository.countByAppId(appId);
+    assertEquals(count,repository.batchDeleteByDeleteApp(appId,null));
+  }
 }

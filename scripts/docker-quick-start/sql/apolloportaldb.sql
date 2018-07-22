@@ -307,16 +307,16 @@ CREATE TABLE `Authorities` (
 # ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Value`, `Comment`)
 VALUES
-    ('apollo.portal.envs', 'dev', '可支持的环境列表'),
-    ('organizations', '[{\"orgId\":\"TEST1\",\"orgName\":\"样例部门1\"},{\"orgId\":\"TEST2\",\"orgName\":\"样例部门2\"}]', '部门列表'),
-    ('superAdmin', 'apollo', 'Portal超级管理员'),
-    ('api.readTimeout', '10000', 'http接口read timeout'),
-    ('consumer.token.salt', 'someSalt', 'consumer token salt'),
-    ('admin.createPrivateNamespace.switch', 'false', '是否允许项目管理员创建私有namespace');
+  ('apollo.portal.envs', 'dev', '可支持的环境列表'),
+  ('organizations', '[{\"orgId\":\"TEST1\",\"orgName\":\"样例部门1\"},{\"orgId\":\"TEST2\",\"orgName\":\"样例部门2\"}]', '部门列表'),
+  ('superAdmin', 'apollo', 'Portal超级管理员'),
+  ('api.readTimeout', '10000', 'http接口read timeout'),
+  ('consumer.token.salt', 'someSalt', 'consumer token salt'),
+  ('admin.createPrivateNamespace.switch', 'false', '是否允许项目管理员创建私有namespace');
 
 INSERT INTO `Users` (`Username`, `Password`, `Email`, `Enabled`)
 VALUES
-	('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo@acme.com', 1);
+  ('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo@acme.com', 1);
 
 INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user');
 
@@ -324,39 +324,39 @@ INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user
 # ------------------------------------------------------------
 INSERT INTO `App` (`AppId`, `Name`, `OrgId`, `OrgName`, `OwnerName`, `OwnerEmail`)
 VALUES
-	('SampleApp', 'Sample App', 'TEST1', '样例部门1', 'apollo', 'apollo@acme.com');
+  ('SampleApp', 'Sample App', 'TEST1', '样例部门1', 'apollo', 'apollo@acme.com');
 
 INSERT INTO `AppNamespace` (`Name`, `AppId`, `Format`, `IsPublic`, `Comment`)
 VALUES
-	('application', 'SampleApp', 'properties', 0, 'default app namespace');
+  ('application', 'SampleApp', 'properties', 0, 'default app namespace');
 
 INSERT INTO `Permission` (`Id`, `PermissionType`, `TargetId`)
 VALUES
-	(1, 'CreateCluster', 'SampleApp'),
-	(2, 'CreateNamespace', 'SampleApp'),
-	(3, 'AssignRole', 'SampleApp'),
-	(4, 'ModifyNamespace', 'SampleApp+application'),
-	(5, 'ReleaseNamespace', 'SampleApp+application');
+  (1, 'CreateCluster', 'SampleApp'),
+  (2, 'CreateNamespace', 'SampleApp'),
+  (3, 'AssignRole', 'SampleApp'),
+  (4, 'ModifyNamespace', 'SampleApp+application'),
+  (5, 'ReleaseNamespace', 'SampleApp+application');
 
 INSERT INTO `Role` (`Id`, `RoleName`)
 VALUES
-	(1, 'Master+SampleApp'),
-	(2, 'ModifyNamespace+SampleApp+application'),
-	(3, 'ReleaseNamespace+SampleApp+application');
+  (1, 'Master+SampleApp'),
+  (2, 'ModifyNamespace+SampleApp+application'),
+  (3, 'ReleaseNamespace+SampleApp+application');
 
 INSERT INTO `RolePermission` (`RoleId`, `PermissionId`)
 VALUES
-	(1, 1),
-	(1, 2),
-	(1, 3),
-	(2, 4),
-	(3, 5);
+  (1, 1),
+  (1, 2),
+  (1, 3),
+  (2, 4),
+  (3, 5);
 
 INSERT INTO `UserRole` (`UserId`, `RoleId`)
 VALUES
-	('apollo', 1),
-	('apollo', 2),
-	('apollo', 3);
+  ('apollo', 1),
+  ('apollo', 2),
+  ('apollo', 3);
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
