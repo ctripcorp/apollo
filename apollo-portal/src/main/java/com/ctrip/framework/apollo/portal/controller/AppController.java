@@ -20,6 +20,8 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +58,10 @@ public class AppController {
   @Autowired
   private RolePermissionService rolePermissionService;
 
-  @RequestMapping(value = "", method = RequestMethod.GET)
+  private static Logger logger = LoggerFactory.getLogger(AppController.class);
+
+
+  @RequestMapping(value = "", method = RequestMethod.DELETE)
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
     if (StringUtils.isEmpty(appIds)) {
       return appService.findAll();
@@ -163,6 +168,12 @@ public class AppController {
 
     return response;
 
+  }
+
+  @RequestMapping(value = "/delete",method = RequestMethod.GET)
+  public ResponseEntity deleteApp(@RequestParam("appid") String appId){
+    appService.deleteByAppId(appId);
+    return ResponseEntity.ok().build();
   }
 
   private App transformToApp(AppModel appModel) {

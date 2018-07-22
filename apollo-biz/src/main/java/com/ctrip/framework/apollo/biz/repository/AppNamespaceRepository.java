@@ -24,4 +24,5 @@ public interface AppNamespaceRepository extends PagingAndSortingRepository<AppNa
 
   List<AppNamespace> findFirst500ByIdGreaterThanOrderByIdAsc(long id);
 
+
 }
