@@ -74,26 +74,22 @@ public class NamespaceService {
   @Transactional
   public void deleteNamespace(String appId, Env env, String clusterName, String namespaceName) {
 
-    //1. check private namespace
     AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
-    if (appNamespace != null && !appNamespace.isPublic()) {
-      throw new BadRequestException("Private namespace can not be deleted");
-    }
 
-    //2. check parent namespace has not instances
+    //1. check parent namespace has not instances
     if (namespaceHasInstances(appId, env, clusterName, namespaceName)) {
       throw new BadRequestException("Can not delete namespace because namespace has active instances");
     }
 
-    //3. check child namespace has not instances
+    //2. check child namespace has not instances
     NamespaceDTO childNamespace = branchService.findBranchBaseInfo(appId, env, clusterName, namespaceName);
     if (childNamespace != null &&
         namespaceHasInstances(appId, env, childNamespace.getClusterName(), namespaceName)) {
       throw new BadRequestException("Can not delete namespace because namespace's branch has active instances");
     }
 
-    //4. check public namespace has not associated namespace
-    if (appNamespace != null && publicAppNamespaceHasAssociatedNamespace(namespaceName, env)) {
+    //3. check public namespace has not associated namespace
+    if (appNamespace != null && appNamespace.isPublic() && publicAppNamespaceHasAssociatedNamespace(namespaceName, env)) {
       throw new BadRequestException("Can not delete public namespace which has associated namespaces");
     }
 

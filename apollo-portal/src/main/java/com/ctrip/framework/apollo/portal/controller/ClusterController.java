@@ -52,9 +52,14 @@ public class ClusterController {
   @RequestMapping(value = "apps/{appId}/envs/{env}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteCluster(@PathVariable String appId, @PathVariable String env,
                                             @PathVariable String clusterName){
-    clusterService.deleteCluster(Env.valueOf(env), appId, clusterName);
+    clusterService.deleteCluster(Env.fromString(env), appId, clusterName);
     return ResponseEntity.ok().build();
   }
 
+  @RequestMapping(value = "apps/{appId}/envs/{env}/clusters/{clusterName:.+}", method = RequestMethod.GET)
+  public ClusterDTO loadCluster(@PathVariable("appId") String appId, @PathVariable String env, @PathVariable("clusterName") String clusterName) {
+
+    return clusterService.loadCluster(appId, Env.fromString(env), clusterName);
+  }
 
 }
