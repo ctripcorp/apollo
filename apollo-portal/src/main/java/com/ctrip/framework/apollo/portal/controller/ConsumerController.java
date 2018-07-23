@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.core.enums.EnvUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.openapi.entity.Consumer;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
@@ -19,12 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -69,6 +65,7 @@ public class ConsumerController {
   @RequestMapping(value = "/consumers/{token}/assign-role", method = RequestMethod.POST)
   public List<ConsumerRole> assignNamespaceRoleToConsumer(@PathVariable String token,
                                                           @RequestParam String type,
+                                                          @RequestParam(required = false) String envs,
                                                           @RequestBody NamespaceDTO namespace) {
 
     String appId = namespace.getAppId();
@@ -77,14 +74,29 @@ public class ConsumerController {
     if (StringUtils.isEmpty(appId)) {
       throw new BadRequestException("Params(AppId) can not be empty.");
     }
-
     if (Objects.equals("AppRole", type)) {
       return Collections.singletonList(consumerService.assignAppRoleToConsumer(token, appId));
     } else {
       if (StringUtils.isEmpty(namespaceName)) {
         throw new BadRequestException("Params(NamespaceName) can not be empty.");
       }
-      return consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName);
+      if (null != envs){
+        String[] envList = envs.split(",");
+        // validate env parameter
+        for (String env : envList) {
+          if (null != env && !"".equals(env) && null == EnvUtils.transformEnv(env)) {
+            throw new BadRequestException(String.format("env: %s is illegal", env));
+          }
+        }
+
+        List<ConsumerRole> consumeRoles = new ArrayList<>();
+        for (String env : envList) {
+          consumeRoles.addAll(consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName, env));
+        }
+        return consumeRoles;
+      }
+
+      return consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName, null);
     }
   }
 

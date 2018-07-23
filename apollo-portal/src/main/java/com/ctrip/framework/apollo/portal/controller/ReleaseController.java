@@ -36,7 +36,7 @@ public class ReleaseController {
   @Autowired
   private PortalConfig portalConfig;
 
-  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName)")
+  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
   public ReleaseDTO createRelease(@PathVariable String appId,
                                   @PathVariable String env, @PathVariable String clusterName,
@@ -67,7 +67,7 @@ public class ReleaseController {
     return createdRelease;
   }
 
-  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName)")
+  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, null) || @permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/releases",
       method = RequestMethod.POST)
   public ReleaseDTO createGrayRelease(@PathVariable String appId,

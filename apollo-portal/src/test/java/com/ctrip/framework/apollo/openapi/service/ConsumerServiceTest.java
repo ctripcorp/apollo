@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.openapi.service;
 
+import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.openapi.entity.Consumer;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
@@ -176,14 +177,22 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     doReturn(consumerId).when(consumerService).getConsumerIdByToken(token);
 
     String testNamespace = "namespace";
-    String modifyRoleName = RoleUtils.buildModifyNamespaceRoleName(testAppId, testNamespace);
-    String releaseRoleName = RoleUtils.buildReleaseNamespaceRoleName(testAppId, testNamespace);
+    String modifyRoleName = RoleUtils.buildModifyNamespaceRoleName(testAppId, testNamespace, null);
+    String releaseRoleName = RoleUtils.buildReleaseNamespaceRoleName(testAppId, testNamespace, null);
+    String envModifyRoleName = RoleUtils.buildModifyNamespaceRoleName(testAppId, testNamespace, Env.DEV.toString());
+    String envReleaseRoleName = RoleUtils.buildReleaseNamespaceRoleName(testAppId, testNamespace, Env.DEV.toString());
     long modifyRoleId = 1;
     long releaseRoleId = 2;
+    long envModifyRoleId = 3;
+    long envReleaseRoleId = 4;
     Role modifyRole = createRole(modifyRoleId, modifyRoleName);
     Role releaseRole = createRole(releaseRoleId, releaseRoleName);
+    Role envModifyRole = createRole(envModifyRoleId, modifyRoleName);
+    Role envReleaseRole = createRole(envReleaseRoleId, releaseRoleName);
     when(rolePermissionService.findRoleByRoleName(modifyRoleName)).thenReturn(modifyRole);
     when(rolePermissionService.findRoleByRoleName(releaseRoleName)).thenReturn(releaseRole);
+    when(rolePermissionService.findRoleByRoleName(envModifyRoleName)).thenReturn(envModifyRole);
+    when(rolePermissionService.findRoleByRoleName(envReleaseRoleName)).thenReturn(envReleaseRole);
 
     when(consumerRoleRepository.findByConsumerIdAndRoleId(consumerId, modifyRoleId)).thenReturn(null);
 
@@ -191,14 +200,21 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     when(userInfoHolder.getUser()).thenReturn(owner);
 
     ConsumerRole namespaceModifyConsumerRole = createConsumerRole(consumerId, modifyRoleId);
+    ConsumerRole namespaceEnvModifyConsumerRole = createConsumerRole(consumerId, envModifyRoleId);
     ConsumerRole namespaceReleaseConsumerRole = createConsumerRole(consumerId, releaseRoleId);
+    ConsumerRole namespaceEnvReleaseConsumerRole = createConsumerRole(consumerId, envReleaseRoleId);
     doReturn(namespaceModifyConsumerRole).when(consumerService).createConsumerRole(consumerId, modifyRoleId, testOwner);
+    doReturn(namespaceEnvModifyConsumerRole).when(consumerService).createConsumerRole(consumerId, envModifyRoleId, testOwner);
     doReturn(namespaceReleaseConsumerRole).when(consumerService).createConsumerRole(consumerId, releaseRoleId, testOwner);
+    doReturn(namespaceEnvReleaseConsumerRole).when(consumerService).createConsumerRole(consumerId, envReleaseRoleId, testOwner);
 
-    consumerService.assignNamespaceRoleToConsumer(token, testAppId, testNamespace);
+    consumerService.assignNamespaceRoleToConsumer(token, testAppId, testNamespace, null);
+    consumerService.assignNamespaceRoleToConsumer(token, testAppId, testNamespace, Env.DEV.toString());
 
     verify(consumerRoleRepository).save(namespaceModifyConsumerRole);
+    verify(consumerRoleRepository).save(namespaceEnvModifyConsumerRole);
     verify(consumerRoleRepository).save(namespaceReleaseConsumerRole);
+    verify(consumerRoleRepository).save(namespaceEnvReleaseConsumerRole);
 
 
   }

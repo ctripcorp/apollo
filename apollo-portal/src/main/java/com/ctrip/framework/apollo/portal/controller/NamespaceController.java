@@ -104,6 +104,7 @@ public class NamespaceController {
     String operator = userInfoHolder.getUser().getUserId();
 
     roleInitializationService.initNamespaceRoles(appId, namespaceName, operator);
+    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, operator);
 
     for (NamespaceCreationModel model : models) {
       NamespaceDTO namespace = model.getNamespace();
@@ -207,10 +208,10 @@ public class NamespaceController {
     String operator = userInfoHolder.getUser().getUserId();
 
     rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE),
+        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE, null),
                            Sets.newHashSet(operator), operator);
     rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
+        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE, null),
                            Sets.newHashSet(operator), operator);
   }
 }

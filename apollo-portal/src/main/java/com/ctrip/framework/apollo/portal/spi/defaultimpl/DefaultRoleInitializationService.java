@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
+import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -18,7 +20,7 @@ import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -29,6 +31,8 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   private UserInfoHolder userInfoHolder;
   @Autowired
   private RolePermissionService rolePermissionService;
+  @Autowired
+  private PortalConfig portalConfig;
 
   @Transactional
   public void initAppRoles(App app) {
@@ -47,16 +51,17 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     //assign master role to user
     rolePermissionService
         .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()),
-                           operator);
+            operator);
 
     initNamespaceRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
+    initNamespaceEnvRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
 
     //assign modify、release namespace role to user
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE, null),
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE, null),
         Sets.newHashSet(operator), operator);
 
   }
@@ -64,16 +69,40 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Transactional
   public void initNamespaceRoles(String appId, String namespaceName, String operator) {
 
-    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName);
+    String modifyNamespaceRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, null);
     if (rolePermissionService.findRoleByRoleName(modifyNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE,
-                          RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName), operator);
+          modifyNamespaceRoleName, operator);
     }
 
-    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName);
+    String releaseNamespaceRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, null);
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE,
-                          RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName), operator);
+          releaseNamespaceRoleName, operator);
+    }
+  }
+
+  @Transactional
+  public void initNamespaceEnvRoles(String appId, String namespaceName, String operator) {
+    List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
+
+    for (Env env : portalEnvs) {
+      initNamespaceSpecificEnvRoles(appId, namespaceName, env.toString(), operator);
+    }
+  }
+
+  @Transactional
+  public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator) {
+    String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env);
+    if (rolePermissionService.findRoleByRoleName(modifyNamespaceEnvRoleName) == null) {
+      createNamespaceEnvRole(appId, namespaceName, PermissionType.MODIFY_NAMESPACE, env,
+          modifyNamespaceEnvRoleName, operator);
+    }
+
+    String releaseNamespaceEnvRoleName = RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env);
+    if (rolePermissionService.findRoleByRoleName(releaseNamespaceEnvRoleName) == null) {
+      createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE, env,
+          releaseNamespaceEnvRoleName, operator);
     }
   }
 
@@ -114,7 +143,18 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
                                    String roleName, String operator) {
 
     Permission permission =
-        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName), permissionType, operator);
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName, null), permissionType, operator);
+    Permission createdPermission = rolePermissionService.createPermission(permission);
+
+    Role role = createRole(roleName, operator);
+    rolePermissionService
+        .createRoleWithPermissions(role, Sets.newHashSet(createdPermission.getId()));
+  }
+
+  private void createNamespaceEnvRole(String appId, String namespaceName, String permissionType, String env,
+                                      String roleName, String operator) {
+    Permission permission =
+        createPermission(RoleUtils.buildNamespaceTargetId(appId, namespaceName, env), permissionType, operator);
     Permission createdPermission = rolePermissionService.createPermission(permission);
 
     Role role = createRole(roleName, operator);
