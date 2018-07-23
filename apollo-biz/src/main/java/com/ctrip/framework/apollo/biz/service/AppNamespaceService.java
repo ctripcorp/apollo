@@ -14,6 +14,8 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import java.util.Set;
 
 @Service
 public class AppNamespaceService {
+
+  private static final Logger logger = LoggerFactory.getLogger(AppNamespaceService.class);
 
   @Autowired
   private AppNamespaceRepository appNamespaceRepository;
@@ -136,5 +140,30 @@ public class AppNamespaceService {
 
       namespaceService.save(namespace);
     }
+  }
+
+  @Transactional
+  public void batchDelete(String appId, String operator) {
+    appNamespaceRepository.batchDeleteByAppId(appId, operator);
+  }
+
+  @Transactional
+  public void deleteAppNamespace(AppNamespace appNamespace, String operator) {
+    String appId = appNamespace.getAppId();
+    String namespaceName = appNamespace.getName();
+
+    logger.info("{} is deleting AppNamespace, appId: {}, namespace: {}", operator, appId, namespaceName);
+
+    // 1. delete namespaces
+    List<Namespace> namespaces = namespaceService.findByAppIdAndNamespaceName(appId, namespaceName);
+
+    if (namespaces != null) {
+      for (Namespace namespace : namespaces) {
+        namespaceService.deleteNamespace(namespace, operator);
+      }
+    }
+
+    // 2. delete app namespace
+    appNamespaceRepository.delete(appId, namespaceName, operator);
   }
 }

@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.util;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -206,8 +207,29 @@ public class ConfigUtil {
   }
 
   public String getDefaultLocalCacheDir() {
-    String cacheRoot = isOSWindows() ? "C:\\opt\\data\\%s" : "/opt/data/%s";
+    String cacheRoot = getCustomizedCacheRoot();
+
+    if (!Strings.isNullOrEmpty(cacheRoot)) {
+      return cacheRoot + File.separator + getAppId();
+    }
+
+    cacheRoot = isOSWindows() ? "C:\\opt\\data\\%s" : "/opt/data/%s";
     return String.format(cacheRoot, getAppId());
+  }
+
+  private String getCustomizedCacheRoot() {
+    // 1. Get from System Property
+    String cacheRoot = System.getProperty("apollo.cacheDir");
+    if (Strings.isNullOrEmpty(cacheRoot)) {
+      // 2. Get from OS environment variable
+      cacheRoot = System.getenv("APOLLO.CACHEDIR");
+    }
+    if (Strings.isNullOrEmpty(cacheRoot)) {
+      // 3. Get from server.properties
+      cacheRoot = Foundation.server().getProperty("apollo.cacheDir", null);
+    }
+
+    return cacheRoot;
   }
 
   public boolean isInLocalMode() {

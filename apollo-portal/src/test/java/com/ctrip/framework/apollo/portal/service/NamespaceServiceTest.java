@@ -111,13 +111,18 @@ public class NamespaceServiceTest extends AbstractUnitTest {
 
   }
 
-  @Test(expected = BadRequestException.class)
+  @Test
   public void testDeletePrivateNamespace() {
+    String operator = "user";
     AppNamespace privateNamespace = createAppNamespace(testAppId, testNamespaceName, false);
 
     when(appNamespaceService.findByAppIdAndName(testAppId, testNamespaceName)).thenReturn(privateNamespace);
 
+    when(userInfoHolder.getUser()).thenReturn(createUser(operator));
+
     namespaceService.deleteNamespace(testAppId, testEnv, testClusterName, testNamespaceName);
+
+    verify(namespaceAPI, times(1)).deleteNamespace(testEnv, testAppId, testClusterName, testNamespaceName, operator);
   }
 
   @Test(expected = BadRequestException.class)

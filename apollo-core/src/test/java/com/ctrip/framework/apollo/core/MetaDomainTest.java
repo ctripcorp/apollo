@@ -18,6 +18,7 @@ public class MetaDomainTest extends BaseIntegrationTest {
     System.clearProperty("fat_meta");
     System.clearProperty("uat_meta");
     System.clearProperty("lpt_meta");
+    System.clearProperty("apollo.meta");
   }
 
   @Test
@@ -28,11 +29,21 @@ public class MetaDomainTest extends BaseIntegrationTest {
   }
 
   @Test
+  public void testGetMetaDomainWithSystemProperty() throws Exception {
+    String someMeta = "some-meta";
+    Env someEnv = Env.DEV;
+
+    System.setProperty("apollo.meta", someMeta);
+
+    assertEquals(someMeta, MetaDomainConsts.getDomain(someEnv));
+  }
+
+  @Test
   public void testGetValidAddress() throws Exception {
     String someResponse = "some response";
     startServerWithHandlers(mockServerHandler(HttpServletResponse.SC_OK, someResponse));
 
-    String validServer = "http://localhost:" + PORT;
+    String validServer = " http://localhost:" + PORT + " ";
     String invalidServer = "http://localhost:" + findFreePort();
 
     System.setProperty("fat_meta", validServer + "," + invalidServer);
@@ -40,14 +51,14 @@ public class MetaDomainTest extends BaseIntegrationTest {
 
     MetaDomainConsts.initialize();
 
-    assertEquals(validServer, MetaDomainConsts.getDomain(Env.FAT));
-    assertEquals(validServer, MetaDomainConsts.getDomain(Env.UAT));
+    assertEquals(validServer.trim(), MetaDomainConsts.getDomain(Env.FAT));
+    assertEquals(validServer.trim(), MetaDomainConsts.getDomain(Env.UAT));
   }
 
   @Test
   public void testInvalidAddress() throws Exception {
-    String invalidServer = "http://localhost:" + findFreePort();
-    String anotherInvalidServer = "http://localhost:" + findFreePort();
+    String invalidServer = "http://localhost:" + findFreePort() + " ";
+    String anotherInvalidServer = "http://localhost:" + findFreePort() + " ";
 
     System.setProperty("lpt_meta", invalidServer + "," + anotherInvalidServer);
 
@@ -55,6 +66,6 @@ public class MetaDomainTest extends BaseIntegrationTest {
 
     String metaServer = MetaDomainConsts.getDomain(Env.LPT);
 
-    assertTrue(metaServer.equals(invalidServer) || metaServer.equals(anotherInvalidServer));
+    assertTrue(metaServer.equals(invalidServer.trim()) || metaServer.equals(anotherInvalidServer.trim()));
   }
 }

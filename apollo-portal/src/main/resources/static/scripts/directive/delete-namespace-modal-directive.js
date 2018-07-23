@@ -18,25 +18,20 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
                 var toDeleteNamespace = context.namespace;
                 scope.toDeleteNamespace = toDeleteNamespace;
 
-                //1. check namespace is not private
-                if (!checkNotPrivateNamespace(toDeleteNamespace)) {
-                    return;
-                }
-
-                //2. check operator has master permission
+                //1. check operator has master permission
                 checkPermission(toDeleteNamespace).then(function () {
 
-                    //3. check namespace's master branch has not instances
+                    //2. check namespace's master branch has not instances
                     if (!checkMasterInstance(toDeleteNamespace)) {
                         return;
                     }
 
-                    //4. check namespace's gray branch has not instances
+                    //3. check namespace's gray branch has not instances
                     if (!checkBranchInstance(toDeleteNamespace)) {
                         return;
                     }
 
-                    if (toDeleteNamespace.isLinkedNamespace) {
+                    if (!toDeleteNamespace.isPublic || toDeleteNamespace.isLinkedNamespace) {
                         showDeleteNamespaceConfirmDialog();
                     } else {
                         //5. check public namespace has not associated namespace
@@ -47,15 +42,6 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
                 })
 
             });
-
-            function checkNotPrivateNamespace(namespace) {
-                if (!namespace.isPublic) {
-                    toastr.error("不能删除私有的Namespace", "删除失败");
-                    return false;
-                }
-
-                return true;
-            }
 
             function checkPermission(namespace) {
                 var d = $q.defer();
@@ -153,7 +139,6 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
 
             function showDeleteNamespaceConfirmDialog() {
                 AppUtil.showModal('#deleteNamespaceModal');
-
             }
 
             function doDeleteNamespace() {

@@ -6,6 +6,8 @@ import com.ctrip.framework.apollo.core.utils.NetUtil;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
+import com.ctrip.framework.foundation.Foundation;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Collections;
@@ -33,9 +35,10 @@ public class MetaDomainConsts {
   private static final long REFRESH_INTERVAL_IN_SECOND = 60;//1 min
   private static final Logger logger = LoggerFactory.getLogger(MetaDomainConsts.class);
 
-  private static Map<Env, String> domains = new HashMap<>();
-  private static Map<String, String> metaServerAddressCache = Maps.newConcurrentMap();
-  private static AtomicBoolean periodicRefreshStarted = new AtomicBoolean(false);
+  private static final Map<Env, String> domains = new HashMap<>();
+  private static final Map<String, String> metaServerAddressCache = Maps.newConcurrentMap();
+  private static final AtomicBoolean periodicRefreshStarted = new AtomicBoolean(false);
+  private static final AtomicBoolean customizedMetaServiceLogged = new AtomicBoolean(false);
 
   static {
     initialize();
@@ -60,11 +63,38 @@ public class MetaDomainConsts {
   }
 
   public static String getDomain(Env env) {
-    String metaAddress = domains.get(env);
-    //if there is more than one address, need to select one
+    // 1. Get meta server address from run time configurations
+    String metaAddress = getCustomizedMetaServerAddress();
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      // 2. Get meta server address from environment
+      metaAddress = domains.get(env);
+    }
+    // 3. if there is more than one address, need to select one
     if (metaAddress != null && metaAddress.contains(",")) {
       return selectMetaServerAddress(metaAddress);
     }
+    // 4. trim if necessary
+    if (metaAddress != null) {
+      metaAddress = metaAddress.trim();
+    }
+    return metaAddress;
+  }
+
+  private static String getCustomizedMetaServerAddress() {
+    // 1. Get from System Property
+    String metaAddress = System.getProperty("apollo.meta");
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      // 2. Get from OS environment variable
+      metaAddress = System.getenv("APOLLO.META");
+    }
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      metaAddress = Foundation.server().getProperty("apollo.meta", null);
+    }
+
+    if (!Strings.isNullOrEmpty(metaAddress) && customizedMetaServiceLogged.compareAndSet(false, true)) {
+      logger.warn("Located meta services from apollo.meta configuration: {}, will not use meta services defined in apollo-env.properties!", metaAddress);
+    }
+
     return metaAddress;
   }
 
@@ -105,6 +135,7 @@ public class MetaDomainConsts {
       boolean serverAvailable = false;
 
       for (String address : metaServers) {
+        address = address.trim();
         if (NetUtil.pingUrl(address)) {
           //select the first available meta server
           metaServerAddressCache.put(metaServerAddresses, address);
@@ -116,7 +147,7 @@ public class MetaDomainConsts {
 
       //we need to make sure the map is not empty, e.g. the first update might be failed
       if (!metaServerAddressCache.containsKey(metaServerAddresses)) {
-        metaServerAddressCache.put(metaServerAddresses, metaServers.get(0));
+        metaServerAddressCache.put(metaServerAddresses, metaServers.get(0).trim());
       }
 
       if (!serverAvailable) {

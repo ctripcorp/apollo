@@ -288,8 +288,7 @@
                              apollo-detail="'发现有 <b>' + deleteNamespaceContext.namespace.instancesCount +
                              '</b> 个实例正在使用Namespace(' + deleteNamespaceContext.namespace.baseInfo.namespaceName +
                              ')，删除Namespace将导致实例获取不到配置。<br>
-                             请到 <ins>“实例列表”</ins> 确认实例信息，如已确认删除Namespace将不会导致实例异常，
-                             请联系Apollo相关负责人删除Namespace'"
+                             请到 <ins>“实例列表”</ins> 确认实例信息，如确认相关实例都已经不再使用该Namespace配置，可以联系Apollo相关负责人删除实例信息（InstanceConfig）或等待实例24小时自动过期后再来删除。'"
                              apollo-confirm="continueDeleteNamespace">
         </apolloconfirmdialog>
 
@@ -298,8 +297,7 @@
                              apollo-detail="'发现有 <b>' + deleteNamespaceContext.namespace.branch.latestReleaseInstances.total
                              + '</b> 个实例正在使用Namespace(' + deleteNamespaceContext.namespace.baseInfo.namespaceName +
                              ')灰度版本的配置，删除Namespace将导致实例获取不到配置。<br>
-                             请到 <ins>“灰度版本” => “实例列表”</ins> 确认实例信息，如已确认删除Namespace将不会导致实例异常，
-                             请联系Apollo相关负责人删除Namespace'"
+                             请到 <ins>“灰度版本” => “实例列表”</ins> 确认实例信息，如确认相关实例都已经不再使用该Namespace配置，可以联系Apollo相关负责人删除实例信息（InstanceConfig）或等待实例24小时自动过期后再来删除。'"
                              apollo-confirm="continueDeleteNamespace">
         </apolloconfirmdialog>
 
