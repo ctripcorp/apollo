@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import static org.slf4j.event.Level.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -49,7 +51,7 @@ public class GlobalDefaultExceptionHandler {
   @ExceptionHandler({HttpRequestMethodNotSupportedException.class, HttpMediaTypeException.class})
   public ResponseEntity<Map<String, Object>> badRequest(HttpServletRequest request,
                                                         ServletException ex) {
-    return handleError(request, BAD_REQUEST, ex);
+    return handleError(request, BAD_REQUEST, ex, WARN);
   }
 
   @ExceptionHandler(HttpStatusCodeException.class)
@@ -67,23 +69,18 @@ public class GlobalDefaultExceptionHandler {
   //处理自定义Exception
   @ExceptionHandler({AbstractApolloHttpException.class})
   public ResponseEntity<Map<String, Object>> badRequest(HttpServletRequest request, AbstractApolloHttpException ex) {
-    return handleError(request, ex);
-  }
-
-
-  private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
-                                                          AbstractApolloHttpException ex) {
     return handleError(request, ex.getHttpStatus(), ex);
   }
 
-
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
                                                           HttpStatus status, Throwable ex) {
+    return handleError(request, status, ex, ERROR);
+  }
+
+  private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
+                                                          HttpStatus status, Throwable ex, Level logLevel) {
     String message = ex.getMessage();
-
-    logger.error(message, ex);
-    Tracer.logError(ex);
-
+    printLog(message, ex, logLevel);
 
     Map<String, Object> errorAttributes = new HashMap<>();
     boolean errorHandled = false;
@@ -111,6 +108,29 @@ public class GlobalDefaultExceptionHandler {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(APPLICATION_JSON);
     return new ResponseEntity<>(errorAttributes, headers, status);
+  }
+
+  //打印日志, 其中logLevel为日志级别: ERROR/WARN/DEBUG/INFO/TRACE
+  private void printLog(String message, Throwable ex, Level logLevel) {
+    switch (logLevel) {
+      case ERROR:
+        logger.error(message, ex);
+        break;
+      case WARN:
+        logger.warn(message, ex);
+        break;
+      case DEBUG:
+        logger.debug(message, ex);
+        break;
+      case INFO:
+        logger.info(message, ex);
+        break;
+      case TRACE:
+        logger.trace(message, ex);
+        break;
+    }
+
+    Tracer.logError(ex);
   }
 
 }

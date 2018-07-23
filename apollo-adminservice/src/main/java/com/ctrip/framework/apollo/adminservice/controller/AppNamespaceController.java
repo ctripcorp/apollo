@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -46,7 +47,16 @@ public class AppNamespaceController {
     entity = appNamespaceService.createAppNamespace(entity);
 
     return BeanUtils.transfrom(AppNamespaceDTO.class, entity);
+  }
 
+  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+  public void delete(@PathVariable("appId") String appId, @PathVariable("namespaceName") String namespaceName,
+      @RequestParam String operator) {
+    AppNamespace entity = appNamespaceService.findOne(appId, namespaceName);
+    if (entity == null) {
+      throw new BadRequestException("app namespace not found for appId: " + appId + " namespace: " + namespaceName);
+    }
+    appNamespaceService.deleteAppNamespace(entity, operator);
   }
 
   @RequestMapping(value = "/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)

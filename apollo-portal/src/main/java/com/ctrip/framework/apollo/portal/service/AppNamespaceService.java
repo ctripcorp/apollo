@@ -27,6 +27,8 @@ public class AppNamespaceService {
   private RoleInitializationService roleInitializationService;
   @Autowired
   private AppService appService;
+  @Autowired
+  private RolePermissionService rolePermissionService;
 
   /**
    * 公共的app ns,能被其它项目关联到的app ns
@@ -118,4 +120,29 @@ public class AppNamespaceService {
     return createdAppNamespace;
   }
 
+  @Transactional
+  public AppNamespace deleteAppNamespace(String appId, String namespaceName) {
+    AppNamespace appNamespace = appNamespaceRepository.findByAppIdAndName(appId, namespaceName);
+    if (appNamespace == null) {
+      throw new BadRequestException(
+          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
+    }
+
+    String operator = userInfoHolder.getUser().getUserId();
+
+    // this operator is passed to com.ctrip.framework.apollo.portal.listener.DeletionListener.onAppNamespaceDeletionEvent
+    appNamespace.setDataChangeLastModifiedBy(operator);
+
+    // delete app namespace in portal db
+    appNamespaceRepository.delete(appId, namespaceName, operator);
+
+    // delete Permission and Role related data
+    rolePermissionService.deleteRolePermissionsByAppIdAndNamespace(appId, namespaceName, operator);
+
+    return appNamespace;
+  }
+
+  public void batchDeleteByAppId(String appId, String operator) {
+    appNamespaceRepository.batchDeleteByAppId(appId, operator);
+  }
 }

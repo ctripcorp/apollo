@@ -1,5 +1,8 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
+import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.portal.listener.AppNamespaceDeletionEvent;
 import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
@@ -130,6 +133,29 @@ public class NamespaceController {
     namespaceService.deleteNamespace(appId, Env.valueOf(env), clusterName, namespaceName);
 
     return ResponseEntity.ok().build();
+  }
+
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
+
+    AppNamespace appNamespace = appNamespaceService.deleteAppNamespace(appId, namespaceName);
+
+    publisher.publishEvent(new AppNamespaceDeletionEvent(appNamespace));
+
+    return ResponseEntity.ok().build();
+  }
+
+  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
+  public AppNamespaceDTO findAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
+    AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
+
+    if (appNamespace == null) {
+      throw new BadRequestException(
+          String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
+    }
+
+    return BeanUtils.transfrom(AppNamespaceDTO.class, appNamespace);
   }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")

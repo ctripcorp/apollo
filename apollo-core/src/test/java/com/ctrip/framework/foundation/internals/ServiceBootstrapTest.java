@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.foundation.internals;
+package com.ctrip.framework.foundation.internals;
 
 import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 import org.junit.Test;

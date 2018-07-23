@@ -21,9 +21,9 @@
 		<fileSet>
 			<directory>src/main/config</directory>
 			<outputDirectory>config</outputDirectory>
-			<excludes>
-				<exclude>apollo-portal.conf</exclude>
-			</excludes>
+			<includes>
+				<include>app.properties</include>
+			</includes>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 		<fileSet>
@@ -33,6 +33,14 @@
 				<include>apollo-portal.conf</include>
 			</includes>
 			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>target/classes</directory>
+			<outputDirectory>/config</outputDirectory>
+			<includes>
+				<include>application-github.properties</include>
+				<include>apollo-env.properties</include>
+			</includes>
 		</fileSet>
 		<!--artifact -->
 		<fileSet>

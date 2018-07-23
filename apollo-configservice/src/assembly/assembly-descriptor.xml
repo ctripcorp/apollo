@@ -23,6 +23,7 @@
 			<outputDirectory>config</outputDirectory>
 			<excludes>
 				<exclude>apollo-configservice.conf</exclude>
+				<exclude>application-github.properties</exclude>
 			</excludes>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
@@ -33,6 +34,13 @@
 				<include>apollo-configservice.conf</include>
 			</includes>
 			<lineEnding>unix</lineEnding>
+		</fileSet>
+		<fileSet>
+			<directory>target/classes</directory>
+			<outputDirectory>/config</outputDirectory>
+			<includes>
+				<include>application-github.properties</include>
+			</includes>
 		</fileSet>
 		<!--artifact -->
 		<fileSet>

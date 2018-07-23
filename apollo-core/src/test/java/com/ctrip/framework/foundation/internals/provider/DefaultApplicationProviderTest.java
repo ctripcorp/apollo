@@ -1,4 +1,4 @@
-package com.ctrip.framework.apollo.foundation.internals.provider;
+package com.ctrip.framework.foundation.internals.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
