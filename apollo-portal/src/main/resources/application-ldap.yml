@@ -1,0 +1,7 @@
+spring:
+  ldap:
+    urls: ${spring.ldap.urls}
+    base: ${spring.ldap.base}
+    username: ${spring.ldap.username}
+    password: ${spring.ldap.password}
+    pooled: 1

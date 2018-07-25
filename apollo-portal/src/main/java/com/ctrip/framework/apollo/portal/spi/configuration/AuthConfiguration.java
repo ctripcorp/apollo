@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.repository.UserRepository;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
@@ -16,6 +17,7 @@ import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultSsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
+import com.ctrip.framework.apollo.portal.spi.ldap.LdapAuthoritiesPopulator;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
 
@@ -28,7 +30,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.ldap.LdapAuthenticationProviderConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -188,7 +192,7 @@ public class AuthConfiguration {
    * spring.profiles.active = auth
    */
   @Configuration
-  @Profile("auth")
+  @Profile({"auth", "ldap"})
   static class SpringSecurityAuthAutoConfiguration {
 
     @Bean
@@ -257,11 +261,38 @@ public class AuthConfiguration {
 
   }
 
+  @Order(99)
+  @Profile("ldap")
+  @Configuration
+  @EnableWebSecurity
+  @EnableGlobalMethodSecurity(prePostEnabled = true)
+  static class LdapSecurityConfigurer extends SpringSecurityConfigurer {
+
+    @Autowired
+    private LdapContextSource contextSource;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+      LdapAuthenticationProviderConfigurer<AuthenticationManagerBuilder> authProvider = auth.ldapAuthentication();
+
+      authProvider.userSearchFilter("(uid={0})")
+          .contextSource(contextSource)
+          .passwordCompare()
+          .passwordAttribute("userPassword");
+
+      authProvider.ldapAuthoritiesPopulator(new LdapAuthoritiesPopulator(contextSource, userRepository));
+    }
+
+  }
+
   /**
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth"})
+  @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
   static class DefaultAuthAutoConfiguration {
 
     @Bean
@@ -289,7 +320,7 @@ public class AuthConfiguration {
     }
   }
 
-  @ConditionalOnMissingProfile("auth")
+  @ConditionalOnMissingProfile({"auth", "ldap"})
   @Configuration
   @EnableWebSecurity
   @EnableGlobalMethodSecurity(prePostEnabled = true)
