@@ -1,18 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -28,11 +15,19 @@ import com.ctrip.framework.apollo.util.function.Functions;
 import com.ctrip.framework.apollo.util.parser.Parsers;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -54,6 +49,14 @@ public abstract class AbstractConfig implements Config {
   private volatile Cache<String, Date> m_dateCache;
   private volatile Cache<String, Long> m_durationCache;
   private Map<String, Cache<String, String[]>> m_arrayCache;
+  private Map<String, Cache<String, List<String>>> m_stringListCache;
+  private Map<String, Cache<String, List<Integer>>> m_integerListCache;
+  private Map<String, Cache<String, List<Long>>> m_longListCache;
+  private Map<String, Cache<String, List<Short>>> m_shortListCache;
+  private Map<String, Cache<String, List<Byte>>> m_byteListCache;
+  private Map<String, Cache<String, List<Float>>> m_floatListCache;
+  private Map<String, Cache<String, List<Boolean>>> m_booleanListCache;
+  private Map<String, Cache<String, List<Double>>> m_doubleListCache;
   private List<Cache> allCaches;
   private AtomicLong m_configVersion; //indicate config version
 
@@ -335,6 +338,278 @@ public abstract class AbstractConfig implements Config {
       Tracer.logError(new ApolloConfigException(
           String.format("getDurationProperty for %s failed, return default value %d", key,
               defaultValue), ex));
+    }
+
+    return defaultValue;
+  }
+
+  @Override
+  public List<String> getStringListProperty(String key, final String delimiter, List<String> defaultValue) {
+    try {
+      if (!m_stringListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_stringListCache.containsKey(delimiter)) {
+            m_stringListCache.put(delimiter, this.<List<String>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<String>> cache = m_stringListCache.get(delimiter);
+      List<String> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<String>>() {
+        @Override
+        public List<String> apply(String input) {
+          return Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getStringListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Integer> getIntegerListProperty(String key, final String delimiter, List<Integer> defaultValue) {
+    try {
+      if (!m_integerListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_integerListCache.containsKey(delimiter)) {
+            m_integerListCache.put(delimiter, this.<List<Integer>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Integer>> cache = m_integerListCache.get(delimiter);
+      List<Integer> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Integer>>() {
+        @Override
+        public List<Integer> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_INT_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getIntegerListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Long> getLongListProperty(String key, final String delimiter, List<Long> defaultValue) {
+    try {
+      if (!m_longListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_longListCache.containsKey(delimiter)) {
+            m_longListCache.put(delimiter, this.<List<Long>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Long>> cache = m_longListCache.get(delimiter);
+      List<Long> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Long>>() {
+        @Override
+        public List<Long> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_LONG_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getLongListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Double> getDoubleListProperty(String key, final String delimiter, List<Double> defaultValue) {
+    try {
+      if (!m_doubleListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_doubleListCache.containsKey(delimiter)) {
+            m_doubleListCache.put(delimiter, this.<List<Double>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Double>> cache = m_doubleListCache.get(delimiter);
+      List<Double> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Double>>() {
+        @Override
+        public List<Double> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_DOUBLE_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getDoubleListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Float> getFloatListProperty(String key, final String delimiter, List<Float> defaultValue) {
+    try {
+      if (!m_floatListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_floatListCache.containsKey(delimiter)) {
+            m_floatListCache.put(delimiter, this.<List<Float>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Float>> cache = m_floatListCache.get(delimiter);
+      List<Float> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Float>>() {
+        @Override
+        public List<Float> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_FLOAT_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getFloatListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Boolean> getBooleanListProperty(String key, final String delimiter, List<Boolean> defaultValue) {
+    try {
+      if (!m_booleanListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_booleanListCache.containsKey(delimiter)) {
+            m_booleanListCache.put(delimiter, this.<List<Boolean>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Boolean>> cache = m_booleanListCache.get(delimiter);
+      List<Boolean> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Boolean>>() {
+        @Override
+        public List<Boolean> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_BOOLEAN_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getBooleanListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Byte> getByteListProperty(String key, final String delimiter, List<Byte> defaultValue) {
+    try {
+      if (!m_byteListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_byteListCache.containsKey(delimiter)) {
+            m_byteListCache.put(delimiter, this.<List<Byte>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Byte>> cache = m_byteListCache.get(delimiter);
+      List<Byte> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Byte>>() {
+        @Override
+        public List<Byte> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_BYTE_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getByteListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public List<Short> getShortListProperty(String key, final String delimiter, List<Short> defaultValue) {
+    try {
+      if (!m_shortListCache.containsKey(delimiter)) {
+        synchronized (this) {
+          if (!m_shortListCache.containsKey(delimiter)) {
+            m_shortListCache.put(delimiter, this.<List<Short>>newCache());
+          }
+        }
+      }
+
+      Cache<String, List<Short>> cache = m_shortListCache.get(delimiter);
+      List<Short> result = cache.getIfPresent(key);
+
+      if (result != null) {
+        return result;
+      }
+
+      return getValueAndStoreToCache(key, new Function<String, List<Short>>() {
+        @Override
+        public List<Short> apply(String input) {
+          return Lists.transform(Splitter.on(delimiter).trimResults().omitEmptyStrings().splitToList(input),
+                  Functions.TO_SHORT_FUNCTION);
+        }
+      }, cache, defaultValue);
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getShortListProperty for %s failed, return default value", key), ex));
+    }
+    return defaultValue;
+  }
+
+  @Override
+  public <T> T getProperty(String key, Function<String, T> function, T defaultValue) {
+    try {
+      String value = getProperty(key, null);
+
+      if (value != null) {
+        return function.apply(value);
+      }
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getProperty for %s failed, return default value %s", key,
+                      defaultValue), ex));
     }
 
     return defaultValue;
