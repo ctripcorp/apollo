@@ -55,7 +55,7 @@ public class DefaultConfigManager implements ConfigManager {
         if (configFile == null) {
           ConfigFactory factory = m_factoryManager.getFactory(namespaceFileName);
 
-          configFile = factory.createConfigFile(namespaceFileName, configFileFormat);
+          configFile = factory.createConfigFile(namespace, configFileFormat);
           m_configFiles.put(namespaceFileName, configFile);
         }
       }
