@@ -72,10 +72,18 @@ public abstract class AbstractConfig implements Config {
   }
 
   public AbstractConfig() {
-      m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-      m_configVersion = new AtomicLong();
-      m_arrayCache = Maps.newConcurrentMap();
-      allCaches = Lists.newArrayList();
+    m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+    m_configVersion = new AtomicLong();
+    m_arrayCache = Maps.newConcurrentMap();
+    m_stringListCache = Maps.newConcurrentMap();
+    m_integerListCache = Maps.newConcurrentMap();
+    m_longListCache = Maps.newConcurrentMap();
+    m_shortListCache = Maps.newConcurrentMap();
+    m_byteListCache = Maps.newConcurrentMap();
+    m_floatListCache = Maps.newConcurrentMap();
+    m_booleanListCache = Maps.newConcurrentMap();
+    m_doubleListCache = Maps.newConcurrentMap();
+    allCaches = Lists.newArrayList();
   }
 
   @Override
