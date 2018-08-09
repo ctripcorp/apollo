@@ -325,49 +325,50 @@ public class AuthConfiguration {
                     .passwordEncoder(new LdapShaPasswordEncoder())
                     .passwordAttribute("userPassword");
         }
+    }
 
-        /**
-         * default profile
-         */
-        @Configuration
-        @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
-        static class DefaultAuthAutoConfiguration {
+    /**
+     * default profile
+     */
+    @Configuration
+    @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
+    static class DefaultAuthAutoConfiguration {
 
-            @Bean
-            @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
-            public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
-                return new DefaultSsoHeartbeatHandler();
-            }
-
-            @Bean
-            @ConditionalOnMissingBean(UserInfoHolder.class)
-            public DefaultUserInfoHolder defaultUserInfoHolder() {
-                return new DefaultUserInfoHolder();
-            }
-
-            @Bean
-            @ConditionalOnMissingBean(LogoutHandler.class)
-            public DefaultLogoutHandler logoutHandler() {
-                return new DefaultLogoutHandler();
-            }
-
-            @Bean
-            @ConditionalOnMissingBean(UserService.class)
-            public UserService defaultUserService() {
-                return new DefaultUserService();
-            }
+        @Bean
+        @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
+        public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
+            return new DefaultSsoHeartbeatHandler();
         }
 
-        @ConditionalOnMissingProfile("auth")
-        @Configuration
-        @EnableWebSecurity
-        @EnableGlobalMethodSecurity(prePostEnabled = true)
-        static class DefaultWebSecurityConfig extends WebSecurityConfigurerAdapter {
+        @Bean
+        @ConditionalOnMissingBean(UserInfoHolder.class)
+        public DefaultUserInfoHolder defaultUserInfoHolder() {
+            return new DefaultUserInfoHolder();
+        }
 
-            @Override
-            protected void configure(HttpSecurity http) throws Exception {
-                http.csrf().disable();
-                http.headers().frameOptions().sameOrigin();
-            }
+        @Bean
+        @ConditionalOnMissingBean(LogoutHandler.class)
+        public DefaultLogoutHandler logoutHandler() {
+            return new DefaultLogoutHandler();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(UserService.class)
+        public UserService defaultUserService() {
+            return new DefaultUserService();
         }
     }
+
+    @ConditionalOnMissingProfile("auth")
+    @Configuration
+    @EnableWebSecurity
+    @EnableGlobalMethodSecurity(prePostEnabled = true)
+    static class DefaultWebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.csrf().disable();
+            http.headers().frameOptions().sameOrigin();
+        }
+    }
+}
