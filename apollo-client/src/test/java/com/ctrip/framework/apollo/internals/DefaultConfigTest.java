@@ -13,8 +13,12 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -678,6 +682,36 @@ public class DefaultConfigTest {
 
     Set<String> propertyNames = defaultConfig.getPropertyNames();
     assertEquals(Collections.emptySet(), propertyNames);
+  }
+
+  @Test
+  public void testGetPropertyWithFunction() throws Exception {
+
+    String someKey = "someKey";
+    String someValue = "a,b,c";
+
+    String someNullKey = "someNullKey";
+
+    //set up config repo
+    someProperties = new Properties();
+    someProperties.setProperty(someKey, someValue);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+
+    DefaultConfig defaultConfig =
+            new DefaultConfig(someNamespace, configRepository);
+
+    assertEquals(defaultConfig.getProperty(someKey, new Function<String, List<String>>() {
+      @Override
+      public List<String> apply(String s) {
+        return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s);
+      }
+    }, Lists.<String>newArrayList()), Lists.newArrayList("a", "b", "c"));
+    assertEquals(defaultConfig.getProperty(someNullKey, new Function<String, List<String>>() {
+      @Override
+      public List<String> apply(String s) {
+        return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s);
+      }
+    }, Lists.<String>newArrayList()), Lists.newArrayList());
   }
 
   private void checkDatePropertyWithFormat(Config config, Date expected, String propertyName, String format, Date
