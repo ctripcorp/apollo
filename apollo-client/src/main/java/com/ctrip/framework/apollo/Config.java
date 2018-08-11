@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo;
 import com.google.common.base.Function;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -177,86 +176,6 @@ public interface Config {
    * @return the property names
    */
   public Set<String> getPropertyNames();
-
-  /**
-   * Return the string-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<String> getStringListProperty(String key, String delimiter, List<String> defaultValue);
-
-  /**
-   * Return the integer-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Integer> getIntegerListProperty(String key, String delimiter, List<Integer> defaultValue);
-
-  /**
-   * Return the long-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Long> getLongListProperty(String key, String delimiter, List<Long> defaultValue);
-
-  /**
-   * Return the double-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Double> getDoubleListProperty(String key, String delimiter, List<Double> defaultValue);
-
-  /**
-   * Return the float-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Float> getFloatListProperty(String key, String delimiter, List<Float> defaultValue);
-
-  /**
-   * Return the boolean-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Boolean> getBooleanListProperty(String key, String delimiter, List<Boolean> defaultValue);
-
-  /**
-   * Return the byte-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Byte> getByteListProperty(String key, String delimiter, List<Byte> defaultValue);
-
-  /**
-   * Return the short-list property value with the given key, or {@code defaultValue} if the key doesn't exist.
-   *
-   * @param key          the property name
-   * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
-   */
-  public List<Short> getShortListProperty(String key, String delimiter, List<Short> defaultValue);
 
   /**
    * Return the user-defined property value with the given key, or {@code defaultValue} if the key doesn't exist.
