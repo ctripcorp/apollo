@@ -2,19 +2,27 @@ package com.ctrip.framework.apollo.internals;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -648,6 +656,56 @@ public class DefaultConfigTest {
   }
 
   @Test
+  public void testFireConfigChangeWithInterestedKeys() throws Exception {
+    String someKeyChanged = "someKeyChanged";
+    String anotherKeyChanged = "anotherKeyChanged";
+    String someKeyNotChanged = "someKeyNotChanged";
+    String someNamespace = "someNamespace";
+    Map<String, ConfigChange> changes = Maps.newHashMap();
+    changes.put(someKeyChanged, mock(ConfigChange.class));
+    changes.put(anotherKeyChanged, mock(ConfigChange.class));
+    ConfigChangeEvent someChangeEvent = new ConfigChangeEvent(someNamespace, changes);
+
+    final SettableFuture<ConfigChangeEvent> interestedInAllKeysFuture = SettableFuture.create();
+    ConfigChangeListener interestedInAllKeys = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        interestedInAllKeysFuture.set(changeEvent);
+      }
+    };
+
+    final SettableFuture<ConfigChangeEvent> interestedInSomeKeyFuture = SettableFuture.create();
+    ConfigChangeListener interestedInSomeKey = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        interestedInSomeKeyFuture.set(changeEvent);
+      }
+    };
+
+    final SettableFuture<ConfigChangeEvent> interestedInSomeKeyNotChangedFuture = SettableFuture.create();
+    ConfigChangeListener interestedInSomeKeyNotChanged = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        interestedInSomeKeyNotChangedFuture.set(changeEvent);
+      }
+    };
+
+    DefaultConfig config = new DefaultConfig(someNamespace, mock(ConfigRepository.class));
+
+    config.addChangeListener(interestedInAllKeys);
+    config.addChangeListener(interestedInSomeKey, Sets.newHashSet(someKeyChanged));
+    config.addChangeListener(interestedInSomeKeyNotChanged, Sets.newHashSet(someKeyNotChanged));
+
+    config.fireConfigChange(someChangeEvent);
+
+    ConfigChangeEvent changeEvent = interestedInAllKeysFuture.get(500, TimeUnit.MILLISECONDS);
+
+    assertEquals(someChangeEvent, changeEvent);
+    assertEquals(someChangeEvent, interestedInSomeKeyFuture.get(500, TimeUnit.MILLISECONDS));
+    assertFalse(interestedInSomeKeyNotChangedFuture.isDone());
+  }
+
+  @Test
   public void testGetPropertyNames() {
     String someKeyPrefix = "someKey";
     String someValuePrefix = "someValue";
@@ -678,6 +736,36 @@ public class DefaultConfigTest {
 
     Set<String> propertyNames = defaultConfig.getPropertyNames();
     assertEquals(Collections.emptySet(), propertyNames);
+  }
+
+  @Test
+  public void testGetPropertyWithFunction() throws Exception {
+
+    String someKey = "someKey";
+    String someValue = "a,b,c";
+
+    String someNullKey = "someNullKey";
+
+    //set up config repo
+    someProperties = new Properties();
+    someProperties.setProperty(someKey, someValue);
+    when(configRepository.getConfig()).thenReturn(someProperties);
+
+    DefaultConfig defaultConfig =
+            new DefaultConfig(someNamespace, configRepository);
+
+    assertEquals(defaultConfig.getProperty(someKey, new Function<String, List<String>>() {
+      @Override
+      public List<String> apply(String s) {
+        return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s);
+      }
+    }, Lists.<String>newArrayList()), Lists.newArrayList("a", "b", "c"));
+    assertEquals(defaultConfig.getProperty(someNullKey, new Function<String, List<String>>() {
+      @Override
+      public List<String> apply(String s) {
+        return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s);
+      }
+    }, Lists.<String>newArrayList()), Lists.newArrayList());
   }
 
   private void checkDatePropertyWithFormat(Config config, Date expected, String propertyName, String format, Date

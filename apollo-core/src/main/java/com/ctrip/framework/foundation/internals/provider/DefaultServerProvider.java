@@ -37,7 +37,6 @@ public class DefaultServerProvider implements ServerProvider {
         return;
       }
 
-      logger.warn("{} does not exist or is not readable.", path);
       initialize(null);
     } catch (Throwable ex) {
       logger.error("Initialize DefaultServerProvider failed.", ex);
@@ -128,7 +127,7 @@ public class DefaultServerProvider implements ServerProvider {
 
     // 4. Set environment to null.
     m_env = null;
-    logger.warn("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
+    logger.info("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
   }
 
   private void initDataCenter() {

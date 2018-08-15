@@ -13,8 +13,14 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
  *
  * <p>Usage example:</p>
  * <pre class="code">
- * //Listener on namespaces of "someNamespace" and "anotherNamespace"
+ * //Listener on namespaces of "someNamespace" and "anotherNamespace", will be notified when any key is changed
  * &#064;ApolloConfigChangeListener({"someNamespace","anotherNamespace"})
+ * private void onChange(ConfigChangeEvent changeEvent) {
+ *     //handle change event
+ * }
+ * <br />
+ * //Listener on namespaces of "someNamespace" and "anotherNamespace", will only be notified when "someKey" or "anotherKey" is changed
+ * &#064;ApolloConfigChangeListener(value = {"someNamespace","anotherNamespace"}, interestedKeys = {"someKey", "anotherKey"})
  * private void onChange(ConfigChangeEvent changeEvent) {
  *     //handle change event
  * }
@@ -30,4 +36,11 @@ public @interface ApolloConfigChangeListener {
    * Apollo namespace for the config, if not specified then default to application
    */
   String[] value() default {ConfigConsts.NAMESPACE_APPLICATION};
+
+  /**
+   * The keys interested by the listener, will only be notified if any of the interested keys is changed.
+   * <br />
+   * If not specified then will be notified when any key is changed.
+   */
+  String[] interestedKeys() default {};
 }

@@ -98,7 +98,7 @@ public class PermissionController {
   public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
 
     // validate env parameter
-    if (null == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
       throw new BadRequestException("env is illegal");
     }
 
@@ -130,7 +130,7 @@ public class PermissionController {
     }
 
     // validate env parameter
-    if (null == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
       throw new BadRequestException("env is illegal");
     }
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
@@ -152,7 +152,7 @@ public class PermissionController {
       throw new BadRequestException("role type is illegal");
     }
     // validate env parameter
-    if (null == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
       throw new BadRequestException("env is illegal");
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),

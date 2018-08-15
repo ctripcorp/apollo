@@ -1,14 +1,16 @@
-Apollo（配置中心）
+![apollo-logo](apollo-portal/src/main/resources/static/img/logo-detail.png)
 ================
 
 [![Build Status](https://travis-ci.org/ctripcorp/apollo.svg?branch=master)](https://travis-ci.org/ctripcorp/apollo)
 [![GitHub release](https://img.shields.io/github/release/ctripcorp/apollo.svg)](https://github.com/ctripcorp/apollo/releases)
+[![Maven Central Repo](https://img.shields.io/maven-central/v/com.ctrip.framework.apollo/apollo.svg)](https://mvnrepository.com/artifact/com.ctrip.framework.apollo/apollo-client)
 [![Coverage Status](https://coveralls.io/repos/github/ctripcorp/apollo/badge.svg?branch=master)](https://coveralls.io/github/ctripcorp/apollo?branch=master)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 <a href="https://scan.coverity.com/projects/ctripcorp-apollo">
   <img alt="Coverity Scan Build Status" src="https://img.shields.io/coverity/scan/8244.svg"/>
 </a>
 [![codecov.io](https://codecov.io/github/ctripcorp/apollo/coverage.svg?branch=master)](https://codecov.io/github/ctripcorp/apollo?branch=master)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 
 Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。
 
@@ -199,3 +201,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![河姆渡](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/homedo.png) 
 ![新网银行](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/xwbank.png) 
 ![中旅安信云贷](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/ctspcl.png) 
+![美柚](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/meiyou.png) 
+![震坤行](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/zkh-logo.png) 
+![万谷盛世](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/wgss.png) 
+![铂涛旅行](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/plateno.png) 

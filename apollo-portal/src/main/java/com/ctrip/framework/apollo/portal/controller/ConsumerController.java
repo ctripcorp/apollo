@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.enums.EnvUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.openapi.entity.Consumer;
@@ -90,7 +91,7 @@ public class ConsumerController {
           if (Strings.isNullOrEmpty(env)) {
             continue;
           }
-          if (null == EnvUtils.transformEnv(env)) {
+          if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
             throw new BadRequestException(String.format("env: %s is illegal", env));
           }
           envList.add(env);

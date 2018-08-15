@@ -131,6 +131,12 @@ public class AppNamespaceService {
     List<Cluster> clusters = clusterService.findParentClusters(appId);
 
     for (Cluster cluster : clusters) {
+
+      // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
+      if (!namespaceService.isNamespaceUnique(appId, cluster.getName(), namespaceName)) {
+        continue;
+      }
+
       Namespace namespace = new Namespace();
       namespace.setClusterName(cluster.getName());
       namespace.setAppId(appId);

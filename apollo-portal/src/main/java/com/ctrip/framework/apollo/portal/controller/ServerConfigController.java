@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,8 +50,12 @@ public class ServerConfigController {
       storedConfig.setDataChangeLastModifiedBy(modifiedBy);
       return serverConfigRepository.save(storedConfig);
     }
-
   }
 
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+  @RequestMapping(value = "/server/config/{key:.+}", method = RequestMethod.GET)
+  public ServerConfig loadServerConfig(@PathVariable String key) {
+    return serverConfigRepository.findByKey(key);
+  }
 
 }

@@ -5,11 +5,11 @@
 
 	<groupId>com.ctrip.framework.apollo</groupId>
 	<artifactId>apollo</artifactId>
-	<version>0.11.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>Apollo</name>
 	<packaging>pom</packaging>
 	<description>Ctrip Configuration Center</description>
-	<url>https://ctripcorp.github.io/apollo</url>
+	<url>https://github.com/ctripcorp/apollo</url>
 
 	<organization>
 		<name>Ctrip, Inc.</name>
@@ -85,6 +85,8 @@
 		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<!-- for travis usage -->
 		<github.global.server>github</github.global.server>
 		<github.global.oauth2Token>${env.GITHUB_OAUTH_TOKEN}</github.global.oauth2Token>
@@ -348,6 +350,30 @@
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>${maven-jar-plugin.version}</version>
 				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven-javadoc-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>attach-javadoc</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<doclint>none</doclint>
+							</configuration>
+						</execution>
+					</executions>
+					<configuration>
+						<show>public</show>
+						<charset>UTF-8</charset>
+						<encoding>UTF-8</encoding>
+						<docencoding>UTF-8</docencoding>
+						<links>
+							<link>http://docs.oracle.com/javase/7/docs/api</link>
+						</links>
+					</configuration>
+				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -366,6 +392,20 @@
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>${maven-deploy-plugin.version}</version>
 				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>${maven-gpg-plugin.version}</version>
+					<executions>
+						<execution>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
@@ -377,29 +417,6 @@
 							</goals>
 						</execution>
 					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.17</version>
-					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>6.18</version>
-						</dependency>
-						<dependency>
-							<groupId>com.ctrip.framework.apollo</groupId>
-							<artifactId>apollo-buildtools</artifactId>
-							<version>${project.version}</version>
-						</dependency>
-					</dependencies>
-					<configuration>
-						<configLocation>google_checks.xml</configLocation>
-						<headerLocation>LICENSE-2.0.txt</headerLocation>
-						<failOnViolation>false</failOnViolation>
-						<consoleOutput>true</consoleOutput>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -461,10 +478,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -531,7 +544,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>application-github.properties</include>
-					<include>apollo-env.properties</include>
 				</includes>
 			</resource>
 			<resource>
@@ -539,7 +551,6 @@
 				<filtering>false</filtering>
 				<excludes>
 					<exclude>application-github.properties</exclude>
-					<exclude>apollo-env.properties</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -814,6 +825,21 @@
 					<artifactId>ctrip-dal-client</artifactId>
 				</dependency>
 			</dependencies>
+		</profile>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 

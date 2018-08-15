@@ -10,7 +10,6 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
 
@@ -98,19 +97,10 @@ public class ConfigUtil {
   /**
    * Get the current environment.
    *
-   * @return the env
-   * @throws ApolloConfigException if env is set
+   * @return the env, UNKNOWN if env is not set or invalid
    */
   public Env getApolloEnv() {
-    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    if (env == null) {
-      String path = isOSWindows() ? "C:\\opt\\settings\\server.properties" :
-          "/opt/settings/server.properties";
-      String message = String.format("env is not set, please make sure it is set in %s!", path);
-      logger.error(message);
-      throw new ApolloConfigException(message);
-    }
-    return env;
+    return EnvUtils.transformEnv(Foundation.server().getEnvType());
   }
 
   public String getLocalIp() {
@@ -234,8 +224,7 @@ public class ConfigUtil {
 
   public boolean isInLocalMode() {
     try {
-      Env env = getApolloEnv();
-      return env == Env.LOCAL;
+      return Env.LOCAL == getApolloEnv();
     } catch (Throwable ex) {
       //ignore
     }

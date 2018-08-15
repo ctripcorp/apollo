@@ -1,101 +1,120 @@
 package com.ctrip.framework.apollo.core;
 
 import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
-import com.ctrip.framework.apollo.core.utils.NetUtil;
-import com.ctrip.framework.apollo.core.utils.ResourceUtils;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.foundation.Foundation;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
+import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
+import com.ctrip.framework.apollo.core.utils.NetUtil;
+import com.ctrip.framework.apollo.tracer.Tracer;
+import com.ctrip.framework.apollo.tracer.spi.Transaction;
+import com.ctrip.framework.foundation.internals.ServiceBootstrap;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 /**
- * The meta domain will load the meta server from System environment first, if not exist, will load from
- * apollo-env.properties. If neither exists, will load the default meta url.
+ * The meta domain will try to load the meta server address from MetaServerProviders, the default ones are:
  *
- * Currently, apollo supports local/dev/fat/uat/lpt/pro environments.
+ * <ul>
+ * <li>com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider</li>
+ * </ul>
+ *
+ * If no provider could provide the meta server url, the default meta url will be used(http://apollo.meta).
+ * <br />
+ *
+ * 3rd party MetaServerProvider could be injected by typical Java Service Loader pattern.
+ *
+ * @see com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider
  */
 public class MetaDomainConsts {
+  public static final String DEFAULT_META_URL = "http://apollo.meta";
 
-  public static final String DEFAULT_META_URL = "http://config.local";
+  // env -> meta server address cache
+  private static final Map<Env, String> metaServerAddressCache = Maps.newConcurrentMap();
+  private static volatile List<MetaServerProvider> metaServerProviders = null;
 
-  private static final long REFRESH_INTERVAL_IN_SECOND = 60;//1 min
+  private static final long REFRESH_INTERVAL_IN_SECOND = 60;// 1 min
   private static final Logger logger = LoggerFactory.getLogger(MetaDomainConsts.class);
-
-  private static final Map<Env, String> domains = new HashMap<>();
-  private static final Map<String, String> metaServerAddressCache = Maps.newConcurrentMap();
+  // comma separated meta server address -> selected single meta server address cache
+  private static final Map<String, String> selectedMetaServerAddressCache = Maps.newConcurrentMap();
   private static final AtomicBoolean periodicRefreshStarted = new AtomicBoolean(false);
-  private static final AtomicBoolean customizedMetaServiceLogged = new AtomicBoolean(false);
 
-  static {
-    initialize();
-  }
-
-  static void initialize() {
-    Properties prop = new Properties();
-    prop = ResourceUtils.readConfigFile("apollo-env.properties", prop);
-    Properties env = System.getProperties();
-    domains.put(Env.LOCAL,
-        env.getProperty("local_meta", prop.getProperty("local.meta", DEFAULT_META_URL)));
-    domains.put(Env.DEV,
-        env.getProperty("dev_meta", prop.getProperty("dev.meta", DEFAULT_META_URL)));
-    domains.put(Env.FAT,
-        env.getProperty("fat_meta", prop.getProperty("fat.meta", DEFAULT_META_URL)));
-    domains.put(Env.UAT,
-        env.getProperty("uat_meta", prop.getProperty("uat.meta", DEFAULT_META_URL)));
-    domains.put(Env.LPT,
-        env.getProperty("lpt_meta", prop.getProperty("lpt.meta", DEFAULT_META_URL)));
-    domains.put(Env.PRO,
-        env.getProperty("pro_meta", prop.getProperty("pro.meta", DEFAULT_META_URL)));
-  }
+  private static final Object LOCK = new Object();
 
   public static String getDomain(Env env) {
-    // 1. Get meta server address from run time configurations
-    String metaAddress = getCustomizedMetaServerAddress();
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      // 2. Get meta server address from environment
-      metaAddress = domains.get(env);
+    String metaServerAddress = getMetaServerAddress(env);
+    // if there is more than one address, need to select one
+    if (metaServerAddress.contains(",")) {
+      return selectMetaServerAddress(metaServerAddress);
     }
-    // 3. if there is more than one address, need to select one
-    if (metaAddress != null && metaAddress.contains(",")) {
-      return selectMetaServerAddress(metaAddress);
-    }
-    // 4. trim if necessary
-    if (metaAddress != null) {
-      metaAddress = metaAddress.trim();
-    }
-    return metaAddress;
+    return metaServerAddress;
   }
 
-  private static String getCustomizedMetaServerAddress() {
-    // 1. Get from System Property
-    String metaAddress = System.getProperty("apollo.meta");
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      // 2. Get from OS environment variable
-      metaAddress = System.getenv("APOLLO_META");
-    }
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      metaAddress = Foundation.server().getProperty("apollo.meta", null);
+  private static String getMetaServerAddress(Env env) {
+    if (!metaServerAddressCache.containsKey(env)) {
+      initMetaServerAddress(env);
     }
 
-    if (!Strings.isNullOrEmpty(metaAddress) && customizedMetaServiceLogged.compareAndSet(false, true)) {
-      logger.warn("Located meta services from apollo.meta configuration: {}, will not use meta services defined in apollo-env.properties!", metaAddress);
+    return metaServerAddressCache.get(env);
+  }
+
+  private static void initMetaServerAddress(Env env) {
+    if (metaServerProviders == null) {
+      synchronized (LOCK) {
+        if (metaServerProviders == null) {
+          metaServerProviders = initMetaServerProviders();
+        }
+      }
     }
 
-    return metaAddress;
+    String metaAddress = null;
+
+    for (MetaServerProvider provider : metaServerProviders) {
+      metaAddress = provider.getMetaServerAddress(env);
+      if (!Strings.isNullOrEmpty(metaAddress)) {
+        logger.info("Located meta server address {} for env {} from {}", metaAddress, env,
+            provider.getClass().getName());
+        break;
+      }
+    }
+
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      // Fallback to default meta address
+      metaAddress = DEFAULT_META_URL;
+      logger.warn(
+          "Meta server address fallback to {} for env {}, because it is not available in all MetaServerProviders",
+          metaAddress, env);
+    }
+
+    metaServerAddressCache.put(env, metaAddress.trim());
+  }
+
+  private static List<MetaServerProvider> initMetaServerProviders() {
+    Iterator<MetaServerProvider> metaServerProviderIterator = ServiceBootstrap.loadAll(MetaServerProvider.class);
+
+    List<MetaServerProvider> metaServerProviders = Lists.newArrayList(metaServerProviderIterator);
+
+    Collections.sort(metaServerProviders, new Comparator<MetaServerProvider>() {
+      @Override
+      public int compare(MetaServerProvider o1, MetaServerProvider o2) {
+        // the smaller order has higher priority
+        return Integer.compare(o1.getOrder(), o2.getOrder());
+      }
+    });
+
+    return metaServerProviders;
   }
 
   /**
@@ -104,18 +123,18 @@ public class MetaDomainConsts {
    *
    * <br />
    *
-   * In production environment, we still suggest using one single domain
-   * like http://config.xxx.com(backed by software load balancers like nginx) instead of multiple ip addresses
+   * In production environment, we still suggest using one single domain like http://config.xxx.com(backed by software
+   * load balancers like nginx) instead of multiple ip addresses
    */
   private static String selectMetaServerAddress(String metaServerAddresses) {
-    String metaAddressSelected = metaServerAddressCache.get(metaServerAddresses);
+    String metaAddressSelected = selectedMetaServerAddressCache.get(metaServerAddresses);
     if (metaAddressSelected == null) {
-      //initialize
+      // initialize
       if (periodicRefreshStarted.compareAndSet(false, true)) {
         schedulePeriodicRefresh();
       }
       updateMetaServerAddresses(metaServerAddresses);
-      metaAddressSelected = metaServerAddressCache.get(metaServerAddresses);
+      metaAddressSelected = selectedMetaServerAddressCache.get(metaServerAddresses);
     }
 
     return metaAddressSelected;
@@ -129,7 +148,7 @@ public class MetaDomainConsts {
 
     try {
       List<String> metaServers = Lists.newArrayList(metaServerAddresses.split(","));
-      //random load balancing
+      // random load balancing
       Collections.shuffle(metaServers);
 
       boolean serverAvailable = false;
@@ -137,22 +156,22 @@ public class MetaDomainConsts {
       for (String address : metaServers) {
         address = address.trim();
         if (NetUtil.pingUrl(address)) {
-          //select the first available meta server
-          metaServerAddressCache.put(metaServerAddresses, address);
+          // select the first available meta server
+          selectedMetaServerAddressCache.put(metaServerAddresses, address);
           serverAvailable = true;
           logger.debug("Selected meta server address {} for {}", address, metaServerAddresses);
           break;
         }
       }
 
-      //we need to make sure the map is not empty, e.g. the first update might be failed
-      if (!metaServerAddressCache.containsKey(metaServerAddresses)) {
-        metaServerAddressCache.put(metaServerAddresses, metaServers.get(0).trim());
+      // we need to make sure the map is not empty, e.g. the first update might be failed
+      if (!selectedMetaServerAddressCache.containsKey(metaServerAddresses)) {
+        selectedMetaServerAddressCache.put(metaServerAddresses, metaServers.get(0).trim());
       }
 
       if (!serverAvailable) {
-        logger.warn("Could not find available meta server for configured meta server addresses: {}, fallback to: {}", metaServerAddresses,
-            metaServerAddressCache.get(metaServerAddresses));
+        logger.warn("Could not find available meta server for configured meta server addresses: {}, fallback to: {}",
+            metaServerAddresses, selectedMetaServerAddressCache.get(metaServerAddresses));
       }
 
       transaction.setStatus(Transaction.SUCCESS);
@@ -165,21 +184,19 @@ public class MetaDomainConsts {
   }
 
   private static void schedulePeriodicRefresh() {
-    ScheduledExecutorService scheduledExecutorService = Executors
-        .newScheduledThreadPool(1, ApolloThreadFactory.create("MetaServiceLocator", true));
+    ScheduledExecutorService scheduledExecutorService =
+        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("MetaServiceLocator", true));
 
     scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
       @Override
       public void run() {
         try {
-          for (String metaServerAddresses : metaServerAddressCache.keySet()) {
+          for (String metaServerAddresses : selectedMetaServerAddressCache.keySet()) {
             updateMetaServerAddresses(metaServerAddresses);
           }
         } catch (Throwable ex) {
-          logger.warn(
-              String.format("Refreshing meta server address failed, will retry in %d seconds",
-                  REFRESH_INTERVAL_IN_SECOND), ex
-          );
+          logger.warn(String.format("Refreshing meta server address failed, will retry in %d seconds",
+              REFRESH_INTERVAL_IN_SECOND), ex);
         }
       }
     }, REFRESH_INTERVAL_IN_SECOND, REFRESH_INTERVAL_IN_SECOND, TimeUnit.SECONDS);

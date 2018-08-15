@@ -1,6 +1,5 @@
 package com.ctrip.framework.foundation.internals;
 
-import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 import org.junit.Test;
 
 import java.util.ServiceConfigurationError;

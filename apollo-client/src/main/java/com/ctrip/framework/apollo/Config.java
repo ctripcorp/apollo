@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo;
 
+import com.google.common.base.Function;
+
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
@@ -162,11 +164,19 @@ public interface Config {
   public long getDurationProperty(String key, long defaultValue);
 
   /**
-   * Add change listener to this config instance.
+   * Add change listener to this config instance, will be notified when any key is changed in this namespace.
    *
    * @param listener the config change listener
    */
   public void addChangeListener(ConfigChangeListener listener);
+
+  /**
+   * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this namespace.
+   *
+   * @param listener the config change listener
+   * @param interestedKeys the keys interested by the listener
+   */
+  public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys);
 
   /**
    * Return a set of the property names
@@ -174,4 +184,15 @@ public interface Config {
    * @return the property names
    */
   public Set<String> getPropertyNames();
+
+  /**
+   * Return the user-defined property value with the given key, or {@code defaultValue} if the key doesn't exist.
+   *
+   * @param key          the property name
+   * @param function     the transform {@link Function}. from String to user-defined type
+   * @param defaultValue the default value when key is not found or any error occurred
+   * @param <T>          user-defined type
+   * @return the property value
+   */
+  public <T> T getProperty(String key, Function<String, T> function, T defaultValue);
 }
