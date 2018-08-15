@@ -16,105 +16,105 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "spring.ldap")
 public class LdapProperties {
 
-    private static final int DEFAULT_PORT = 389;
+  private static final int DEFAULT_PORT = 389;
 
-    /**
-     * LDAP URLs of the server.
-     */
-    private String[] urls;
+  /**
+   * LDAP URLs of the server.
+   */
+  private String[] urls;
 
-    /**
-     * Base suffix from which all operations should originate.
-     */
-    private String base;
+  /**
+   * Base suffix from which all operations should originate.
+   */
+  private String base;
 
-    /**
-     * Login username of the server.
-     */
-    private String username;
+  /**
+   * Login username of the server.
+   */
+  private String username;
 
-    /**
-     * Login password of the server.
-     */
-    private String password;
+  /**
+   * Login password of the server.
+   */
+  private String password;
 
-    /**
-     * Whether read-only operations should use an anonymous environment.
-     */
-    private boolean anonymousReadOnly;
+  /**
+   * Whether read-only operations should use an anonymous environment.
+   */
+  private boolean anonymousReadOnly;
 
-    /**
-     * LDAP specification settings.
-     */
-    private final Map<String, String> baseEnvironment = new HashMap<>();
+  /**
+   * LDAP specification settings.
+   */
+  private final Map<String, String> baseEnvironment = new HashMap<>();
 
-    private String userDnPatterns;
+  private String userDnPatterns;
 
-    public String[] getUrls() {
-        return this.urls;
+  public String[] getUrls() {
+    return this.urls;
+  }
+
+  public void setUrls(String[] urls) {
+    this.urls = urls;
+  }
+
+  public String getBase() {
+    return this.base;
+  }
+
+  public void setBase(String base) {
+    this.base = base;
+  }
+
+  public String getUsername() {
+    return this.username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getPassword() {
+    return this.password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public boolean getAnonymousReadOnly() {
+    return this.anonymousReadOnly;
+  }
+
+  public void setAnonymousReadOnly(boolean anonymousReadOnly) {
+    this.anonymousReadOnly = anonymousReadOnly;
+  }
+
+  public String getUserDnPatterns() {
+    return userDnPatterns;
+  }
+
+  public void setUserDnPatterns(String userDnPatterns) {
+    this.userDnPatterns = userDnPatterns;
+  }
+
+  public Map<String, String> getBaseEnvironment() {
+    return this.baseEnvironment;
+  }
+
+  public String[] determineUrls(Environment environment) {
+    if (ObjectUtils.isEmpty(this.urls)) {
+      return new String[]{"ldap://localhost:" + determinePort(environment)};
     }
+    return this.urls;
+  }
 
-    public void setUrls(String[] urls) {
-        this.urls = urls;
+  private int determinePort(Environment environment) {
+    Assert.notNull(environment, "Environment must not be null");
+    String localPort = environment.getProperty("local.ldap.port");
+    if (localPort != null) {
+      return Integer.valueOf(localPort);
     }
-
-    public String getBase() {
-        return this.base;
-    }
-
-    public void setBase(String base) {
-        this.base = base;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean getAnonymousReadOnly() {
-        return this.anonymousReadOnly;
-    }
-
-    public void setAnonymousReadOnly(boolean anonymousReadOnly) {
-        this.anonymousReadOnly = anonymousReadOnly;
-    }
-
-    public String getUserDnPatterns() {
-        return userDnPatterns;
-    }
-
-    public void setUserDnPatterns(String userDnPatterns) {
-        this.userDnPatterns = userDnPatterns;
-    }
-
-    public Map<String, String> getBaseEnvironment() {
-        return this.baseEnvironment;
-    }
-
-    public String[] determineUrls(Environment environment) {
-        if (ObjectUtils.isEmpty(this.urls)) {
-            return new String[] { "ldap://localhost:" + determinePort(environment) };
-        }
-        return this.urls;
-    }
-
-    private int determinePort(Environment environment) {
-        Assert.notNull(environment, "Environment must not be null");
-        String localPort = environment.getProperty("local.ldap.port");
-        if (localPort != null) {
-            return Integer.valueOf(localPort);
-        }
-        return DEFAULT_PORT;
-    }
+    return DEFAULT_PORT;
+  }
 }

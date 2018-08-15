@@ -24,29 +24,29 @@ import java.util.Collections;
 @EnableConfigurationProperties(LdapProperties.class)
 public class LdapAutoConfiguration {
 
-    @Autowired
-    private LdapProperties properties;
-    @Autowired
-    private Environment environment;
+  @Autowired
+  private LdapProperties properties;
+  @Autowired
+  private Environment environment;
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ContextSource ldapContextSource() {
-        LdapContextSource source = new LdapContextSource();
-        source.setUserDn(this.properties.getUsername());
-        source.setPassword(this.properties.getPassword());
-        source.setAnonymousReadOnly(this.properties.getAnonymousReadOnly());
-        source.setBase(this.properties.getBase());
-        source.setUrls(this.properties.determineUrls(this.environment));
-        source.setBaseEnvironmentProperties(
-                Collections.unmodifiableMap(this.properties.getBaseEnvironment()));
-        return source;
-    }
+  @Bean
+  @ConditionalOnMissingBean
+  public ContextSource ldapContextSource() {
+    LdapContextSource source = new LdapContextSource();
+    source.setUserDn(this.properties.getUsername());
+    source.setPassword(this.properties.getPassword());
+    source.setAnonymousReadOnly(this.properties.getAnonymousReadOnly());
+    source.setBase(this.properties.getBase());
+    source.setUrls(this.properties.determineUrls(this.environment));
+    source.setBaseEnvironmentProperties(
+        Collections.unmodifiableMap(this.properties.getBaseEnvironment()));
+    return source;
+  }
 
-    @Bean
-    @ConditionalOnMissingBean(LdapOperations.class)
-    public LdapTemplate ldapTemplate(ContextSource contextSource) {
-        return new LdapTemplate(contextSource);
-    }
+  @Bean
+  @ConditionalOnMissingBean(LdapOperations.class)
+  public LdapTemplate ldapTemplate(ContextSource contextSource) {
+    return new LdapTemplate(contextSource);
+  }
 
 }
