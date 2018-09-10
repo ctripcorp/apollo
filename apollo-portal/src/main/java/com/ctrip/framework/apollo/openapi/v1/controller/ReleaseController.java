@@ -1,11 +1,12 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
-
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
+import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
@@ -38,7 +39,7 @@ public class ReleaseController {
   public OpenReleaseDTO createRelease(@PathVariable String appId, @PathVariable String env,
                                       @PathVariable String clusterName,
                                       @PathVariable String namespaceName,
-                                      @RequestBody NamespaceReleaseModel model,
+                                      @RequestBody NamespaceReleaseDTO model,
                                       HttpServletRequest request) {
 
     checkModel(model != null);
@@ -50,12 +51,14 @@ public class ReleaseController {
       throw new BadRequestException("user(releaseBy) not exists");
     }
 
-    model.setAppId(appId);
-    model.setEnv(Env.fromString(env).toString());
-    model.setClusterName(clusterName);
-    model.setNamespaceName(namespaceName);
+    NamespaceReleaseModel releaseModel = BeanUtils.transfrom(NamespaceReleaseModel.class, model);
 
-    return OpenApiBeanUtils.transformFromReleaseDTO(releaseService.publish(model));
+    releaseModel.setAppId(appId);
+    releaseModel.setEnv(Env.fromString(env).toString());
+    releaseModel.setClusterName(clusterName);
+    releaseModel.setNamespaceName(namespaceName);
+
+    return OpenApiBeanUtils.transformFromReleaseDTO(releaseService.publish(releaseModel));
   }
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/latest", method = RequestMethod.GET)

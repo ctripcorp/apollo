@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
-import com.ctrip.framework.apollo.common.dto.BaseDTO;
-
 public class OpenItemDTO extends BaseDTO {
 
   private String key;

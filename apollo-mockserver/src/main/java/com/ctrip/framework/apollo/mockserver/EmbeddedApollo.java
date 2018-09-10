@@ -5,10 +5,9 @@ import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 import com.ctrip.framework.apollo.internals.ConfigServiceLocator;
-import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
-import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Method;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -110,8 +108,10 @@ public class EmbeddedApollo extends ExternalResource {
   private String loadConfigFor(String namespace) {
     String filename = String.format("mockdata-%s.properties", namespace);
     final Properties prop = ResourceUtils.readConfigFile(filename, new Properties());
-    Map<String, String> configurations = prop.stringPropertyNames().stream().collect(
-        Collectors.toMap(key -> key, prop::getProperty));
+    Map<String, String> configurations = Maps.newHashMap();
+    for (String propertyName : prop.stringPropertyNames()) {
+      configurations.put(propertyName, prop.getProperty(propertyName));
+    }
     ApolloConfig apolloConfig = new ApolloConfig("someAppId", "someCluster", namespace, "someReleaseKey");
 
     Map<String, String> mergedConfigurations = mergeOverriddenProperties(namespace, configurations);

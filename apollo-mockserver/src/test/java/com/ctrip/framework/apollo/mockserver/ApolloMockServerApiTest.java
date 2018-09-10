@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.util.concurrent.SettableFuture;
@@ -32,9 +33,14 @@ public class ApolloMockServerApiTest {
 
     Config otherConfig = ConfigService.getConfig(otherNamespace);
 
-    SettableFuture<ConfigChangeEvent> future = SettableFuture.create();
+    final SettableFuture<ConfigChangeEvent> future = SettableFuture.create();
 
-    otherConfig.addChangeListener(future::set);
+    otherConfig.addChangeListener(new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        future.set(changeEvent);
+      }
+    });
 
     assertEquals("otherValue1", otherConfig.getProperty("key1", null));
     assertEquals("otherValue2", otherConfig.getProperty("key2", null));

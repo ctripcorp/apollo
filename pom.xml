@@ -104,6 +104,7 @@
 		<module>apollo-assembly</module>
 		<module>apollo-demo</module>
 		<module>apollo-mockserver</module>
+		<module>apollo-openapi</module>
 	</modules>
 
 	<dependencyManagement>
@@ -146,6 +147,11 @@
 			<dependency>
 				<groupId>com.ctrip.framework.apollo</groupId>
 				<artifactId>apollo-portal</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ctrip.framework.apollo</groupId>
+				<artifactId>apollo-openapi</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- ctrip internal dependencies, only used when ctrip profiles are enabled -->

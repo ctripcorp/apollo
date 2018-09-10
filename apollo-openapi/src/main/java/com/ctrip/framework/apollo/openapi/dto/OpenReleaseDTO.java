@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
-import com.ctrip.framework.apollo.common.dto.BaseDTO;
-
 import java.util.Map;
 
 public class OpenReleaseDTO extends BaseDTO {

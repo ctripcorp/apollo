@@ -43,7 +43,7 @@ public class ItemController {
     ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
     Item managedEntity = itemService.findOne(appId, clusterName, namespaceName, entity.getKey());
     if (managedEntity != null) {
-      throw new BadRequestException("item already exist");
+      throw new BadRequestException("item already exists");
     } else {
       entity = itemService.save(entity);
       builder.createItem(entity);
