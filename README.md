@@ -211,3 +211,5 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![财学堂](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/caixuetang.png) 
 ![4399](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/4399.png) 
 ![汽车之家](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/autohome.png) 
+![面包财经](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/mbcaijing.png) 
+![虎扑](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/hoopchina.png) 
