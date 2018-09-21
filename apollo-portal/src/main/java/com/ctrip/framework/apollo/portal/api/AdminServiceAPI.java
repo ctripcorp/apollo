@@ -274,6 +274,16 @@ public class AdminServiceAPI {
       return response;
     }
 
+    public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
+                                    String releaseName, String releaseComment, String operator,
+                                    boolean isEmergencyPublish, Set<String> grayDelKeys) {
+      ReleaseDTO response = restTemplate.post(
+              env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/operator/{operator}/releases?"
+                      + "releaseName={releaseName}&comment={comment}&isEmergencyPublish={isEmergencyPublish}", grayDelKeys,
+              ReleaseDTO.class, appId, clusterName, namespace, operator, releaseName, releaseComment, isEmergencyPublish);
+      return response;
+    }
+
     public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
         String releaseName, String releaseComment, String branchName,
         boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {

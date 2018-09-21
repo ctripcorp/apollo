@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.portal.service;
 
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseModel;
 import com.google.common.base.Objects;
 import com.google.gson.Gson;
 
@@ -56,6 +57,24 @@ public class ReleaseService {
 
     Tracer.logEvent(TracerEventType.RELEASE_NAMESPACE,
                     String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
+
+    return releaseDTO;
+  }
+
+  //gray deletion release
+  public ReleaseDTO publish(NamespaceGrayDelReleaseModel model, String releaseBy) {
+    Env env = model.getEnv();
+    boolean isEmergencyPublish = model.isEmergencyPublish();
+    String appId = model.getAppId();
+    String clusterName = model.getClusterName();
+    String namespaceName = model.getNamespaceName();
+
+    ReleaseDTO releaseDTO = releaseAPI.createRelease(appId, env, clusterName, namespaceName,
+            model.getReleaseTitle(), model.getReleaseComment(),
+            releaseBy, isEmergencyPublish, model.getGrayDelKeys());
+
+    Tracer.logEvent(TracerEventType.RELEASE_NAMESPACE,
+            String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
 
     return releaseDTO;
   }
