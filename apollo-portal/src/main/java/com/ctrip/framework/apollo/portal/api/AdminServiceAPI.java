@@ -276,11 +276,11 @@ public class AdminServiceAPI {
 
     public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
                                     String releaseName, String releaseComment, String operator,
-                                    boolean isEmergencyPublish, Set<String> grayDelKeys) {
+                                    boolean isEmergencyPublish, Set<String> grayDelKeys, boolean isKeepingGrayConfig) {
       ReleaseDTO response = restTemplate.post(
               env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/operator/{operator}/releases?"
-                      + "releaseName={releaseName}&comment={comment}&isEmergencyPublish={isEmergencyPublish}", grayDelKeys,
-              ReleaseDTO.class, appId, clusterName, namespace, operator, releaseName, releaseComment, isEmergencyPublish);
+                      + "releaseName={releaseName}&comment={comment}&isEmergencyPublish={isEmergencyPublish}&isKeepingGrayConfig={isKeepingGrayConfig}", grayDelKeys,
+              ReleaseDTO.class, appId, clusterName, namespace, operator, releaseName, releaseComment, isEmergencyPublish, isKeepingGrayConfig);
       return response;
     }
 

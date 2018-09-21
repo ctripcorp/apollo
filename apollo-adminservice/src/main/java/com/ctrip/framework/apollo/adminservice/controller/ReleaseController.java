@@ -185,6 +185,7 @@ public class ReleaseController {
                             @RequestParam("releaseName") String releaseName,
                             @RequestParam(name = "comment", required = false) String releaseComment,
                             @RequestParam(name = "isEmergencyPublish", defaultValue = "false") boolean isEmergencyPublish,
+                            @RequestParam(name = "isKeepingGrayConfig", defaultValue = "false") boolean isKeepingGrayConfig,
                             @RequestBody Set<String> grayDelKeys) {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
     if (namespace == null) {
@@ -192,7 +193,7 @@ public class ReleaseController {
               clusterName, namespaceName));
     }
 
-    Release release = releaseService.publish(namespace, releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys);
+    Release release = releaseService.publish(namespace, releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys, isKeepingGrayConfig);
 
     //send release message
     Namespace parentNamespace = namespaceService.findParentNamespace(namespace);

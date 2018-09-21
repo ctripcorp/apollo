@@ -71,7 +71,7 @@ public class ReleaseService {
 
     ReleaseDTO releaseDTO = releaseAPI.createRelease(appId, env, clusterName, namespaceName,
             model.getReleaseTitle(), model.getReleaseComment(),
-            releaseBy, isEmergencyPublish, model.getGrayDelKeys());
+            releaseBy, isEmergencyPublish, model.getGrayDelKeys(), model.isKeepingGrayConfig());
 
     Tracer.logEvent(TracerEventType.RELEASE_NAMESPACE,
             String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
