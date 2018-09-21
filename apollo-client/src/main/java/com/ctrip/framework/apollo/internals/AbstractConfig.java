@@ -86,6 +86,12 @@ public abstract class AbstractConfig implements Config {
   }
 
   @Override
+  public boolean removeChangeListener(ConfigChangeListener listener) {
+    m_interestedKeys.remove(listener);
+    return m_listeners.remove(listener);
+  }
+
+  @Override
   public Integer getIntProperty(String key, Integer defaultValue) {
     try {
       if (m_integerCache == null) {

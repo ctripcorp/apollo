@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo;
 
 import static org.junit.Assert.assertEquals;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.Set;
 
 import org.junit.Before;
@@ -101,6 +102,11 @@ public class ConfigServiceTest {
     public Set<String> getPropertyNames() {
       return null;
     }
+
+    @Override
+    public ConfigSourceType getSourceType() {
+      return null;
+    }
   }
 
   private static class MockConfigFile implements ConfigFile {
@@ -136,6 +142,16 @@ public class ConfigServiceTest {
     @Override
     public void addChangeListener(ConfigFileChangeListener listener) {
 
+    }
+
+    @Override
+    public boolean removeChangeListener(ConfigChangeListener listener) {
+      return false;
+    }
+
+    @Override
+    public ConfigSourceType getSourceType() {
+      return null;
     }
   }
 

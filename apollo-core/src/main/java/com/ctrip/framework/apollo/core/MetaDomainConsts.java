@@ -161,7 +161,8 @@ public class MetaDomainConsts {
 
       for (String address : metaServers) {
         address = address.trim();
-        if (NetUtil.pingUrl(address)) {
+        //check whether /services/config is accessible
+        if (NetUtil.pingUrl(address + "/services/config")) {
           // select the first available meta server
           selectedMetaServerAddressCache.put(metaServerAddresses, address);
           serverAvailable = true;

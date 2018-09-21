@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.google.common.base.Function;
 
 import java.util.Date;
@@ -179,6 +180,14 @@ public interface Config {
   public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys);
 
   /**
+   * Remove the change listener
+   *
+   * @param listener the specific config change listener to remove
+   * @return true if the specific config change listener is found and removed
+   */
+  public boolean removeChangeListener(ConfigChangeListener listener);
+
+  /**
    * Return a set of the property names
    *
    * @return the property names
@@ -195,4 +204,11 @@ public interface Config {
    * @return the property value
    */
   public <T> T getProperty(String key, Function<String, T> function, T defaultValue);
+
+  /**
+   * Return the config's source type, i.e. where is the config loaded from
+   *
+   * @return the config's source type
+   */
+  public ConfigSourceType getSourceType();
 }

@@ -12,7 +12,7 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         },
         createAppNamespace: {
             method: 'POST',
-            url: '/apps/:appId/appnamespaces',
+            url: '/apps/:appId/appnamespaces?appendNamespacePrefix=:appendNamespacePrefix',
             isArray: false
         },
         getNamespacePublishInfo: {
@@ -60,11 +60,12 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         return d.promise;
     }
 
-    function createAppNamespace(appId, appnamespace) {
+    function createAppNamespace(appId, appnamespace, appendNamespacePrefix) {
         var d = $q.defer();
         namespace_source.createAppNamespace({
-                                                appId: appId
-                                            }, appnamespace, function (result) {
+            appId: appId,
+            appendNamespacePrefix: appendNamespacePrefix
+          }, appnamespace, function (result) {
             d.resolve(result);
         }, function (result) {
             d.reject(result);

@@ -161,16 +161,18 @@ public class NamespaceController {
 
   @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")
   @RequestMapping(value = "/apps/{appId}/appnamespaces", method = RequestMethod.POST)
-  public AppNamespace createAppNamespace(@PathVariable String appId, @RequestBody AppNamespace appNamespace) {
+  public AppNamespace createAppNamespace(@PathVariable String appId,
+      @RequestParam(defaultValue = "true") boolean appendNamespacePrefix,
+      @RequestBody AppNamespace appNamespace) {
 
     RequestPrecondition.checkArgumentsNotEmpty(appNamespace.getAppId(), appNamespace.getName());
     if (!InputValidator.isValidAppNamespace(appNamespace.getName())) {
       throw new BadRequestException(String.format("Namespace格式错误: %s",
-              InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-                      + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
+          InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
+              + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
     }
 
-    AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace);
+    AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace, appendNamespacePrefix);
 
     if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {
       assignNamespaceRoleToOperator(appId, appNamespace.getName());

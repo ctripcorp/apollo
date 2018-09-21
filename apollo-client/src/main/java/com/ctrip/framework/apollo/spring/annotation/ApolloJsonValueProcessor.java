@@ -65,7 +65,7 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
       Set<String> keys = placeholderHelper.extractPlaceholderKeys(placeholder);
       for (String key : keys) {
         SpringValue springValue = new SpringValue(key, placeholder, bean, beanName, field, true);
-        springValueRegistry.register(key, springValue);
+        springValueRegistry.register(beanFactory, key, springValue);
         logger.debug("Monitoring {}", springValue);
       }
     }
@@ -102,7 +102,7 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
       for (String key : keys) {
         SpringValue springValue = new SpringValue(key, apolloJsonValue.value(), bean, beanName,
             method, true);
-        springValueRegistry.register(key, springValue);
+        springValueRegistry.register(beanFactory, key, springValue);
         logger.debug("Monitoring {}", springValue);
       }
     }

@@ -297,7 +297,7 @@ DROP TABLE IF EXISTS `Authorities`;
 
 CREATE TABLE `Authorities` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `Username` varchar(50) NOT NULL,
+  `Username` varchar(64) NOT NULL,
   `Authority` varchar(50) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
