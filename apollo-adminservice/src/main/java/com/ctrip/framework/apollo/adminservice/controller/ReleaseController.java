@@ -193,7 +193,7 @@ public class ReleaseController {
               clusterName, namespaceName));
     }
 
-    Release release = releaseService.publish(namespace, releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys, isKeepingGrayConfig);
+    Release release = releaseService.grayDeletionPublish(namespace, releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys, isKeepingGrayConfig);
 
     //send release message
     Namespace parentNamespace = namespaceService.findParentNamespace(namespace);
