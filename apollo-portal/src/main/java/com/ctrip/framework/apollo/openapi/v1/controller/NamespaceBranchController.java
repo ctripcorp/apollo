@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@RestController
+@RestController("openapiNamespaceBranchController")
 @RequestMapping("/openapi/v1/envs/{env}")
-public class BranchController {
+public class NamespaceBranchController {
 
     @Autowired
     private PermissionValidator permissionValidator;
@@ -47,6 +47,7 @@ public class BranchController {
         return namespaceBranchService.findBranch(appId, Env.valueOf(env.toUpperCase()), clusterName, namespaceName);
     }
 
+    @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/operator/{operator}/branches", method = RequestMethod.POST)
     public NamespaceDTO createBranch(@PathVariable String appId,
                                      @PathVariable String env,
