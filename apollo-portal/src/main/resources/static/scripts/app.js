@@ -36,3 +36,5 @@ var user_module = angular.module('user', ['apollo.directive', 'toastr', 'app.ser
 var login_module = angular.module('login', ['toastr', 'app.util']);
 //delete app cluster namespace
 var delete_app_cluster_namespace_module = angular.module('delete_app_cluster_namespace', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar']);
+//system info
+var system_info_module = angular.module('system_info', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar']);

@@ -9,7 +9,7 @@
 FROM openjdk:8-jre-alpine
 MAINTAINER ameizi <sxyx2008@163.com>
 
-ENV VERSION 1.0.0
+ENV VERSION 1.1.0-SNAPSHOT
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.6/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.6/community" >> /etc/apk/repositories \
@@ -25,6 +25,6 @@ RUN unzip /apollo-portal/apollo-portal-${VERSION}-github.zip -d /apollo-portal \
     && sed -i '$d' /apollo-portal/scripts/startup.sh \
     && echo "tail -f /dev/null" >> /apollo-portal/scripts/startup.sh
 
-EXPOSE 8080
+EXPOSE 8070
 
 CMD ["/apollo-portal/scripts/startup.sh"]

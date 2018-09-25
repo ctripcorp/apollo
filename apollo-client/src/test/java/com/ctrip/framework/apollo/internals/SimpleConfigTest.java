@@ -1,8 +1,10 @@
 package com.ctrip.framework.apollo.internals;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +30,7 @@ public class SimpleConfigTest {
   private String someNamespace;
   @Mock
   private ConfigRepository configRepository;
+  private ConfigSourceType someSourceType;
 
   @Before
   public void setUp() throws Exception {
@@ -41,22 +44,28 @@ public class SimpleConfigTest {
     String someValue = "someValue";
     someProperties.setProperty(someKey, someValue);
 
+    someSourceType = ConfigSourceType.LOCAL;
+
     when(configRepository.getConfig()).thenReturn(someProperties);
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
 
     SimpleConfig config = new SimpleConfig(someNamespace, configRepository);
 
     assertEquals(someValue, config.getProperty(someKey, null));
+    assertEquals(someSourceType, config.getSourceType());
   }
 
   @Test
   public void testLoadConfigFromConfigRepositoryError() throws Exception {
-    when(configRepository.getConfig()).thenThrow(Throwable.class);
+    String someKey = "someKey";
+    String anyValue = "anyValue" + Math.random();
+
+    when(configRepository.getConfig()).thenThrow(mock(RuntimeException.class));
 
     Config config = new SimpleConfig(someNamespace, configRepository);
 
-    String someKey = "someKey";
-    String anyValue = "anyValue" + Math.random();
     assertEquals(anyValue, config.getProperty(someKey, anyValue));
+    assertEquals(ConfigSourceType.NONE, config.getSourceType());
   }
 
   @Test
@@ -74,7 +83,10 @@ public class SimpleConfigTest {
     String someValueNew = "someValueNew";
     anotherProperties.putAll(ImmutableMap.of(someKey, someValueNew, newKey, newValue));
 
+    someSourceType = ConfigSourceType.LOCAL;
+
     when(configRepository.getConfig()).thenReturn(someProperties);
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
 
     final SettableFuture<ConfigChangeEvent> configChangeFuture = SettableFuture.create();
     ConfigChangeListener someListener = new ConfigChangeListener() {
@@ -85,7 +97,13 @@ public class SimpleConfigTest {
     };
 
     SimpleConfig config = new SimpleConfig(someNamespace, configRepository);
+
+    assertEquals(someSourceType, config.getSourceType());
+
     config.addChangeListener(someListener);
+
+    ConfigSourceType anotherSourceType = ConfigSourceType.REMOTE;
+    when(configRepository.getSourceType()).thenReturn(anotherSourceType);
 
     config.onRepositoryChange(someNamespace, anotherProperties);
 
@@ -108,5 +126,7 @@ public class SimpleConfigTest {
     assertEquals(null, newKeyChange.getOldValue());
     assertEquals(newValue, newKeyChange.getNewValue());
     assertEquals(PropertyChangeType.ADDED, newKeyChange.getChangeType());
+
+    assertEquals(anotherSourceType, config.getSourceType());
   }
 }

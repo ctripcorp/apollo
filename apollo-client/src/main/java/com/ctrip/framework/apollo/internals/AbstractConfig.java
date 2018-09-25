@@ -64,10 +64,10 @@ public abstract class AbstractConfig implements Config {
   }
 
   public AbstractConfig() {
-      m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-      m_configVersion = new AtomicLong();
-      m_arrayCache = Maps.newConcurrentMap();
-      allCaches = Lists.newArrayList();
+    m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+    m_configVersion = new AtomicLong();
+    m_arrayCache = Maps.newConcurrentMap();
+    allCaches = Lists.newArrayList();
   }
 
   @Override
@@ -83,6 +83,12 @@ public abstract class AbstractConfig implements Config {
         m_interestedKeys.put(listener, Sets.newHashSet(interestedKeys));
       }
     }
+  }
+
+  @Override
+  public boolean removeChangeListener(ConfigChangeListener listener) {
+    m_interestedKeys.remove(listener);
+    return m_listeners.remove(listener);
   }
 
   @Override
@@ -344,6 +350,23 @@ public abstract class AbstractConfig implements Config {
       Tracer.logError(new ApolloConfigException(
           String.format("getDurationProperty for %s failed, return default value %d", key,
               defaultValue), ex));
+    }
+
+    return defaultValue;
+  }
+
+  @Override
+  public <T> T getProperty(String key, Function<String, T> function, T defaultValue) {
+    try {
+      String value = getProperty(key, null);
+
+      if (value != null) {
+        return function.apply(value);
+      }
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getProperty for %s failed, return default value %s", key,
+                      defaultValue), ex));
     }
 
     return defaultValue;

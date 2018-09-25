@@ -11,6 +11,7 @@ namespace_module.controller("LinkNamespaceController",
                                  $scope.step = 1;
 
                                  $scope.submitBtnDisabled = false;
+                                 $scope.appendNamespacePrefix = true;
 
                                  PermissionService.has_root_permission().then(function (result) {
                                      $scope.hasRootPermission = result.hasPermission;
@@ -125,7 +126,9 @@ namespace_module.controller("LinkNamespaceController",
                                          }
 
                                          $scope.submitBtnDisabled = true;
-                                         NamespaceService.createAppNamespace($scope.appId, $scope.appNamespace).then(
+                                         //only append namespace prefix for public app namespace
+                                         var appendNamespacePrefix = $scope.appNamespace.isPublic ? $scope.appendNamespacePrefix : false;
+                                         NamespaceService.createAppNamespace($scope.appId, $scope.appNamespace, appendNamespacePrefix).then(
                                              function (result) {
                                                  $scope.step = 2;
                                                  setTimeout(function () {

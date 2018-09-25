@@ -95,9 +95,9 @@
                             <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>
                                 名称</label>
-                            <div class="col-sm-4" valdr-form-group>
-                                <div ng-class="{'input-group':appNamespace.isPublic}">
-                                    <span class="input-group-addon" ng-show="appNamespace.isPublic"
+                            <div class="col-sm-5" valdr-form-group>
+                                <div ng-class="{'input-group':appNamespace.isPublic && appendNamespacePrefix}">
+                                    <span class="input-group-addon" ng-show="appNamespace.isPublic && appendNamespacePrefix"
                                           ng-bind="appBaseInfo.namespacePrefix"></span>
                                     <input type="text" name="namespaceName" class="form-control"
                                            ng-model="appNamespace.name">
@@ -116,9 +116,25 @@
                             </div>
 
                             &nbsp;&nbsp;
-                            <span ng-show="appNamespace.isPublic" ng-bind="concatNamespace()"
+                            <span ng-show="appNamespace.isPublic && appendNamespacePrefix" ng-bind="concatNamespace()"
                                   style="line-height: 34px;"></span>
                         </div>
+
+                        <div class="form-group" ng-show="type == 'create' && appNamespace.isPublic">
+                            <label class="col-sm-3 control-label">
+                                自动添加部门前缀
+                            </label>
+                            <div class="col-sm-6" valdr-form-group>
+                                <div>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" ng-model="appendNamespacePrefix" />
+                                        {{appBaseInfo.namespacePrefix}}
+                                    </label>
+                                </div>
+                                <small>(公共Namespace的名称需要全局唯一，添加部门前缀有助于保证全局唯一性)</small>
+                            </div>
+                        </div>
+
                         <div class="form-group" ng-show="type == 'create' && (pageSetting.canAppAdminCreatePrivateNamespace || hasRootPermission)">
                             <label class="col-sm-3 control-label">
                                 <apollorequiredfield></apollorequiredfield>

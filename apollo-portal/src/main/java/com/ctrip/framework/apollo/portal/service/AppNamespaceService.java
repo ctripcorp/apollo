@@ -9,15 +9,22 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class AppNamespaceService {
+
+  private static final int PRIVATE_APP_NAMESPACE_NOTIFICATION_COUNT = 5;
+  private static final Joiner APP_NAMESPACE_JOINER = Joiner.on(",").skipNulls();
 
   @Autowired
   private UserInfoHolder userInfoHolder;
@@ -38,7 +45,17 @@ public class AppNamespaceService {
   }
 
   public AppNamespace findPublicAppNamespace(String namespaceName) {
-    return appNamespaceRepository.findByNameAndIsPublic(namespaceName, true);
+    List<AppNamespace> appNamespaces = appNamespaceRepository.findByNameAndIsPublic(namespaceName, true);
+
+    if (CollectionUtils.isEmpty(appNamespaces)) {
+      return null;
+    }
+
+    return appNamespaces.get(0);
+  }
+
+  private List<AppNamespace> findAllPrivateAppNamespaces(String namespaceName) {
+    return appNamespaceRepository.findByNameAndIsPublic(namespaceName, false);
   }
 
   public AppNamespace findByAppIdAndName(String appId, String namespaceName) {
@@ -69,8 +86,12 @@ public class AppNamespaceService {
     return Objects.isNull(appNamespaceRepository.findByAppIdAndName(appId, namespaceName));
   }
 
-  @Transactional
   public AppNamespace createAppNamespaceInLocal(AppNamespace appNamespace) {
+    return createAppNamespaceInLocal(appNamespace, true);
+  }
+
+  @Transactional
+  public AppNamespace createAppNamespaceInLocal(AppNamespace appNamespace, boolean appendNamespacePrefix) {
     String appId = appNamespace.getAppId();
 
     //add app org id as prefix
@@ -82,7 +103,7 @@ public class AppNamespaceService {
     StringBuilder appNamespaceName = new StringBuilder();
     //add prefix postfix
     appNamespaceName
-        .append(appNamespace.isPublic() ? app.getOrgId() + "." : "")
+        .append(appNamespace.isPublic() && appendNamespacePrefix ? app.getOrgId() + "." : "")
         .append(appNamespace.getName())
         .append(appNamespace.formatAsEnum() == ConfigFileFormat.Properties ? "" : "." + appNamespace.getFormat());
     appNamespace.setName(appNamespaceName.toString());
@@ -103,12 +124,9 @@ public class AppNamespaceService {
 
     appNamespace.setDataChangeLastModifiedBy(operator);
 
-    // unique check
+    // globally uniqueness check
     if (appNamespace.isPublic()) {
-      AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
-      if (publicAppNamespace != null) {
-        throw new BadRequestException("Public AppNamespace " + appNamespace.getName() + " already exists in appId: " + publicAppNamespace.getAppId() + "!");
-      }
+      checkAppNamespaceGlobalUniqueness(appNamespace);
     }
 
     if (!appNamespace.isPublic() &&
@@ -123,6 +141,30 @@ public class AppNamespaceService {
 
     return createdAppNamespace;
   }
+
+  private void checkAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
+    AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
+    if (publicAppNamespace != null) {
+      throw new BadRequestException("Public AppNamespace " + appNamespace.getName() + " already exists in appId: " + publicAppNamespace.getAppId() + "!");
+    }
+
+    List<AppNamespace> privateAppNamespaces = findAllPrivateAppNamespaces(appNamespace.getName());
+
+    if (!CollectionUtils.isEmpty(privateAppNamespaces)) {
+      Set<String> appIds = Sets.newHashSet();
+      for (AppNamespace ans : privateAppNamespaces) {
+        appIds.add(ans.getAppId());
+        if (appIds.size() == PRIVATE_APP_NAMESPACE_NOTIFICATION_COUNT) {
+          break;
+        }
+      }
+
+      throw new BadRequestException(
+          "Public AppNamespace " + appNamespace.getName() + " already exists as private AppNamespace in appId: "
+              + APP_NAMESPACE_JOINER.join(appIds) + ", etc. Please select another name!");
+    }
+  }
+
 
   @Transactional
   public AppNamespace deleteAppNamespace(String appId, String namespaceName) {

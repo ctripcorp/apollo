@@ -51,7 +51,7 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
     }
     for (String key : keys) {
       // 1. check whether the changed key is relevant
-      Collection<SpringValue> targetValues = springValueRegistry.get(key);
+      Collection<SpringValue> targetValues = springValueRegistry.get(beanFactory, key);
       if (targetValues == null || targetValues.isEmpty()) {
         continue;
       }

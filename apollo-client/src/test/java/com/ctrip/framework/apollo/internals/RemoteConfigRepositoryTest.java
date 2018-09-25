@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,7 @@ public class RemoteConfigRepositoryTest {
     Properties config = remoteConfigRepository.getConfig();
 
     assertEquals(configurations, config);
+    assertEquals(ConfigSourceType.REMOTE, remoteConfigRepository.getSourceType());
     remoteConfigLongPollService.stopLongPollingRefresh();
   }
 
