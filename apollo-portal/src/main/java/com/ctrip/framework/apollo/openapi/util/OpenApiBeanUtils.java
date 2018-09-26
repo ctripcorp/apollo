@@ -1,29 +1,20 @@
 package com.ctrip.framework.apollo.openapi.util;
 
+import com.ctrip.framework.apollo.common.dto.*;
+import com.ctrip.framework.apollo.openapi.dto.*;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-import com.ctrip.framework.apollo.common.dto.ItemDTO;
-import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
-import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OpenApiBeanUtils {
@@ -114,6 +105,25 @@ public class OpenApiBeanUtils {
     }
 
     return lock;
+  }
+
+  public static OpenGrayReleaseRuleDTO transformFromGrayReleaseRuleDTO(GrayReleaseRuleDTO grayReleaseRuleDTO){
+    OpenGrayReleaseRuleDTO openGrayReleaseRuleDTO = new OpenGrayReleaseRuleDTO();
+    openGrayReleaseRuleDTO.setAppId(grayReleaseRuleDTO.getAppId());
+    openGrayReleaseRuleDTO.setBranchName(grayReleaseRuleDTO.getBranchName());
+    openGrayReleaseRuleDTO.setClusterName(grayReleaseRuleDTO.getClusterName());
+
+    Set<GrayReleaseRuleItemDTO> grayReleaseRuleItemDTOSet = grayReleaseRuleDTO.getRuleItems();
+    Set<OpenGrayReleaseRuleItemDTO> ruleItems = new HashSet<>();
+    grayReleaseRuleItemDTOSet.forEach(grayReleaseRuleItemDTO -> {
+      OpenGrayReleaseRuleItemDTO item = new OpenGrayReleaseRuleItemDTO();
+      item.setClientAppId(grayReleaseRuleItemDTO.getClientAppId());
+      item.setClientIpList(grayReleaseRuleItemDTO.getClientIpList());
+      ruleItems.add(item);
+    });
+    openGrayReleaseRuleDTO.setRuleItems(ruleItems);
+
+    return openGrayReleaseRuleDTO;
   }
 
 }

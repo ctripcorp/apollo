@@ -13,6 +13,7 @@ import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
+import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 
@@ -30,8 +31,12 @@ public class ReleaseController {
 
     @Autowired
     private ReleaseService releaseService;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NamespaceBranchService namespaceBranchService;
 
     @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
@@ -71,6 +76,28 @@ public class ReleaseController {
         }
 
         return OpenApiBeanUtils.transformFromReleaseDTO(releaseDTO);
+    }
+
+    @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
+    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/merge", method = RequestMethod.POST)
+    public OpenReleaseDTO merge(@PathVariable String appId, @PathVariable String env,
+                            @PathVariable String clusterName, @PathVariable String namespaceName,
+                            @PathVariable String branchName, @RequestParam(value = "deleteBranch", defaultValue = "true") boolean deleteBranch,
+                            @RequestBody NamespaceReleaseDTO model, HttpServletRequest request) {
+        checkModel(model != null);
+        RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
+                        .getReleaseTitle()),
+                "Params(releaseTitle and releasedBy) can not be empty");
+
+        if (userService.findByUserId(model.getReleasedBy()) == null) {
+            throw new BadRequestException("user(releaseBy) not exists");
+        }
+
+        ReleaseDTO mergedRelease = namespaceBranchService.merge(appId, Env.valueOf(env.toUpperCase()), clusterName, namespaceName, branchName,
+                model.getReleaseTitle(), model.getReleaseComment(),
+                model.isEmergencyPublish(), deleteBranch, model.getReleasedBy());
+
+        return OpenApiBeanUtils.transformFromReleaseDTO(mergedRelease);
     }
 
     @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
