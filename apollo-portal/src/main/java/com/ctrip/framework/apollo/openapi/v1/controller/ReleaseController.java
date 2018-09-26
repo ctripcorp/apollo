@@ -73,40 +73,32 @@ public class ReleaseController {
         return OpenApiBeanUtils.transformFromReleaseDTO(releaseDTO);
     }
 
-//    @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
-//    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/operator/{operator}/releases",
-//            method = RequestMethod.POST)
-//    public ReleaseDTO createGrayRelease(@PathVariable String appId,
-//                                        @PathVariable String env, @PathVariable String clusterName,
-//                                        @PathVariable String namespaceName, @PathVariable String branchName,
-//                                        @RequestBody NamespaceReleaseDTO model,
-//                                        HttpServletRequest request) {
-//
-//        NamespaceReleaseModel model = new NamespaceReleaseModel();
-//        model.setAppId(appId);
-//        model.setEnv(env.toUpperCase());
-//        model.setClusterName(branchName);
-//        model.setNamespaceName(namespaceName);
-//        model.setReleasedBy(operator);
-//
-//        if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(env.toUpperCase()))) {
-//            throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
-//        }
-//
-//        ReleaseDTO createdRelease = releaseService.publish(model);
-//
-//        ConfigPublishEvent event = ConfigPublishEvent.instance();
-//        event.withAppId(appId)
-//                .withCluster(clusterName)
-//                .withNamespace(namespaceName)
-//                .withReleaseId(createdRelease.getId())
-//                .setGrayPublishEvent(true)
-//                .setEnv(Env.valueOf(env.toUpperCase()));
-//
-//        publisher.publishEvent(event);
-//
-//        return createdRelease;
-//    }
+    @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
+    @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/releases",
+            method = RequestMethod.POST)
+    public OpenReleaseDTO createGrayRelease(@PathVariable String appId,
+                                        @PathVariable String env, @PathVariable String clusterName,
+                                        @PathVariable String namespaceName, @PathVariable String branchName,
+                                        @RequestBody NamespaceReleaseDTO model,
+                                        HttpServletRequest request) {
+        checkModel(model != null);
+        RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
+                        .getReleaseTitle()),
+                "Params(releaseTitle and releasedBy) can not be empty");
+
+        if (userService.findByUserId(model.getReleasedBy()) == null) {
+            throw new BadRequestException("user(releaseBy) not exists");
+        }
+
+        NamespaceReleaseModel releaseModel = BeanUtils.transfrom(NamespaceReleaseModel.class, model);
+
+        releaseModel.setAppId(appId);
+        releaseModel.setEnv(Env.fromString(env).toString());
+        releaseModel.setClusterName(branchName);
+        releaseModel.setNamespaceName(namespaceName);
+
+        return OpenApiBeanUtils.transformFromReleaseDTO(releaseService.publish(releaseModel));
+    }
 
     @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
     @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/gray-del-releases",
