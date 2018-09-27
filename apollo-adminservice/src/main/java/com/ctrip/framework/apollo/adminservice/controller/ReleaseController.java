@@ -176,4 +176,36 @@ public class ReleaseController {
                               Topics.APOLLO_RELEASE_TOPIC);
   }
 
+  @Transactional
+  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/operator/{operator}/releases", method = RequestMethod.POST)
+  public ReleaseDTO publish(@PathVariable("appId") String appId,
+                            @PathVariable("clusterName") String clusterName,
+                            @PathVariable("namespaceName") String namespaceName,
+                            @PathVariable("operator") String operator,
+                            @RequestParam("releaseName") String releaseName,
+                            @RequestParam(name = "comment", required = false) String releaseComment,
+                            @RequestParam(name = "isEmergencyPublish", defaultValue = "false") boolean isEmergencyPublish,
+                            @RequestParam(name = "isKeepingGrayConfig", defaultValue = "false") boolean isKeepingGrayConfig,
+                            @RequestBody Set<String> grayDelKeys) {
+    Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
+    if (namespace == null) {
+      throw new NotFoundException(String.format("Could not find namespace for %s %s %s", appId,
+              clusterName, namespaceName));
+    }
+
+    Release release = releaseService.grayDeletionPublish(namespace, releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys, isKeepingGrayConfig);
+
+    //send release message
+    Namespace parentNamespace = namespaceService.findParentNamespace(namespace);
+    String messageCluster;
+    if (parentNamespace != null) {
+      messageCluster = parentNamespace.getClusterName();
+    } else {
+      messageCluster = clusterName;
+    }
+    messageSender.sendMessage(ReleaseMessageKeyGenerator.generate(appId, messageCluster, namespaceName),
+            Topics.APOLLO_RELEASE_TOPIC);
+    return BeanUtils.transfrom(ReleaseDTO.class, release);
+  }
+
 }

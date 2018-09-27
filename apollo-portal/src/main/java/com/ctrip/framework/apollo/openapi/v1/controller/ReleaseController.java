@@ -9,11 +9,15 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
+import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +37,11 @@ public class ReleaseController {
   private ReleaseService releaseService;
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private ApplicationEventPublisher publisher;
+  @Autowired
+  private PortalConfig portalConfig;
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
@@ -72,6 +81,74 @@ public class ReleaseController {
     }
 
     return OpenApiBeanUtils.transformFromReleaseDTO(releaseDTO);
+  }
+
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/operator/{operator}/releases",
+          method = RequestMethod.POST)
+  public ReleaseDTO createGrayRelease(@PathVariable String appId,
+                                      @PathVariable String env, @PathVariable String clusterName,
+                                      @PathVariable String namespaceName, @PathVariable String branchName,
+                                      @PathVariable String operator,
+                                      HttpServletRequest request) {
+
+    NamespaceReleaseModel model = new NamespaceReleaseModel();
+    model.setAppId(appId);
+    model.setEnv(env.toUpperCase());
+    model.setClusterName(branchName);
+    model.setNamespaceName(namespaceName);
+    model.setReleasedBy(operator);
+
+    if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(env.toUpperCase()))) {
+      throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+    }
+
+    ReleaseDTO createdRelease = releaseService.publish(model);
+
+    ConfigPublishEvent event = ConfigPublishEvent.instance();
+    event.withAppId(appId)
+            .withCluster(clusterName)
+            .withNamespace(namespaceName)
+            .withReleaseId(createdRelease.getId())
+            .setGrayPublishEvent(true)
+            .setEnv(Env.valueOf(env.toUpperCase()));
+
+    publisher.publishEvent(event);
+
+    return createdRelease;
+  }
+
+  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/operator/{operator}/gray-del-releases",
+          method = RequestMethod.POST)
+  public ReleaseDTO createGrayDelRelease(@PathVariable String appId,
+                                         @PathVariable String env, @PathVariable String clusterName,
+                                         @PathVariable String namespaceName, @PathVariable String branchName,
+                                         @PathVariable String operator,
+                                         @RequestBody NamespaceGrayDelReleaseModel model,
+                                         HttpServletRequest request) {
+
+    checkModel(model != null);
+    model.setAppId(appId);
+    model.setEnv(env.toUpperCase());
+    model.setClusterName(branchName);
+    model.setNamespaceName(namespaceName);
+
+    if (model.isEmergencyPublish() && !portalConfig.isEmergencyPublishAllowed(Env.valueOf(env.toUpperCase()))) {
+      throw new BadRequestException(String.format("Env: %s is not supported emergency publish now", env));
+    }
+
+    ReleaseDTO createdRelease = releaseService.publish(model, operator);
+
+    ConfigPublishEvent event = ConfigPublishEvent.instance();
+    event.withAppId(appId)
+            .withCluster(clusterName)
+            .withNamespace(namespaceName)
+            .withReleaseId(createdRelease.getId())
+            .setGrayPublishEvent(true)
+            .setEnv(Env.valueOf(env.toUpperCase()));
+
+    publisher.publishEvent(event);
+
+    return createdRelease;
   }
 
 }
