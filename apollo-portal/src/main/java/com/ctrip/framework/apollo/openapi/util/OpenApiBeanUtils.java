@@ -112,6 +112,7 @@ public class OpenApiBeanUtils {
     openGrayReleaseRuleDTO.setAppId(grayReleaseRuleDTO.getAppId());
     openGrayReleaseRuleDTO.setBranchName(grayReleaseRuleDTO.getBranchName());
     openGrayReleaseRuleDTO.setClusterName(grayReleaseRuleDTO.getClusterName());
+    openGrayReleaseRuleDTO.setNamespaceName(grayReleaseRuleDTO.getNamespaceName());
 
     Set<GrayReleaseRuleItemDTO> grayReleaseRuleItemDTOSet = grayReleaseRuleDTO.getRuleItems();
     Set<OpenGrayReleaseRuleItemDTO> ruleItems = new HashSet<>();
@@ -124,6 +125,25 @@ public class OpenApiBeanUtils {
     openGrayReleaseRuleDTO.setRuleItems(ruleItems);
 
     return openGrayReleaseRuleDTO;
+  }
+
+  public static GrayReleaseRuleDTO transformToGrayReleaseRuleDTO(OpenGrayReleaseRuleDTO openGrayReleaseRuleDTO){
+    String appId = openGrayReleaseRuleDTO.getAppId();
+    String branchName = openGrayReleaseRuleDTO.getBranchName();
+    String clusterName = openGrayReleaseRuleDTO.getClusterName();
+    String namespaceName = openGrayReleaseRuleDTO.getNamespaceName();
+
+    GrayReleaseRuleDTO grayReleaseRuleDTO = new GrayReleaseRuleDTO(appId,clusterName,namespaceName,branchName);
+
+    Set<OpenGrayReleaseRuleItemDTO> openGrayReleaseRuleItemDTOSet = openGrayReleaseRuleDTO.getRuleItems();
+    openGrayReleaseRuleItemDTOSet.forEach(openGrayReleaseRuleItemDTO ->{
+      String clientAppId = openGrayReleaseRuleItemDTO.getClientAppId();
+      Set<String> clientIpList = openGrayReleaseRuleItemDTO.getClientIpList();
+      GrayReleaseRuleItemDTO ruleItem = new GrayReleaseRuleItemDTO(clientAppId, clientIpList);
+      grayReleaseRuleDTO.addRuleItem(ruleItem);
+    });
+
+    return grayReleaseRuleDTO;
   }
 
 }

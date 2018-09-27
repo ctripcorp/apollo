@@ -96,12 +96,12 @@ public class NamespaceBranchController {
     @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules", method = RequestMethod.PUT)
     public void updateBranchRules(@PathVariable String appId, @PathVariable String env,
                                   @PathVariable String clusterName, @PathVariable String namespaceName,
-                                  @PathVariable String branchName, @RequestBody GrayReleaseRuleDTO rules,
+                                  @PathVariable String branchName, @RequestBody OpenGrayReleaseRuleDTO rules,
                                   @RequestParam("operator") String operator,
                                   HttpServletRequest request) {
-
+        GrayReleaseRuleDTO grayReleaseRuleDTO = OpenApiBeanUtils.transformToGrayReleaseRuleDTO(rules);
         namespaceBranchService
-                .updateBranchGrayRules(appId, Env.valueOf(env.toUpperCase()), clusterName, namespaceName, branchName, rules, operator);
+                .updateBranchGrayRules(appId, Env.valueOf(env.toUpperCase()), clusterName, namespaceName, branchName, grayReleaseRuleDTO, operator);
 
     }
 }
