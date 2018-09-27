@@ -185,6 +185,49 @@ public class ReleaseService {
     return release;
   }
 
+  private Release publishBranchNamespace(Namespace parentNamespace, Namespace childNamespace,
+                                         Map<String, String> childNamespaceItems,
+                                         String releaseName, String releaseComment,
+                                         String operator, boolean isEmergencyPublish, Set<String> grayDelKeys) {
+    Release parentLatestRelease = findLatestActiveRelease(parentNamespace);
+    Map<String, String> parentConfigurations = parentLatestRelease != null ?
+            gson.fromJson(parentLatestRelease.getConfigurations(),
+                    GsonType.CONFIG) : new HashMap<>();
+    long baseReleaseId = parentLatestRelease == null ? 0 : parentLatestRelease.getId();
+
+    Map<String, String> configsToPublish = mergeConfiguration(parentConfigurations, childNamespaceItems);
+
+    if(!(grayDelKeys == null || grayDelKeys.size()==0)){
+      for (String key : grayDelKeys){
+        configsToPublish.remove(key);
+      }
+    }
+
+    return branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
+            configsToPublish, baseReleaseId, operator,
+            ReleaseOperation.GRAY_RELEASE, isEmergencyPublish);
+
+  }
+
+  @Transactional
+  public Release grayDeletionPublish(Namespace namespace, String releaseName, String releaseComment,
+                                     String operator, boolean isEmergencyPublish, Set<String> grayDelKeys) {
+
+    checkLock(namespace, isEmergencyPublish, operator);
+
+    Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
+
+    Namespace parentNamespace = namespaceService.findParentNamespace(namespace);
+
+    //branch release
+    if (parentNamespace != null) {
+      return publishBranchNamespace(parentNamespace, namespace, operateNamespaceItems,
+              releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys);
+    }else {
+      throw new NotFoundException("Parent namespace not found");
+    }
+  }
+
   private void checkLock(Namespace namespace, boolean isEmergencyPublish, String operator) {
     if (!isEmergencyPublish) {
       NamespaceLock lock = namespaceLockService.findLock(namespace.getId());
@@ -222,17 +265,8 @@ public class ReleaseService {
                                          Map<String, String> childNamespaceItems,
                                          String releaseName, String releaseComment,
                                          String operator, boolean isEmergencyPublish) {
-    Release parentLatestRelease = findLatestActiveRelease(parentNamespace);
-    Map<String, String> parentConfigurations = parentLatestRelease != null ?
-                                               gson.fromJson(parentLatestRelease.getConfigurations(),
-                                                             GsonType.CONFIG) : new HashMap<>();
-    long baseReleaseId = parentLatestRelease == null ? 0 : parentLatestRelease.getId();
-
-    Map<String, String> childNamespaceToPublishConfigs = mergeConfiguration(parentConfigurations, childNamespaceItems);
-
-    return branchRelease(parentNamespace, childNamespace, releaseName, releaseComment,
-                         childNamespaceToPublishConfigs, baseReleaseId, operator,
-                         ReleaseOperation.GRAY_RELEASE, isEmergencyPublish);
+    return publishBranchNamespace(parentNamespace, childNamespace, childNamespaceItems, releaseName, releaseComment,
+            operator, isEmergencyPublish, null);
 
   }
 

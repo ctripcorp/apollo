@@ -274,6 +274,27 @@ public class AdminServiceAPI {
       return response;
     }
 
+    public ReleaseDTO createGrayDeletionRelease(String appId, Env env, String clusterName, String namespace,
+                                    String releaseName, String releaseComment, String operator,
+                                    boolean isEmergencyPublish, Set<String> grayDelKeys) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8"));
+      MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+      parameters.add("releaseName", releaseName);
+      parameters.add("comment", releaseComment);
+      parameters.add("operator", operator);
+      parameters.add("isEmergencyPublish", String.valueOf(isEmergencyPublish));
+      grayDelKeys.forEach(key ->{
+        parameters.add("grayDelKeys",key);
+      });
+      HttpEntity<MultiValueMap<String, String>> entity =
+              new HttpEntity<>(parameters, headers);
+      ReleaseDTO response = restTemplate.post(
+              env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/gray-del-releases", entity,
+              ReleaseDTO.class, appId, clusterName, namespace);
+      return response;
+    }
+
     public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
         String releaseName, String releaseComment, String branchName,
         boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
