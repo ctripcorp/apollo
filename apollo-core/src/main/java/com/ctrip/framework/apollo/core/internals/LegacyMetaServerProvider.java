@@ -5,6 +5,7 @@ import static java.lang.System.getenv;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
+import com.google.common.base.Strings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,23 +27,28 @@ public class LegacyMetaServerProvider implements MetaServerProvider {
     Properties prop = new Properties();
     prop = ResourceUtils.readConfigFile("apollo-env.properties", prop);
     Properties env = System.getProperties();
-    domains.put(Env.LOCAL, getenv("local_meta") != null ? getenv("local_meta")
-        : env.getProperty("local_meta", prop.getProperty("local.meta")));
 
-    domains.put(Env.DEV, getenv("dev_meta") != null ? getenv("dev_meta")
-        : env.getProperty("dev_meta", prop.getProperty("dev.meta")));
+    domains.put(Env.LOCAL, getMeteServerConf(env, prop, "local_meta", "local.meta"));
+    domains.put(Env.DEV, getMeteServerConf(env, prop, "dev_meta", "dev.meta"));
+    domains.put(Env.FAT, getMeteServerConf(env, prop, "fat_meta", "fat.meta"));
+    domains.put(Env.UAT, getMeteServerConf(env, prop, "uat_meta", "uat.meta"));
+    domains.put(Env.LPT, getMeteServerConf(env, prop, "lpt_meta", "lpt.meta"));
+    domains.put(Env.PRO, getMeteServerConf(env, prop, "pro_meta", "pro.meta"));
+  }
 
-    domains.put(Env.FAT, getenv("fat_meta") != null ? getenv("fat_meta")
-        : env.getProperty("fat_meta", prop.getProperty("fat.meta")));
-
-    domains.put(Env.UAT, getenv("uat_meta") != null ? getenv("uat_meta")
-        : env.getProperty("uat_meta", prop.getProperty("uat.meta")));
-
-    domains.put(Env.LPT, getenv("lpt_meta") != null ? getenv("lpt_meta")
-        : env.getProperty("lpt_meta", prop.getProperty("lpt.meta")));
-
-    domains.put(Env.PRO, getenv("pro_meta") != null ? getenv("pro_meta")
-        : env.getProperty("pro_meta", prop.getProperty("pro.meta")));
+  public String getMeteServerConf(Properties env, Properties prop, String sourceName,
+      String propName) {
+    // 1. Get from System Property.
+    String metaAddress = env.getProperty(sourceName);
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      // 2. Get from OS environment variable, which could not contain dot and is normally in UPPER case,like DEV_META.
+      metaAddress = getenv(sourceName.toUpperCase());
+    }
+    if (Strings.isNullOrEmpty(metaAddress)) {
+      // 3. Get from properties file.
+      metaAddress = prop.getProperty(propName);
+    }
+    return metaAddress;
   }
 
   @Override
