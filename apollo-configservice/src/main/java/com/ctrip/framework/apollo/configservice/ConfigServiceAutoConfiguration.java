@@ -14,6 +14,7 @@ import com.ctrip.framework.apollo.configservice.service.config.DefaultConfigServ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -35,6 +36,11 @@ public class ConfigServiceAutoConfiguration {
       return new ConfigServiceWithCache();
     }
     return new DefaultConfigService();
+  }
+
+  @Bean
+  public static NoOpPasswordEncoder passwordEncoder() {
+    return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
   }
 
   @Configuration
