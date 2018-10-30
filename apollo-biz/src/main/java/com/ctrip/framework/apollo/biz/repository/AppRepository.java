@@ -14,5 +14,4 @@ public interface AppRepository extends PagingAndSortingRepository<App, Long> {
   List<App> findByName(@Param("name") String name);
 
   App findByAppId(String appId);
-
 }

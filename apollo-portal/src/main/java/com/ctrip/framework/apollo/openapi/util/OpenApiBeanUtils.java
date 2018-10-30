@@ -1,30 +1,20 @@
 package com.ctrip.framework.apollo.openapi.util;
 
+import com.ctrip.framework.apollo.common.dto.*;
+import com.ctrip.framework.apollo.openapi.dto.*;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
-import com.ctrip.framework.apollo.common.dto.ItemDTO;
-import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
-import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
-import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OpenApiBeanUtils {
@@ -115,6 +105,33 @@ public class OpenApiBeanUtils {
     }
 
     return lock;
+  }
+
+  public static OpenGrayReleaseRuleDTO transformFromGrayReleaseRuleDTO(GrayReleaseRuleDTO grayReleaseRuleDTO){
+    Preconditions.checkArgument(grayReleaseRuleDTO != null);
+
+    return BeanUtils.transfrom(OpenGrayReleaseRuleDTO.class, grayReleaseRuleDTO);
+  }
+
+  public static GrayReleaseRuleDTO transformToGrayReleaseRuleDTO(OpenGrayReleaseRuleDTO openGrayReleaseRuleDTO){
+    Preconditions.checkArgument(openGrayReleaseRuleDTO != null);
+
+    String appId = openGrayReleaseRuleDTO.getAppId();
+    String branchName = openGrayReleaseRuleDTO.getBranchName();
+    String clusterName = openGrayReleaseRuleDTO.getClusterName();
+    String namespaceName = openGrayReleaseRuleDTO.getNamespaceName();
+
+    GrayReleaseRuleDTO grayReleaseRuleDTO = new GrayReleaseRuleDTO(appId,clusterName,namespaceName,branchName);
+
+    Set<OpenGrayReleaseRuleItemDTO> openGrayReleaseRuleItemDTOSet = openGrayReleaseRuleDTO.getRuleItems();
+    openGrayReleaseRuleItemDTOSet.forEach(openGrayReleaseRuleItemDTO ->{
+      String clientAppId = openGrayReleaseRuleItemDTO.getClientAppId();
+      Set<String> clientIpList = openGrayReleaseRuleItemDTO.getClientIpList();
+      GrayReleaseRuleItemDTO ruleItem = new GrayReleaseRuleItemDTO(clientAppId, clientIpList);
+      grayReleaseRuleDTO.addRuleItem(ruleItem);
+    });
+
+    return grayReleaseRuleDTO;
   }
 
 }

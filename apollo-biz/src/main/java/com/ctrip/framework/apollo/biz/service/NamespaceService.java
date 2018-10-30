@@ -67,7 +67,7 @@ public class NamespaceService {
 
 
   public Namespace findOne(Long namespaceId) {
-    return namespaceRepository.findOne(namespaceId);
+    return namespaceRepository.findById(namespaceId).orElse(null);
   }
 
   public Namespace findOne(String appId, String clusterName, String namespaceName) {
@@ -175,7 +175,7 @@ public class NamespaceService {
   }
 
   public List<Namespace> findByAppIdAndNamespaceName(String appId, String namespaceName) {
-    return namespaceRepository.findByAppIdAndNamespaceName(appId, namespaceName);
+    return namespaceRepository.findByAppIdAndNamespaceNameOrderByIdAsc(appId, namespaceName);
   }
 
   public Namespace findChildNamespace(String appId, String parentClusterName, String namespaceName) {
@@ -263,6 +263,8 @@ public class NamespaceService {
     itemService.batchDelete(namespace.getId(), operator);
     commitService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
 
+    // Child namespace releases should retain as long as the parent namespace exists, because parent namespaces' release
+    // histories need them
     if (!isChildNamespace(namespace)) {
       releaseService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
     }

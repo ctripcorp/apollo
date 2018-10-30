@@ -1,5 +1,9 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.enums.EnvUtils;
+import com.ctrip.framework.apollo.portal.entity.vo.NamespaceEnvRolesAssignedUsers;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.google.common.collect.Sets;
 
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
@@ -37,6 +41,14 @@ public class PermissionController {
   private RolePermissionService rolePermissionService;
   @Autowired
   private UserService userService;
+  @Autowired
+  private RoleInitializationService roleInitializationService;
+
+  @RequestMapping(value = "/apps/{appId}/initPermission", method = RequestMethod.POST)
+  public ResponseEntity<Void> initAppPermission(@PathVariable String appId, @RequestBody String namespaceName) {
+    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, userInfoHolder.getUser().getUserId());
+    return ResponseEntity.ok().build();
+  }
 
   @RequestMapping(value = "/apps/{appId}/permissions/{permissionType}", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String permissionType) {
@@ -60,6 +72,18 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/permissions/{permissionType}", method = RequestMethod.GET)
+  public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
+                                                           @PathVariable String permissionType) {
+    PermissionCondition permissionCondition = new PermissionCondition();
+
+    permissionCondition.setHasPermission(
+        rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType,
+            RoleUtils.buildNamespaceTargetId(appId, namespaceName, env)));
+
+    return ResponseEntity.ok().body(permissionCondition);
+  }
+
   @RequestMapping(value = "/permissions/root", method = RequestMethod.GET)
   public ResponseEntity<PermissionCondition> hasRootPermission() {
     PermissionCondition permissionCondition = new PermissionCondition();
@@ -69,6 +93,72 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
+
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
+  public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
+
+    // validate env parameter
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+      throw new BadRequestException("env is illegal");
+    }
+
+    NamespaceEnvRolesAssignedUsers assignedUsers = new NamespaceEnvRolesAssignedUsers();
+    assignedUsers.setNamespaceName(namespaceName);
+    assignedUsers.setAppId(appId);
+    assignedUsers.setEnv(Env.fromString(env));
+
+    Set<UserInfo> releaseNamespaceUsers =
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env));
+    assignedUsers.setReleaseRoleUsers(releaseNamespaceUsers);
+
+    Set<UserInfo> modifyNamespaceUsers =
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env));
+    assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
+
+    return assignedUsers;
+  }
+
+  @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.POST)
+  public ResponseEntity<Void> assignNamespaceEnvRoleToUser(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
+                                                           @PathVariable String roleType, @RequestBody String user) {
+    checkUserExists(user);
+    RequestPrecondition.checkArgumentsNotEmpty(user);
+
+    if (!RoleType.isValidRoleType(roleType)) {
+      throw new BadRequestException("role type is illegal");
+    }
+
+    // validate env parameter
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+      throw new BadRequestException("env is illegal");
+    }
+    Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
+        Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
+    if (CollectionUtils.isEmpty(assignedUser)) {
+      throw new BadRequestException(user + "已授权");
+    }
+
+    return ResponseEntity.ok().build();
+  }
+
+  @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
+  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> removeNamespaceEnvRoleFromUser(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
+                                                             @PathVariable String roleType, @RequestParam String user) {
+    RequestPrecondition.checkArgumentsNotEmpty(user);
+
+    if (!RoleType.isValidRoleType(roleType)) {
+      throw new BadRequestException("role type is illegal");
+    }
+    // validate env parameter
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+      throw new BadRequestException("env is illegal");
+    }
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
+        Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
+    return ResponseEntity.ok().build();
+  }
 
   @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
   public NamespaceRolesAssignedUsers getNamespaceRoles(@PathVariable String appId, @PathVariable String namespaceName) {

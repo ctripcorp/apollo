@@ -38,7 +38,7 @@ public class ItemService {
 
   @Transactional
   public Item delete(long id, String operator) {
-    Item item = itemRepository.findOne(id);
+    Item item = itemRepository.findById(id).orElse(null);
     if (item == null) {
       throw new IllegalArgumentException("item not exist. ID:" + id);
     }
@@ -81,7 +81,7 @@ public class ItemService {
   }
 
   public Item findOne(long itemId) {
-    Item item = itemRepository.findOne(itemId);
+    Item item = itemRepository.findById(itemId).orElse(null);
     return item;
   }
 
@@ -147,7 +147,7 @@ public class ItemService {
   @Transactional
   public Item update(Item item) {
     checkItemValueLength(item.getNamespaceId(), item.getValue());
-    Item managedItem = itemRepository.findOne(item.getId());
+    Item managedItem = itemRepository.findById(item.getId()).orElse(null);
     BeanUtils.copyEntityProperties(item, managedItem);
     managedItem = itemRepository.save(managedItem);
 

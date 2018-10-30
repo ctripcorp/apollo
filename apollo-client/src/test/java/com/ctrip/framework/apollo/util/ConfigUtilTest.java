@@ -2,11 +2,14 @@ package com.ctrip.framework.apollo.util;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
 
+import java.io.File;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -22,6 +25,8 @@ public class ConfigUtilTest {
     System.clearProperty("apollo.longPollQPS");
     System.clearProperty("apollo.configCacheSize");
     System.clearProperty("apollo.longPollingInitialDelayInMills");
+    System.clearProperty("apollo.autoUpdateInjectedSpringProperties");
+    System.clearProperty("apollo.cacheDir");
   }
 
   @Test
@@ -172,5 +177,48 @@ public class ConfigUtilTest {
     ConfigUtil configUtil = new ConfigUtil();
 
     assertTrue(configUtil.getLongPollingInitialDelayInMills() > 0);
+  }
+
+  @Test
+  public void testCustomizeAutoUpdateInjectedSpringProperties() throws Exception {
+    boolean someAutoUpdateInjectedSpringProperties = false;
+    System.setProperty("apollo.autoUpdateInjectedSpringProperties",
+        String.valueOf(someAutoUpdateInjectedSpringProperties));
+
+    ConfigUtil configUtil = new ConfigUtil();
+
+    assertEquals(someAutoUpdateInjectedSpringProperties,
+        configUtil.isAutoUpdateInjectedSpringPropertiesEnabled());
+  }
+
+  @Test
+  public void testLocalCacheDirWithSystemProperty() throws Exception {
+    String someCacheDir = "someCacheDir";
+    String someAppId = "someAppId";
+
+    System.setProperty("apollo.cacheDir", someCacheDir);
+
+    ConfigUtil configUtil = spy(new ConfigUtil());
+
+    doReturn(someAppId).when(configUtil).getAppId();
+
+    assertEquals(someCacheDir + File.separator + someAppId, configUtil.getDefaultLocalCacheDir());
+  }
+
+  @Test
+  public void testDefaultLocalCacheDir() throws Exception {
+    String someAppId = "someAppId";
+
+    ConfigUtil configUtil = spy(new ConfigUtil());
+
+    doReturn(someAppId).when(configUtil).getAppId();
+
+    doReturn(true).when(configUtil).isOSWindows();
+
+    assertEquals("C:\\opt\\data\\" + someAppId, configUtil.getDefaultLocalCacheDir());
+
+    doReturn(false).when(configUtil).isOSWindows();
+
+    assertEquals("/opt/data/" + someAppId, configUtil.getDefaultLocalCacheDir());
   }
 }

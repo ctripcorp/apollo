@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -342,11 +343,13 @@ public class NotificationControllerV2Test {
 
     controller.handleMessage(someReleaseMessage, Topics.APOLLO_RELEASE_TOPIC);
 
-    assertTrue(!anotherDeferredResult.hasResult());
+    //in batch mode, at most one of them should have result
+    assertFalse(deferredResult.hasResult() && anotherDeferredResult.hasResult());
 
     TimeUnit.MILLISECONDS.sleep(someBatchInterval * 10);
 
-    assertTrue(anotherDeferredResult.hasResult());
+    //now both of them should have result
+    assertTrue(deferredResult.hasResult() && anotherDeferredResult.hasResult());
   }
 
   private String transformApolloConfigNotificationsToString(

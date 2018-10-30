@@ -133,7 +133,7 @@ public class AppNamespaceServiceWithCacheTest {
     // Add 1 private namespace and 1 public namespace
     when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(0)).thenReturn(Lists
         .newArrayList(somePrivateAppNamespace, somePublicAppNamespace));
-    when(appNamespaceRepository.findAll(Lists.newArrayList(somePrivateNamespaceId,
+    when(appNamespaceRepository.findAllById(Lists.newArrayList(somePrivateNamespaceId,
         somePublicNamespaceId))).thenReturn(Lists.newArrayList(somePrivateAppNamespace,
         somePublicAppNamespace));
 
@@ -165,7 +165,7 @@ public class AppNamespaceServiceWithCacheTest {
     when(appNamespaceRepository.findFirst500ByIdGreaterThanOrderByIdAsc(somePublicNamespaceId))
         .thenReturn(Lists.newArrayList(anotherPrivateAppNamespace, yetAnotherPrivateAppNamespace,
             anotherPublicAppNamespace));
-    when(appNamespaceRepository.findAll(appNamespaceIds)).thenReturn(allAppNamespaces);
+    when(appNamespaceRepository.findAllById(appNamespaceIds)).thenReturn(allAppNamespaces);
 
     scanIntervalTimeUnit.sleep(sleepInterval);
 
@@ -213,7 +213,7 @@ public class AppNamespaceServiceWithCacheTest {
         (somePublicAppNamespace.getDataChangeLastModifiedTime(), 1));
 
     // Delete 1 private and 1 public
-    when(appNamespaceRepository.findAll(appNamespaceIds)).thenReturn(Lists.newArrayList
+    when(appNamespaceRepository.findAllById(appNamespaceIds)).thenReturn(Lists.newArrayList
         (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
 
     scanIntervalTimeUnit.sleep(sleepInterval);

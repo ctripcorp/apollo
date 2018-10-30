@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.internals;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -54,6 +53,8 @@ public class RemoteConfigLongPollService {
   private static final Joiner.MapJoiner MAP_JOINER = Joiner.on("&").withKeyValueSeparator("=");
   private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
   private static final long INIT_NOTIFICATION_ID = ConfigConsts.NOTIFICATION_ID_PLACEHOLDER;
+  //90 seconds, should be longer than server side's long polling timeout, which is now 60 seconds
+  private static final int LONG_POLLING_READ_TIMEOUT = 90 * 1000;
   private final ExecutorService m_longPollingService;
   private final AtomicBoolean m_longPollingStopped;
   private SchedulePolicy m_longPollFailSchedulePolicyInSecond;
@@ -161,8 +162,7 @@ public class RemoteConfigLongPollService {
 
         logger.debug("Long polling from {}", url);
         HttpRequest request = new HttpRequest(url);
-        //longer timeout for read - 10 minutes
-        request.setReadTimeout(600000);
+        request.setReadTimeout(LONG_POLLING_READ_TIMEOUT);
 
         transaction.addData("Url", url);
 

@@ -38,7 +38,7 @@ public class NamespaceServiceTest extends AbstractUnitTest {
 
   @Test(expected = BadRequestException.class)
   public void testFindPublicAppNamespaceWithWrongNamespace() {
-    Pageable page = new PageRequest(0, 10);
+    Pageable page = PageRequest.of(0, 10);
 
     when(appNamespaceService.findPublicNamespaceByName(testPublicAppNamespace)).thenReturn(null);
 
@@ -59,7 +59,7 @@ public class NamespaceServiceTest extends AbstractUnitTest {
         MockBeanFactory.mockNamespace("app2", ConfigConsts.CLUSTER_NAME_DEFAULT, testPublicAppNamespace);
 
 
-    Pageable page = new PageRequest(0, 10);
+    Pageable page = PageRequest.of(0, 10);
 
     when(namespaceRepository.findByNamespaceName(testPublicAppNamespace, page))
         .thenReturn(Arrays.asList(firstParentNamespace, secondParentNamespace));

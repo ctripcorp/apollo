@@ -9,10 +9,13 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
@@ -31,24 +34,29 @@ public class ServerConfigController {
   @RequestMapping(value = "/server/config", method = RequestMethod.POST)
   public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
 
-    checkModel(serverConfig != null);
+    checkModel(Objects.nonNull(serverConfig));
     RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
 
     String modifiedBy = userInfoHolder.getUser().getUserId();
 
     ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());
 
-    if (storedConfig == null) {//create
+    if (Objects.isNull(storedConfig)) {//create
       serverConfig.setDataChangeCreatedBy(modifiedBy);
       serverConfig.setDataChangeLastModifiedBy(modifiedBy);
+      serverConfig.setId(0L);//为空，设置ID 为0，jpa执行新增操作
       return serverConfigRepository.save(serverConfig);
     } else {//update
       BeanUtils.copyEntityProperties(serverConfig, storedConfig);
       storedConfig.setDataChangeLastModifiedBy(modifiedBy);
       return serverConfigRepository.save(storedConfig);
     }
-
   }
 
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
+  @RequestMapping(value = "/server/config/{key:.+}", method = RequestMethod.GET)
+  public ServerConfig loadServerConfig(@PathVariable String key) {
+    return serverConfigRepository.findByKey(key);
+  }
 
 }

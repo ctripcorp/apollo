@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -29,10 +31,12 @@ import com.google.common.util.concurrent.RateLimiter;
 public class DefaultConfig extends AbstractConfig implements RepositoryChangeListener {
   private static final Logger logger = LoggerFactory.getLogger(DefaultConfig.class);
   private final String m_namespace;
-  private Properties m_resourceProperties;
-  private AtomicReference<Properties> m_configProperties;
-  private ConfigRepository m_configRepository;
-  private RateLimiter m_warnLogRateLimiter;
+  private final Properties m_resourceProperties;
+  private final AtomicReference<Properties> m_configProperties;
+  private final ConfigRepository m_configRepository;
+  private final RateLimiter m_warnLogRateLimiter;
+
+  private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
 
   /**
    * Constructor.
@@ -51,7 +55,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
   private void initialize() {
     try {
-      m_configProperties.set(m_configRepository.getConfig());
+      updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
       logger.warn("Init Apollo Local Config failed - namespace: {}, reason: {}.",
@@ -101,7 +105,25 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       return Collections.emptySet();
     }
 
-    return properties.stringPropertyNames();
+    return stringPropertyNames(properties);
+  }
+
+  @Override
+  public ConfigSourceType getSourceType() {
+    return m_sourceType;
+  }
+
+  private Set<String> stringPropertyNames(Properties properties) {
+    //jdk9以下版本Properties#enumerateStringProperties方法存在性能问题，keys() + get(k) 重复迭代, jdk9之后改为entrySet遍历.
+    Map<String, String> h = new HashMap<>();
+    for (Map.Entry<Object, Object> e : properties.entrySet()) {
+      Object k = e.getKey();
+      Object v = e.getValue();
+      if (k instanceof String && v instanceof String) {
+        h.put((String) k, (String) v);
+      }
+    }
+    return h.keySet();
   }
 
   @Override
@@ -109,10 +131,12 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     if (newProperties.equals(m_configProperties.get())) {
       return;
     }
+
+    ConfigSourceType sourceType = m_configRepository.getSourceType();
     Properties newConfigProperties = new Properties();
     newConfigProperties.putAll(newProperties);
 
-    Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties);
+    Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties, sourceType);
 
     //check double checked result
     if (actualChanges.isEmpty()) {
@@ -124,7 +148,13 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     Tracer.logEvent("Apollo.Client.ConfigChanges", m_namespace);
   }
 
-  private Map<String, ConfigChange> updateAndCalcConfigChanges(Properties newConfigProperties) {
+  private void updateConfig(Properties newConfigProperties, ConfigSourceType sourceType) {
+    m_configProperties.set(newConfigProperties);
+    m_sourceType = sourceType;
+  }
+
+  private Map<String, ConfigChange> updateAndCalcConfigChanges(Properties newConfigProperties,
+      ConfigSourceType sourceType) {
     List<ConfigChange> configChanges =
         calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);
 
@@ -139,7 +169,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     //2. update m_configProperties
-    m_configProperties.set(newConfigProperties);
+    updateConfig(newConfigProperties, sourceType);
     clearConfigCache();
 
     //3. use getProperty to update configChange's new value and calc the final changes

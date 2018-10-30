@@ -67,7 +67,7 @@ public class RolePermissionServiceTest extends AbstractIntegrationTest {
 
     Permission created = rolePermissionService.createPermission(somePermission);
 
-    Permission createdFromDB = permissionRepository.findOne(created.getId());
+    Permission createdFromDB = permissionRepository.findById(created.getId()).orElse(null);
 
     assertEquals(somePermissionType, createdFromDB.getPermissionType());
     assertEquals(someTargetId, createdFromDB.getTargetId());
@@ -103,7 +103,7 @@ public class RolePermissionServiceTest extends AbstractIntegrationTest {
         FluentIterable.from(created).transform(BaseEntity::getId)
             .toSet();
 
-    Iterable<Permission> permissionsFromDB = permissionRepository.findAll(permissionIds);
+    Iterable<Permission> permissionsFromDB = permissionRepository.findAllById(permissionIds);
 
     Set<String> targetIds = Sets.newHashSet();
     Set<String> permissionTypes = Sets.newHashSet();
@@ -145,7 +145,7 @@ public class RolePermissionServiceTest extends AbstractIntegrationTest {
 
     Role created = rolePermissionService.createRoleWithPermissions(role, permissionIds);
 
-    Role createdFromDB = roleRepository.findOne(created.getId());
+    Role createdFromDB = roleRepository.findById(created.getId()).orElse(null);
     List<RolePermission> rolePermissions =
         rolePermissionRepository.findByRoleIdIn(Sets.newHashSet(createdFromDB.getId()));
 

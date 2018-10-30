@@ -6,7 +6,7 @@ import com.ctrip.framework.apollo.portal.PortalApplication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
@@ -25,8 +25,7 @@ public class LocalApolloApplication {
      * Common
      */
     ConfigurableApplicationContext commonContext =
-        new SpringApplicationBuilder(ApolloApplication.class).web(false).run(args);
-    commonContext.addApplicationListener(new ApplicationPidFileWriter());
+        new SpringApplicationBuilder(ApolloApplication.class).web(WebApplicationType.NONE).run(args);
     logger.info(commonContext.getId() + " isActive: " + commonContext.isActive());
 
     /**

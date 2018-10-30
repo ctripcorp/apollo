@@ -51,7 +51,7 @@ public class AppRepositoryTest extends AbstractIntegrationTest{
 
     Assert.assertEquals(1, appRepository.count());
 
-    appRepository.delete(app.getId());
+    appRepository.deleteById(app.getId());
 
     Assert.assertEquals(0, appRepository.count());
   }

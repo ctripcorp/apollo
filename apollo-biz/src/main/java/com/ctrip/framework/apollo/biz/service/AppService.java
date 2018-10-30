@@ -31,7 +31,7 @@ public class AppService {
   
   @Transactional
   public void delete(long id, String operator) {
-    App app = appRepository.findOne(id);
+    App app = appRepository.findById(id).orElse(null);
     if (app == null) {
       return;
     }

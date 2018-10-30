@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
+import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
@@ -14,13 +15,18 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -36,7 +42,8 @@ public class DefaultRolePermissionService implements RolePermissionService {
     private PermissionRepository permissionRepository;
     @Autowired
     private PortalConfig portalConfig;
-
+    @Autowired
+    private ConsumerRoleRepository consumerRoleRepository;
 
     /**
      * Create role with permissions, note that role name should be unique
@@ -58,7 +65,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
                         rolePermission.setDataChangeLastModifiedBy(createdRole.getDataChangeLastModifiedBy());
                         return rolePermission;
                     });
-            rolePermissionRepository.save(rolePermissions);
+            rolePermissionRepository.saveAll(rolePermissions);
         }
 
         return createdRole;
@@ -91,7 +98,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
             return userRole;
         });
 
-        userRoleRepository.save(toCreate);
+        userRoleRepository.saveAll(toCreate);
         return toAssignUserIds;
     }
 
@@ -112,7 +119,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
             userRole.setDataChangeLastModifiedBy(operatorUserId);
         }
 
-        userRoleRepository.save(existedUserRoles);
+        userRoleRepository.saveAll(existedUserRoles);
     }
 
     /**
@@ -178,6 +185,18 @@ public class DefaultRolePermissionService implements RolePermissionService {
         return false;
     }
 
+    @Override
+    public List<Role> findUserRoles(String userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        if (CollectionUtils.isEmpty(userRoles)) {
+            return Collections.emptyList();
+        }
+
+        Set<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+
+        return Lists.newLinkedList(roleRepository.findAllById(roleIds));
+    }
+
     public boolean isSuperAdmin(String userId) {
         return portalConfig.superAdmins().contains(userId);
     }
@@ -216,8 +235,61 @@ public class DefaultRolePermissionService implements RolePermissionService {
                     targetId);
         }
 
-        Iterable<Permission> results = permissionRepository.save(permissions);
+        Iterable<Permission> results = permissionRepository.saveAll(permissions);
         return FluentIterable.from(results).toSet();
     }
 
+    @Transactional
+    @Override
+    public void deleteRolePermissionsByAppId(String appId, String operator) {
+        List<Long> permissionIds = permissionRepository.findPermissionIdsByAppId(appId);
+
+        if (!permissionIds.isEmpty()) {
+            // 1. delete Permission
+            permissionRepository.batchDelete(permissionIds, operator);
+
+            // 2. delete Role Permission
+            rolePermissionRepository.batchDeleteByPermissionIds(permissionIds, operator);
+        }
+
+        List<Long> roleIds = roleRepository.findRoleIdsByAppId(appId);
+
+        if (!roleIds.isEmpty()) {
+            // 3. delete Role
+            roleRepository.batchDelete(roleIds, operator);
+
+            // 4. delete User Role
+            userRoleRepository.batchDeleteByRoleIds(roleIds, operator);
+
+            // 5. delete Consumer Role
+            consumerRoleRepository.batchDeleteByRoleIds(roleIds, operator);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteRolePermissionsByAppIdAndNamespace(String appId, String namespaceName, String operator) {
+        List<Long> permissionIds = permissionRepository.findPermissionIdsByAppIdAndNamespace(appId, namespaceName);
+
+        if (!permissionIds.isEmpty()) {
+            // 1. delete Permission
+            permissionRepository.batchDelete(permissionIds, operator);
+
+            // 2. delete Role Permission
+            rolePermissionRepository.batchDeleteByPermissionIds(permissionIds, operator);
+        }
+
+        List<Long> roleIds = roleRepository.findRoleIdsByAppIdAndNamespace(appId, namespaceName);
+
+        if (!roleIds.isEmpty()) {
+            // 3. delete Role
+            roleRepository.batchDelete(roleIds, operator);
+
+            // 4. delete User Role
+            userRoleRepository.batchDeleteByRoleIds(roleIds, operator);
+
+            // 5. delete Consumer Role
+            consumerRoleRepository.batchDeleteByRoleIds(roleIds, operator);
+        }
+    }
 }

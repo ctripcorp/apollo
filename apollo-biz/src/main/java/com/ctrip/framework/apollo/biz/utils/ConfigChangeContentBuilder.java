@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.springframework.beans.BeanUtils;
 
 
 public class ConfigChangeContentBuilder {
@@ -22,14 +23,14 @@ public class ConfigChangeContentBuilder {
 
   public ConfigChangeContentBuilder createItem(Item item) {
     if (!StringUtils.isEmpty(item.getKey())){
-      createItems.add(item);
+      createItems.add(cloneItem(item));
     }
     return this;
   }
 
   public ConfigChangeContentBuilder updateItem(Item oldItem, Item newItem) {
     if (!oldItem.getValue().equals(newItem.getValue())){
-      ItemPair itemPair = new ItemPair(oldItem, newItem);
+      ItemPair itemPair = new ItemPair(cloneItem(oldItem), cloneItem(newItem));
       updateItems.add(itemPair);
     }
     return this;
@@ -37,7 +38,7 @@ public class ConfigChangeContentBuilder {
 
   public ConfigChangeContentBuilder deleteItem(Item item) {
     if (!StringUtils.isEmpty(item.getKey())) {
-      deleteItems.add(item);
+      deleteItems.add(cloneItem(item));
     }
     return this;
   }
@@ -48,16 +49,18 @@ public class ConfigChangeContentBuilder {
 
   public String build() {
     //因为事务第一段提交并没有更新时间,所以build时统一更新
+    Date now = new Date();
+
     for (Item item : createItems) {
-      item.setDataChangeLastModifiedTime(new Date());
+      item.setDataChangeLastModifiedTime(now);
     }
 
     for (ItemPair item : updateItems) {
-      item.newItem.setDataChangeLastModifiedTime(new Date());
+      item.newItem.setDataChangeLastModifiedTime(now);
     }
 
     for (Item item : deleteItems) {
-      item.setDataChangeLastModifiedTime(new Date());
+      item.setDataChangeLastModifiedTime(now);
     }
     return gson.toJson(this);
   }
@@ -71,6 +74,14 @@ public class ConfigChangeContentBuilder {
       this.oldItem = oldItem;
       this.newItem = newItem;
     }
+  }
+
+  Item cloneItem(Item source) {
+    Item target = new Item();
+
+    BeanUtils.copyProperties(source, target);
+
+    return target;
   }
 
 }

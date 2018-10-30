@@ -68,7 +68,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -96,7 +96,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
         stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -124,7 +124,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -156,7 +156,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     String somePublicNamespaceWithIncorrectCase = somePublicNamespace.toUpperCase();
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace + ".properties",
@@ -189,7 +189,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(namespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -216,7 +216,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
       throws Exception {
     long someOutDatedNotificationId = 1;
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace, someOutDatedNotificationId));
@@ -247,7 +247,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER));
@@ -278,7 +278,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER),
@@ -311,7 +311,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(defaultNamespace, ConfigConsts.NOTIFICATION_ID_PLACEHOLDER,
@@ -344,7 +344,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     periodicSendMessage(executorService, key, stop);
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}&dataCenter={dataCenter}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace + ".properties",
@@ -373,7 +373,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     long someOutDatedNotificationId = 1;
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace,
@@ -407,7 +407,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
 
     //the same namespace with difference character case, and difference notification id
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace, newNotificationId,
@@ -440,7 +440,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
 
     //the same namespace with difference character case, and difference notification id
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNameWithIncorrectCase, someOutDatedNotificationId,
@@ -473,7 +473,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
 
     //the same namespace with difference character case, and difference notification id
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNameWithIncorrectCase, newNotificationId,
@@ -506,7 +506,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
 
     //the same namespace with difference character case, and difference notification id
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace, someOutDatedNotificationId,
@@ -538,7 +538,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     long newPublicNamespaceNotification = 20;
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespace,
@@ -592,7 +592,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     String somePublicNamespaceWithIncorrectCase = somePublicNamespace.toUpperCase();
 
     ResponseEntity<List<ApolloConfigNotification>> result = restTemplate.exchange(
-        "{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
+        "http://{baseurl}/notifications/v2?appId={appId}&cluster={clusterName}&notifications={notifications}",
         HttpMethod.GET, null, typeReference,
         getHostUrl(), someAppId, someCluster,
         transformApolloConfigNotificationsToString(somePublicNamespaceWithIncorrectCase,

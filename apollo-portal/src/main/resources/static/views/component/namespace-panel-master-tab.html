@@ -92,9 +92,16 @@
         </div>
     </header>
 
+
+
     <div id="BODY{{namespace.id}}" class="collapse in">
+        <div class="J_namespace-release-tip well well-sm no-radius text-center"
+             ng-show="namespace.isConfigHidden">
+            <span style="color: red">您不是该项目的管理员，也没有该Namespace的编辑或发布权限，无法查看配置信息。</span>
+        </div>
+
         <!--second header-->
-        <header class="panel-heading second-panel-heading">
+        <header class="panel-heading second-panel-heading" ng-show="!namespace.isConfigHidden">
             <div class="row">
                 <div class="col-md-6 col-sm-6 pull-left">
                     <!--master branch nav tabs-->
@@ -182,7 +189,7 @@
         </header>
 
         <!--namespace body-->
-        <section>
+        <section ng-show="!namespace.isConfigHidden">
             <!--table view-->
             <div class="namespace-view-table" ng-show="namespace.viewType == 'table'">
 

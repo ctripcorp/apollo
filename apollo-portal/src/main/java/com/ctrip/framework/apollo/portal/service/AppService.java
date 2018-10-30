@@ -41,6 +41,10 @@ public class AppService {
   @Autowired
   private RoleInitializationService roleInitializationService;
   @Autowired
+  private RolePermissionService rolePermissionService;
+  @Autowired
+  private FavoriteService favoriteService;
+  @Autowired
   private UserService userService;
 
 
@@ -54,6 +58,10 @@ public class AppService {
 
   public List<App> findByAppIds(Set<String> appIds) {
     return appRepository.findByAppIdIn(appIds);
+  }
+
+  public List<App> findByAppIds(Set<String> appIds, Pageable pageable) {
+    return appRepository.findByAppIdIn(appIds, pageable);
   }
 
   public List<App> findByOwnerName(String ownerName, Pageable page) {
@@ -139,4 +147,29 @@ public class AppService {
     return node;
   }
 
+  @Transactional
+  public App deleteAppInLocal(String appId) {
+    App managedApp = appRepository.findByAppId(appId);
+    if (managedApp == null) {
+      throw new BadRequestException(String.format("App not exists. AppId = %s", appId));
+    }
+    String operator = userInfoHolder.getUser().getUserId();
+
+    //this operator is passed to com.ctrip.framework.apollo.portal.listener.DeletionListener.onAppDeletionEvent
+    managedApp.setDataChangeLastModifiedBy(operator);
+
+    //删除portal数据库中的app
+    appRepository.deleteApp(appId, operator);
+
+    //删除portal数据库中的appNamespace
+    appNamespaceService.batchDeleteByAppId(appId, operator);
+
+    //删除portal数据库中的收藏表
+    favoriteService.batchDeleteByAppId(appId, operator);
+
+    //删除portal数据库中Permission、Role相关数据
+    rolePermissionService.deleteRolePermissionsByAppId(appId, operator);
+
+    return managedApp;
+  }
 }

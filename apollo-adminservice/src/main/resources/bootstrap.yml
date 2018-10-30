@@ -2,6 +2,8 @@ eureka:
   instance:
     hostname: ${hostname:localhost}
     preferIpAddress: true
+    status-page-url-path: /info
+    health-check-url-path: /health
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8080/eureka/
@@ -9,15 +11,7 @@ eureka:
       enabled: true
     eurekaServiceUrlPollIntervalSeconds: 60
 
-endpoints:
-  health:
-    sensitive: false
-
-
-
 management:
-  security:
-    enabled: false
   health:
     status:
       order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP 

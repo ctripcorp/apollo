@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.core.dto.ApolloNotificationMessages;
 
 import com.google.common.base.Strings;
 
-import java.util.Map;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -93,6 +93,24 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   @Test
+  public void testMultiplePropertySourcesWithSameProperties2() throws Exception {
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+
+    Config application = mock(Config.class);
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(application.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
+
+    Config fxApollo = mock(Config.class);
+    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
+    mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
+
+    check("spring/XmlConfigPlaceholderTest6.xml", anotherTimeout, someBatch);
+  }
+
+  @Test
   public void testMultiplePropertySourcesWithSamePropertiesWithWeight() throws Exception {
     int someTimeout = 1000;
     int anotherTimeout = someTimeout + 1;

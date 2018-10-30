@@ -186,7 +186,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     }
     List<List<Long>> partitionIds = Lists.partition(ids, 500);
     for (List<Long> toRebuild : partitionIds) {
-      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAll(toRebuild);
+      Iterable<AppNamespace> appNamespaces = appNamespaceRepository.findAllById(toRebuild);
 
       if (appNamespaces == null) {
         continue;
@@ -247,7 +247,11 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
       }
       appNamespaceCache.remove(assembleAppNamespaceKey(deleted));
       if (deleted.isPublic()) {
-        publicAppNamespaceCache.remove(deleted.getName());
+        AppNamespace publicAppNamespace = publicAppNamespaceCache.get(deleted.getName());
+        // in case there is some dirty data, e.g. public namespace deleted in some app and now created in another app
+        if (publicAppNamespace == deleted) {
+          publicAppNamespaceCache.remove(deleted.getName());
+        }
       }
       logger.info("Found AppNamespace deleted, {}", deleted);
     }

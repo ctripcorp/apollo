@@ -6,16 +6,13 @@ spring:
 
 server:
   port: 8080
+  compression:
+    enabled: true
   
 logging:
   file: /opt/logs/100003173/apollo-portal.log
 
-endpoints:
-  health:
-    sensitive: false
 management:
-  security:
-    enabled: false
   health:
     status:
       order: DOWN, OUT_OF_SERVICE, UNKNOWN, UP 

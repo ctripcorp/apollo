@@ -183,7 +183,7 @@ public class InstanceConfigController {
                                           @RequestParam("clusterName") String clusterName,
                                           @RequestParam("namespaceName") String namespaceName) {
     Page<Instance> instances = instanceService.findInstancesByNamespace(appId, clusterName,
-        namespaceName, new PageRequest(0, 1));
+        namespaceName, PageRequest.of(0, 1));
     return instances.getTotalElements();
   }
 }

@@ -28,9 +28,6 @@ public class DefaultApplicationProvider implements ApplicationProvider {
         in = DefaultApplicationProvider.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
       }
 
-      if (in == null) {
-        logger.warn("{} not found from classpath!", APP_PROPERTIES_CLASSPATH);
-      }
       initialize(in);
     } catch (Throwable ex) {
       logger.error("Initialize DefaultApplicationProvider failed.", ex);
