@@ -28,7 +28,7 @@ public class NamespaceBranchServiceTest extends AbstractIntegrationTest {
   private String testNamespace = "application";
   private String testBranchName = "child-cluster";
   private String operator = "apollo";
-  private Pageable pageable = new PageRequest(0, 10);
+  private Pageable pageable = PageRequest.of(0, 10);
 
   @Test
   @Sql(scripts = "/sql/namespace-branch-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)

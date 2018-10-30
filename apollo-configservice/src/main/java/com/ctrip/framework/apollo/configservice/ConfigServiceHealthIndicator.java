@@ -24,7 +24,7 @@ public class ConfigServiceHealthIndicator implements HealthIndicator {
   }
 
   private int check() {
-    PageRequest pageable = new PageRequest(0, 1);
+    PageRequest pageable = PageRequest.of(0, 1);
     appService.findAll(pageable);
     return 0;
   }

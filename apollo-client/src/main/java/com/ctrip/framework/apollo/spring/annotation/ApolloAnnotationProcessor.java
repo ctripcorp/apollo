@@ -5,8 +5,10 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Set;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -51,6 +53,8 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
 
     ReflectionUtils.makeAccessible(method);
     String[] namespaces = annotation.value();
+    String[] annotatedInterestedKeys = annotation.interestedKeys();
+    Set<String> interestedKeys = annotatedInterestedKeys.length > 0 ? Sets.newHashSet(annotatedInterestedKeys) : null;
     ConfigChangeListener configChangeListener = new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
@@ -61,7 +65,11 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
     for (String namespace : namespaces) {
       Config config = ConfigService.getConfig(namespace);
 
-      config.addChangeListener(configChangeListener);
+      if (interestedKeys == null) {
+        config.addChangeListener(configChangeListener);
+      } else {
+        config.addChangeListener(configChangeListener, interestedKeys);
+      }
     }
   }
 }

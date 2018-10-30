@@ -1,19 +1,12 @@
 package com.ctrip.framework.apollo.spring;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-
-import java.util.List;
-
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
@@ -23,6 +16,17 @@ import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -200,6 +204,39 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertEquals(someEvent, bean.getSomeChangeEvent());
   }
 
+  @Test
+  public void testApolloConfigChangeListenerWithInterestedKeys() throws Exception {
+    Config applicationConfig = mock(Config.class);
+    Config fxApolloConfig = mock(Config.class);
+
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationConfig);
+    mockConfig(FX_APOLLO_NAMESPACE, fxApolloConfig);
+
+    TestApolloConfigChangeListenerWithInterestedKeysBean bean = getBean(
+        TestApolloConfigChangeListenerWithInterestedKeysBean.class, AppConfig8.class);
+
+    final ArgumentCaptor<Set> applicationConfigInterestedKeys = ArgumentCaptor.forClass(Set.class);
+    final ArgumentCaptor<Set> fxApolloConfigInterestedKeys = ArgumentCaptor.forClass(Set.class);
+
+    verify(applicationConfig, times(2))
+        .addChangeListener(any(ConfigChangeListener.class), applicationConfigInterestedKeys.capture());
+
+    verify(fxApolloConfig, times(1))
+        .addChangeListener(any(ConfigChangeListener.class), fxApolloConfigInterestedKeys.capture());
+
+    assertEquals(2, applicationConfigInterestedKeys.getAllValues().size());
+
+    Set<String> result = Sets.newHashSet();
+    for (Set interestedKeys : applicationConfigInterestedKeys.getAllValues()) {
+      result.addAll(interestedKeys);
+    }
+    assertEquals(Sets.newHashSet("someKey", "anotherKey"), result);
+
+    assertEquals(1, fxApolloConfigInterestedKeys.getAllValues().size());
+
+    assertEquals(asList(Sets.newHashSet("anotherKey")), fxApolloConfigInterestedKeys.getAllValues());
+  }
+
   private <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
 
@@ -266,6 +303,15 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     @Bean
     public TestApolloChildConfigChangeListener bean() {
       return new TestApolloChildConfigChangeListener();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig
+  static class AppConfig8 {
+    @Bean
+    public TestApolloConfigChangeListenerWithInterestedKeysBean bean() {
+      return new TestApolloConfigChangeListenerWithInterestedKeysBean();
     }
   }
 
@@ -363,6 +409,18 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
     public ConfigChangeEvent getSomeChangeEvent() {
       return someChangeEvent;
+    }
+  }
+
+  static class TestApolloConfigChangeListenerWithInterestedKeysBean {
+
+    @ApolloConfigChangeListener(interestedKeys = {"someKey"})
+    private void someOnChange(ConfigChangeEvent changeEvent) {}
+
+    @ApolloConfigChangeListener(value = {ConfigConsts.NAMESPACE_APPLICATION, FX_APOLLO_NAMESPACE},
+        interestedKeys = {"anotherKey"})
+    private void anotherOnChange(ConfigChangeEvent changeEvent) {
+
     }
   }
 }

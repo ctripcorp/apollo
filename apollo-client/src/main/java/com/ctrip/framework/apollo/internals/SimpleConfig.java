@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
   private final String m_namespace;
   private final ConfigRepository m_configRepository;
   private volatile Properties m_configProperties;
+  private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
 
   /**
    * Constructor.
@@ -39,7 +41,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
 
   private void initialize() {
     try {
-      m_configProperties = m_configRepository.getConfig();
+      updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
       logger.warn("Init Apollo Simple Config failed - namespace: {}, reason: {}", m_namespace,
@@ -70,6 +72,11 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
   }
 
   @Override
+  public ConfigSourceType getSourceType() {
+    return m_sourceType;
+  }
+
+  @Override
   public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
     if (newProperties.equals(m_configProperties)) {
       return;
@@ -77,9 +84,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
     Properties newConfigProperties = new Properties();
     newConfigProperties.putAll(newProperties);
 
-    List<ConfigChange>
-        changes =
-        calcPropertyChanges(namespace, m_configProperties, newConfigProperties);
+    List<ConfigChange> changes = calcPropertyChanges(namespace, m_configProperties, newConfigProperties);
     Map<String, ConfigChange> changeMap = Maps.uniqueIndex(changes,
         new Function<ConfigChange, String>() {
           @Override
@@ -88,11 +93,16 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
           }
         });
 
-    m_configProperties = newConfigProperties;
+    updateConfig(newConfigProperties, m_configRepository.getSourceType());
     clearConfigCache();
 
     this.fireConfigChange(new ConfigChangeEvent(m_namespace, changeMap));
 
     Tracer.logEvent("Apollo.Client.ConfigChanges", m_namespace);
+  }
+
+  private void updateConfig(Properties newConfigProperties, ConfigSourceType sourceType) {
+    m_configProperties = newConfigProperties;
+    m_sourceType = sourceType;
   }
 }

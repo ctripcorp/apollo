@@ -54,7 +54,7 @@ public class AppController {
     if (entity == null) {
       throw new NotFoundException("app not found for appId " + appId);
     }
-    appService.delete(entity.getId(), operator);
+    adminService.deleteApp(entity, operator);
   }
 
   @RequestMapping(value = "/apps/{appId:.+}", method = RequestMethod.PUT)
@@ -91,5 +91,4 @@ public class AppController {
   public boolean isAppIdUnique(@PathVariable("appId") String appId) {
     return appService.isAppIdUnique(appId);
   }
-
 }

@@ -56,7 +56,7 @@ public class ControllerExceptionTest {
   @Test
   public void testFindEmpty() {
     when(appService.findAll(any(Pageable.class))).thenReturn(new ArrayList<App>());
-    Pageable pageable = new PageRequest(0, 10);
+    Pageable pageable = PageRequest.of(0, 10);
     List<AppDTO> appDTOs = appController.find(null, pageable);
     Assert.assertNotNull(appDTOs);
     Assert.assertEquals(0, appDTOs.size());
@@ -68,7 +68,7 @@ public class ControllerExceptionTest {
 
   @Test
   public void testFindByName() {
-    Pageable pageable = new PageRequest(0, 10);
+    Pageable pageable = PageRequest.of(0, 10);
     List<AppDTO> appDTOs = appController.find("unexist", pageable);
     Assert.assertNotNull(appDTOs);
     Assert.assertEquals(0, appDTOs.size());

@@ -11,7 +11,7 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
@@ -47,7 +47,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets itemSet = new ItemChangeSets();
     itemSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdTemplate = new TestRestTemplate();
+    RestTemplate createdTemplate = (new TestRestTemplate()).getRestTemplate();
     createdTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -96,7 +96,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets createChangeSet = new ItemChangeSets();
     createChangeSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdRestTemplate = new TestRestTemplate();
+    RestTemplate createdRestTemplate = (new TestRestTemplate()).getRestTemplate();
     createdRestTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -123,7 +123,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
     ItemChangeSets updateChangeSet = new ItemChangeSets();
     updateChangeSet.setDataChangeLastModifiedBy("updated");
 
-    RestTemplate updatedRestTemplate = new TestRestTemplate();
+    RestTemplate updatedRestTemplate = (new TestRestTemplate()).getRestTemplate();
     updatedRestTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int updatedSize = 2;
@@ -170,7 +170,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets createChangeSet = new ItemChangeSets();
     createChangeSet.setDataChangeLastModifiedBy("created");
-    RestTemplate createdTemplate = new TestRestTemplate();
+    RestTemplate createdTemplate = (new TestRestTemplate()).getRestTemplate();
     createdTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int createdSize = 3;
@@ -196,7 +196,7 @@ public class ItemSetControllerTest extends AbstractControllerTest {
 
     ItemChangeSets deleteChangeSet = new ItemChangeSets();
     deleteChangeSet.setDataChangeLastModifiedBy("deleted");
-    RestTemplate deletedTemplate = new TestRestTemplate();
+    RestTemplate deletedTemplate = (new TestRestTemplate()).getRestTemplate();
     deletedTemplate.setMessageConverters(restTemplate.getMessageConverters());
     
     int deletedSize = 1;

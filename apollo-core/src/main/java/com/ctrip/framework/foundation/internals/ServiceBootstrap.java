@@ -14,7 +14,7 @@ public class ServiceBootstrap {
     return iterator.next();
   }
 
-  private static <S> Iterator<S> loadAll(Class<S> clazz) {
+  public static <S> Iterator<S> loadAll(Class<S> clazz) {
     ServiceLoader<S> loader = ServiceLoader.load(clazz);
 
     return loader.iterator();

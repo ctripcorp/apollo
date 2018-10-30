@@ -88,7 +88,7 @@ public class DatabaseMessageSender implements MessageSender {
   private void cleanMessage(Long id) {
     boolean hasMore = true;
     //double check in case the release message is rolled back
-    ReleaseMessage releaseMessage = releaseMessageRepository.findOne(id);
+    ReleaseMessage releaseMessage = releaseMessageRepository.findById(id).orElse(null);
     if (releaseMessage == null) {
       return;
     }
@@ -96,7 +96,7 @@ public class DatabaseMessageSender implements MessageSender {
       List<ReleaseMessage> messages = releaseMessageRepository.findFirst100ByMessageAndIdLessThanOrderByIdAsc(
           releaseMessage.getMessage(), releaseMessage.getId());
 
-      releaseMessageRepository.delete(messages);
+      releaseMessageRepository.deleteAll(messages);
       hasMore = messages.size() == 100;
 
       messages.forEach(toRemove -> Tracer.logEvent(

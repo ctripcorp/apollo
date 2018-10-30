@@ -1,8 +1,8 @@
 open_manage_module.controller('OpenManageController',
-                              ['$scope', 'toastr', 'AppUtil', 'OrganizationService', 'ConsumerService', 'PermissionService',
+                              ['$scope', 'toastr', 'AppUtil', 'OrganizationService', 'ConsumerService', 'PermissionService','EnvService',
                                OpenManageController]);
 
-function OpenManageController($scope, toastr, AppUtil, OrganizationService, ConsumerService, PermissionService) {
+function OpenManageController($scope, toastr, AppUtil, OrganizationService, ConsumerService, PermissionService, EnvService) {
 
     var $orgWidget = $('#organization');
 
@@ -18,12 +18,10 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
     $scope.createConsumer = createConsumer;
     $scope.assignRoleToConsumer = assignRoleToConsumer;
 
-    init();
-
     function init() {
         initOrganization();
         initPermission();
-
+        initEnv();
     }
 
     function initOrganization() {
@@ -50,7 +48,29 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
         PermissionService.has_root_permission()
             .then(function (result) {
                   $scope.isRootUser = result.hasPermission;
-            })
+            });
+    }
+
+    function initEnv() {
+        EnvService.find_all_envs()
+            .then(function (result){
+                $scope.envs = new Array();
+                for (var iLoop  = 0; iLoop < result.length; iLoop++) {
+                    $scope.envs.push({ checked : false, env : result[iLoop] });
+                    $scope.envsChecked = new Array();
+                }
+
+                $scope.switchSelect = function (item) {
+                    item.checked = !item.checked;
+                    $scope.envsChecked = new Array();
+                    for (var iLoop = 0; iLoop < $scope.envs.length; iLoop++) {
+                        var env = $scope.envs[iLoop];
+                        if (env.checked) {
+                            $scope.envsChecked.push(env.env);
+                        }
+                    }
+                };
+            });
     }
 
     function getTokenByAppId() {
@@ -68,7 +88,7 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
                 } else {
                     $scope.consumerToken = {token: 'App(' + $scope.consumer.appId + ')未创建，请先创建'};
                 }
-            })
+            });
     }
 
     function createConsumer() {
@@ -114,12 +134,14 @@ function OpenManageController($scope, toastr, AppUtil, OrganizationService, Cons
         ConsumerService.assignRoleToConsumer($scope.consumerRole.token,
                                              $scope.consumerRole.type,
                                              $scope.consumerRole.appId,
-                                             $scope.consumerRole.namespaceName)
+                                             $scope.consumerRole.namespaceName,
+                                             $scope.envsChecked)
             .then(function (consumerRoles) {
                 toastr.success("赋权成功");
             }, function (response) {
                 AppUtil.showErrorMsg(response, "赋权失败");
             })
     }
-    
+
+    init();
 }

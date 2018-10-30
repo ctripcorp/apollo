@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -36,7 +36,7 @@ public class BootstrapConfigTest {
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapEnabledAndDefaultNamespacesAndConditionalOn extends
       AbstractSpringIntegrationTest {
@@ -90,7 +90,7 @@ public class BootstrapConfigTest {
   }
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapEnabledAndNamespacesAndConditionalOn extends
       AbstractSpringIntegrationTest {
@@ -132,7 +132,7 @@ public class BootstrapConfigTest {
   }
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapEnabledAndDefaultNamespacesAndConditionalOnFailed extends
       AbstractSpringIntegrationTest {
@@ -168,7 +168,7 @@ public class BootstrapConfigTest {
   }
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithoutConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithoutConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapEnabledAndDefaultNamespacesAndConditionalOff extends
       AbstractSpringIntegrationTest {
@@ -202,7 +202,7 @@ public class BootstrapConfigTest {
   }
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapDisabledAndDefaultNamespacesAndConditionalOn extends
       AbstractSpringIntegrationTest {
@@ -234,7 +234,7 @@ public class BootstrapConfigTest {
   }
 
   @RunWith(SpringJUnit4ClassRunner.class)
-  @SpringApplicationConfiguration(ConfigurationWithoutConditionalOnProperty.class)
+  @SpringBootTest(classes = ConfigurationWithoutConditionalOnProperty.class)
   @DirtiesContext
   public static class TestWithBootstrapDisabledAndDefaultNamespacesAndConditionalOff extends
       AbstractSpringIntegrationTest {

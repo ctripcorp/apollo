@@ -297,7 +297,7 @@ DROP TABLE IF EXISTS `Authorities`;
 
 CREATE TABLE `Authorities` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `Username` varchar(50) NOT NULL,
+  `Username` varchar(64) NOT NULL,
   `Authority` varchar(50) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -312,7 +312,9 @@ VALUES
     ('superAdmin', 'apollo', 'Portal超级管理员'),
     ('api.readTimeout', '10000', 'http接口read timeout'),
     ('consumer.token.salt', 'someSalt', 'consumer token salt'),
-    ('admin.createPrivateNamespace.switch', 'false', '是否允许项目管理员创建私有namespace');
+    ('admin.createPrivateNamespace.switch', 'true', '是否允许项目管理员创建私有namespace'),
+    ('configView.memberOnly.envs', 'pro', '只对项目成员显示配置信息的环境列表，多个env以英文逗号分隔');
+
 
 INSERT INTO `Users` (`Username`, `Password`, `Email`, `Enabled`)
 VALUES

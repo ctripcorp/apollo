@@ -79,6 +79,31 @@ public class AppNamespaceServiceTest extends AbstractIntegrationTest {
   @Test
   @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void testCreatePublicAppNamespaceNotExistedWithNoAppendnamespacePrefix() {
+    AppNamespace appNamespace = assmbleBaseAppNamespace();
+    appNamespace.setPublic(true);
+    appNamespace.setName("old");
+
+    AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace, false);
+
+    Assert.assertNotNull(createdAppNamespace);
+    Assert.assertEquals(appNamespace.getName(), createdAppNamespace.getName());
+  }
+
+  @Test(expected = BadRequestException.class)
+  @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void testCreatePublicAppNamespaceExistedWithNoAppendnamespacePrefix() {
+    AppNamespace appNamespace = assmbleBaseAppNamespace();
+    appNamespace.setPublic(true);
+    appNamespace.setName("datasource");
+
+    appNamespaceService.createAppNamespaceInLocal(appNamespace, false);
+  }
+
+  @Test
+  @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testCreatePublicAppNamespaceNotExisted() {
     AppNamespace appNamespace = assmbleBaseAppNamespace();
     appNamespace.setPublic(true);

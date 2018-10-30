@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo;
 
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -36,4 +37,19 @@ public interface ConfigFile {
    * @param listener the config file change listener
    */
   void addChangeListener(ConfigFileChangeListener listener);
+
+  /**
+   * Remove the change listener
+   *
+   * @param listener the specific config change listener to remove
+   * @return true if the specific config change listener is found and removed
+   */
+  public boolean removeChangeListener(ConfigChangeListener listener);
+
+  /**
+   * Return the config's source type, i.e. where is the config loaded from
+   *
+   * @return the config's source type
+   */
+  public ConfigSourceType getSourceType();
 }

@@ -12,7 +12,7 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         },
         createAppNamespace: {
             method: 'POST',
-            url: '/apps/:appId/appnamespaces',
+            url: '/apps/:appId/appnamespaces?appendNamespacePrefix=:appendNamespacePrefix',
             isArray: false
         },
         getNamespacePublishInfo: {
@@ -27,6 +27,14 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
             method: 'GET',
             url: '/envs/:env/appnamespaces/:publicNamespaceName/namespaces',
             isArray: true
+        },
+        loadAppNamespace: {
+            method: 'GET',
+            url: '/apps/:appId/appnamespaces/:namespaceName'
+        },
+        deleteAppNamespace: {
+            method: 'DELETE',
+            url: '/apps/:appId/appnamespaces/:namespaceName'
         }
     });
 
@@ -52,11 +60,12 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         return d.promise;
     }
 
-    function createAppNamespace(appId, appnamespace) {
+    function createAppNamespace(appId, appnamespace, appendNamespacePrefix) {
         var d = $q.defer();
         namespace_source.createAppNamespace({
-                                                appId: appId
-                                            }, appnamespace, function (result) {
+            appId: appId,
+            appendNamespacePrefix: appendNamespacePrefix
+          }, appnamespace, function (result) {
             d.resolve(result);
         }, function (result) {
             d.reject(result);
@@ -112,13 +121,47 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
 
     }
 
+    function loadAppNamespace(appId, namespaceName) {
+        var d = $q.defer();
+        namespace_source.loadAppNamespace({
+                                             appId: appId,
+                                             namespaceName: namespaceName
+                                         },
+                                         function (result) {
+                                             d.resolve(result);
+                                         },
+                                         function (result) {
+                                             d.reject(result);
+                                         });
+
+        return d.promise;
+    }
+
+    function deleteAppNamespace(appId, namespaceName) {
+        var d = $q.defer();
+        namespace_source.deleteAppNamespace({
+                                             appId: appId,
+                                             namespaceName: namespaceName
+                                         },
+                                         function (result) {
+                                             d.resolve(result);
+                                         },
+                                         function (result) {
+                                             d.reject(result);
+                                         });
+
+        return d.promise;
+    }
+
     return {
         find_public_namespaces: find_public_namespaces,
         createNamespace: createNamespace,
         createAppNamespace: createAppNamespace,
         getNamespacePublishInfo: getNamespacePublishInfo,
         deleteNamespace: deleteNamespace,
-        getPublicAppNamespaceAllNamespaces: getPublicAppNamespaceAllNamespaces
+        getPublicAppNamespaceAllNamespaces: getPublicAppNamespaceAllNamespaces,
+        loadAppNamespace: loadAppNamespace,
+        deleteAppNamespace: deleteAppNamespace
     }
 
 }]);

@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,10 +52,17 @@ public class ClusterController {
   @RequestMapping(path = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
   public void delete(@PathVariable("appId") String appId,
                      @PathVariable("clusterName") String clusterName, @RequestParam String operator) {
+
     Cluster entity = clusterService.findOne(appId, clusterName);
+
     if (entity == null) {
       throw new NotFoundException("cluster not found for clusterName " + clusterName);
     }
+
+    if(ConfigConsts.CLUSTER_NAME_DEFAULT.equals(entity.getName())){
+      throw new BadRequestException("can not delete default cluster!");
+    }
+
     clusterService.delete(entity.getId(), operator);
   }
 

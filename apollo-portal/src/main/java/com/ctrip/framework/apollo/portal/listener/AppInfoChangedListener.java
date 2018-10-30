@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ public class AppInfoChangedListener {
   @Autowired
   private PortalSettings portalSettings;
 
-
   @EventListener
   public void onAppInfoChange(AppInfoChangedEvent event) {
     AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
@@ -39,7 +39,5 @@ public class AppInfoChangedListener {
         Tracer.logError(String.format("Update app's info failed. Env = %s, AppId = %s", env, appId), e);
       }
     }
-
   }
-
 }

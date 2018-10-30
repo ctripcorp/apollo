@@ -41,7 +41,7 @@ public class InstanceService {
   }
 
   public List<Instance> findInstancesByIds(Set<Long> instanceIds) {
-    Iterable<Instance> instances = instanceRepository.findAll(instanceIds);
+    Iterable<Instance> instances = instanceRepository.findAllById(instanceIds);
     if (instances == null) {
       return Collections.emptyList();
     }
@@ -159,7 +159,7 @@ public class InstanceService {
 
   @Transactional
   public InstanceConfig updateInstanceConfig(InstanceConfig instanceConfig) {
-    InstanceConfig existedInstanceConfig = instanceConfigRepository.findOne(instanceConfig.getId());
+    InstanceConfig existedInstanceConfig = instanceConfigRepository.findById(instanceConfig.getId()).orElse(null);
     Preconditions.checkArgument(existedInstanceConfig != null, String.format(
         "Instance config %d doesn't exist", instanceConfig.getId()));
 

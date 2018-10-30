@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriTemplateHandler;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriTemplateHandler;
 
 import java.net.SocketTimeoutException;
@@ -36,7 +36,7 @@ public class RetryableRestTemplate {
 
   private Logger logger = LoggerFactory.getLogger(RetryableRestTemplate.class);
 
-  private UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
+  private UriTemplateHandler uriTemplateHandler = new DefaultUriBuilderFactory();
 
   private RestTemplate restTemplate;
 

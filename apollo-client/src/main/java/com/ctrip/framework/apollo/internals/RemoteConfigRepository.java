@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,21 +48,22 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   private static final Logger logger = LoggerFactory.getLogger(RemoteConfigRepository.class);
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private static final Joiner.MapJoiner MAP_JOINER = Joiner.on("&").withKeyValueSeparator("=");
-  private ConfigServiceLocator m_serviceLocator;
-  private HttpUtil m_httpUtil;
-  private ConfigUtil m_configUtil;
-  private RemoteConfigLongPollService remoteConfigLongPollService;
+  private static final Escaper pathEscaper = UrlEscapers.urlPathSegmentEscaper();
+  private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
+
+  private final ConfigServiceLocator m_serviceLocator;
+  private final HttpUtil m_httpUtil;
+  private final ConfigUtil m_configUtil;
+  private final RemoteConfigLongPollService remoteConfigLongPollService;
   private volatile AtomicReference<ApolloConfig> m_configCache;
   private final String m_namespace;
   private final static ScheduledExecutorService m_executorService;
-  private AtomicReference<ServiceDTO> m_longPollServiceDto;
-  private AtomicReference<ApolloNotificationMessages> m_remoteMessages;
-  private RateLimiter m_loadConfigRateLimiter;
-  private AtomicBoolean m_configNeedForceRefresh;
-  private SchedulePolicy m_loadConfigFailSchedulePolicy;
-  private Gson gson;
-  private static final Escaper pathEscaper = UrlEscapers.urlPathSegmentEscaper();
-  private static final Escaper queryParamEscaper = UrlEscapers.urlFormParameterEscaper();
+  private final AtomicReference<ServiceDTO> m_longPollServiceDto;
+  private final AtomicReference<ApolloNotificationMessages> m_remoteMessages;
+  private final RateLimiter m_loadConfigRateLimiter;
+  private final AtomicBoolean m_configNeedForceRefresh;
+  private final SchedulePolicy m_loadConfigFailSchedulePolicy;
+  private final Gson gson;
 
   static {
     m_executorService = Executors.newScheduledThreadPool(1,
@@ -103,6 +105,11 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   @Override
   public void setUpstreamRepository(ConfigRepository upstreamConfigRepository) {
     //remote config doesn't need upstream
+  }
+
+  @Override
+  public ConfigSourceType getSourceType() {
+    return ConfigSourceType.REMOTE;
   }
 
   private void schedulePeriodicRefresh() {

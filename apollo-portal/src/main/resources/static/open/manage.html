@@ -135,6 +135,20 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group" valdr-form-group ng-show="consumerRole.type=='NamespaceRole'">
+                        <label class="col-sm-2 control-label">
+                            环境
+                        </label>
+                        <div class="col-sm-10">
+                            <div>
+                                <label class="checkbox-inline" ng-repeat="env in envs">
+                                    <input type="checkbox" ng-checked="env.checked" ng-click="switchSelect(env)" />
+                                    {{env.env}}
+                                </label>
+                            </div>
+                            <small>(不选择则所有环境都有权限，如果提示Namespace's role does not exist，请先打开该Namespace的授权页面触发一下权限的初始化动作)</small>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-9">
                             <button type="submit" class="btn btn-primary"

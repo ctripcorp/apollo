@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.ctrip.framework.apollo</groupId>
 		<artifactId>apollo</artifactId>
-		<version>0.11.0-SNAPSHOT</version>
+		<version>1.2.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -22,17 +22,15 @@
 		<!-- end of apollo -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka-server</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>
-                        spring-cloud-starter-archaius
-                    </artifactId>
+					<artifactId>spring-cloud-starter-netflix-archaius</artifactId>
 					<groupId>org.springframework.cloud</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>spring-cloud-starter-ribbon</artifactId>
+					<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
 					<groupId>org.springframework.cloud</groupId>
 				</exclusion>
 				<exclusion>

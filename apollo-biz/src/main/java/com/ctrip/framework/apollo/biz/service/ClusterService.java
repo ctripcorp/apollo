@@ -40,7 +40,7 @@ public class ClusterService {
   }
 
   public Cluster findOne(long clusterId) {
-    return clusterRepository.findOne(clusterId);
+    return clusterRepository.findById(clusterId).orElse(null);
   }
 
   public List<Cluster> findParentClusters(String appId) {
@@ -85,7 +85,7 @@ public class ClusterService {
 
   @Transactional
   public void delete(long id, String operator) {
-    Cluster cluster = clusterRepository.findOne(id);
+    Cluster cluster = clusterRepository.findById(id).orElse(null);
     if (cluster == null) {
       throw new BadRequestException("cluster not exist");
     }
@@ -137,4 +137,16 @@ public class ClusterService {
     return clusterRepository.findByParentClusterId(parentCluster.getId());
   }
 
+  public List<Cluster> findClusters(String appId) {
+    List<Cluster> clusters = clusterRepository.findByAppId(appId);
+
+    if (clusters == null) {
+      return Collections.emptyList();
+    }
+
+    // to make sure parent cluster is ahead of branch cluster
+    Collections.sort(clusters);
+
+    return clusters;
+  }
 }

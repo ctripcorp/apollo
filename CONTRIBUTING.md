@@ -22,4 +22,16 @@ We provide template files [intellij-java-google-style.xml](https://github.com/ct
 
 * If no-one else is using your branch, please rebase it against the current master (or other target branch in the main project).
 
+* Normally, we would squash commits for one feature into one commit. There are 2 ways to do this:
+
+    1. To rebase and squash based on the remote branch
+
+        * `git rebase -i <remote>/master`
+        * merge commits via `fixup`, etc
+
+    2. Create a new branch and merge these commits into one
+
+        * `git checkout -b <some-branch-name> <remote>/master`
+        * `git merge --squash <current-feature-branch>`
+
 * When writing a commit message please follow these conventions: if you are fixing an existing issue, please add Fixes #XXX at the end of the commit message (where XXX is the issue number).

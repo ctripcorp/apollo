@@ -74,6 +74,18 @@ public class PortalConfig extends RefreshableConfig {
     return result;
   }
 
+  public boolean isConfigViewMemberOnly(String env) {
+    String[] configViewMemberOnlyEnvs = getArrayProperty("configView.memberOnly.envs", new String[0]);
+
+    for (String memberOnlyEnv : configViewMemberOnlyEnvs) {
+      if (memberOnlyEnv.equalsIgnoreCase(env)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   /***
    * Level: normal
    **/
