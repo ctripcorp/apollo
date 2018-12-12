@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -14,6 +15,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,13 @@ public class ConfigsExportController {
       @RequestParam("file") MultipartFile file) {
     if (file.isEmpty()) {
       throw new BadRequestException("The file is empty.");
+    }
+
+    NamespaceDTO namespaceDTO = namespaceService
+        .loadNamespaceBaseInfo(appId, Env.fromString(env), clusterName, namespaceName);
+
+    if (Objects.isNull(namespaceDTO)) {
+      throw new BadRequestException(String.format("Namespace: {} not exist.", namespaceName));
     }
 
     NamespaceTextModel model = new NamespaceTextModel();
