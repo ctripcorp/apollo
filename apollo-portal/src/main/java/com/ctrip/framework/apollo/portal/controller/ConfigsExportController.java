@@ -55,9 +55,7 @@ public class ConfigsExportController {
     }
 
     NamespaceTextModel model = new NamespaceTextModel();
-    String fileName = file.getOriginalFilename();
-    List<String> fileNameSplit = Splitter.on(".").splitToList(fileName);
-    //String[] fileNameSplit = fileName.split(".");
+    List<String> fileNameSplit = Splitter.on(".").splitToList(file.getOriginalFilename());
     if (fileNameSplit.size() <= 1) {
       throw new BadRequestException("The file format is invalid.");
     }
@@ -69,11 +67,11 @@ public class ConfigsExportController {
     model.setClusterName(clusterName);
     model.setNamespaceName(namespaceName);
     model.setNamespaceId(namespaceId);
-    String configText = "";
+    String configText;
     try {
       configText = ConfigToFileUtils.fileToString(file.getInputStream());
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new ServiceException("Read config file errors:{}", e);
     }
     model.setConfigText(configText);
 
@@ -83,7 +81,6 @@ public class ConfigsExportController {
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export", method = RequestMethod.GET)
   public void exportItems(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
-      @RequestParam(defaultValue = "lineNum") String orderBy,
       HttpServletResponse res) {
     List<String> fileNameSplit = Splitter.on(".").splitToList(namespaceName);
 
