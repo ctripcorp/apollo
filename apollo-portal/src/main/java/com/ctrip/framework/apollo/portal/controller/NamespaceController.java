@@ -1,33 +1,32 @@
 package com.ctrip.framework.apollo.portal.controller;
 
-import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
-import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
-import com.ctrip.framework.apollo.common.http.RichResponseEntity;
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-import com.ctrip.framework.apollo.portal.component.PermissionValidator;
-import com.ctrip.framework.apollo.portal.listener.AppNamespaceDeletionEvent;
-import com.google.common.collect.Sets;
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
+import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
+import com.ctrip.framework.apollo.common.http.RichResponseEntity;
+import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceCreationModel;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceCreationEvent;
+import com.ctrip.framework.apollo.portal.listener.AppNamespaceDeletionEvent;
 import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
-import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -44,11 +43,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
-
 @RestController
 public class NamespaceController {
 
@@ -64,8 +58,6 @@ public class NamespaceController {
   private AppNamespaceService appNamespaceService;
   @Autowired
   private RoleInitializationService roleInitializationService;
-  @Autowired
-  private RolePermissionService rolePermissionService;
   @Autowired
   private PortalConfig portalConfig;
   @Autowired
@@ -145,7 +137,7 @@ public class NamespaceController {
       }
     }
 
-    assignNamespaceRoleToOperator(appId, namespaceName);
+    namespaceService.assignNamespaceRoleToOperator(appId, namespaceName,userInfoHolder.getUser().getUserId());
 
     return ResponseEntity.ok().build();
   }
@@ -199,7 +191,8 @@ public class NamespaceController {
     AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace, appendNamespacePrefix);
 
     if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {
-      assignNamespaceRoleToOperator(appId, appNamespace.getName());
+      namespaceService.assignNamespaceRoleToOperator(appId, appNamespace.getName(),
+          userInfoHolder.getUser().getUserId());
     }
 
     publisher.publishEvent(new AppNamespaceCreationEvent(createdAppNamespace));
@@ -281,18 +274,5 @@ public class NamespaceController {
     Set<String> missingNamespaceNames = Sets.difference(portalDbPrivateAppNamespaceNames, configDbNamespaceNames);
 
     return Sets.union(missingAppNamespaceNames, missingNamespaceNames);
-  }
-
-
-  private void assignNamespaceRoleToOperator(String appId, String namespaceName) {
-    //default assign modify、release namespace role to namespace creator
-    String operator = userInfoHolder.getUser().getUserId();
-
-    rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE),
-                           Sets.newHashSet(operator), operator);
-    rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
-                           Sets.newHashSet(operator), operator);
   }
 }

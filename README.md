@@ -246,6 +246,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![贝吉塔网络科技](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/bjt.png) 
 ![微盟](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/weimob.png) 
 ![网易卡搭](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/kada.png) 
+![股书](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/kapbook.png) 
 
 # Awards
 
