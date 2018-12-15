@@ -14,6 +14,7 @@ import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -68,9 +69,9 @@ public class ConfigsExportController {
     model.setNamespaceName(namespaceName);
     model.setNamespaceId(namespaceId);
     String configText;
-    try {
-      configText = ConfigToFileUtils.fileToString(file.getInputStream());
-    } catch (IOException e) {
+    try(InputStream in = file.getInputStream()){
+      configText = ConfigToFileUtils.fileToString(in);
+    }catch (IOException e) {
       throw new ServiceException("Read config file errors:{}", e);
     }
     model.setConfigText(configText);
@@ -85,7 +86,7 @@ public class ConfigsExportController {
     List<String> fileNameSplit = Splitter.on(".").splitToList(namespaceName);
 
     String fileName = fileNameSplit.size() <= 1 ? Joiner.on(".")
-        .join(namespaceName, ConfigFileFormat.Properties) : namespaceName;
+        .join(namespaceName, ConfigFileFormat.Properties.getValue()) : namespaceName;
     NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.fromString
         (env), clusterName, namespaceName);
 
