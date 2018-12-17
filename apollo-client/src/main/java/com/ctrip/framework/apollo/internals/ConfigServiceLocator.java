@@ -75,7 +75,7 @@ public class ConfigServiceLocator {
     String configServices = System.getProperty("apollo.configService");
     if (Strings.isNullOrEmpty(configServices)) {
       // 2. Get from OS environment variable
-      configServices = System.getenv("APOLLO.CONFIGSERVICE");
+      configServices = System.getenv("APOLLO_CONFIGSERVICE");
     }
     if (Strings.isNullOrEmpty(configServices)) {
       // 3. Get from server.properties

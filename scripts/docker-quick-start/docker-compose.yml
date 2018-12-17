@@ -1,34 +1,45 @@
 version: '2'
 
 services:
-  apollo-quick-start:
-    image: nobodyiam/apollo-quick-start
-    container_name: apollo-quick-start
-    depends_on:
-      - apollo-db
-    ports:
-      - "8080:8080"
-      - "8070:8070"
-    links:
-      - apollo-db
-
-  apollo-db:
-    image: mysql:5.7
-    container_name: apollo-db
+  apollo-configservice:
+    container_name: apollo-configservice
+    build: F:/Software/Git/Git/apollo-config/apollo-config/apollo-configservice/src/main/docker
+    image: docker.registry:30018/godeye/apollo-configservice:0.11.0
+    ports: 
+      - "8080:8768"
+    volumes:
+      - "/Users/modin/opt/logs/100003171:/opt/logs/100003171"
     environment:
-      TZ: Asia/Shanghai
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    depends_on:
-      - apollo-dbdata
-    ports:
-      - "13306:3306"
-    volumes:
-      - ./sql:/docker-entrypoint-initdb.d
-    volumes_from:
-      - apollo-dbdata
+      - spring_datasource_url=jdbc:mysql://rm-2ze5w706ah6050ie8ko.mysql.rds.aliyuncs.com/apollo_config_dev?useSSL=false
+      - spring_datasource_username=root
+      - spring_datasource_password=tVFaeamXfvo9kwK
 
-  apollo-dbdata:
-    image: alpine:latest
-    container_name: apollo-dbdata
+  apollo-adminservice:
+    container_name: apollo-adminservice
+    build: F:/Software/Git/Git/apollo-config/apollo-config/apollo-adminservice/src/main/docker/
+    image: docker.registry:30018/godeye/apollo-adminservice:0.11.0
+    ports:
+      - "8090:8767"
+    depends_on:
+      - apollo-configservice
     volumes:
-      - /var/lib/mysql
+      - "/Users/mobin/opt/logs/100003172:/opt/logs/100003172"
+    environment:
+      - spring_datasource_url=jdbc:mysql://rm-2ze5w706ah6050ie8ko.mysql.rds.aliyuncs.com/apollo_config_dev?useSSL=false
+      - spring_datasource_username=root
+      - spring_datasource_password=tVFaeamXfvo9kwK
+
+  apollo-portal:
+    container_name: apollo-portal
+    build: F:/Software/Git/Git/apollo-config/apollo-config/apollo-portal/src/main/docker/
+    image: docker.registry:30018/godeye/apollo-portal:0.11.0
+    ports:
+      - "8070:8766"
+    depends_on:
+      - apollo-adminservice
+    volumes:
+      - "/Users/mobin/opt/logs/100003173:/opt/logs/100003173"
+    environment:
+      - spring_datasource_url=jdbc:mysql://rm-2ze5w706ah6050ie8ko.mysql.rds.aliyuncs.com/apollo_portal?useSSL=false
+      - spring_datasource_username=root
+      - spring_datasource_password=tVFaeamXfvo9kwK

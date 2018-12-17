@@ -2,13 +2,18 @@ spring:
   application:
     name: apollo-configservice
   profiles:
-    active: ${apollo_profile}
+    active: dev
+  cloud:
+    inetutils:
+      ignored-interfaces:
+        - docker0
+        - veth.*
 
 ctrip:
   appid: 100003171
   
 server:
-  port: 8080
+  port: 8768
   
 logging:
-  file: /opt/logs/100003171/apollo-configservice.log
+  file: /logs/apollo-configservice.log

@@ -2,8 +2,10 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
@@ -13,6 +15,7 @@ import com.ctrip.framework.apollo.portal.service.ReleaseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +38,8 @@ public class ReleaseController {
   private ApplicationEventPublisher publisher;
   @Autowired
   private PortalConfig portalConfig;
+  @Autowired
+  private PermissionValidator permissionValidator;
 
   @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
@@ -138,15 +143,20 @@ public class ReleaseController {
   }
 
 
-  @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @RequestMapping(path = "/envs/{env}/releases/{releaseId}/rollback", method = RequestMethod.PUT)
   public void rollback(@PathVariable String env,
                        @PathVariable long releaseId) {
-    releaseService.rollback(Env.valueOf(env), releaseId);
     ReleaseDTO release = releaseService.findReleaseById(Env.valueOf(env), releaseId);
-    if (Objects.isNull(release)) {
-      return;
+
+    if (release == null) {
+      throw new NotFoundException("release not found");
     }
+
+    if (!permissionValidator.hasReleaseNamespacePermission(release.getAppId(), release.getNamespaceName(), env)) {
+      throw new AccessDeniedException("Access is denied");
+    }
+
+    releaseService.rollback(Env.valueOf(env), releaseId);
 
     ConfigPublishEvent event = ConfigPublishEvent.instance();
     event.withAppId(release.getAppId())

@@ -1,20 +1,20 @@
 #!/bin/sh
 
 # apollo config db info
-apollo_config_db_url=jdbc:mysql://fill-in-the-correct-server:3306/ApolloConfigDB?characterEncoding=utf8
-apollo_config_db_username=FillInCorrectUser
-apollo_config_db_password=FillInCorrectPassword
+apollo_config_db_url=jdbc:mysql://rm-2ze5w706ah6050ie8ko.mysql.rds.aliyuncs.com/apollo_config_dev?useSSL=false
+apollo_config_db_username=root
+apollo_config_db_password=tVFaeamXfvo9kwK
 
 # apollo portal db info
-apollo_portal_db_url=jdbc:mysql://fill-in-the-correct-server:3306/ApolloPortalDB?characterEncoding=utf8
-apollo_portal_db_username=FillInCorrectUser
-apollo_portal_db_password=FillInCorrectPassword
+apollo_portal_db_url=jdbc:mysql://rm-2ze5w706ah6050ie8ko.mysql.rds.aliyuncs.com/apollo_portal?useSSL=false
+apollo_portal_db_username=root
+apollo_portal_db_password=tVFaeamXfvo9kwK
 
-# meta server url, different environments should have different meta server addresses
-dev_meta=http://fill-in-dev-meta-server:8080
-fat_meta=http://fill-in-fat-meta-server:8080
-uat_meta=http://fill-in-uat-meta-server:8080
-pro_meta=http://fill-in-pro-meta-server:8080
+#meta server url, different environments should have different meta server addresses
+dev_meta=http://39.107.112.223:8768
+fat_meta=http://39.107.112.223:8768
+uat_meta=http://39.107.112.223:8768
+pro_meta=http://39.107.112.223:8768
 
 META_SERVERS_OPTS="-Ddev_meta=$dev_meta -Dfat_meta=$fat_meta -Duat_meta=$uat_meta -Dpro_meta=$pro_meta"
 

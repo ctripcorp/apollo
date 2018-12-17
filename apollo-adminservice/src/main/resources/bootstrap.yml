@@ -1,10 +1,11 @@
 eureka:
   instance:
-    hostname: ${hostname:localhost}
-    preferIpAddress: true
+    hostname: godeye-apollo-adminservice-dev
+    #hostname: ${hostname:localhost}
   client:
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:8080/eureka/
+      defaultZone: http://39.107.112.223:8768/eureka/
+      #defaultZone: http://${eureka.instance.hostname}:8080/eureka/
     healthcheck:
       enabled: true
     eurekaServiceUrlPollIntervalSeconds: 60

@@ -2,15 +2,15 @@ spring:
   application:
     name: apollo-portal
   profiles:
-    active: ${apollo_profile}
+    active: github,auth
   resources:
     cache-period: 3600
 
 server:
-  port: 8080
+  port: 8766
   
 logging:
-  file: /opt/logs/100003173/apollo-portal.log
+  file: /logs/apollo-portal.log
 
 endpoints:
   health:

@@ -85,7 +85,7 @@ public class MetaDomainConsts {
     String metaAddress = System.getProperty("apollo.meta");
     if (Strings.isNullOrEmpty(metaAddress)) {
       // 2. Get from OS environment variable
-      metaAddress = System.getenv("APOLLO.META");
+      metaAddress = System.getenv("APOLLO_META");
     }
     if (Strings.isNullOrEmpty(metaAddress)) {
       metaAddress = Foundation.server().getProperty("apollo.meta", null);

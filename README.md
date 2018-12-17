@@ -193,3 +193,5 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![汽摩交易所](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/cnvex.png) 
 ![好未来教育集团](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/100tal.png) 
 ![猎户星空](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/ainirobot.png) 
+![卓健科技](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/zhuojian.png) 
+![银江股份](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/enjoyor.png) 

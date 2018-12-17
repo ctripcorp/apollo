@@ -104,13 +104,16 @@ public class AppNamespaceService {
     appNamespace.setDataChangeLastModifiedBy(operator);
 
     // unique check
-    if (appNamespace.isPublic() && findPublicAppNamespace(appNamespace.getName()) != null) {
-      throw new BadRequestException(appNamespace.getName() + "已存在");
+    if (appNamespace.isPublic()) {
+      AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
+      if (publicAppNamespace != null) {
+        throw new BadRequestException("Public AppNamespace " + appNamespace.getName() + " already exists in appId: " + publicAppNamespace.getAppId() + "!");
+      }
     }
 
     if (!appNamespace.isPublic() &&
         appNamespaceRepository.findByAppIdAndName(appNamespace.getAppId(), appNamespace.getName()) != null) {
-      throw new BadRequestException(appNamespace.getName() + "已存在");
+      throw new BadRequestException("Private AppNamespace " + appNamespace.getName() + " already exists!");
     }
 
     AppNamespace createdAppNamespace = appNamespaceRepository.save(appNamespace);
