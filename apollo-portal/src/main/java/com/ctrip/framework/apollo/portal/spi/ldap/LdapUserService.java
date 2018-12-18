@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.google.common.base.Strings;
@@ -13,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.AttributesMapper;
@@ -169,9 +169,9 @@ public class LdapUserService implements UserService {
     return ldapTemplate.search(groupBase, groupSearch, (ContextMapper<List<UserInfo>>) ctx -> {
       String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
       List<UserInfo> userInfos = new ArrayList<>();
-      for (String member1 : members) {
+      for (String item : members) {
         String member = org.apache.commons.lang.StringUtils
-            .strip(member1.replace(base, ""), ",");
+            .strip(item.replace(base, ""), ",");
         if (keyword != null) {
           if (member.contains(String.format("%s=%s", rdn, keyword))) {
             UserInfo userInfo = lockupUser(member, userIds);
@@ -190,7 +190,7 @@ public class LdapUserService implements UserService {
   @Override
   public List<UserInfo> searchUsers(String keyword, int offset, int limit) {
     List<UserInfo> users = new ArrayList<>();
-    if (org.apache.commons.lang.StringUtils.isNotBlank(groupSearch)) {
+    if (StringUtils.isNotBlank(groupSearch)) {
       List<List<UserInfo>> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, keyword,
           null);
       for (List<UserInfo> userInfos : userListByGroup) {
@@ -215,7 +215,7 @@ public class LdapUserService implements UserService {
 
   @Override
   public UserInfo findByUserId(String userId) {
-    if (org.apache.commons.lang.StringUtils.isNotBlank(groupSearch)) {
+    if (StringUtils.isNotBlank(groupSearch)) {
       List<List<UserInfo>> lists = searchUserInfoByGroup(groupBase, groupSearch, null,
           Collections.singletonList(userId));
       if (lists != null && !lists.isEmpty() && lists.get(0) != null
@@ -236,7 +236,7 @@ public class LdapUserService implements UserService {
       return new ArrayList<>();
     } else {
       List<UserInfo> userList = new ArrayList<>();
-      if (org.apache.commons.lang.StringUtils.isNotBlank(groupSearch)) {
+      if (StringUtils.isNotBlank(groupSearch)) {
         List<List<UserInfo>> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, null,
             userIds);
         for (List<UserInfo> userInfos : userListByGroup) {
