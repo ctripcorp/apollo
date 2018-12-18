@@ -24,8 +24,13 @@ import org.springframework.ldap.query.SearchScope;
 import org.springframework.util.CollectionUtils;
 
 /**
+ * Ldap user spi service
+ *
+ * Support OpenLdap,ApacheDS,ActiveDirectory
+ * use {@link LdapTemplate} as underlying implementation
  * @author xm.lin xm.lin@anxincloud.com
- * @Description
+ * @author idefav
+ * @Description ldap user service
  * @date 18-8-9 下午4:42
  */
 public class LdapUserService implements UserService {
