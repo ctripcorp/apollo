@@ -26,8 +26,8 @@ import org.springframework.util.CollectionUtils;
 /**
  * Ldap user spi service
  *
- * Support OpenLdap,ApacheDS,ActiveDirectory
- * use {@link LdapTemplate} as underlying implementation
+ * Support OpenLdap,ApacheDS,ActiveDirectory use {@link LdapTemplate} as underlying implementation
+ *
  * @author xm.lin xm.lin@anxincloud.com
  * @author idefav
  * @Description ldap user service
@@ -163,11 +163,11 @@ public class LdapUserService implements UserService {
 
   /**
    * 按照group搜索用户
+   *
    * @param groupBase group search base
    * @param groupSearch group filter
    * @param keyword user search keywords
    * @param userIds user id list
-   * @return
    */
   private List<List<UserInfo>> searchUserInfoByGroup(String groupBase, String groupSearch,
       String keyword, List<String> userIds) {
@@ -175,8 +175,7 @@ public class LdapUserService implements UserService {
       String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
       List<UserInfo> userInfos = new ArrayList<>();
       for (String item : members) {
-        String member = org.apache.commons.lang.StringUtils
-            .strip(item.replace(base, ""), ",");
+        String member = StringUtils.strip(item.replace(base, ""), ",");
         if (keyword != null) {
           if (member.contains(String.format("%s=%s", rdn, keyword))) {
             UserInfo userInfo = lookupUser(member, userIds);
@@ -184,7 +183,9 @@ public class LdapUserService implements UserService {
           }
         } else {
           UserInfo userInfo = lookupUser(member, userIds);
-          userInfos.add(userInfo);
+          if (userInfo != null) {
+            userInfos.add(userInfo);
+          }
         }
 
       }
