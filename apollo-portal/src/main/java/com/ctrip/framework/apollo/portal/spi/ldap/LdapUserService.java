@@ -68,7 +68,7 @@ public class LdapUserService implements UserService {
   /**
    * rdn
    */
-  @Value("${ldap.mapping.rdn}")
+  @Value("${ldap.mapping.rdn:}")
   private String rdn;
 
   /**
@@ -80,25 +80,25 @@ public class LdapUserService implements UserService {
   /**
    * group objectClassName
    */
-  @Value("${ldap.group.objectClass}")
+  @Value("${ldap.group.objectClass:}")
   private String groupObjectClassName;
 
   /**
    * group search base
    */
-  @Value("${ldap.group.groupBase}")
+  @Value("${ldap.group.groupBase:}")
   private String groupBase;
 
   /**
    * group filter eg. (&(cn=apollo-admins)(&(member=*)))
    */
-  @Value("${ldap.group.groupSearch}")
+  @Value("${ldap.group.groupSearch:}")
   private String groupSearch;
 
   /**
    * group memberShip eg. member
    */
-  @Value("${ldap.group.groupMembership}")
+  @Value("${ldap.group.groupMembership:}")
   private String groupMembershipAttrName;
 
 
@@ -141,7 +141,7 @@ public class LdapUserService implements UserService {
    * @param member ldap EntryDN
    * @param userIds 用户ID列表
    */
-  private UserInfo lockupUser(String member, List<String> userIds) {
+  private UserInfo lookupUser(String member, List<String> userIds) {
     return ldapTemplate.lookup(member, (AttributesMapper<UserInfo>) attributes -> {
       UserInfo tmp = new UserInfo();
       tmp.setEmail(attributes.get(emailAttrName).get().toString());
@@ -179,11 +179,11 @@ public class LdapUserService implements UserService {
             .strip(item.replace(base, ""), ",");
         if (keyword != null) {
           if (member.contains(String.format("%s=%s", rdn, keyword))) {
-            UserInfo userInfo = lockupUser(member, userIds);
+            UserInfo userInfo = lookupUser(member, userIds);
             userInfos.add(userInfo);
           }
         } else {
-          UserInfo userInfo = lockupUser(member, userIds);
+          UserInfo userInfo = lookupUser(member, userIds);
           userInfos.add(userInfo);
         }
 
