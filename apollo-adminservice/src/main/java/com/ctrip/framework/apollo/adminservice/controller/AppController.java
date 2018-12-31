@@ -36,7 +36,7 @@ public class AppController {
     if (!InputValidator.isValidClusterNamespace(dto.getAppId())) {
       throw new BadRequestException(String.format("AppId格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
     }
-    App entity = BeanUtils.transfrom(App.class, dto);
+    App entity = BeanUtils.transform(App.class, dto);
     App managedEntity = appService.findOne(entity.getAppId());
     if (managedEntity != null) {
       throw new BadRequestException("app already exist.");
@@ -44,7 +44,7 @@ public class AppController {
 
     entity = adminService.createNewApp(entity);
 
-    dto = BeanUtils.transfrom(AppDTO.class, entity);
+    dto = BeanUtils.transform(AppDTO.class, entity);
     return dto;
   }
 
@@ -84,7 +84,7 @@ public class AppController {
     if (app == null) {
       throw new NotFoundException("app not found for appId " + appId);
     }
-    return BeanUtils.transfrom(AppDTO.class, app);
+    return BeanUtils.transform(AppDTO.class, app);
   }
 
   @RequestMapping(value = "/apps/{appId}/unique", method = RequestMethod.GET)

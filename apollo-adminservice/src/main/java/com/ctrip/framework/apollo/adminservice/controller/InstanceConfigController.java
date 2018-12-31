@@ -139,7 +139,7 @@ public class InstanceConfigController {
     for (Release release : otherReleases) {
       //unset configurations to save space
       release.setConfigurations(null);
-      ReleaseDTO releaseDTO = BeanUtils.transfrom(ReleaseDTO.class, release);
+      ReleaseDTO releaseDTO = BeanUtils.transform(ReleaseDTO.class, release);
       releaseMap.put(release.getReleaseKey(), releaseDTO);
     }
 

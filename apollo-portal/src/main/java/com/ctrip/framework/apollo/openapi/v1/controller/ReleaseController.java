@@ -57,7 +57,7 @@ public class ReleaseController {
       throw new BadRequestException("user(releaseBy) not exists");
     }
 
-    NamespaceReleaseModel releaseModel = BeanUtils.transfrom(NamespaceReleaseModel.class, model);
+    NamespaceReleaseModel releaseModel = BeanUtils.transform(NamespaceReleaseModel.class, model);
 
     releaseModel.setAppId(appId);
     releaseModel.setEnv(Env.fromString(env).toString());
@@ -119,7 +119,7 @@ public class ReleaseController {
             throw new BadRequestException("user(releaseBy) not exists");
         }
 
-        NamespaceReleaseModel releaseModel = BeanUtils.transfrom(NamespaceReleaseModel.class, model);
+        NamespaceReleaseModel releaseModel = BeanUtils.transform(NamespaceReleaseModel.class, model);
 
         releaseModel.setAppId(appId);
         releaseModel.setEnv(Env.fromString(env).toString());
@@ -149,7 +149,7 @@ public class ReleaseController {
             throw new BadRequestException("user(releaseBy) not exists");
         }
 
-        NamespaceGrayDelReleaseModel releaseModel = BeanUtils.transfrom(NamespaceGrayDelReleaseModel.class, model);
+        NamespaceGrayDelReleaseModel releaseModel = BeanUtils.transform(NamespaceGrayDelReleaseModel.class, model);
         releaseModel.setAppId(appId);
         releaseModel.setEnv(env.toUpperCase());
         releaseModel.setClusterName(branchName);

@@ -44,7 +44,7 @@ public class NamespaceLockController {
       return null;
     }
 
-    return BeanUtils.transfrom(NamespaceLockDTO.class, lock);
+    return BeanUtils.transform(NamespaceLockDTO.class, lock);
   }
 
 }
