@@ -33,7 +33,7 @@ public class ClusterController {
       throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
     }
 
-    Cluster entity = BeanUtils.transfrom(Cluster.class, dto);
+    Cluster entity = BeanUtils.transform(Cluster.class, dto);
     Cluster managedEntity = clusterService.findOne(appId, entity.getName());
     if (managedEntity != null) {
       throw new BadRequestException("cluster already exist.");
@@ -45,7 +45,7 @@ public class ClusterController {
       entity = clusterService.saveWithoutInstanceOfAppNamespaces(entity);
     }
 
-    dto = BeanUtils.transfrom(ClusterDTO.class, entity);
+    dto = BeanUtils.transform(ClusterDTO.class, entity);
     return dto;
   }
 
@@ -79,7 +79,7 @@ public class ClusterController {
     if (cluster == null) {
       throw new NotFoundException("cluster not found for name " + clusterName);
     }
-    return BeanUtils.transfrom(ClusterDTO.class, cluster);
+    return BeanUtils.transform(ClusterDTO.class, cluster);
   }
 
   @RequestMapping(value = "/apps/{appId}/cluster/{clusterName}/unique", method = RequestMethod.GET)

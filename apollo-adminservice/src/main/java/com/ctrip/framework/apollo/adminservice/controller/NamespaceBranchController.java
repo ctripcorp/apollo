@@ -44,7 +44,7 @@ public class NamespaceBranchController {
 
     Namespace createdBranch = namespaceBranchService.createBranch(appId, clusterName, namespaceName, operator);
 
-    return BeanUtils.transfrom(NamespaceDTO.class, createdBranch);
+    return BeanUtils.transform(NamespaceDTO.class, createdBranch);
   }
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules",
@@ -79,7 +79,7 @@ public class NamespaceBranchController {
 
     checkBranch(appId, clusterName, namespaceName, branchName);
 
-    GrayReleaseRule newRules = BeanUtils.transfrom(GrayReleaseRule.class, newRuleDto);
+    GrayReleaseRule newRules = BeanUtils.transform(GrayReleaseRule.class, newRuleDto);
     newRules.setRules(GrayReleaseRuleItemTransformer.batchTransformToJSON(newRuleDto.getRuleItems()));
     newRules.setBranchStatus(NamespaceBranchStatus.ACTIVE);
 
@@ -116,7 +116,7 @@ public class NamespaceBranchController {
       return null;
     }
 
-    return BeanUtils.transfrom(NamespaceDTO.class, childNamespace);
+    return BeanUtils.transform(NamespaceDTO.class, childNamespace);
   }
 
   private void checkBranch(String appId, String clusterName, String namespaceName, String branchName) {

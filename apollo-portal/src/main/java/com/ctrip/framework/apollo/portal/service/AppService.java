@@ -81,7 +81,7 @@ public class AppService {
     app.setDataChangeCreatedBy(username);
     app.setDataChangeLastModifiedBy(username);
 
-    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, app);
+    AppDTO appDTO = BeanUtils.transform(AppDTO.class, app);
     appAPI.createApp(env, appDTO);
   }
 

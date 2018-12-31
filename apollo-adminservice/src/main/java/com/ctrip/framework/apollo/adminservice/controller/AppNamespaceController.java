@@ -34,7 +34,7 @@ public class AppNamespaceController {
   public AppNamespaceDTO create(@RequestBody AppNamespaceDTO appNamespace,
                                 @RequestParam(defaultValue = "false") boolean silentCreation) {
 
-    AppNamespace entity = BeanUtils.transfrom(AppNamespace.class, appNamespace);
+    AppNamespace entity = BeanUtils.transform(AppNamespace.class, appNamespace);
     AppNamespace managedEntity = appNamespaceService.findOne(entity.getAppId(), entity.getName());
 
     if (managedEntity == null) {
@@ -52,7 +52,7 @@ public class AppNamespaceController {
       throw new BadRequestException("app namespaces already exist.");
     }
 
-    return BeanUtils.transfrom(AppNamespaceDTO.class, entity);
+    return BeanUtils.transform(AppNamespaceDTO.class, entity);
   }
 
   @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)

@@ -38,7 +38,7 @@ public class ItemController {
   public ItemDTO create(@PathVariable("appId") String appId,
                         @PathVariable("clusterName") String clusterName,
                         @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
-    Item entity = BeanUtils.transfrom(Item.class, dto);
+    Item entity = BeanUtils.transform(Item.class, dto);
 
     ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
     Item managedEntity = itemService.findOne(appId, clusterName, namespaceName, entity.getKey());
@@ -48,7 +48,7 @@ public class ItemController {
       entity = itemService.save(entity);
       builder.createItem(entity);
     }
-    dto = BeanUtils.transfrom(ItemDTO.class, entity);
+    dto = BeanUtils.transform(ItemDTO.class, entity);
 
     Commit commit = new Commit();
     commit.setAppId(appId);
@@ -70,7 +70,7 @@ public class ItemController {
                         @PathVariable("itemId") long itemId,
                         @RequestBody ItemDTO itemDTO) {
 
-    Item entity = BeanUtils.transfrom(Item.class, itemDTO);
+    Item entity = BeanUtils.transform(Item.class, itemDTO);
 
     ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
 
@@ -79,7 +79,7 @@ public class ItemController {
       throw new BadRequestException("item not exist");
     }
 
-    Item beforeUpdateItem = BeanUtils.transfrom(Item.class, managedEntity);
+    Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);
 
     //protect. only value,comment,lastModifiedBy can be modified
     managedEntity.setValue(entity.getValue());
@@ -88,7 +88,7 @@ public class ItemController {
 
     entity = itemService.update(managedEntity);
     builder.updateItem(beforeUpdateItem, entity);
-    itemDTO = BeanUtils.transfrom(ItemDTO.class, entity);
+    itemDTO = BeanUtils.transform(ItemDTO.class, entity);
 
     if (builder.hasContent()) {
       Commit commit = new Commit();
@@ -138,7 +138,7 @@ public class ItemController {
     if (item == null) {
       throw new NotFoundException("item not found for itemId " + itemId);
     }
-    return BeanUtils.transfrom(ItemDTO.class, item);
+    return BeanUtils.transform(ItemDTO.class, item);
   }
 
   @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.GET)
@@ -150,7 +150,7 @@ public class ItemController {
       throw new NotFoundException(
           String.format("item not found for %s %s %s %s", appId, clusterName, namespaceName, key));
     }
-    return BeanUtils.transfrom(ItemDTO.class, item);
+    return BeanUtils.transform(ItemDTO.class, item);
   }
 
 

@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
-import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ public class AppInfoChangedListener {
 
   @EventListener
   public void onAppInfoChange(AppInfoChangedEvent event) {
-    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
+    AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
     String appId = appDTO.getAppId();
 
     List<Env> envs = portalSettings.getActiveEnvs();
