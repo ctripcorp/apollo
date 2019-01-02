@@ -172,7 +172,7 @@ public class NamespaceController {
           String.format("AppNamespace not exists. AppId = %s, NamespaceName = %s", appId, namespaceName));
     }
 
-    return BeanUtils.transfrom(AppNamespaceDTO.class, appNamespace);
+    return BeanUtils.transform(AppNamespaceDTO.class, appNamespace);
   }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")

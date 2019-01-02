@@ -32,7 +32,7 @@ public class BeanUtils {
 
     List<T> result = new ArrayList<>(srcList.size());
     for (Object srcObject : srcList) {
-      result.add(transfrom(clazz, srcObject));
+      result.add(transform(clazz, srcObject));
     }
     return result;
   }
@@ -45,7 +45,7 @@ public class BeanUtils {
    *      return BeanUtil.transform(UserDTO.class, userBean);
    * </pre>
    */
-  public static <T> T transfrom(Class<T> clazz, Object src) {
+  public static <T> T transform(Class<T> clazz, Object src) {
     if (src == null) {
       return null;
     }
@@ -210,7 +210,7 @@ public class BeanUtils {
   }
 
   /**
-   * 
+   *
    * @param source
    * @param target
    */
@@ -227,6 +227,6 @@ public class BeanUtils {
   public static void copyEntityProperties(Object source, Object target) {
     org.springframework.beans.BeanUtils.copyProperties(source, target, COPY_IGNORED_PROPERTIES);
   }
-  
+
   private static final String[] COPY_IGNORED_PROPERTIES = {"id", "dataChangeCreatedBy", "dataChangeCreatedTime", "dataChangeLastModifiedTime"};
 }

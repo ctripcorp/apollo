@@ -28,7 +28,7 @@ public class DeletionListener {
 
   @EventListener
   public void onAppDeletionEvent(AppDeletionEvent event) {
-    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
+    AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
     String appId = appDTO.getAppId();
     String operator = appDTO.getDataChangeLastModifiedBy();
 
@@ -45,7 +45,7 @@ public class DeletionListener {
 
   @EventListener
   public void onAppNamespaceDeletionEvent(AppNamespaceDeletionEvent event) {
-    AppNamespaceDTO appNamespace = BeanUtils.transfrom(AppNamespaceDTO.class, event.getAppNamespace());
+    AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
     List<Env> envs = portalSettings.getActiveEnvs();
     String appId = appNamespace.getAppId();
     String namespaceName = appNamespace.getName();

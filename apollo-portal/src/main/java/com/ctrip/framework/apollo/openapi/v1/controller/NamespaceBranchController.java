@@ -15,7 +15,6 @@ import com.ctrip.framework.apollo.openapi.auth.ConsumerPermissionValidator;
 import com.ctrip.framework.apollo.openapi.dto.OpenGrayReleaseRuleDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
-import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
@@ -70,7 +69,7 @@ public class NamespaceBranchController {
         if (namespaceDTO == null) {
             return null;
         }
-        return BeanUtils.transfrom(OpenNamespaceDTO.class, namespaceDTO);
+        return BeanUtils.transform(OpenNamespaceDTO.class, namespaceDTO);
     }
 
     @PreAuthorize(value = "@consumerPermissionValidator.hasModifyNamespacePermission(#request, #appId, #namespaceName, #env)")

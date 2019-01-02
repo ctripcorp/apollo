@@ -85,7 +85,7 @@ public class AppControllerTest extends AbstractControllerTest {
   @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testFind() {
     AppDTO dto = generateSampleDTOData();
-    App app = BeanUtils.transfrom(App.class, dto);
+    App app = BeanUtils.transform(App.class, dto);
     app = appRepository.save(app);
 
     AppDTO result = restTemplate.getForObject(getBaseAppUrl() + dto.getAppId(), AppDTO.class);
@@ -103,7 +103,7 @@ public class AppControllerTest extends AbstractControllerTest {
   @Sql(scripts = "/controller/cleanup.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
   public void testDelete() {
     AppDTO dto = generateSampleDTOData();
-    App app = BeanUtils.transfrom(App.class, dto);
+    App app = BeanUtils.transform(App.class, dto);
     app = appRepository.save(app);
 
     restTemplate.delete("http://localhost:{port}/apps/{appId}?operator={operator}", port, app.getAppId(), "test");

@@ -30,7 +30,7 @@ public class CreationListener {
 
   @EventListener
   public void onAppCreationEvent(AppCreationEvent event) {
-    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
+    AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
     List<Env> envs = portalSettings.getActiveEnvs();
     for (Env env : envs) {
       try {
@@ -44,7 +44,7 @@ public class CreationListener {
 
   @EventListener
   public void onAppNamespaceCreationEvent(AppNamespaceCreationEvent event) {
-    AppNamespaceDTO appNamespace = BeanUtils.transfrom(AppNamespaceDTO.class, event.getAppNamespace());
+    AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
     List<Env> envs = portalSettings.getActiveEnvs();
     for (Env env : envs) {
       try {

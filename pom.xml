@@ -866,6 +866,52 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>configdb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.flywaydb</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>5.2.4</version>
+						<dependencies>
+							<dependency>
+								<groupId>mysql</groupId>
+								<artifactId>mysql-connector-java</artifactId>
+								<version>5.1.46</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<configFile>scripts/db/migration/flyway-configdb.properties</configFile>
+						</configuration>
+						<inherited>false</inherited>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>portaldb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.flywaydb</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>5.2.4</version>
+						<dependencies>
+							<dependency>
+								<groupId>mysql</groupId>
+								<artifactId>mysql-connector-java</artifactId>
+								<version>5.1.46</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<configFile>scripts/db/migration/flyway-portaldb.properties</configFile>
+						</configuration>
+						<inherited>false</inherited>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<reporting>

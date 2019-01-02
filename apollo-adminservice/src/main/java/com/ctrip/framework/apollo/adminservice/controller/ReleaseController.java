@@ -54,7 +54,7 @@ public class ReleaseController {
     if (release == null) {
       throw new NotFoundException(String.format("release not found for %s", releaseId));
     }
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    return BeanUtils.transform(ReleaseDTO.class, release);
   }
 
   @RequestMapping(value = "/releases", method = RequestMethod.GET)
@@ -91,7 +91,7 @@ public class ReleaseController {
                               @PathVariable("clusterName") String clusterName,
                               @PathVariable("namespaceName") String namespaceName) {
     Release release = releaseService.findLatestActiveRelease(appId, clusterName, namespaceName);
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    return BeanUtils.transform(ReleaseDTO.class, release);
   }
 
   @Transactional
@@ -120,7 +120,7 @@ public class ReleaseController {
     }
     messageSender.sendMessage(ReleaseMessageKeyGenerator.generate(appId, messageCluster, namespaceName),
                               Topics.APOLLO_RELEASE_TOPIC);
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    return BeanUtils.transform(ReleaseDTO.class, release);
   }
 
 
@@ -157,7 +157,7 @@ public class ReleaseController {
     messageSender.sendMessage(ReleaseMessageKeyGenerator.generate(appId, clusterName, namespaceName),
                               Topics.APOLLO_RELEASE_TOPIC);
 
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    return BeanUtils.transform(ReleaseDTO.class, release);
 
   }
 
@@ -204,7 +204,7 @@ public class ReleaseController {
     }
     messageSender.sendMessage(ReleaseMessageKeyGenerator.generate(appId, messageCluster, namespaceName),
             Topics.APOLLO_RELEASE_TOPIC);
-    return BeanUtils.transfrom(ReleaseDTO.class, release);
+    return BeanUtils.transform(ReleaseDTO.class, release);
   }
 
 }
