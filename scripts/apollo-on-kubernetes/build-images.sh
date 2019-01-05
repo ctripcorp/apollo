@@ -1,16 +1,16 @@
 #!/bin/bash
 usage(){
-    echo "use this tool such as following:\n"
-    echo "\tclear all"
-    echo "\tsh build-images.sh -C\n"
-    echo "\tall modules delfault version: 1.2.0"
-    echo "\tsh build-images.sh -cb\n"
-    echo "\tdelete build all modules"
-    echo "\tsh build-images.sh -db -v 1.2.0\n"
-    echo "\tdelete build amdin server v1.2.0"
-    echo "\tsh build-images.sh -db admin -v 1.2.0\n"
-    echo "\tredownload source zip file"
-    echo "\tsh build-images.sh -db admin config -v 1.2.0 --completely"
+    echo -e "use this tool such as following:\n"
+    echo -e "\tclear all"
+    echo -e "\tsh build-images.sh -C\n"
+    echo -e "\tall modules delfault version: 1.2.0"
+    echo -e "\tsh build-images.sh -cb\n"
+    echo -e "\tdelete build all modules"
+    echo -e "\tsh build-images.sh -db -v 1.2.0\n"
+    echo -e "\tdelete build amdin server v1.2.0"
+    echo -e "\tsh build-images.sh -db admin -v 1.2.0\n"
+    echo -e "\tredownload source zip file"
+    echo -e "\tsh build-images.sh -db admin config -v 1.2.0 --completely"
 }
 help(){
     echo "Usage: build-images OPTIONS"
@@ -48,7 +48,7 @@ if [ "$?" != "4" ];then
     if [ "$(uname)" == "Darwin" ]; then
         brew -v > /dev/null 
         if [ "$?" != "0" ];then 
-            echo 'Please install brew for Mac: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"' 
+            echo "Please install brew for Mac: ruby -e '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)'"
         else 
             echo "hhah$?"
             echo 'Please install gnu-getopt for Mac: brew install gnu-getopt' 
@@ -62,7 +62,7 @@ fi
 #-l或--long选项后面接可接受的长选项，用逗号分开，冒号的意义同短选项。
 #-n选项后接选项解析错误时提示的脚本名字
 
-ARGS=`getopt -o aCcdv:b:: --long all,check,delete,clear,version:,build:: -n 'build-images.sh' -- "$@"`
+ARGS=$(getopt -o aCcdv:b:: --long all,check,delete,clear,version:,build:: -n 'build-images.sh' -- "$@")
 
 #将规范化后的命令行参数分配至位置参数（$1,$2,...)
 eval set -- "${ARGS}"
@@ -215,7 +215,7 @@ build(){
 cmd(){
     if [[ $clear -eq 1 ]];then
         rm -f ./apollo-admin-server/apollo-adminservice.jar ./apollo-config-server/apollo-configservice.jar ./apollo-portal-server/apollo-portal.jar
-        rm -f `ls|grep -e '^apollo-.*.zip.*$'`
+        rm -f $(ls|grep -e '^apollo-.*.zip.*$')
         echo "clear successful"
     fi
     modules=$1
