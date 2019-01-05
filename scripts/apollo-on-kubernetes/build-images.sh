@@ -10,7 +10,7 @@ usage(){
     echo -e "\tdelete build amdin server v1.2.0"
     echo -e "\tsh build-images.sh -db admin -v 1.2.0\n"
     echo -e "\tredownload source zip file"
-    echo -e "\tsh build-images.sh -db admin config -v 1.2.0 --completely"
+    echo -e "\tsh build-images.sh -db admin config -v 1.2.0 --all"
 }
 help(){
     echo "Usage: build-images OPTIONS"
