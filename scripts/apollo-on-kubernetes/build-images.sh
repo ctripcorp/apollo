@@ -3,11 +3,11 @@ usage(){
     echo -e "use this tool such as following:\n"
     echo -e "\tclear all"
     echo -e "\tsh build-images.sh -C\n"
-    echo -e "\tall modules delfault version: 1.2.0"
+    echo -e "\tall modules default version: 1.2.0"
     echo -e "\tsh build-images.sh -cb\n"
     echo -e "\tdelete build all modules"
     echo -e "\tsh build-images.sh -db -v 1.2.0\n"
-    echo -e "\tdelete build amdin server v1.2.0"
+    echo -e "\tdelete build admin server v1.2.0"
     echo -e "\tsh build-images.sh -db admin -v 1.2.0\n"
     echo -e "\tredownload source zip file"
     echo -e "\tsh build-images.sh -db admin config -v 1.2.0 --all"
@@ -15,13 +15,13 @@ usage(){
 help(){
     echo "Usage: build-images OPTIONS"
     echo 
-    echo "a shell tool for build apollo docker image"
+    echo "a shell tool to build apollo docker image"
     echo
     echo "OPTIONS:"
     echo -e "\t-h\t--help,this help message."
     echo -e "\t-v\t--version,the apollo version should be used" 
     echo -e "\t-d\t--delete delete local docker images and jar files."
-    echo -e "\t-c\t--check check local jar files ware downloaded."
+    echo -e "\t-c\t--check check local jar files are downloaded."
     echo -e "\t-b\t--build build docker images,default execute check before running."
     echo -e "\t-C\t--clear clear all about apollo(all version and files)"
     echo -e "\t-a\t--all,clean all include apollo zip files,if there nothing disappears after this option means clean all modules include admin、config and portal " 
@@ -36,21 +36,20 @@ elif [ "$1" = "-h" -o "$1" = "--help" ];then
     help
 fi
 
-# envoriment check
+# environment check
 if [[ $(which docker|wc -l) -ne 1 ]] && [[ $(which wget|wc -l) -ne 1 ]] && [[ $(which unzip|wc -l) -ne 1 ]];then
     echo "docker、wget and unzip must be installed!"
 else     
-    echo "envoriment checked success"
+    echo "environment checked success"
 fi
 
 getopt --test 
-if [ "$?" != "4" ];then 
+if [ "$?" != "0" ];then 
     if [ "$(uname)" == "Darwin" ]; then
         brew -v > /dev/null 
         if [ "$?" != "0" ];then 
             echo "Please install brew for Mac: ruby -e '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)'"
         else 
-            echo "hhah$?"
             echo 'Please install gnu-getopt for Mac: brew install gnu-getopt' 
             exit 1 
         fi
