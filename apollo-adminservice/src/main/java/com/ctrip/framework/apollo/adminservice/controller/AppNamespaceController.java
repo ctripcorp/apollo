@@ -10,13 +10,13 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +30,7 @@ public class AppNamespaceController {
   @Autowired
   private NamespaceService namespaceService;
 
-  @RequestMapping(value = "/apps/{appId}/appnamespaces", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespaceDTO create(@RequestBody AppNamespaceDTO appNamespace,
                                 @RequestParam(defaultValue = "false") boolean silentCreation) {
 
@@ -55,7 +55,7 @@ public class AppNamespaceController {
     return BeanUtils.transform(AppNamespaceDTO.class, entity);
   }
 
-  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/appnamespaces/{namespaceName:.+}")
   public void delete(@PathVariable("appId") String appId, @PathVariable("namespaceName") String namespaceName,
       @RequestParam String operator) {
     AppNamespace entity = appNamespaceService.findOne(appId, namespaceName);
@@ -65,7 +65,7 @@ public class AppNamespaceController {
     appNamespaceService.deleteAppNamespace(entity, operator);
   }
 
-  @RequestMapping(value = "/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)
+  @GetMapping("/appnamespaces/{publicNamespaceName}/namespaces")
   public List<NamespaceDTO> findPublicAppNamespaceAllNamespaces(@PathVariable String publicNamespaceName, Pageable pageable) {
 
     List<Namespace> namespaces = namespaceService.findPublicAppNamespaceAllNamespaces(publicNamespaceName, pageable);
@@ -73,12 +73,12 @@ public class AppNamespaceController {
     return BeanUtils.batchTransform(NamespaceDTO.class, namespaces);
   }
 
-  @RequestMapping(value = "/appnamespaces/{publicNamespaceName}/associated-namespaces/count", method = RequestMethod.GET)
+  @GetMapping("/appnamespaces/{publicNamespaceName}/associated-namespaces/count")
   public int countPublicAppNamespaceAssociatedNamespaces(@PathVariable String publicNamespaceName) {
     return namespaceService.countPublicAppNamespaceAssociatedNamespaces(publicNamespaceName);
   }
 
-  @RequestMapping(value = "/apps/{appId}/appnamespaces", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/appnamespaces")
   public List<AppNamespaceDTO> getAppNamespaces(@PathVariable("appId") String appId) {
 
     List<AppNamespace> appNamespaces = appNamespaceService.findByAppId(appId);

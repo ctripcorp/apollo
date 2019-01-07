@@ -12,12 +12,13 @@ import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,7 @@ public class ItemController {
   private CommitService commitService;
 
   @PreAcquireNamespaceLock
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
   public ItemDTO create(@PathVariable("appId") String appId,
                         @PathVariable("clusterName") String clusterName,
                         @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
@@ -63,7 +64,7 @@ public class ItemController {
   }
 
   @PreAcquireNamespaceLock
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}", method = RequestMethod.PUT)
+  @PutMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}")
   public ItemDTO update(@PathVariable("appId") String appId,
                         @PathVariable("clusterName") String clusterName,
                         @PathVariable("namespaceName") String namespaceName,
@@ -105,7 +106,7 @@ public class ItemController {
   }
 
   @PreAcquireNamespaceLock
-  @RequestMapping(path = "/items/{itemId}", method = RequestMethod.DELETE)
+  @DeleteMapping("/items/{itemId}")
   public void delete(@PathVariable("itemId") long itemId, @RequestParam String operator) {
     Item entity = itemService.findOne(itemId);
     if (entity == null) {
@@ -125,14 +126,14 @@ public class ItemController {
     commitService.save(commit);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
   public List<ItemDTO> findItems(@PathVariable("appId") String appId,
                                  @PathVariable("clusterName") String clusterName,
                                  @PathVariable("namespaceName") String namespaceName) {
     return BeanUtils.batchTransform(ItemDTO.class, itemService.findItemsWithOrdered(appId, clusterName, namespaceName));
   }
 
-  @RequestMapping(value = "/items/{itemId}", method = RequestMethod.GET)
+  @GetMapping("/items/{itemId}")
   public ItemDTO get(@PathVariable("itemId") long itemId) {
     Item item = itemService.findOne(itemId);
     if (item == null) {
@@ -141,7 +142,7 @@ public class ItemController {
     return BeanUtils.transform(ItemDTO.class, item);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
   public ItemDTO get(@PathVariable("appId") String appId,
                      @PathVariable("clusterName") String clusterName,
                      @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {

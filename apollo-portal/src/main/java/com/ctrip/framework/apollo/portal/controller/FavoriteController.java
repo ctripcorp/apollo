@@ -2,13 +2,14 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.service.FavoriteService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,13 +22,13 @@ public class FavoriteController {
   private FavoriteService favoriteService;
 
 
-  @RequestMapping(value = "/favorites", method = RequestMethod.POST)
+  @PostMapping("/favorites")
   public Favorite addFavorite(@RequestBody Favorite favorite) {
     return favoriteService.addFavorite(favorite);
   }
 
 
-  @RequestMapping(value = "/favorites", method = RequestMethod.GET)
+  @GetMapping("/favorites")
   public List<Favorite> findFavorites(@RequestParam(value = "userId", required = false) String userId,
                                       @RequestParam(value = "appId", required = false) String appId,
                                       Pageable page) {
@@ -35,13 +36,13 @@ public class FavoriteController {
   }
 
 
-  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.DELETE)
+  @DeleteMapping("/favorites/{favoriteId}")
   public void deleteFavorite(@PathVariable long favoriteId) {
     favoriteService.deleteFavorite(favoriteId);
   }
 
 
-  @RequestMapping(value = "/favorites/{favoriteId}", method = RequestMethod.PUT)
+  @PutMapping("/favorites/{favoriteId}")
   public void toTop(@PathVariable long favoriteId) {
     favoriteService.adjustFavoriteToFirst(favoriteId);
   }

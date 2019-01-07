@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.portal.controller;
 
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
-
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
@@ -25,10 +23,6 @@ import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +30,20 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
 public class NamespaceController {
@@ -66,12 +68,12 @@ public class NamespaceController {
   private AdminServiceAPI.NamespaceAPI namespaceAPI;
 
 
-  @RequestMapping(value = "/appnamespaces/public", method = RequestMethod.GET)
+  @GetMapping("/appnamespaces/public")
   public List<AppNamespace> findPublicAppNamespaces() {
     return appNamespaceService.findPublicAppNamespaces();
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces")
   public List<NamespaceBO> findNamespaces(@PathVariable String appId, @PathVariable String env,
                                           @PathVariable String clusterName) {
 
@@ -86,7 +88,7 @@ public class NamespaceController {
     return namespaceBOs;
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}")
   public NamespaceBO findNamespace(@PathVariable String appId, @PathVariable String env,
                                    @PathVariable String clusterName, @PathVariable String namespaceName) {
 
@@ -99,8 +101,7 @@ public class NamespaceController {
     return namespaceBO;
   }
 
-  @RequestMapping(value = "/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace",
-      method = RequestMethod.GET)
+  @GetMapping("/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/associated-public-namespace")
   public NamespaceBO findPublicNamespaceForAssociatedNamespace(@PathVariable String env,
                                                                @PathVariable String appId,
                                                                @PathVariable String namespaceName,
@@ -110,7 +111,7 @@ public class NamespaceController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/namespaces", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/namespaces")
   public ResponseEntity<Void> createNamespace(@PathVariable String appId,
                                               @RequestBody List<NamespaceCreationModel> models) {
 
@@ -143,7 +144,7 @@ public class NamespaceController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasDeleteNamespacePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}")
   public ResponseEntity<Void> deleteNamespace(@PathVariable String appId, @PathVariable String env,
                                               @PathVariable String clusterName, @PathVariable String namespaceName) {
 
@@ -153,7 +154,7 @@ public class NamespaceController {
   }
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/appnamespaces/{namespaceName:.+}")
   public ResponseEntity<Void> deleteAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
 
     AppNamespace appNamespace = appNamespaceService.deleteAppNamespace(appId, namespaceName);
@@ -163,7 +164,7 @@ public class NamespaceController {
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/apps/{appId}/appnamespaces/{namespaceName:.+}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/appnamespaces/{namespaceName:.+}")
   public AppNamespaceDTO findAppNamespace(@PathVariable String appId, @PathVariable String namespaceName) {
     AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
 
@@ -176,7 +177,7 @@ public class NamespaceController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateAppNamespacePermission(#appId, #appNamespace)")
-  @RequestMapping(value = "/apps/{appId}/appnamespaces", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespace createAppNamespace(@PathVariable String appId,
       @RequestParam(defaultValue = "true") boolean appendNamespacePrefix,
       @RequestBody AppNamespace appNamespace) {
@@ -207,12 +208,12 @@ public class NamespaceController {
    *  default -> true   (default cluster has not published namespace)
    *  customCluster -> false (customCluster cluster's all namespaces had published)
    */
-  @RequestMapping(value = "/apps/{appId}/namespaces/publish_info", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/namespaces/publish_info")
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(@PathVariable String appId) {
     return namespaceService.getNamespacesPublishInfo(appId);
   }
 
-  @RequestMapping(value = "/envs/{env}/appnamespaces/{publicNamespaceName}/namespaces", method = RequestMethod.GET)
+  @GetMapping("/envs/{env}/appnamespaces/{publicNamespaceName}/namespaces")
   public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(@PathVariable String env,
                                                                @PathVariable String publicNamespaceName,
                                                                @RequestParam(name = "page", defaultValue = "0") int page,
@@ -222,7 +223,7 @@ public class NamespaceController {
 
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/missing-namespaces", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/missing-namespaces")
   public MultiResponseEntity<String> findMissingNamespaces(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName) {
 
     MultiResponseEntity<String> response = MultiResponseEntity.ok();
@@ -236,7 +237,7 @@ public class NamespaceController {
     return response;
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/missing-namespaces", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/missing-namespaces")
   public ResponseEntity<Void> createMissingNamespaces(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName) {
 
     Set<String> missingNamespaces = findMissingNamespaceNames(appId, env, clusterName);

@@ -6,13 +6,12 @@ import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.portal.entity.po.ServerConfig;
 import com.ctrip.framework.apollo.portal.repository.ServerConfigRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
@@ -31,7 +30,7 @@ public class ServerConfigController {
   private UserInfoHolder userInfoHolder;
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/server/config", method = RequestMethod.POST)
+  @PostMapping("/server/config")
   public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
 
     checkModel(Objects.nonNull(serverConfig));
@@ -54,7 +53,7 @@ public class ServerConfigController {
   }
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/server/config/{key:.+}", method = RequestMethod.GET)
+  @GetMapping("/server/config/{key:.+}")
   public ServerConfig loadServerConfig(@PathVariable String key) {
     return serverConfigRepository.findByKey(key);
   }

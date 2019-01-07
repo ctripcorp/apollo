@@ -13,13 +13,14 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.GrayReleaseRuleItemTransformer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,7 @@ public class NamespaceBranchController {
   private NamespaceService namespaceService;
 
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
   public NamespaceDTO createBranch(@PathVariable String appId,
                                    @PathVariable String clusterName,
                                    @PathVariable String namespaceName,
@@ -47,8 +48,7 @@ public class NamespaceBranchController {
     return BeanUtils.transform(NamespaceDTO.class, createdBranch);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules",
-      method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules")
   public GrayReleaseRuleDTO findBranchGrayRules(@PathVariable String appId,
                                                 @PathVariable String clusterName,
                                                 @PathVariable String namespaceName,
@@ -72,7 +72,7 @@ public class NamespaceBranchController {
   }
 
   @Transactional
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules", method = RequestMethod.PUT)
+  @PutMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules")
   public void updateBranchGrayRules(@PathVariable String appId, @PathVariable String clusterName,
                                     @PathVariable String namespaceName, @PathVariable String branchName,
                                     @RequestBody GrayReleaseRuleDTO newRuleDto) {
@@ -90,7 +90,7 @@ public class NamespaceBranchController {
   }
 
   @Transactional
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}")
   public void deleteBranch(@PathVariable String appId, @PathVariable String clusterName,
                            @PathVariable String namespaceName, @PathVariable String branchName,
                            @RequestParam("operator") String operator) {
@@ -105,7 +105,7 @@ public class NamespaceBranchController {
 
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
   public NamespaceDTO loadNamespaceBranch(@PathVariable String appId, @PathVariable String clusterName,
                                           @PathVariable String namespaceName) {
 
