@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
 
-import com.google.common.base.Splitter;
-
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.message.MessageSender;
@@ -16,14 +14,15 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
+import com.google.common.base.Splitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,7 +47,7 @@ public class ReleaseController {
   private NamespaceBranchService namespaceBranchService;
 
 
-  @RequestMapping(value = "/releases/{releaseId}", method = RequestMethod.GET)
+  @GetMapping("/releases/{releaseId}")
   public ReleaseDTO get(@PathVariable("releaseId") long releaseId) {
     Release release = releaseService.findOne(releaseId);
     if (release == null) {
@@ -57,7 +56,7 @@ public class ReleaseController {
     return BeanUtils.transform(ReleaseDTO.class, release);
   }
 
-  @RequestMapping(value = "/releases", method = RequestMethod.GET)
+  @GetMapping("/releases")
   public List<ReleaseDTO> findReleaseByIds(@RequestParam("releaseIds") String releaseIds) {
     Set<Long> releaseIdSet = RELEASES_SPLITTER.splitToList(releaseIds).stream().map(Long::parseLong)
         .collect(Collectors.toSet());
@@ -67,7 +66,7 @@ public class ReleaseController {
     return BeanUtils.batchTransform(ReleaseDTO.class, releases);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/all", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/all")
   public List<ReleaseDTO> findAllReleases(@PathVariable("appId") String appId,
                                           @PathVariable("clusterName") String clusterName,
                                           @PathVariable("namespaceName") String namespaceName,
@@ -77,7 +76,7 @@ public class ReleaseController {
   }
 
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/active", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/active")
   public List<ReleaseDTO> findActiveReleases(@PathVariable("appId") String appId,
                                              @PathVariable("clusterName") String clusterName,
                                              @PathVariable("namespaceName") String namespaceName,
@@ -86,7 +85,7 @@ public class ReleaseController {
     return BeanUtils.batchTransform(ReleaseDTO.class, releases);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/latest", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/latest")
   public ReleaseDTO getLatest(@PathVariable("appId") String appId,
                               @PathVariable("clusterName") String clusterName,
                               @PathVariable("namespaceName") String namespaceName) {
@@ -95,7 +94,7 @@ public class ReleaseController {
   }
 
   @Transactional
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases")
   public ReleaseDTO publish(@PathVariable("appId") String appId,
                             @PathVariable("clusterName") String clusterName,
                             @PathVariable("namespaceName") String namespaceName,
@@ -130,7 +129,7 @@ public class ReleaseController {
    * @return published result
    */
   @Transactional
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/updateAndPublish", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/updateAndPublish")
   public ReleaseDTO updateAndPublish(@PathVariable("appId") String appId,
                                      @PathVariable("clusterName") String clusterName,
                                      @PathVariable("namespaceName") String namespaceName,
@@ -162,7 +161,7 @@ public class ReleaseController {
   }
 
   @Transactional
-  @RequestMapping(path = "/releases/{releaseId}/rollback", method = RequestMethod.PUT)
+  @PutMapping("/releases/{releaseId}/rollback")
   public void rollback(@PathVariable("releaseId") long releaseId,
                        @RequestParam("operator") String operator) {
 
@@ -177,7 +176,7 @@ public class ReleaseController {
   }
 
   @Transactional
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/gray-del-releases", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/gray-del-releases")
   public ReleaseDTO publish(@PathVariable("appId") String appId,
                             @PathVariable("clusterName") String clusterName,
                             @PathVariable("namespaceName") String namespaceName,

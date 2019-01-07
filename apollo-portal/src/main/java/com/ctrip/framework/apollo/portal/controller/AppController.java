@@ -1,31 +1,27 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.portal.entity.po.Role;
-import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
-
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
+import com.ctrip.framework.apollo.portal.entity.po.Role;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
 import com.ctrip.framework.apollo.portal.listener.AppCreationEvent;
 import com.ctrip.framework.apollo.portal.listener.AppDeletionEvent;
 import com.ctrip.framework.apollo.portal.listener.AppInfoChangedEvent;
 import com.ctrip.framework.apollo.portal.service.AppService;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -34,13 +30,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 
 @RestController
@@ -60,7 +63,7 @@ public class AppController {
   @Autowired
   private RoleInitializationService roleInitializationService;
 
-  @RequestMapping(value = "", method = RequestMethod.GET)
+  @GetMapping
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
     if (StringUtils.isEmpty(appIds)) {
       return appService.findAll();
@@ -70,7 +73,7 @@ public class AppController {
 
   }
 
-  @RequestMapping(value = "/by-owner", method = RequestMethod.GET)
+  @GetMapping("/by-owner")
   public List<App> findAppsByOwner(@RequestParam("owner") String owner, Pageable page) {
     Set<String> appIds = Sets.newHashSet();
 
@@ -87,7 +90,7 @@ public class AppController {
     return appService.findByAppIds(appIds, page);
   }
 
-  @RequestMapping(value = "", method = RequestMethod.POST)
+  @PostMapping
   public App create(@RequestBody AppModel appModel) {
 
     App app = transformToApp(appModel);
@@ -107,7 +110,7 @@ public class AppController {
   }
 
   @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.PUT)
+  @PutMapping("/{appId:.+}")
   public void update(@PathVariable String appId, @RequestBody AppModel appModel) {
     if (!Objects.equals(appId, appModel.getAppId())) {
       throw new BadRequestException("The App Id of path variable and request body is different");
@@ -120,7 +123,7 @@ public class AppController {
     publisher.publishEvent(new AppInfoChangedEvent(updatedApp));
   }
 
-  @RequestMapping(value = "/{appId}/navtree", method = RequestMethod.GET)
+  @GetMapping("/{appId}/navtree")
   public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
 
     MultiResponseEntity<EnvClusterInfo> response = MultiResponseEntity.ok();
@@ -137,8 +140,7 @@ public class AppController {
     return response;
   }
 
-  @RequestMapping(value = "/envs/{env}", method = RequestMethod.POST, consumes = {
-      "application/json"})
+  @PostMapping(value = "/envs/{env}", consumes = {"application/json"})
   public ResponseEntity<Void> create(@PathVariable String env, @RequestBody App app) {
 
     RequestPrecondition.checkArgumentsNotEmpty(app.getName(), app.getAppId(), app.getOwnerEmail(),
@@ -155,7 +157,7 @@ public class AppController {
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.GET)
+  @GetMapping("/{appId:.+}")
   public App load(@PathVariable String appId) {
 
     return appService.load(appId);
@@ -163,14 +165,14 @@ public class AppController {
 
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/{appId:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping("/{appId:.+}")
   public void deleteApp(@PathVariable String appId) {
     App app = appService.deleteAppInLocal(appId);
 
     publisher.publishEvent(new AppDeletionEvent(app));
   }
 
-  @RequestMapping(value = "/{appId}/miss_envs", method = RequestMethod.GET)
+  @GetMapping("/{appId}/miss_envs")
   public MultiResponseEntity<Env> findMissEnvs(@PathVariable String appId) {
 
     MultiResponseEntity<Env> response = MultiResponseEntity.ok();

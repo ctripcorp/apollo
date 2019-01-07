@@ -7,13 +7,13 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
-
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +25,7 @@ public class ClusterController {
   @Autowired
   private ClusterService clusterService;
 
-  @RequestMapping(path = "/apps/{appId}/clusters", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/clusters")
   public ClusterDTO create(@PathVariable("appId") String appId,
                            @RequestParam(value = "autoCreatePrivateNamespace", defaultValue = "true") boolean autoCreatePrivateNamespace,
                            @RequestBody ClusterDTO dto) {
@@ -49,7 +49,7 @@ public class ClusterController {
     return dto;
   }
 
-  @RequestMapping(path = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/clusters/{clusterName:.+}")
   public void delete(@PathVariable("appId") String appId,
                      @PathVariable("clusterName") String clusterName, @RequestParam String operator) {
 
@@ -66,13 +66,13 @@ public class ClusterController {
     clusterService.delete(entity.getId(), operator);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters")
   public List<ClusterDTO> find(@PathVariable("appId") String appId) {
     List<Cluster> clusters = clusterService.findParentClusters(appId);
     return BeanUtils.batchTransform(ClusterDTO.class, clusters);
   }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName:.+}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName:.+}")
   public ClusterDTO get(@PathVariable("appId") String appId,
                         @PathVariable("clusterName") String clusterName) {
     Cluster cluster = clusterService.findOne(appId, clusterName);
@@ -82,7 +82,7 @@ public class ClusterController {
     return BeanUtils.transform(ClusterDTO.class, cluster);
   }
 
-  @RequestMapping(value = "/apps/{appId}/cluster/{clusterName}/unique", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/cluster/{clusterName}/unique")
   public boolean isAppIdUnique(@PathVariable("appId") String appId,
                                @PathVariable("clusterName") String clusterName) {
     return clusterService.isClusterNameUnique(appId, clusterName);

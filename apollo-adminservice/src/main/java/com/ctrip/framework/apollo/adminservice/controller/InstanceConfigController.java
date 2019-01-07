@@ -1,12 +1,5 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-
 import com.ctrip.framework.apollo.biz.entity.Instance;
 import com.ctrip.framework.apollo.biz.entity.InstanceConfig;
 import com.ctrip.framework.apollo.biz.entity.Release;
@@ -18,14 +11,19 @@ import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +47,7 @@ public class InstanceConfigController {
   @Autowired
   private InstanceService instanceService;
 
-  @RequestMapping(value = "/by-release", method = RequestMethod.GET)
+  @GetMapping("/by-release")
   public PageDTO<InstanceDTO> getByRelease(@RequestParam("releaseId") long releaseId,
                                            Pageable pageable) {
     Release release = releaseService.findOne(releaseId);
@@ -96,7 +94,7 @@ public class InstanceConfigController {
     return new PageDTO<>(instanceDTOs, pageable, instanceConfigsPage.getTotalElements());
   }
 
-  @RequestMapping(value = "/by-namespace-and-releases-not-in", method = RequestMethod.GET)
+  @GetMapping("/by-namespace-and-releases-not-in")
   public List<InstanceDTO> getByReleasesNotIn(@RequestParam("appId") String appId,
                                               @RequestParam("clusterName") String clusterName,
                                               @RequestParam("namespaceName") String namespaceName,
@@ -159,7 +157,7 @@ public class InstanceConfigController {
     return instanceDTOs;
   }
 
-  @RequestMapping(value = "/by-namespace", method = RequestMethod.GET)
+  @GetMapping("/by-namespace")
   public PageDTO<InstanceDTO> getInstancesByNamespace(
       @RequestParam("appId") String appId, @RequestParam("clusterName") String clusterName,
       @RequestParam("namespaceName") String namespaceName,
@@ -178,7 +176,7 @@ public class InstanceConfigController {
     return new PageDTO<>(instanceDTOs, pageable, instances.getTotalElements());
   }
 
-  @RequestMapping(value = "/by-namespace/count", method = RequestMethod.GET)
+  @GetMapping("/by-namespace/count")
   public long getInstancesCountByNamespace(@RequestParam("appId") String appId,
                                           @RequestParam("clusterName") String clusterName,
                                           @RequestParam("namespaceName") String namespaceName) {
