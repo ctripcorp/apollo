@@ -14,4 +14,11 @@ public class RoleUtilsTest {
 
     assertNull(RoleUtils.extractAppIdFromMasterRoleName("ReleaseNamespace+app1+application"));
   }
+
+  @Test
+  public void testExtractAppIdFromRoleName() throws Exception {
+    assertEquals("someApp", RoleUtils.extractAppIdFromRoleName("Master+someApp"));
+    assertEquals("someApp", RoleUtils.extractAppIdFromRoleName("ModifyNamespace+someApp+xx"));
+    assertEquals("app1", RoleUtils.extractAppIdFromRoleName("ReleaseNamespace+app1+application"));
+  }
 }
