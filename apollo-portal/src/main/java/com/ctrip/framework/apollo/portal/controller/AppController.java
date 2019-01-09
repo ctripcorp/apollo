@@ -80,7 +80,7 @@ public class AppController {
     List<Role> userRoles = rolePermissionService.findUserRoles(owner);
 
     for (Role role : userRoles) {
-      String appId = RoleUtils.extractAppIdFromMasterRoleName(role.getRoleName());
+      String appId = RoleUtils.extractAppIdFromRoleName(role.getRoleName());
 
       if (appId != null) {
         appIds.add(appId);
