@@ -40,8 +40,7 @@ public class ClusterController {
       entity = clusterService.saveWithoutInstanceOfAppNamespaces(entity);
     }
 
-    dto = BeanUtils.transform(ClusterDTO.class, entity);
-    return dto;
+    return BeanUtils.transform(ClusterDTO.class, entity);
   }
 
   @DeleteMapping("/apps/{appId}/clusters/{clusterName:.+}")

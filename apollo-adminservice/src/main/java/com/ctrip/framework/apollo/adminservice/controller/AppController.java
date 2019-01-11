@@ -41,8 +41,7 @@ public class AppController {
 
     entity = adminService.createNewApp(entity);
 
-    dto = BeanUtils.transform(AppDTO.class, entity);
-    return dto;
+    return BeanUtils.transform(AppDTO.class, entity);
   }
 
   @DeleteMapping("/apps/{appId:.+}")

@@ -13,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.web.client.HttpClientErrorException;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.stringContainsInOrder;
 
 public class AppControllerTest extends AbstractControllerTest {
 
