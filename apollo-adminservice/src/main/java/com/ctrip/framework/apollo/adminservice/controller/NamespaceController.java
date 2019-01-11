@@ -6,7 +6,9 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.InputValidator;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
 public class NamespaceController {
 
@@ -27,10 +26,8 @@ public class NamespaceController {
 
   @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces")
   public NamespaceDTO create(@PathVariable("appId") String appId,
-                             @PathVariable("clusterName") String clusterName, @RequestBody NamespaceDTO dto) {
-    if (!InputValidator.isValidClusterNamespace(dto.getNamespaceName())) {
-      throw new BadRequestException(String.format("Namespace格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-    }
+                             @PathVariable("clusterName") String clusterName,
+                             @Valid @RequestBody NamespaceDTO dto) {
     Namespace entity = BeanUtils.transform(Namespace.class, dto);
     Namespace managedEntity = namespaceService.findOne(appId, clusterName, entity.getNamespaceName());
     if (managedEntity != null) {

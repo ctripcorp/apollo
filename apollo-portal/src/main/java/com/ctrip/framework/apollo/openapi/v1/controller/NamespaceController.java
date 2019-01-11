@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
@@ -19,6 +18,10 @@ import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.NamespaceLockService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
+import java.util.List;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,10 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Objects;
 
 @RestController("openapiNamespaceController")
 public class NamespaceController {
@@ -49,8 +48,9 @@ public class NamespaceController {
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasCreateNamespacePermission(#request, #appId)")
   @PostMapping(value = "/openapi/v1/apps/{appId}/appnamespaces")
-  public OpenAppNamespaceDTO createNamespace(@PathVariable String appId, @RequestBody OpenAppNamespaceDTO appNamespaceDTO,
-                                         HttpServletRequest request) {
+  public OpenAppNamespaceDTO createNamespace(@PathVariable String appId,
+                                             @Valid @RequestBody OpenAppNamespaceDTO appNamespaceDTO,
+                                             HttpServletRequest request) {
 
     if (!Objects.equals(appId, appNamespaceDTO.getAppId())) {
       throw new BadRequestException(String.format("AppId not equal. AppId in path = %s, AppId in payload = %s", appId,
@@ -58,12 +58,6 @@ public class NamespaceController {
     }
     RequestPrecondition.checkArgumentsNotEmpty(appNamespaceDTO.getAppId(), appNamespaceDTO.getName(),
                                                appNamespaceDTO.getFormat(), appNamespaceDTO.getDataChangeCreatedBy());
-
-    if (!InputValidator.isValidAppNamespace(appNamespaceDTO.getName())) {
-      throw new BadRequestException(String.format("Namespace格式错误: %s",
-                                                  InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-                                                  + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
-    }
 
     if (!ConfigFileFormat.isValidFormat(appNamespaceDTO.getFormat())) {
       throw new BadRequestException(String.format("Invalid namespace format. format = %s", appNamespaceDTO.getFormat()));

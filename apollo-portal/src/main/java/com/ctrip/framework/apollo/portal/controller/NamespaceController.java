@@ -23,6 +23,7 @@ import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Sets;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,15 +181,7 @@ public class NamespaceController {
   @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespace createAppNamespace(@PathVariable String appId,
       @RequestParam(defaultValue = "true") boolean appendNamespacePrefix,
-      @RequestBody AppNamespace appNamespace) {
-
-    RequestPrecondition.checkArgumentsNotEmpty(appNamespace.getAppId(), appNamespace.getName());
-    if (!InputValidator.isValidAppNamespace(appNamespace.getName())) {
-      throw new BadRequestException(String.format("Namespace格式错误: %s",
-          InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-              + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
-    }
-
+      @Valid @RequestBody AppNamespace appNamespace) {
     AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace, appendNamespacePrefix);
 
     if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {

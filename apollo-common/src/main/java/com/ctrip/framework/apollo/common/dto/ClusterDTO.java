@@ -1,11 +1,21 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import com.ctrip.framework.apollo.common.utils.InputValidator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 public class ClusterDTO extends BaseDTO{
 
   private long id;
 
+  @NotBlank(message = "cluster name cannot be blank")
+  @Pattern(
+      regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
+      message = "Cluster格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+  )
   private String name;
 
+  @NotBlank(message = "appId cannot be blank")
   private String appId;
 
   private long parentClusterId;

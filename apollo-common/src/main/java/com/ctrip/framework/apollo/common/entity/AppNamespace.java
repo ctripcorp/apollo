@@ -1,8 +1,11 @@
 package com.ctrip.framework.apollo.common.entity;
 
 
+import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -16,9 +19,15 @@ import javax.persistence.Table;
 @Where(clause = "isDeleted = 0")
 public class AppNamespace extends BaseEntity {
 
+  @NotBlank(message = "App Name cannot be blank")
+  @Pattern(
+      regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
+      message = "Namespace格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & " + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE
+  )
   @Column(name = "Name", nullable = false)
   private String name;
 
+  @NotBlank(message = "AppId cannot be blank")
   @Column(name = "AppId", nullable = false)
   private String appId;
 
