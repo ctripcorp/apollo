@@ -25,13 +25,13 @@ public abstract class AbstractControllerTest {
   protected RestTemplate restTemplate = (new TestRestTemplate()).getRestTemplate();
 
   @PostConstruct
-  private void postConstruct() {
+  protected void postConstruct() {
     restTemplate.setErrorHandler(new DefaultResponseErrorHandler());
     restTemplate.setMessageConverters(httpMessageConverters.getConverters());
   }
 
   @Value("${local.server.port}")
-  int port;
+  protected int port;
 
   protected String url(String path) {
     return "http://localhost:" + port + path;
