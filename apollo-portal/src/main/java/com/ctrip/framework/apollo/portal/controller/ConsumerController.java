@@ -11,7 +11,6 @@ import com.ctrip.framework.apollo.openapi.entity.ConsumerToken;
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +37,11 @@ public class ConsumerController {
 
   private static final Date DEFAULT_EXPIRES = new GregorianCalendar(2099, Calendar.JANUARY, 1).getTime();
 
-  @Autowired
-  private ConsumerService consumerService;
+  private final ConsumerService consumerService;
+
+  public ConsumerController(final ConsumerService consumerService) {
+    this.consumerService = consumerService;
+  }
 
 
   @Transactional

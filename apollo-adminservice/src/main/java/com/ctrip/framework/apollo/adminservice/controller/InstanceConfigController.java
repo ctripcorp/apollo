@@ -17,7 +17,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,10 +41,13 @@ import java.util.stream.Collectors;
 public class InstanceConfigController {
   private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
       .trimResults();
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private InstanceService instanceService;
+  private final ReleaseService releaseService;
+  private final InstanceService instanceService;
+
+  public InstanceConfigController(final ReleaseService releaseService, final InstanceService instanceService) {
+    this.releaseService = releaseService;
+    this.instanceService = instanceService;
+  }
 
   @GetMapping("/by-release")
   public PageDTO<InstanceDTO> getByRelease(@RequestParam("releaseId") long releaseId,

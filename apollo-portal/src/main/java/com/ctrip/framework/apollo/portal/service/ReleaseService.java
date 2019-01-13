@@ -1,9 +1,5 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseModel;
-import com.google.common.base.Objects;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
@@ -11,15 +7,16 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
-import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.bo.KVEntity;
-import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseBO;
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseModel;
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
+import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
 import com.ctrip.framework.apollo.portal.enums.ChangeType;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Objects;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -37,10 +34,13 @@ public class ReleaseService {
 
   private static final Gson gson = new Gson();
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AdminServiceAPI.ReleaseAPI releaseAPI;
+  private final UserInfoHolder userInfoHolder;
+  private final AdminServiceAPI.ReleaseAPI releaseAPI;
+
+  public ReleaseService(final UserInfoHolder userInfoHolder, final AdminServiceAPI.ReleaseAPI releaseAPI) {
+    this.userInfoHolder = userInfoHolder;
+    this.releaseAPI = releaseAPI;
+  }
 
   public ReleaseDTO publish(NamespaceReleaseModel model) {
     Env env = model.getEnv();

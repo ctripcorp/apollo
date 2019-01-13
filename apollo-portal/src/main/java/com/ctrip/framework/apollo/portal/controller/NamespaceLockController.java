@@ -4,7 +4,6 @@ import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.LockInfo;
 import com.ctrip.framework.apollo.portal.service.NamespaceLockService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NamespaceLockController {
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
+  private final NamespaceLockService namespaceLockService;
+
+  public NamespaceLockController(final NamespaceLockService namespaceLockService) {
+    this.namespaceLockService = namespaceLockService;
+  }
 
   @Deprecated
   @GetMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/lock")

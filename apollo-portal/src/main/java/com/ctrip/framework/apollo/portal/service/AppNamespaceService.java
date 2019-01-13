@@ -8,17 +8,16 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import org.springframework.util.CollectionUtils;
+import java.util.Set;
 
 @Service
 public class AppNamespaceService {
@@ -26,16 +25,24 @@ public class AppNamespaceService {
   private static final int PRIVATE_APP_NAMESPACE_NOTIFICATION_COUNT = 5;
   private static final Joiner APP_NAMESPACE_JOINER = Joiner.on(",").skipNulls();
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AppNamespaceRepository appNamespaceRepository;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
-  @Autowired
-  private AppService appService;
-  @Autowired
-  private RolePermissionService rolePermissionService;
+  private final UserInfoHolder userInfoHolder;
+  private final AppNamespaceRepository appNamespaceRepository;
+  private final RoleInitializationService roleInitializationService;
+  private final AppService appService;
+  private final RolePermissionService rolePermissionService;
+
+  public AppNamespaceService(
+      final UserInfoHolder userInfoHolder,
+      final AppNamespaceRepository appNamespaceRepository,
+      final RoleInitializationService roleInitializationService,
+      final @Lazy AppService appService,
+      final RolePermissionService rolePermissionService) {
+    this.userInfoHolder = userInfoHolder;
+    this.appNamespaceRepository = appNamespaceRepository;
+    this.roleInitializationService = roleInitializationService;
+    this.appService = appService;
+    this.rolePermissionService = rolePermissionService;
+  }
 
   /**
    * 公共的app ns,能被其它项目关联到的app ns

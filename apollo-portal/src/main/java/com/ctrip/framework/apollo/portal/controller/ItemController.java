@@ -12,7 +12,6 @@ import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,12 +34,15 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ItemController {
 
-  @Autowired
-  private ItemService configService;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private PermissionValidator permissionValidator;
+  private final ItemService configService;
+  private final UserInfoHolder userInfoHolder;
+  private final PermissionValidator permissionValidator;
+
+  public ItemController(final ItemService configService, final UserInfoHolder userInfoHolder, final PermissionValidator permissionValidator) {
+    this.configService = configService;
+    this.userInfoHolder = userInfoHolder;
+    this.permissionValidator = permissionValidator;
+  }
 
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @PutMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items", consumes = {

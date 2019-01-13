@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,19 +39,27 @@ import java.util.stream.Collectors;
 public class ConfigController {
   private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
       .trimResults();
-  @Autowired
-  private ConfigService configService;
-  @Autowired
-  private AppNamespaceServiceWithCache appNamespaceService;
-  @Autowired
-  private NamespaceUtil namespaceUtil;
-  @Autowired
-  private InstanceConfigAuditUtil instanceConfigAuditUtil;
-  @Autowired
-  private Gson gson;
+  private final ConfigService configService;
+  private final AppNamespaceServiceWithCache appNamespaceService;
+  private final NamespaceUtil namespaceUtil;
+  private final InstanceConfigAuditUtil instanceConfigAuditUtil;
+  private final Gson gson;
 
   private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
       }.getType();
+
+  public ConfigController(
+      final ConfigService configService,
+      final AppNamespaceServiceWithCache appNamespaceService,
+      final NamespaceUtil namespaceUtil,
+      final InstanceConfigAuditUtil instanceConfigAuditUtil,
+      final Gson gson) {
+    this.configService = configService;
+    this.appNamespaceService = appNamespaceService;
+    this.namespaceUtil = namespaceUtil;
+    this.instanceConfigAuditUtil = instanceConfigAuditUtil;
+    this.gson = gson;
+  }
 
   @GetMapping(value = "/{appId}/{clusterName}/{namespace:.+}")
   public ApolloConfig queryConfig(@PathVariable String appId, @PathVariable String clusterName,

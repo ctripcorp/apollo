@@ -4,8 +4,6 @@ import com.ctrip.framework.apollo.common.dto.InstanceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +13,11 @@ import java.util.Set;
 public class InstanceService {
 
 
-  @Autowired
-  private AdminServiceAPI.InstanceAPI instanceAPI;
+  private final AdminServiceAPI.InstanceAPI instanceAPI;
+
+  public InstanceService(final AdminServiceAPI.InstanceAPI instanceAPI) {
+    this.instanceAPI = instanceAPI;
+  }
 
   public PageDTO<InstanceDTO> getByRelease(Env env, long releaseId, int page, int size){
     return instanceAPI.getByRelease(env, releaseId, page, size);

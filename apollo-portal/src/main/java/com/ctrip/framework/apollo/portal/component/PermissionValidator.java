@@ -7,20 +7,26 @@ import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("permissionValidator")
 public class PermissionValidator {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
+  private final UserInfoHolder userInfoHolder;
+  private final RolePermissionService rolePermissionService;
+  private final PortalConfig portalConfig;
+  private final AppNamespaceService appNamespaceService;
+
+  public PermissionValidator(
+      final UserInfoHolder userInfoHolder,
+      final RolePermissionService rolePermissionService,
+      final PortalConfig portalConfig,
+      final AppNamespaceService appNamespaceService) {
+    this.userInfoHolder = userInfoHolder;
+    this.rolePermissionService = rolePermissionService;
+    this.portalConfig = portalConfig;
+    this.appNamespaceService = appNamespaceService;
+  }
 
   public boolean hasModifyNamespacePermission(String appId, String namespaceName) {
     return rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(),

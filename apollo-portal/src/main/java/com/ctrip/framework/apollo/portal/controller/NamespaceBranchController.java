@@ -12,7 +12,6 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,16 +27,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NamespaceBranchController {
 
-  @Autowired
-  private PermissionValidator permissionValidator;
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private NamespaceBranchService namespaceBranchService;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private PortalConfig portalConfig;
+  private final PermissionValidator permissionValidator;
+  private final ReleaseService releaseService;
+  private final NamespaceBranchService namespaceBranchService;
+  private final ApplicationEventPublisher publisher;
+  private final PortalConfig portalConfig;
+
+  public NamespaceBranchController(
+      final PermissionValidator permissionValidator,
+      final ReleaseService releaseService,
+      final NamespaceBranchService namespaceBranchService,
+      final ApplicationEventPublisher publisher,
+      final PortalConfig portalConfig) {
+    this.permissionValidator = permissionValidator;
+    this.releaseService = releaseService;
+    this.namespaceBranchService = namespaceBranchService;
+    this.publisher = publisher;
+    this.portalConfig = portalConfig;
+  }
 
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
   public NamespaceBO findBranch(@PathVariable String appId,

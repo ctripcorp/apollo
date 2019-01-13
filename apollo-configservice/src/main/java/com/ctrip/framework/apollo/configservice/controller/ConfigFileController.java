@@ -25,7 +25,6 @@ import com.google.common.collect.Multimaps;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,19 +65,16 @@ public class ConfigFileController implements ReleaseMessageListener {
       cacheKey2WatchedKeys = Multimaps.synchronizedSetMultimap(HashMultimap.create());
   private static final Gson gson = new Gson();
 
-  @Autowired
-  private ConfigController configController;
+  private final ConfigController configController;
+  private final NamespaceUtil namespaceUtil;
+  private final WatchKeysUtil watchKeysUtil;
+  private final GrayReleaseRulesHolder grayReleaseRulesHolder;
 
-  @Autowired
-  private NamespaceUtil namespaceUtil;
-
-  @Autowired
-  private WatchKeysUtil watchKeysUtil;
-
-  @Autowired
-  private GrayReleaseRulesHolder grayReleaseRulesHolder;
-
-  public ConfigFileController() {
+  public ConfigFileController(
+      final ConfigController configController,
+      final NamespaceUtil namespaceUtil,
+      final WatchKeysUtil watchKeysUtil,
+      final GrayReleaseRulesHolder grayReleaseRulesHolder) {
     localCache = CacheBuilder.newBuilder()
         .expireAfterWrite(EXPIRE_AFTER_WRITE, TimeUnit.MINUTES)
         .weigher(new Weigher<String, String>() {
@@ -111,6 +107,10 @@ public class ConfigFileController implements ReleaseMessageListener {
     jsonResponseHeaders = new HttpHeaders();
     jsonResponseHeaders.add("Content-Type", "application/json;charset=UTF-8");
     NOT_FOUND_RESPONSE = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    this.configController = configController;
+    this.namespaceUtil = namespaceUtil;
+    this.watchKeysUtil = watchKeysUtil;
+    this.grayReleaseRulesHolder = grayReleaseRulesHolder;
   }
 
   @GetMapping(value = "/{appId}/{clusterName}/{namespace:.+}")

@@ -1,5 +1,10 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.service.ClusterService;
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
@@ -11,14 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class ClusterControllerTest extends AbstractControllerTest {
   private ClusterController clusterController;
@@ -28,10 +26,8 @@ public class ClusterControllerTest extends AbstractControllerTest {
 
   @Before
   public void setUp() {
-    clusterController = new ClusterController();
     MockitoAnnotations.initMocks(this);
-
-    ReflectionTestUtils.setField(clusterController, "clusterService", clusterService);
+    clusterController = new ClusterController(clusterService);
   }
 
 

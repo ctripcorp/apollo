@@ -25,7 +25,6 @@ public class PortalDBPropertySource extends RefreshablePropertySource {
   @Autowired
   private ServerConfigRepository serverConfigRepository;
 
-
   public PortalDBPropertySource(String name, Map<String, Object> source) {
     super(name, source);
   }

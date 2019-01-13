@@ -12,7 +12,6 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ReleaseCompareResult;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,14 +32,21 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ReleaseController {
 
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private PermissionValidator permissionValidator;
+  private final ReleaseService releaseService;
+  private final ApplicationEventPublisher publisher;
+  private final PortalConfig portalConfig;
+  private final PermissionValidator permissionValidator;
+
+  public ReleaseController(
+      final ReleaseService releaseService,
+      final ApplicationEventPublisher publisher,
+      final PortalConfig portalConfig,
+      final PermissionValidator permissionValidator) {
+    this.releaseService = releaseService;
+    this.publisher = publisher;
+    this.portalConfig = portalConfig;
+    this.permissionValidator = permissionValidator;
+  }
 
   @PreAuthorize(value = "@permissionValidator.hasReleaseNamespacePermission(#appId, #namespaceName, #env)")
   @PostMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/releases")

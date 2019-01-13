@@ -5,6 +5,8 @@ import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
+import com.ctrip.framework.apollo.common.utils.InputValidator;
+import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
@@ -20,10 +22,6 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -43,23 +41,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 
 @RestController
 @RequestMapping("/apps")
 public class AppController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AppService appService;
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
+  private final UserInfoHolder userInfoHolder;
+  private final AppService appService;
+  private final PortalSettings portalSettings;
+  private final ApplicationEventPublisher publisher;
+  private final RolePermissionService rolePermissionService;
+  private final RoleInitializationService roleInitializationService;
+
+  public AppController(
+      final UserInfoHolder userInfoHolder,
+      final AppService appService,
+      final PortalSettings portalSettings,
+      final ApplicationEventPublisher publisher,
+      final RolePermissionService rolePermissionService,
+      final RoleInitializationService roleInitializationService) {
+    this.userInfoHolder = userInfoHolder;
+    this.appService = appService;
+    this.portalSettings = portalSettings;
+    this.publisher = publisher;
+    this.rolePermissionService = rolePermissionService;
+    this.roleInitializationService = roleInitializationService;
+  }
 
   @GetMapping
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {

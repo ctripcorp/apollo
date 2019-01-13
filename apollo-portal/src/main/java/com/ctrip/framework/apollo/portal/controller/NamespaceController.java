@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,22 +50,33 @@ public class NamespaceController {
 
   private static final Logger logger = LoggerFactory.getLogger(NamespaceController.class);
 
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private PermissionValidator permissionValidator;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final ApplicationEventPublisher publisher;
+  private final UserInfoHolder userInfoHolder;
+  private final NamespaceService namespaceService;
+  private final AppNamespaceService appNamespaceService;
+  private final RoleInitializationService roleInitializationService;
+  private final PortalConfig portalConfig;
+  private final PermissionValidator permissionValidator;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+
+  public NamespaceController(
+      final ApplicationEventPublisher publisher,
+      final UserInfoHolder userInfoHolder,
+      final NamespaceService namespaceService,
+      final AppNamespaceService appNamespaceService,
+      final RoleInitializationService roleInitializationService,
+      final PortalConfig portalConfig,
+      final PermissionValidator permissionValidator,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+    this.publisher = publisher;
+    this.userInfoHolder = userInfoHolder;
+    this.namespaceService = namespaceService;
+    this.appNamespaceService = appNamespaceService;
+    this.roleInitializationService = roleInitializationService;
+    this.portalConfig = portalConfig;
+    this.permissionValidator = permissionValidator;
+    this.namespaceAPI = namespaceAPI;
+  }
 
 
   @GetMapping("/appnamespaces/public")

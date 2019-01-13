@@ -1,10 +1,8 @@
 package com.ctrip.framework.apollo.openapi.util;
 
-import com.google.common.util.concurrent.SettableFuture;
-
 import com.ctrip.framework.apollo.openapi.entity.ConsumerAudit;
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
-
+import com.google.common.util.concurrent.SettableFuture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +13,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyCollectionOf;
@@ -40,8 +37,7 @@ public class ConsumerAuditUtilTest {
 
   @Before
   public void setUp() throws Exception {
-    consumerAuditUtil = new ConsumerAuditUtil();
-    ReflectionTestUtils.setField(consumerAuditUtil, "consumerService", consumerService);
+    consumerAuditUtil = new ConsumerAuditUtil(consumerService);
     ReflectionTestUtils.setField(consumerAuditUtil, "BATCH_TIMEOUT", batchTimeout);
     ReflectionTestUtils.setField(consumerAuditUtil, "BATCH_TIMEUNIT", batchTimeUnit);
     consumerAuditUtil.afterPropertiesSet();

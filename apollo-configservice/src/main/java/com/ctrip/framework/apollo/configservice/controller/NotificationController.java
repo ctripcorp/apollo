@@ -18,7 +18,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,17 +45,21 @@ public class NotificationController implements ReleaseMessageListener {
   private static final Splitter STRING_SPLITTER =
       Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
 
-  @Autowired
-  private WatchKeysUtil watchKeysUtil;
+  private final WatchKeysUtil watchKeysUtil;
+  private final ReleaseMessageServiceWithCache releaseMessageService;
+  private final EntityManagerUtil entityManagerUtil;
+  private final NamespaceUtil namespaceUtil;
 
-  @Autowired
-  private ReleaseMessageServiceWithCache releaseMessageService;
-
-  @Autowired
-  private EntityManagerUtil entityManagerUtil;
-
-  @Autowired
-  private NamespaceUtil namespaceUtil;
+  public NotificationController(
+      final WatchKeysUtil watchKeysUtil,
+      final ReleaseMessageServiceWithCache releaseMessageService,
+      final EntityManagerUtil entityManagerUtil,
+      final NamespaceUtil namespaceUtil) {
+    this.watchKeysUtil = watchKeysUtil;
+    this.releaseMessageService = releaseMessageService;
+    this.entityManagerUtil = entityManagerUtil;
+    this.namespaceUtil = namespaceUtil;
+  }
 
   /**
    * For single namespace notification, reserved for older version of apollo clients
