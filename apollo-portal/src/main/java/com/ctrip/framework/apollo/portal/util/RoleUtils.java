@@ -27,6 +27,17 @@ public class RoleUtils {
     return null;
   }
 
+  public static String extractAppIdFromRoleName(String roleName) {
+     Iterator<String> parts = STRING_SPLITTER.split(roleName).iterator();
+     if (parts.hasNext()) {
+       String roleType = parts.next();
+       if (RoleType.isValidRoleType(roleType) && parts.hasNext()) {
+         return parts.next();
+       }
+     }
+     return null;
+  }
+
   public static String buildAppRoleName(String appId, String roleType) {
     return STRING_JOINER.join(roleType, appId);
   }
