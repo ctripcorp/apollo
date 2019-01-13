@@ -2,8 +2,6 @@ package com.ctrip.framework.apollo.biz.customize;
 
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.common.customize.LoggingCustomizer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +9,11 @@ import org.springframework.stereotype.Component;
 @Profile("ctrip")
 public class BizLoggingCustomizer extends LoggingCustomizer{
 
+  private final BizConfig bizConfig;
 
-  @Autowired
-  private BizConfig bizConfig;
-
+  public BizLoggingCustomizer(final BizConfig bizConfig) {
+    this.bizConfig = bizConfig;
+  }
 
   @Override
   protected String cloggingUrl() {

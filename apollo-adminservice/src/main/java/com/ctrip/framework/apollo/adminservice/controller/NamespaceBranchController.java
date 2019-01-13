@@ -13,7 +13,6 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.GrayReleaseRuleItemTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class NamespaceBranchController {
 
-  @Autowired
-  private MessageSender messageSender;
-  @Autowired
-  private NamespaceBranchService namespaceBranchService;
-  @Autowired
-  private NamespaceService namespaceService;
+  private final MessageSender messageSender;
+  private final NamespaceBranchService namespaceBranchService;
+  private final NamespaceService namespaceService;
+
+  public NamespaceBranchController(
+      final MessageSender messageSender,
+      final NamespaceBranchService namespaceBranchService,
+      final NamespaceService namespaceService) {
+    this.messageSender = messageSender;
+    this.namespaceBranchService = namespaceBranchService;
+    this.namespaceService = namespaceService;
+  }
 
 
   @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches")

@@ -16,7 +16,6 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
@@ -34,14 +33,21 @@ import java.util.Set;
 @RestController
 public class PermissionController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private UserService userService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
+  private final UserInfoHolder userInfoHolder;
+  private final RolePermissionService rolePermissionService;
+  private final UserService userService;
+  private final RoleInitializationService roleInitializationService;
+
+  public PermissionController(
+      final UserInfoHolder userInfoHolder,
+      final RolePermissionService rolePermissionService,
+      final UserService userService,
+      final RoleInitializationService roleInitializationService) {
+    this.userInfoHolder = userInfoHolder;
+    this.rolePermissionService = rolePermissionService;
+    this.userService = userService;
+    this.roleInitializationService = roleInitializationService;
+  }
 
   @PostMapping("/apps/{appId}/initPermission")
   public ResponseEntity<Void> initAppPermission(@PathVariable String appId, @RequestBody String namespaceName) {

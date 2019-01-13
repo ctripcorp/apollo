@@ -1,12 +1,9 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -19,8 +16,11 @@ import java.util.List;
  */
 @Service
 public class ReleaseMessageService {
-  @Autowired
-  private ReleaseMessageRepository releaseMessageRepository;
+  private final ReleaseMessageRepository releaseMessageRepository;
+
+  public ReleaseMessageService(final ReleaseMessageRepository releaseMessageRepository) {
+    this.releaseMessageRepository = releaseMessageRepository;
+  }
 
   public ReleaseMessage findLatestReleaseMessageForMessages(Collection<String> messages) {
     if (CollectionUtils.isEmpty(messages)) {

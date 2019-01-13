@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,10 +23,13 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ClusterController {
 
-  @Autowired
-  private ClusterService clusterService;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
+  private final ClusterService clusterService;
+  private final UserInfoHolder userInfoHolder;
+
+  public ClusterController(final ClusterService clusterService, final UserInfoHolder userInfoHolder) {
+    this.clusterService = clusterService;
+    this.userInfoHolder = userInfoHolder;
+  }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateClusterPermission(#appId)")
   @PostMapping(value = "apps/{appId}/envs/{env}/clusters")

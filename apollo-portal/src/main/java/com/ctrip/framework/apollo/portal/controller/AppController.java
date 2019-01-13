@@ -22,7 +22,6 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,18 +49,27 @@ import java.util.Set;
 @RequestMapping("/apps")
 public class AppController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AppService appService;
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
+  private final UserInfoHolder userInfoHolder;
+  private final AppService appService;
+  private final PortalSettings portalSettings;
+  private final ApplicationEventPublisher publisher;
+  private final RolePermissionService rolePermissionService;
+  private final RoleInitializationService roleInitializationService;
+
+  public AppController(
+      final UserInfoHolder userInfoHolder,
+      final AppService appService,
+      final PortalSettings portalSettings,
+      final ApplicationEventPublisher publisher,
+      final RolePermissionService rolePermissionService,
+      final RoleInitializationService roleInitializationService) {
+    this.userInfoHolder = userInfoHolder;
+    this.appService = appService;
+    this.portalSettings = portalSettings;
+    this.publisher = publisher;
+    this.rolePermissionService = rolePermissionService;
+    this.roleInitializationService = roleInitializationService;
+  }
 
   @GetMapping
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {

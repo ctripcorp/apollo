@@ -19,7 +19,6 @@ import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.NamespaceLockService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,16 +34,24 @@ import java.util.Objects;
 @RestController("openapiNamespaceController")
 public class NamespaceController {
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private UserService userService;
+  private final NamespaceLockService namespaceLockService;
+  private final NamespaceService namespaceService;
+  private final AppNamespaceService appNamespaceService;
+  private final ApplicationEventPublisher publisher;
+  private final UserService userService;
+
+  public NamespaceController(
+      final NamespaceLockService namespaceLockService,
+      final NamespaceService namespaceService,
+      final AppNamespaceService appNamespaceService,
+      final ApplicationEventPublisher publisher,
+      final UserService userService) {
+    this.namespaceLockService = namespaceLockService;
+    this.namespaceService = namespaceService;
+    this.appNamespaceService = appNamespaceService;
+    this.publisher = publisher;
+    this.userService = userService;
+  }
 
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasCreateNamespacePermission(#request, #appId)")

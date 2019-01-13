@@ -8,7 +8,6 @@ import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +24,18 @@ import java.util.List;
 @RestController
 public class UserInfoController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private LogoutHandler logoutHandler;
+  private final UserInfoHolder userInfoHolder;
+  private final LogoutHandler logoutHandler;
+  private final UserService userService;
 
-  @Autowired
-  private UserService userService;
+  public UserInfoController(
+      final UserInfoHolder userInfoHolder,
+      final LogoutHandler logoutHandler,
+      final UserService userService) {
+    this.userInfoHolder = userInfoHolder;
+    this.logoutHandler = logoutHandler;
+    this.userService = userService;
+  }
 
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")

@@ -1,17 +1,12 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.NamespaceLock;
 import com.ctrip.framework.apollo.biz.entity.Release;
+import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
 import com.ctrip.framework.apollo.biz.repository.ReleaseRepository;
 import com.ctrip.framework.apollo.biz.utils.ReleaseKeyGenerator;
 import com.ctrip.framework.apollo.common.constants.GsonType;
@@ -22,12 +17,12 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.GrayReleaseRuleItemTransformer;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.Collection;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,22 +54,33 @@ public class ReleaseService {
   private static final Pageable FIRST_ITEM = PageRequest.of(0, 1);
   private static final Type OPERATION_CONTEXT_TYPE_REFERENCE = new TypeToken<Map<String, Object>>() { }.getType();
 
-  @Autowired
-  private ReleaseRepository releaseRepository;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private AuditService auditService;
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private NamespaceBranchService namespaceBranchService;
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
-  @Autowired
-  private ItemSetService itemSetService;
+  private final ReleaseRepository releaseRepository;
+  private final ItemService itemService;
+  private final AuditService auditService;
+  private final NamespaceLockService namespaceLockService;
+  private final NamespaceService namespaceService;
+  private final NamespaceBranchService namespaceBranchService;
+  private final ReleaseHistoryService releaseHistoryService;
+  private final ItemSetService itemSetService;
+
+  public ReleaseService(
+      final ReleaseRepository releaseRepository,
+      final ItemService itemService,
+      final AuditService auditService,
+      final NamespaceLockService namespaceLockService,
+      final NamespaceService namespaceService,
+      final NamespaceBranchService namespaceBranchService,
+      final ReleaseHistoryService releaseHistoryService,
+      final ItemSetService itemSetService) {
+    this.releaseRepository = releaseRepository;
+    this.itemService = itemService;
+    this.auditService = auditService;
+    this.namespaceLockService = namespaceLockService;
+    this.namespaceService = namespaceService;
+    this.namespaceBranchService = namespaceBranchService;
+    this.releaseHistoryService = releaseHistoryService;
+    this.itemSetService = itemSetService;
+  }
 
   public Release findOne(long releaseId) {
     return releaseRepository.findById(releaseId).orElse(null);

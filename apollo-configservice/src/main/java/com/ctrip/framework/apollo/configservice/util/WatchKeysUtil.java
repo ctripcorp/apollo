@@ -1,17 +1,14 @@
 package com.ctrip.framework.apollo.configservice.util;
 
+import com.ctrip.framework.apollo.common.entity.AppNamespace;
+import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
-import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.core.ConfigConsts;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -25,8 +22,11 @@ import java.util.Set;
 @Component
 public class WatchKeysUtil {
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
-  @Autowired
-  private AppNamespaceServiceWithCache appNamespaceService;
+  private final AppNamespaceServiceWithCache appNamespaceService;
+
+  public WatchKeysUtil(final AppNamespaceServiceWithCache appNamespaceService) {
+    this.appNamespaceService = appNamespaceService;
+  }
 
   /**
    * Assemble watch keys for the given appId, cluster, namespace, dataCenter combination

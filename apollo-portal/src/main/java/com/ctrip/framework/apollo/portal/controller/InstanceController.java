@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Number;
 import com.ctrip.framework.apollo.portal.service.InstanceService;
 import com.google.common.base.Splitter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +24,11 @@ public class InstanceController {
     private static final Splitter RELEASES_SPLITTER = Splitter.on(",").omitEmptyStrings()
         .trimResults();
 
-    @Autowired
-    private InstanceService instanceService;
+    private final InstanceService instanceService;
+
+    public InstanceController(final InstanceService instanceService) {
+        this.instanceService = instanceService;
+    }
 
     @GetMapping("/envs/{env}/instances/by-release")
     public PageDTO<InstanceDTO> getByRelease(@PathVariable String env, @RequestParam long releaseId,

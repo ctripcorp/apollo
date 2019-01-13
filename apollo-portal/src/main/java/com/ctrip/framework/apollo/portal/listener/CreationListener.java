@@ -7,10 +7,8 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +19,18 @@ public class CreationListener {
 
   private static Logger logger = LoggerFactory.getLogger(CreationListener.class);
 
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private AdminServiceAPI.AppAPI appAPI;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final PortalSettings portalSettings;
+  private final AdminServiceAPI.AppAPI appAPI;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+
+  public CreationListener(
+      final PortalSettings portalSettings,
+      final AdminServiceAPI.AppAPI appAPI,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+    this.portalSettings = portalSettings;
+    this.appAPI = appAPI;
+    this.namespaceAPI = namespaceAPI;
+  }
 
   @EventListener
   public void onAppCreationEvent(AppCreationEvent event) {

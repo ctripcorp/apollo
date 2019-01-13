@@ -8,7 +8,6 @@ import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +21,11 @@ import java.util.List;
 @RestController
 public class ClusterController {
 
-  @Autowired
-  private ClusterService clusterService;
+  private final ClusterService clusterService;
+
+  public ClusterController(final ClusterService clusterService) {
+    this.clusterService = clusterService;
+  }
 
   @PostMapping("/apps/{appId}/clusters")
   public ClusterDTO create(@PathVariable("appId") String appId,

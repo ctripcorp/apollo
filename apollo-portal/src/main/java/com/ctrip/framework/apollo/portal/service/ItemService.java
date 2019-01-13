@@ -17,8 +17,6 @@ import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -32,20 +30,24 @@ import java.util.Map;
 @Service
 public class ItemService {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
-  @Autowired
-  private AdminServiceAPI.ItemAPI itemAPI;
+  private final UserInfoHolder userInfoHolder;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final AdminServiceAPI.ItemAPI itemAPI;
+  private final ConfigTextResolver fileTextResolver;
+  private final ConfigTextResolver propertyResolver;
 
-  @Autowired
-  @Qualifier("fileTextResolver")
-  private ConfigTextResolver fileTextResolver;
-
-  @Autowired
-  @Qualifier("propertyResolver")
-  private ConfigTextResolver propertyResolver;
+  public ItemService(
+      final UserInfoHolder userInfoHolder,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI,
+      final AdminServiceAPI.ItemAPI itemAPI,
+      final @Qualifier("fileTextResolver") ConfigTextResolver fileTextResolver,
+      final @Qualifier("propertyResolver") ConfigTextResolver propertyResolver) {
+    this.userInfoHolder = userInfoHolder;
+    this.namespaceAPI = namespaceAPI;
+    this.itemAPI = itemAPI;
+    this.fileTextResolver = fileTextResolver;
+    this.propertyResolver = propertyResolver;
+  }
 
 
   /**

@@ -9,7 +9,6 @@ import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +25,13 @@ import java.util.Objects;
 @RestController
 public class AppController {
 
-  @Autowired
-  private AppService appService;
+  private final AppService appService;
+  private final AdminService adminService;
 
-  @Autowired
-  private AdminService adminService;
+  public AppController(final AppService appService, final AdminService adminService) {
+    this.appService = appService;
+    this.adminService = adminService;
+  }
 
   @PostMapping("/apps")
   public AppDTO create(@RequestBody AppDTO dto) {
