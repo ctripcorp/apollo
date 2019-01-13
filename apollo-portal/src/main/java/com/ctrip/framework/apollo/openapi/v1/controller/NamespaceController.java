@@ -58,7 +58,7 @@ public class NamespaceController {
   @PreAuthorize(value = "@consumerPermissionValidator.hasCreateNamespacePermission(#request, #appId)")
   @PostMapping(value = "/openapi/v1/apps/{appId}/appnamespaces")
   public OpenAppNamespaceDTO createNamespace(@PathVariable String appId,
-                                             @Valid @RequestBody OpenAppNamespaceDTO appNamespaceDTO,
+                                             @RequestBody OpenAppNamespaceDTO appNamespaceDTO,
                                              HttpServletRequest request) {
 
     if (!Objects.equals(appId, appNamespaceDTO.getAppId())) {
@@ -67,6 +67,12 @@ public class NamespaceController {
     }
     RequestPrecondition.checkArgumentsNotEmpty(appNamespaceDTO.getAppId(), appNamespaceDTO.getName(),
                                                appNamespaceDTO.getFormat(), appNamespaceDTO.getDataChangeCreatedBy());
+
+    if (!InputValidator.isValidAppNamespace(appNamespaceDTO.getName())) {
+      throw new BadRequestException(String.format("Namespace格式错误: %s",
+                                                  InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
+                                                  + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
+    }
 
     if (!ConfigFileFormat.isValidFormat(appNamespaceDTO.getFormat())) {
       throw new BadRequestException(String.format("Invalid namespace format. format = %s", appNamespaceDTO.getFormat()));

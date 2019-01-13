@@ -1,14 +1,6 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
-import javax.validation.constraints.Pattern;
-
 public class OpenAppNamespaceDTO extends BaseDTO {
-
-    @Pattern(
-        regexp = "[0-9a-zA-Z_.-]+",
-        message = "Namespace格式错误: 只允许输入数字，字母和符号 - _ . & "
-            + "不允许以.json, .yml, .yaml, .xml, .properties结尾"
-    )
     private String name;
 
     private String appId;
