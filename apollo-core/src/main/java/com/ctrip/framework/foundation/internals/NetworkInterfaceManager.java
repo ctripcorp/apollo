@@ -1,5 +1,6 @@
 package com.ctrip.framework.foundation.internals;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -57,7 +58,8 @@ public enum NetworkInterfaceManager {
   }
 
   public String getLocalHostAddress() {
-    return m_local.getHostAddress();
+    InetAddress hostAddress = this.findFirstNonLoopbackAddress();
+    return hostAddress != null ? hostAddress.getHostAddress() : m_local.getHostAddress();
   }
 
   public String getLocalHostName() {
@@ -98,7 +100,8 @@ public enum NetworkInterfaceManager {
 
     try {
       Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-      List<NetworkInterface> nis = interfaces == null ? Collections.<NetworkInterface>emptyList() : Collections.list(interfaces);
+      List<NetworkInterface> nis = interfaces == null ? Collections.<NetworkInterface>emptyList()
+          : Collections.list(interfaces);
       List<InetAddress> addresses = new ArrayList<InetAddress>();
       InetAddress local = null;
 
@@ -121,5 +124,52 @@ public enum NetworkInterfaceManager {
     }
 
     m_local = InetAddress.getLoopbackAddress();
+  }
+
+  /**
+   * ref:org.springframework.cloud.commons.util.InetUtils
+   *
+   * @return InetAddress
+   */
+  public InetAddress findFirstNonLoopbackAddress() {
+    InetAddress result = null;
+    try {
+      int lowest = Integer.MAX_VALUE;
+      for (Enumeration<NetworkInterface> nics = NetworkInterface.getNetworkInterfaces();
+          nics.hasMoreElements(); ) {
+        NetworkInterface ifc = nics.nextElement();
+        if (ifc.isUp()) {
+          // testing interface:  + ifc.getDisplayName());
+          if (ifc.getIndex() < lowest || result == null) {
+            lowest = ifc.getIndex();
+          } else {
+            continue;
+          }
+
+          for (Enumeration<InetAddress> addrs = ifc
+              .getInetAddresses(); addrs.hasMoreElements(); ) {
+            InetAddress address = addrs.nextElement();
+            if (address instanceof Inet4Address
+                && !address.isLoopbackAddress()) {
+              //found non-loopback interface: +ifc.getDisplayName()
+              result = address;
+            }
+          }
+        }
+      }
+    } catch (IOException ex) {
+      // ignore
+    }
+
+    if (result != null) {
+      return result;
+    }
+
+    try {
+      return InetAddress.getLocalHost();
+    } catch (UnknownHostException e) {
+      // ignore
+    }
+    return null;
   }
 }
