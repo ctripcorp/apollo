@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.component;
 
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.FactoryBean;

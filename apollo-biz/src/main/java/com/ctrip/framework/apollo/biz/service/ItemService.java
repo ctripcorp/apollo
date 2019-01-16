@@ -10,8 +10,7 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +22,21 @@ import java.util.Map;
 @Service
 public class ItemService {
 
-  @Autowired
-  private ItemRepository itemRepository;
+  private final ItemRepository itemRepository;
+  private final NamespaceService namespaceService;
+  private final AuditService auditService;
+  private final BizConfig bizConfig;
 
-  @Autowired
-  private NamespaceService namespaceService;
-
-  @Autowired
-  private AuditService auditService;
-
-  @Autowired
-  private BizConfig bizConfig;
+  public ItemService(
+      final ItemRepository itemRepository,
+      final @Lazy NamespaceService namespaceService,
+      final AuditService auditService,
+      final BizConfig bizConfig) {
+    this.itemRepository = itemRepository;
+    this.namespaceService = namespaceService;
+    this.auditService = auditService;
+    this.bizConfig = bizConfig;
+  }
 
 
   @Transactional

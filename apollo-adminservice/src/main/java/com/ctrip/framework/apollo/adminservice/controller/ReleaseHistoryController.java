@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +29,11 @@ public class ReleaseHistoryController {
   private Type configurationTypeReference = new TypeToken<Map<String, Object>>() {
   }.getType();
 
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
+  private final ReleaseHistoryService releaseHistoryService;
+
+  public ReleaseHistoryController(final ReleaseHistoryService releaseHistoryService) {
+    this.releaseHistoryService = releaseHistoryService;
+  }
 
   @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories")
   public PageDTO<ReleaseHistoryDTO> findReleaseHistoriesByNamespace(

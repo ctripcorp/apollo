@@ -10,7 +10,6 @@ import com.ctrip.framework.apollo.portal.entity.vo.EnvironmentInfo;
 import com.ctrip.framework.apollo.portal.entity.vo.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,12 +30,15 @@ public class SystemInfoController {
   private static final String ADMIN_SERVICE_URL_PATH = "/services/admin";
 
   private RestTemplate restTemplate;
+  private final PortalSettings portalSettings;
+  private final RestTemplateFactory restTemplateFactory;
 
-  @Autowired
-  private PortalSettings portalSettings;
-
-  @Autowired
-  private RestTemplateFactory restTemplateFactory;
+  public SystemInfoController(
+      final PortalSettings portalSettings,
+      final RestTemplateFactory restTemplateFactory) {
+    this.portalSettings = portalSettings;
+    this.restTemplateFactory = restTemplateFactory;
+  }
 
   @PostConstruct
   private void init() {

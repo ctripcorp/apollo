@@ -19,10 +19,17 @@ import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,14 +37,21 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/openapi/v1/envs/{env}")
 public class NamespaceBranchController {
 
-    @Autowired
-    private ConsumerPermissionValidator consumerPermissionValidator;
-    @Autowired
-    private ReleaseService releaseService;
-    @Autowired
-    private NamespaceBranchService namespaceBranchService;
-    @Autowired
-    private UserService userService;
+    private final ConsumerPermissionValidator consumerPermissionValidator;
+    private final ReleaseService releaseService;
+    private final NamespaceBranchService namespaceBranchService;
+    private final UserService userService;
+
+    public NamespaceBranchController(
+        final ConsumerPermissionValidator consumerPermissionValidator,
+        final ReleaseService releaseService,
+        final NamespaceBranchService namespaceBranchService,
+        final UserService userService) {
+        this.consumerPermissionValidator = consumerPermissionValidator;
+        this.releaseService = releaseService;
+        this.namespaceBranchService = namespaceBranchService;
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
     public OpenNamespaceDTO findBranch(@PathVariable String appId,

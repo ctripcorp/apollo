@@ -1,9 +1,5 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import com.ctrip.framework.apollo.biz.entity.Instance;
 import com.ctrip.framework.apollo.biz.entity.InstanceConfig;
 import com.ctrip.framework.apollo.biz.entity.Release;
@@ -12,7 +8,9 @@ import com.ctrip.framework.apollo.biz.service.ReleaseService;
 import com.ctrip.framework.apollo.common.dto.InstanceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Date;
@@ -52,9 +49,7 @@ public class InstanceConfigControllerTest {
 
   @Before
   public void setUp() throws Exception {
-    instanceConfigController = new InstanceConfigController();
-    ReflectionTestUtils.setField(instanceConfigController, "releaseService", releaseService);
-    ReflectionTestUtils.setField(instanceConfigController, "instanceService", instanceService);
+    instanceConfigController = new InstanceConfigController(releaseService, instanceService);
 
     pageable = PageRequest.of(0, 2);
   }

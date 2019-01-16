@@ -1,19 +1,17 @@
 package com.ctrip.framework.apollo.biz.message;
 
-import com.google.common.collect.Queues;
-
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
+import com.google.common.collect.Queues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -21,8 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -35,12 +31,12 @@ public class DatabaseMessageSender implements MessageSender {
   private final ExecutorService cleanExecutorService;
   private final AtomicBoolean cleanStopped;
 
-  @Autowired
-  private ReleaseMessageRepository releaseMessageRepository;
+  private final ReleaseMessageRepository releaseMessageRepository;
 
-  public DatabaseMessageSender() {
+  public DatabaseMessageSender(final ReleaseMessageRepository releaseMessageRepository) {
     cleanExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create("DatabaseMessageSender", true));
     cleanStopped = new AtomicBoolean(false);
+    this.releaseMessageRepository = releaseMessageRepository;
   }
 
   @Override

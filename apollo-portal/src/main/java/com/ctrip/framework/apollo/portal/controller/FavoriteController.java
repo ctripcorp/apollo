@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.service.FavoriteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +17,11 @@ import java.util.List;
 @RestController
 public class FavoriteController {
 
-  @Autowired
-  private FavoriteService favoriteService;
+  private final FavoriteService favoriteService;
+
+  public FavoriteController(final FavoriteService favoriteService) {
+    this.favoriteService = favoriteService;
+  }
 
 
   @PostMapping("/favorites")

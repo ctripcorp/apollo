@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.service.CommitService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,11 +17,13 @@ import java.util.List;
 @RestController
 public class CommitController {
 
-  @Autowired
-  private CommitService commitService;
+  private final CommitService commitService;
+  private final PermissionValidator permissionValidator;
 
-  @Autowired
-  private PermissionValidator permissionValidator;
+  public CommitController(final CommitService commitService, final PermissionValidator permissionValidator) {
+    this.commitService = commitService;
+    this.permissionValidator = permissionValidator;
+  }
 
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/commits")
   public List<CommitDTO> find(@PathVariable String appId, @PathVariable String env,

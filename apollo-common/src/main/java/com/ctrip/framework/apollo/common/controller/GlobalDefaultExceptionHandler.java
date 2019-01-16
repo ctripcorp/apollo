@@ -1,11 +1,18 @@
 package com.ctrip.framework.apollo.common.controller;
 
+import com.ctrip.framework.apollo.common.exception.AbstractApolloHttpException;
+import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import com.ctrip.framework.apollo.common.exception.AbstractApolloHttpException;
-import com.ctrip.framework.apollo.tracer.Tracer;
-
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -13,22 +20,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import static org.slf4j.event.Level.*;
+import static org.slf4j.event.Level.ERROR;
+import static org.slf4j.event.Level.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -70,6 +70,18 @@ public class GlobalDefaultExceptionHandler {
   @ExceptionHandler({AbstractApolloHttpException.class})
   public ResponseEntity<Map<String, Object>> badRequest(HttpServletRequest request, AbstractApolloHttpException ex) {
     return handleError(request, ex.getHttpStatus(), ex);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
+      HttpServletRequest request, MethodArgumentNotValidException ex
+  ) {
+    final Optional<ObjectError> firstError = ex.getBindingResult().getAllErrors().stream().findFirst();
+    if (firstError.isPresent()) {
+      final String firstErrorMessage = firstError.get().getDefaultMessage();
+      return handleError(request, BAD_REQUEST, new BadRequestException(firstErrorMessage));
+    }
+    return handleError(request, BAD_REQUEST, ex);
   }
 
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,

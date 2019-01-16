@@ -13,7 +13,7 @@ import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,11 +34,16 @@ import java.util.stream.Collectors;
 @RestController
 public class ConfigsExportController {
 
-  @Autowired
-  private ItemService configService;
+  private final ItemService configService;
 
-  @Autowired
-  private NamespaceService namespaceService;
+  private final NamespaceService namespaceService;
+
+  public ConfigsExportController(
+      final ItemService configService,
+      final @Lazy NamespaceService namespaceService) {
+    this.configService = configService;
+    this.namespaceService = namespaceService;
+  }
 
   @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/import")
   public void importConfigFile(@PathVariable String appId, @PathVariable String env,

@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.google.common.base.Strings;
-
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.repository.ClusterRepository;
@@ -9,8 +7,8 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Strings;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +19,18 @@ import java.util.Objects;
 @Service
 public class ClusterService {
 
-  @Autowired
-  private ClusterRepository clusterRepository;
-  @Autowired
-  private AuditService auditService;
-  @Autowired
-  private NamespaceService namespaceService;
+  private final ClusterRepository clusterRepository;
+  private final AuditService auditService;
+  private final NamespaceService namespaceService;
+
+  public ClusterService(
+      final ClusterRepository clusterRepository,
+      final AuditService auditService,
+      final @Lazy NamespaceService namespaceService) {
+    this.clusterRepository = clusterRepository;
+    this.auditService = auditService;
+    this.namespaceService = namespaceService;
+  }
 
 
   public boolean isClusterNameUnique(String appId, String clusterName) {

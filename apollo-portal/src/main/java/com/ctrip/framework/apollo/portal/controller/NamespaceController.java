@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.InputValidator;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
@@ -25,7 +24,6 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,22 +49,33 @@ public class NamespaceController {
 
   private static final Logger logger = LoggerFactory.getLogger(NamespaceController.class);
 
-  @Autowired
-  private ApplicationEventPublisher publisher;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private PermissionValidator permissionValidator;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final ApplicationEventPublisher publisher;
+  private final UserInfoHolder userInfoHolder;
+  private final NamespaceService namespaceService;
+  private final AppNamespaceService appNamespaceService;
+  private final RoleInitializationService roleInitializationService;
+  private final PortalConfig portalConfig;
+  private final PermissionValidator permissionValidator;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+
+  public NamespaceController(
+      final ApplicationEventPublisher publisher,
+      final UserInfoHolder userInfoHolder,
+      final NamespaceService namespaceService,
+      final AppNamespaceService appNamespaceService,
+      final RoleInitializationService roleInitializationService,
+      final PortalConfig portalConfig,
+      final PermissionValidator permissionValidator,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+    this.publisher = publisher;
+    this.userInfoHolder = userInfoHolder;
+    this.namespaceService = namespaceService;
+    this.appNamespaceService = appNamespaceService;
+    this.roleInitializationService = roleInitializationService;
+    this.portalConfig = portalConfig;
+    this.permissionValidator = permissionValidator;
+    this.namespaceAPI = namespaceAPI;
+  }
 
 
   @GetMapping("/appnamespaces/public")
@@ -180,15 +190,7 @@ public class NamespaceController {
   @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespace createAppNamespace(@PathVariable String appId,
       @RequestParam(defaultValue = "true") boolean appendNamespacePrefix,
-      @RequestBody AppNamespace appNamespace) {
-
-    RequestPrecondition.checkArgumentsNotEmpty(appNamespace.getAppId(), appNamespace.getName());
-    if (!InputValidator.isValidAppNamespace(appNamespace.getName())) {
-      throw new BadRequestException(String.format("Namespace格式错误: %s",
-          InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-              + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
-    }
-
+      @Valid @RequestBody AppNamespace appNamespace) {
     AppNamespace createdAppNamespace = appNamespaceService.createAppNamespaceInLocal(appNamespace, appendNamespacePrefix);
 
     if (portalConfig.canAppAdminCreatePrivateNamespace() || createdAppNamespace.isPublic()) {

@@ -1,13 +1,9 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.common.utils.InputValidator;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
@@ -24,22 +21,20 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RestController
 public class ClusterController {
 
-  @Autowired
-  private ClusterService clusterService;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
+  private final ClusterService clusterService;
+  private final UserInfoHolder userInfoHolder;
+
+  public ClusterController(final ClusterService clusterService, final UserInfoHolder userInfoHolder) {
+    this.clusterService = clusterService;
+    this.userInfoHolder = userInfoHolder;
+  }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateClusterPermission(#appId)")
   @PostMapping(value = "apps/{appId}/envs/{env}/clusters")
   public ClusterDTO createCluster(@PathVariable String appId, @PathVariable String env,
-                                  @RequestBody ClusterDTO cluster) {
+                                  @Valid @RequestBody ClusterDTO cluster) {
 
     checkModel(Objects.nonNull(cluster));
-    RequestPrecondition.checkArgumentsNotEmpty(cluster.getAppId(), cluster.getName());
-
-    if (!InputValidator.isValidClusterNamespace(cluster.getName())) {
-      throw new BadRequestException(String.format("Cluster格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
-    }
 
     String operator = userInfoHolder.getUser().getUserId();
     cluster.setDataChangeLastModifiedBy(operator);

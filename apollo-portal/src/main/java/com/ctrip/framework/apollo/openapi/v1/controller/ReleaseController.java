@@ -15,7 +15,6 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +32,18 @@ import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkM
 @RequestMapping("/openapi/v1/envs/{env}")
 public class ReleaseController {
 
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private UserService userService;
-  @Autowired
-  private NamespaceBranchService namespaceBranchService;
+  private final ReleaseService releaseService;
+  private final UserService userService;
+  private final NamespaceBranchService namespaceBranchService;
+
+  public ReleaseController(
+      final ReleaseService releaseService,
+      final UserService userService,
+      final NamespaceBranchService namespaceBranchService) {
+    this.releaseService = releaseService;
+    this.userService = userService;
+    this.namespaceBranchService = namespaceBranchService;
+  }
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasReleaseNamespacePermission(#request, #appId, #namespaceName, #env)")
   @PostMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases")

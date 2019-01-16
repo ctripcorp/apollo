@@ -63,27 +63,29 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
   private final ExecutorService largeNotificationBatchExecutorService;
 
-  @Autowired
-  private WatchKeysUtil watchKeysUtil;
+  private final WatchKeysUtil watchKeysUtil;
+  private final ReleaseMessageServiceWithCache releaseMessageService;
+  private final EntityManagerUtil entityManagerUtil;
+  private final NamespaceUtil namespaceUtil;
+  private final Gson gson;
+  private final BizConfig bizConfig;
 
   @Autowired
-  private ReleaseMessageServiceWithCache releaseMessageService;
-
-  @Autowired
-  private EntityManagerUtil entityManagerUtil;
-
-  @Autowired
-  private NamespaceUtil namespaceUtil;
-
-  @Autowired
-  private Gson gson;
-
-  @Autowired
-  private BizConfig bizConfig;
-
-  public NotificationControllerV2() {
+  public NotificationControllerV2(
+      final WatchKeysUtil watchKeysUtil,
+      final ReleaseMessageServiceWithCache releaseMessageService,
+      final EntityManagerUtil entityManagerUtil,
+      final NamespaceUtil namespaceUtil,
+      final Gson gson,
+      final BizConfig bizConfig) {
     largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
         ("NotificationControllerV2", true));
+    this.watchKeysUtil = watchKeysUtil;
+    this.releaseMessageService = releaseMessageService;
+    this.entityManagerUtil = entityManagerUtil;
+    this.namespaceUtil = namespaceUtil;
+    this.gson = gson;
+    this.bizConfig = bizConfig;
   }
 
   @GetMapping

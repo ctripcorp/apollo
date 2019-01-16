@@ -10,7 +10,6 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +24,15 @@ import java.util.List;
 @RestController
 public class AppNamespaceController {
 
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private NamespaceService namespaceService;
+  private final AppNamespaceService appNamespaceService;
+  private final NamespaceService namespaceService;
+
+  public AppNamespaceController(
+      final AppNamespaceService appNamespaceService,
+      final NamespaceService namespaceService) {
+    this.appNamespaceService = appNamespaceService;
+    this.namespaceService = namespaceService;
+  }
 
   @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespaceDTO create(@RequestBody AppNamespaceDTO appNamespace,

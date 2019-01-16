@@ -9,8 +9,6 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -19,14 +17,18 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class ItemSetService {
 
-  @Autowired
-  private AuditService auditService;
+  private final AuditService auditService;
+  private final CommitService commitService;
+  private final ItemService itemService;
 
-  @Autowired
-  private CommitService commitService;
-
-  @Autowired
-  private ItemService itemService;
+  public ItemSetService(
+      final AuditService auditService,
+      final CommitService commitService,
+      final ItemService itemService) {
+    this.auditService = auditService;
+    this.commitService = commitService;
+    this.itemService = itemService;
+  }
 
   @Transactional
   public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets){

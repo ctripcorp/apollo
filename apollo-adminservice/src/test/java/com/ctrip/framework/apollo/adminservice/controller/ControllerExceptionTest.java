@@ -6,7 +6,6 @@ import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +34,7 @@ public class ControllerExceptionTest {
 
   @Before
   public void setUp() {
-    appController = new AppController();
-    ReflectionTestUtils.setField(appController, "appService", appService);
-    ReflectionTestUtils.setField(appController, "adminService", adminService);
+    appController = new AppController(appService, adminService);
   }
 
   @Test(expected = NotFoundException.class)

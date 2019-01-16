@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz.config;
 
+import com.ctrip.framework.apollo.biz.service.BizDBPropertySource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ public class BizConfigTest {
 
   @Before
   public void setUp() throws Exception {
-    bizConfig = new BizConfig();
+    bizConfig = new BizConfig(new BizDBPropertySource());
     ReflectionTestUtils.setField(bizConfig, "environment", environment);
   }
 
