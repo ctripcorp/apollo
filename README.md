@@ -256,6 +256,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![二维火](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/2dfire.jpg) 
 ![上品](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/shopin.png) 
 ![浪潮集团](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/inspur.png) 
+![纳里健康](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/ngarihealth.png) 
 
 # Awards
 
