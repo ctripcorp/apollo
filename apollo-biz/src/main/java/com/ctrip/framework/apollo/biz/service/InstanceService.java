@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.biz.repository.InstanceConfigRepository;
 import com.ctrip.framework.apollo.biz.repository.InstanceRepository;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -91,7 +92,7 @@ public class InstanceService {
       appId, String clusterName, String
                                                                      namespaceName, Pageable
                                                                      pageable) {
-    Page<Object[]> instanceIdResult = instanceConfigRepository
+    Page<Object> instanceIdResult = instanceConfigRepository
         .findInstanceIdsByNamespaceAndInstanceAppId(instanceAppId, appId, clusterName,
             namespaceName, getValidInstanceConfigDate(), pageable);
 
@@ -116,7 +117,7 @@ public class InstanceService {
         }
 
         return null;
-      }).filter((Long value) -> value != null).collect(Collectors.toSet());
+      }).filter(Objects::nonNull).collect(Collectors.toSet());
       instances = findInstancesByIds(instanceIds);
     }
 
