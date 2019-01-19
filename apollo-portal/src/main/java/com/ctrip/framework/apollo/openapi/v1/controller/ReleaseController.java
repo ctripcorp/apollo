@@ -52,8 +52,6 @@ public class ReleaseController {
                                       @PathVariable String namespaceName,
                                       @RequestBody NamespaceReleaseDTO model,
                                       HttpServletRequest request) {
-
-    checkModel(model != null);
     RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
             .getReleaseTitle()),
         "Params(releaseTitle and releasedBy) can not be empty");
@@ -91,7 +89,6 @@ public class ReleaseController {
                             @PathVariable String clusterName, @PathVariable String namespaceName,
                             @PathVariable String branchName, @RequestParam(value = "deleteBranch", defaultValue = "true") boolean deleteBranch,
                             @RequestBody NamespaceReleaseDTO model, HttpServletRequest request) {
-        checkModel(model != null);
         RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
                         .getReleaseTitle()),
                 "Params(releaseTitle and releasedBy) can not be empty");
@@ -114,7 +111,6 @@ public class ReleaseController {
                                         @PathVariable String namespaceName, @PathVariable String branchName,
                                         @RequestBody NamespaceReleaseDTO model,
                                         HttpServletRequest request) {
-        checkModel(model != null);
         RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
                         .getReleaseTitle()),
                 "Params(releaseTitle and releasedBy) can not be empty");
@@ -140,8 +136,6 @@ public class ReleaseController {
                                                @PathVariable String namespaceName, @PathVariable String branchName,
                                                @RequestBody NamespaceGrayDelReleaseDTO model,
                                                HttpServletRequest request) {
-
-        checkModel(model != null);
         RequestPrecondition.checkArguments(!StringUtils.isContainEmpty(model.getReleasedBy(), model
                         .getReleaseTitle()),
                 "Params(releaseTitle and releasedBy) can not be empty");

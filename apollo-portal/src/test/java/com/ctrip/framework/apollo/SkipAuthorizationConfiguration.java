@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo;
 
 import com.ctrip.framework.apollo.openapi.auth.ConsumerPermissionValidator;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -13,6 +14,8 @@ import static org.mockito.Mockito.when;
 /**
  * Created by kezhenxu at 2019/1/8 20:19.
  *
+ * Configuration class that will disable authorization.
+ *
  * @author kezhenxu (kezhenxu94@163.com)
  */
 @Profile("skipAuthorization")
@@ -20,10 +23,25 @@ import static org.mockito.Mockito.when;
 public class SkipAuthorizationConfiguration {
   @Primary
   @Bean
-  @Qualifier("consumerPermissionValidator")
   public ConsumerPermissionValidator consumerPermissionValidator() {
-    ConsumerPermissionValidator mock = mock(ConsumerPermissionValidator.class);
+    final ConsumerPermissionValidator mock = mock(ConsumerPermissionValidator.class);
     when(mock.hasCreateNamespacePermission(any(), any())).thenReturn(true);
+    return mock;
+  }
+
+  @Primary
+  @Bean
+  public ConsumerAuthUtil consumerAuthUtil() {
+    final ConsumerAuthUtil mock = mock(ConsumerAuthUtil.class);
+    when(mock.getConsumerId(any())).thenReturn(1L);
+    return mock;
+  }
+
+  @Primary
+  @Bean("permissionValidator")
+  public PermissionValidator permissionValidator() {
+    final PermissionValidator mock = mock(PermissionValidator.class);
+    when(mock.isSuperAdmin()).thenReturn(true);
     return mock;
   }
 }
