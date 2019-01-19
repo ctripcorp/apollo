@@ -50,9 +50,6 @@ public class ItemController {
   public void modifyItemsByText(@PathVariable String appId, @PathVariable String env,
                                 @PathVariable String clusterName, @PathVariable String namespaceName,
                                 @RequestBody NamespaceTextModel model) {
-
-    checkModel(model != null);
-
     model.setAppId(appId);
     model.setClusterName(clusterName);
     model.setEnv(env);
@@ -141,7 +138,7 @@ public class ItemController {
 
   @PostMapping(value = "/namespaces/{namespaceName}/diff", consumes = {"application/json"})
   public List<ItemDiffs> diff(@RequestBody NamespaceSyncModel model) {
-    checkModel(Objects.nonNull(model) && !model.isInvalid());
+    checkModel(!model.isInvalid());
 
     List<ItemDiffs> itemDiffs = configService.compare(model.getSyncToNamespaces(), model.getSyncItems());
 
@@ -164,7 +161,7 @@ public class ItemController {
   @PutMapping(value = "/apps/{appId}/namespaces/{namespaceName}/items", consumes = {"application/json"})
   public ResponseEntity<Void> update(@PathVariable String appId, @PathVariable String namespaceName,
                                      @RequestBody NamespaceSyncModel model) {
-    checkModel(Objects.nonNull(model) && !model.isInvalid());
+    checkModel(!model.isInvalid());
     boolean hasPermission = permissionValidator.hasModifyNamespacePermission(appId, namespaceName);
     Env envNoPermission = null;
     // if uses has ModifyNamespace permission then he has permission

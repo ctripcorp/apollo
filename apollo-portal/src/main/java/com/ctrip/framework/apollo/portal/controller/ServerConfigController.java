@@ -2,20 +2,17 @@ package com.ctrip.framework.apollo.portal.controller;
 
 
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.portal.entity.po.ServerConfig;
 import com.ctrip.framework.apollo.portal.repository.ServerConfigRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import java.util.Objects;
+import javax.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 /**
  * 配置中心本身需要一些配置,这些配置放在数据库里面
@@ -33,11 +30,7 @@ public class ServerConfigController {
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @PostMapping("/server/config")
-  public ServerConfig createOrUpdate(@RequestBody ServerConfig serverConfig) {
-
-    checkModel(Objects.nonNull(serverConfig));
-    RequestPrecondition.checkArgumentsNotEmpty(serverConfig.getKey(), serverConfig.getValue());
-
+  public ServerConfig createOrUpdate(@Valid @RequestBody ServerConfig serverConfig) {
     String modifiedBy = userInfoHolder.getUser().getUserId();
 
     ServerConfig storedConfig = serverConfigRepository.findByKey(serverConfig.getKey());

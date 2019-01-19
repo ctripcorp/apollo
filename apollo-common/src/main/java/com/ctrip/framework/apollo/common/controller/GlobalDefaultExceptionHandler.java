@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -82,6 +83,13 @@ public class GlobalDefaultExceptionHandler {
       return handleError(request, BAD_REQUEST, new BadRequestException(firstErrorMessage));
     }
     return handleError(request, BAD_REQUEST, ex);
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
+      HttpServletRequest request, ConstraintViolationException ex
+  ) {
+    return handleError(request, BAD_REQUEST, new BadRequestException(ex.getMessage()));
   }
 
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
