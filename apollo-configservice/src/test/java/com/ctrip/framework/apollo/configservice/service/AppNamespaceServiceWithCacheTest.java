@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -205,6 +205,14 @@ public class AppNamespaceServiceWithCacheTest {
         (somePublicAppNamespace.getDataChangeLastModifiedTime(), 1));
 
     // Delete 1 private and 1 public
+
+    // should prepare for the case after deleted first, or in 2 rebuild intervals, all will be deleted
+    List<Long> appNamespaceIdsAfterDelete = Lists
+        .newArrayList(somePrivateNamespaceId, somePublicNamespaceId, yetAnotherPrivateNamespaceId);
+    when(appNamespaceRepository.findAllById(appNamespaceIdsAfterDelete)).thenReturn(Lists.newArrayList
+        (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
+
+    // do delete
     when(appNamespaceRepository.findAllById(appNamespaceIds)).thenReturn(Lists.newArrayList
         (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
 

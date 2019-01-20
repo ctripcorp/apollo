@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -36,9 +36,7 @@ public class NotificationControllerTest {
   private NotificationController controller;
   private String someAppId;
   private String someCluster;
-  private String defaultCluster;
   private String defaultNamespace;
-  private String somePublicNamespace;
   private String someDataCenter;
   private long someNotificationId;
   private String someClientIp;
@@ -60,15 +58,12 @@ public class NotificationControllerTest {
 
     someAppId = "someAppId";
     someCluster = "someCluster";
-    defaultCluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     defaultNamespace = ConfigConsts.NAMESPACE_APPLICATION;
-    somePublicNamespace = "somePublicNamespace";
     someDataCenter = "someDC";
     someNotificationId = 1;
     someClientIp = "someClientIp";
 
     when(namespaceUtil.filterNamespaceName(defaultNamespace)).thenReturn(defaultNamespace);
-    when(namespaceUtil.filterNamespaceName(somePublicNamespace)).thenReturn(somePublicNamespace);
 
     deferredResults =
         (Multimap<String, DeferredResult<ResponseEntity<ApolloConfigNotification>>>) ReflectionTestUtils
@@ -156,8 +151,6 @@ public class NotificationControllerTest {
   public void testPollNotificationWithDefaultNamespaceWithNotificationIdOutDated()
       throws Exception {
     long notificationId = someNotificationId + 1;
-    String releaseMessage = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
-        .join(someAppId, someCluster, defaultNamespace);
     ReleaseMessage someReleaseMessage = mock(ReleaseMessage.class);
 
     String someWatchKey = "someKey";
@@ -170,7 +163,6 @@ public class NotificationControllerTest {
             watchKeys);
 
     when(someReleaseMessage.getId()).thenReturn(notificationId);
-    when(someReleaseMessage.getMessage()).thenReturn(releaseMessage);
     when(releaseMessageService.findLatestReleaseMessageForMessages(watchKeys))
         .thenReturn(someReleaseMessage);
 

@@ -288,12 +288,6 @@
 				<artifactId>h2</artifactId>
 				<version>1.4.191</version>
 			</dependency>
-			<!-- stick with mockito 1.x -->
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>1.10.19</version>
-			</dependency>
 			<!-- declare Spring BOMs in order -->
 			<dependency>
 				<groupId>io.spring.platform</groupId>

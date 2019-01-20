@@ -52,7 +52,7 @@ public class CtripMQService implements MQService {
 
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     converter.setSupportedMediaTypes(
-        Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM));
+        Arrays.asList(MediaType.APPLICATION_JSON_UTF8, MediaType.APPLICATION_OCTET_STREAM));
 
     restTemplate.setMessageConverters(Arrays.asList(converter, new FormHttpMessageConverter()));
 
