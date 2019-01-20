@@ -1,16 +1,11 @@
 package com.ctrip.framework.apollo.mockserver;
 
-import static org.junit.Assert.assertEquals;
-
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.mockserver.ApolloMockServerSpringIntegrationTest.TestConfiguration;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.google.common.util.concurrent.SettableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +16,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Create by zhangzheng on 8/16/18 Email:zhangzheng@youzan.com
@@ -36,6 +37,9 @@ public class ApolloMockServerSpringIntegrationTest {
 
   @Autowired
   private TestBean testBean;
+
+  @Autowired
+  private TestInterestedKeyPrefixesBean testInterestedKeyPrefixesBean;
 
   @Test
   @DirtiesContext
@@ -63,6 +67,25 @@ public class ApolloMockServerSpringIntegrationTest {
     assertEquals(PropertyChangeType.DELETED, changeEvent.getChange("key1").getChangeType());
   }
 
+  @Test
+  @DirtiesContext
+  public void shouldNotifyOnInterestedPatterns() throws Exception {
+    embeddedApollo.addOrModifyProperty(otherNamespace, "server.port", "8080");
+    embeddedApollo.addOrModifyProperty(otherNamespace, "server.path", "/apollo");
+    embeddedApollo.addOrModifyProperty(otherNamespace, "spring.application.name", "whatever");
+    ConfigChangeEvent changeEvent = testInterestedKeyPrefixesBean.futureData.get(5000, TimeUnit.MILLISECONDS);
+    assertEquals(otherNamespace, changeEvent.getNamespace());
+    assertEquals("8080", changeEvent.getChange("server.port").getNewValue());
+    assertEquals("/apollo", changeEvent.getChange("server.path").getNewValue());
+  }
+
+  @Test(expected = TimeoutException.class)
+  @DirtiesContext
+  public void shouldNotNotifyOnUninterestedPatterns() throws Exception {
+    embeddedApollo.addOrModifyProperty(otherNamespace, "spring.application.name", "apollo");
+    testInterestedKeyPrefixesBean.futureData.get(5000, TimeUnit.MILLISECONDS);
+  }
+
   @EnableApolloConfig
   @Configuration
   static class TestConfiguration {
@@ -70,6 +93,11 @@ public class ApolloMockServerSpringIntegrationTest {
     @Bean
     public TestBean testBean() {
       return new TestBean();
+    }
+
+    @Bean
+    public TestInterestedKeyPrefixesBean testInterestedKeyPrefixesBean() {
+      return new TestInterestedKeyPrefixesBean();
     }
   }
 
@@ -83,6 +111,15 @@ public class ApolloMockServerSpringIntegrationTest {
     private SettableFuture<ConfigChangeEvent> futureData = SettableFuture.create();
 
     @ApolloConfigChangeListener(otherNamespace)
+    private void onChange(ConfigChangeEvent changeEvent) {
+      futureData.set(changeEvent);
+    }
+  }
+
+  private static class TestInterestedKeyPrefixesBean {
+    private SettableFuture<ConfigChangeEvent> futureData = SettableFuture.create();
+
+    @ApolloConfigChangeListener(value = otherNamespace, interestedKeyPrefixes = "server.")
     private void onChange(ConfigChangeEvent changeEvent) {
       futureData.set(changeEvent);
     }
