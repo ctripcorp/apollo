@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal;
 
 
+import com.ctrip.framework.apollo.SkipAuthorizationConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,11 +14,14 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = PortalApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {
+    PortalApplication.class,
+    SkipAuthorizationConfiguration.class
+}, webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AbstractIntegrationTest {
 
   protected RestTemplate restTemplate = (new TestRestTemplate()).getRestTemplate();
- 
+
   @PostConstruct
   private void postConstruct() {
     System.setProperty("spring.profiles.active", "test");
@@ -27,4 +31,7 @@ public abstract class AbstractIntegrationTest {
   @Value("${local.server.port}")
   int port;
 
+  protected String url(String path) {
+    return "http://localhost:" + port + path;
+  }
 }

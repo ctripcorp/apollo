@@ -13,11 +13,13 @@ import java.util.Map;
 import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.ObjectError;
@@ -32,7 +34,6 @@ import static org.slf4j.event.Level.WARN;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
@@ -84,6 +85,13 @@ public class GlobalDefaultExceptionHandler {
     return handleError(request, BAD_REQUEST, ex);
   }
 
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
+      HttpServletRequest request, ConstraintViolationException ex
+  ) {
+    return handleError(request, BAD_REQUEST, new BadRequestException(ex.getMessage()));
+  }
+
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
                                                           HttpStatus status, Throwable ex) {
     return handleError(request, status, ex, ERROR);
@@ -118,7 +126,7 @@ public class GlobalDefaultExceptionHandler {
     }
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(APPLICATION_JSON);
+    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     return new ResponseEntity<>(errorAttributes, headers, status);
   }
 
