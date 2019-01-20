@@ -257,6 +257,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![上品](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/shopin.png) 
 ![浪潮集团](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/inspur.png) 
 ![纳里健康](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/ngarihealth.png) 
+![橙红科技](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/oraro.png) 
+![龙腾出行](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/dragonpass.png) 
 
 # Awards
 
