@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
 import com.ctrip.framework.apollo.common.utils.InputValidator;
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.openapi.auth.ConsumerPermissionValidator;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
 import org.junit.Assert;
@@ -21,7 +22,6 @@ public class NamespaceControllerTest extends AbstractControllerTest {
   @Autowired
   private ConsumerPermissionValidator consumerPermissionValidator;
 
-  @Ignore
   @Test
   public void shouldFailWhenAppNamespaceNameIsInvalid() {
     Assert.assertTrue(consumerPermissionValidator.hasCreateNamespacePermission(null, null));
@@ -29,6 +29,8 @@ public class NamespaceControllerTest extends AbstractControllerTest {
     OpenAppNamespaceDTO dto = new OpenAppNamespaceDTO();
     dto.setAppId("appId");
     dto.setName("invalid name");
+    dto.setFormat(ConfigFileFormat.Properties.getValue());
+    dto.setDataChangeCreatedBy("apollo");
     try {
       restTemplate.postForEntity(
           url("/openapi/v1/apps/{appId}/appnamespaces"),
@@ -36,11 +38,9 @@ public class NamespaceControllerTest extends AbstractControllerTest {
       );
       Assert.fail("should throw");
     } catch (HttpClientErrorException e) {
-      Assert.assertThat(
-          new String(e.getResponseBodyAsByteArray()),
-          containsString(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
-              + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE)
-      );
+      String result = e.getResponseBodyAsString();
+      Assert.assertThat(result, containsString(InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+      Assert.assertThat(result, containsString(InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
     }
   }
 }
