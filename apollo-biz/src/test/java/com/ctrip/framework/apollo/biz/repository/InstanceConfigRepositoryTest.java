@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.Rollback;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
@@ -22,6 +24,7 @@ public class InstanceConfigRepositoryTest extends AbstractIntegrationTest {
   @Autowired
   private InstanceRepository instanceRepository;
 
+  @Rollback
   @Test
   public void shouldPaginated() {
     for (int i = 0; i < 25; i++) {
