@@ -1,22 +1,22 @@
 package com.ctrip.framework.apollo.common.datasource;
 
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
-
 import javax.sql.DataSource;
+import java.lang.reflect.Method;
 
 @Component
 @Conditional(TitanCondition.class)
 public class TitanEntityManager {
 
-  @Autowired
-  private TitanSettings settings;
+  private final TitanSettings settings;
+
+  public TitanEntityManager(final TitanSettings settings) {
+    this.settings = settings;
+  }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Bean

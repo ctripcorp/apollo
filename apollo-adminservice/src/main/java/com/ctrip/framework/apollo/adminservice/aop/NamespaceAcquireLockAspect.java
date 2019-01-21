@@ -12,12 +12,10 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
@@ -31,15 +29,21 @@ import org.springframework.stereotype.Component;
 public class NamespaceAcquireLockAspect {
   private static final Logger logger = LoggerFactory.getLogger(NamespaceAcquireLockAspect.class);
 
+  private final NamespaceLockService namespaceLockService;
+  private final NamespaceService namespaceService;
+  private final ItemService itemService;
+  private final BizConfig bizConfig;
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private BizConfig bizConfig;
+  public NamespaceAcquireLockAspect(
+      final NamespaceLockService namespaceLockService,
+      final NamespaceService namespaceService,
+      final ItemService itemService,
+      final BizConfig bizConfig) {
+    this.namespaceLockService = namespaceLockService;
+    this.namespaceService = namespaceService;
+    this.itemService = itemService;
+    this.bizConfig = bizConfig;
+  }
 
 
   //create item

@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.openapi.client.service;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.openapi.client.constant.ApolloOpenApiConstants;
@@ -13,7 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 abstract class AbstractOpenApiServiceTest {

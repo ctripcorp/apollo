@@ -17,8 +17,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 public class NamespacePublishInfoTest extends AbstractUnitTest {
@@ -65,7 +65,7 @@ public class NamespacePublishInfoTest extends AbstractUnitTest {
     when(namespaceRepository.findByAppIdAndClusterNameOrderByIdAsc(testApp, ConfigConsts.CLUSTER_NAME_DEFAULT))
         .thenReturn(Collections.singletonList(namespace));
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
-    when(itemService.findItemsModifiedAfterDate(anyLong(), anyObject())).thenReturn(Collections.singletonList(item));
+    when(itemService.findItemsModifiedAfterDate(anyLong(), any())).thenReturn(Collections.singletonList(item));
 
     Map<String, Boolean> result = namespaceService.namespacePublishInfo(testApp);
 
@@ -85,7 +85,7 @@ public class NamespacePublishInfoTest extends AbstractUnitTest {
     when(namespaceRepository.findByAppIdAndClusterNameOrderByIdAsc(testApp, ConfigConsts.CLUSTER_NAME_DEFAULT))
         .thenReturn(Collections.singletonList(namespace));
     when(releaseService.findLatestActiveRelease(namespace)).thenReturn(release);
-    when(itemService.findItemsModifiedAfterDate(anyLong(), anyObject())).thenReturn(Collections.singletonList(item));
+    when(itemService.findItemsModifiedAfterDate(anyLong(), any())).thenReturn(Collections.singletonList(item));
 
     Map<String, Boolean> result = namespaceService.namespacePublishInfo(testApp);
 

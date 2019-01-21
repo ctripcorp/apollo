@@ -6,14 +6,13 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,24 +23,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class PortalSettings {
 
   private static final Logger logger = LoggerFactory.getLogger(PortalSettings.class);
   private static final int HEALTH_CHECK_INTERVAL = 10 * 1000;
 
-  @Autowired
-  ApplicationContext applicationContext;
-
-  @Autowired
-  private PortalConfig portalConfig;
+  private final ApplicationContext applicationContext;
+  private final PortalConfig portalConfig;
 
   private List<Env> allEnvs = new ArrayList<>();
 
   //mark env up or down
   private Map<Env, Boolean> envStatusMark = new ConcurrentHashMap<>();
+
+  public PortalSettings(final ApplicationContext applicationContext, final PortalConfig portalConfig) {
+    this.applicationContext = applicationContext;
+    this.portalConfig = portalConfig;
+  }
 
   @PostConstruct
   private void postConstruct() {
