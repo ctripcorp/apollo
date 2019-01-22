@@ -264,3 +264,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 # Awards
 
 <img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/awards/oschina-2018-award.jpg" width="240px" alt="2018 年度最受欢迎中国开源软件">
+
+# Stargazers over time
+
+[![Stargazers over time](https://starcharts.herokuapp.com/ctripcorp/apollo.svg)](https://starcharts.herokuapp.com/ctripcorp/apollo)
