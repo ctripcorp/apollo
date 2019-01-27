@@ -9,31 +9,35 @@ import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.web.client.HttpStatusCodeException;
 
 
 @RestController("openapiItemController")
 @RequestMapping("/openapi/v1/envs/{env}")
 public class ItemController {
 
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private UserService userService;
+  private final ItemService itemService;
+  private final UserService userService;
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.GET)
+  public ItemController(final ItemService itemService, final UserService userService) {
+    this.itemService = itemService;
+    this.userService = userService;
+  }
+
+  @GetMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
   public OpenItemDTO getItem(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName,
       @PathVariable String namespaceName, @PathVariable String key) {
 
@@ -43,14 +47,14 @@ public class ItemController {
   }
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasModifyNamespacePermission(#request, #appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items", method = RequestMethod.POST)
+  @PostMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
   public OpenItemDTO createItem(@PathVariable String appId, @PathVariable String env,
                                 @PathVariable String clusterName, @PathVariable String namespaceName,
                                 @RequestBody OpenItemDTO item, HttpServletRequest request) {
 
     RequestPrecondition.checkArguments(
-        !StringUtils.isContainEmpty(item.getKey(), item.getValue(), item.getDataChangeCreatedBy()),
-        "key, value and dataChangeCreatedBy should not be null or empty");
+        !StringUtils.isContainEmpty(item.getKey(), item.getDataChangeCreatedBy()),
+        "key and dataChangeCreatedBy should not be null or empty");
 
     if (userService.findByUserId(item.getDataChangeCreatedBy()) == null) {
       throw new BadRequestException("User " + item.getDataChangeCreatedBy() + " doesn't exist!");
@@ -71,7 +75,7 @@ public class ItemController {
   }
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasModifyNamespacePermission(#request, #appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.PUT)
+  @PutMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
   public void updateItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
                          @PathVariable String key, @RequestBody OpenItemDTO item,
@@ -80,8 +84,8 @@ public class ItemController {
     RequestPrecondition.checkArguments(item != null, "item payload can not be empty");
 
     RequestPrecondition.checkArguments(
-        !StringUtils.isContainEmpty(item.getKey(), item.getValue(), item.getDataChangeLastModifiedBy()),
-        "key, value and dataChangeLastModifiedBy can not be empty");
+        !StringUtils.isContainEmpty(item.getKey(), item.getDataChangeLastModifiedBy()),
+        "key and dataChangeLastModifiedBy can not be empty");
 
     RequestPrecondition.checkArguments(item.getKey().equals(key), "Key in path and payload is not consistent");
 
@@ -112,7 +116,7 @@ public class ItemController {
 
 
   @PreAuthorize(value = "@consumerPermissionValidator.hasModifyNamespacePermission(#request, #appId, #namespaceName, #env)")
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}", method = RequestMethod.DELETE)
+  @DeleteMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
   public void deleteItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
                          @PathVariable String key, @RequestParam String operator,

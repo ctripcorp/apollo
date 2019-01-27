@@ -1,20 +1,16 @@
 package com.ctrip.framework.apollo.openapi.util;
 
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -29,8 +25,7 @@ public class ConsumerAuthUtilTest {
 
   @Before
   public void setUp() throws Exception {
-    consumerAuthUtil = new ConsumerAuthUtil();
-    ReflectionTestUtils.setField(consumerAuthUtil, "consumerService", consumerService);
+    consumerAuthUtil = new ConsumerAuthUtil(consumerService);
   }
 
   @Test

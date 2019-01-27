@@ -25,28 +25,28 @@ public class OpenApiBeanUtils {
 
   public static OpenItemDTO transformFromItemDTO(ItemDTO item) {
     Preconditions.checkArgument(item != null);
-    return BeanUtils.transfrom(OpenItemDTO.class, item);
+    return BeanUtils.transform(OpenItemDTO.class, item);
   }
 
   public static ItemDTO transformToItemDTO(OpenItemDTO openItemDTO) {
     Preconditions.checkArgument(openItemDTO != null);
-    return BeanUtils.transfrom(ItemDTO.class, openItemDTO);
+    return BeanUtils.transform(ItemDTO.class, openItemDTO);
   }
 
   public static OpenAppNamespaceDTO transformToOpenAppNamespaceDTO(AppNamespace appNamespace) {
     Preconditions.checkArgument(appNamespace != null);
-    return BeanUtils.transfrom(OpenAppNamespaceDTO.class, appNamespace);
+    return BeanUtils.transform(OpenAppNamespaceDTO.class, appNamespace);
   }
 
   public static AppNamespace transformToAppNamespace(OpenAppNamespaceDTO openAppNamespaceDTO) {
     Preconditions.checkArgument(openAppNamespaceDTO != null);
-    return BeanUtils.transfrom(AppNamespace.class, openAppNamespaceDTO);
+    return BeanUtils.transform(AppNamespace.class, openAppNamespaceDTO);
   }
 
   public static OpenReleaseDTO transformFromReleaseDTO(ReleaseDTO release) {
     Preconditions.checkArgument(release != null);
 
-    OpenReleaseDTO openReleaseDTO = BeanUtils.transfrom(OpenReleaseDTO.class, release);
+    OpenReleaseDTO openReleaseDTO = BeanUtils.transform(OpenReleaseDTO.class, release);
 
     Map<String, String> configs = gson.fromJson(release.getConfigurations(), type);
 
@@ -57,7 +57,7 @@ public class OpenApiBeanUtils {
   public static OpenNamespaceDTO transformFromNamespaceBO(NamespaceBO namespaceBO) {
     Preconditions.checkArgument(namespaceBO != null);
 
-    OpenNamespaceDTO openNamespaceDTO = BeanUtils.transfrom(OpenNamespaceDTO.class, namespaceBO
+    OpenNamespaceDTO openNamespaceDTO = BeanUtils.transform(OpenNamespaceDTO.class, namespaceBO
         .getBaseInfo());
 
     //app namespace info
@@ -110,7 +110,7 @@ public class OpenApiBeanUtils {
   public static OpenGrayReleaseRuleDTO transformFromGrayReleaseRuleDTO(GrayReleaseRuleDTO grayReleaseRuleDTO){
     Preconditions.checkArgument(grayReleaseRuleDTO != null);
 
-    return BeanUtils.transfrom(OpenGrayReleaseRuleDTO.class, grayReleaseRuleDTO);
+    return BeanUtils.transform(OpenGrayReleaseRuleDTO.class, grayReleaseRuleDTO);
   }
 
   public static GrayReleaseRuleDTO transformToGrayReleaseRuleDTO(OpenGrayReleaseRuleDTO openGrayReleaseRuleDTO){

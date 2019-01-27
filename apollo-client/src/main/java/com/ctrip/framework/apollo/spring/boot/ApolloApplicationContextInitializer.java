@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -54,7 +55,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *
  */
 public class ApolloApplicationContextInitializer implements
-    ApplicationContextInitializer<ConfigurableApplicationContext> , EnvironmentPostProcessor {
+    ApplicationContextInitializer<ConfigurableApplicationContext> , EnvironmentPostProcessor, Ordered {
+  public static final int DEFAULT_ORDER = 0;
+
   private static final Logger logger = LoggerFactory.getLogger(ApolloApplicationContextInitializer.class);
   private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
   private static final String[] APOLLO_SYSTEM_PROPERTIES = {"app.id", ConfigConsts.APOLLO_CLUSTER_KEY,
@@ -62,6 +65,8 @@ public class ApolloApplicationContextInitializer implements
 
   private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
       .getInstance(ConfigPropertySourceFactory.class);
+
+  private int order = DEFAULT_ORDER;
 
   @Override
   public void initialize(ConfigurableApplicationContext context) {
@@ -158,5 +163,20 @@ public class ApolloApplicationContextInitializer implements
       initialize(configurableEnvironment);
     }
 
+  }
+
+  /**
+   * @since 1.3.0
+   */
+  @Override
+  public int getOrder() {
+    return order;
+  }
+
+  /**
+   * @since 1.3.0
+   */
+  public void setOrder(int order) {
+    this.order = order;
   }
 }

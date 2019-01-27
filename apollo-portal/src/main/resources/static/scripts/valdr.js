@@ -75,11 +75,6 @@ application_module.config(function (valdrProvider) {
                                              'required': {
                                                  'message': 'Key不能为空'
                                              }
-                                         }, 
-                                         'value': {
-                                             'required': {
-                                                 'message': 'value不能为空'
-                                             }
                                          },
                                          'comment': {
                                              'size': {

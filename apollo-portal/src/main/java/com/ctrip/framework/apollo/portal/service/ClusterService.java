@@ -7,8 +7,6 @@ import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +14,13 @@ import java.util.List;
 @Service
 public class ClusterService {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AdminServiceAPI.ClusterAPI clusterAPI;
+  private final UserInfoHolder userInfoHolder;
+  private final AdminServiceAPI.ClusterAPI clusterAPI;
+
+  public ClusterService(final UserInfoHolder userInfoHolder, final AdminServiceAPI.ClusterAPI clusterAPI) {
+    this.userInfoHolder = userInfoHolder;
+    this.clusterAPI = clusterAPI;
+  }
 
   public List<ClusterDTO> findClusters(Env env, String appId) {
     return clusterAPI.findClustersByApp(appId, env);

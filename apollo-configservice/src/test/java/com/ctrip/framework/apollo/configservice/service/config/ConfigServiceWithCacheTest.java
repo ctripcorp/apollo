@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -250,8 +250,6 @@ public class ConfigServiceWithCacheTest {
   @Test
   public void testFindLatestActiveReleaseWithIrrelevantMessages() throws Exception {
     long someNewNotificationId = someNotificationId + 1;
-    ReleaseMessage anotherReleaseMessage = mock(ReleaseMessage.class);
-    Release anotherRelease = mock(Release.class);
     String someIrrelevantKey = "someIrrelevantKey";
 
     when(releaseMessageService.findLatestReleaseMessageForMessages(Lists.newArrayList(someKey))).thenReturn
@@ -262,12 +260,6 @@ public class ConfigServiceWithCacheTest {
 
     Release release = configServiceWithCache.findLatestActiveRelease(someAppId, someClusterName, someNamespaceName,
         someNotificationMessages);
-
-    when(releaseMessageService.findLatestReleaseMessageForMessages(Lists.newArrayList(someKey))).thenReturn
-        (anotherReleaseMessage);
-    when(releaseService.findLatestActiveRelease(someAppId, someClusterName, someNamespaceName)).thenReturn
-        (anotherRelease);
-    when(anotherReleaseMessage.getId()).thenReturn(someNewNotificationId);
 
     Release stillOldRelease = configServiceWithCache.findLatestActiveRelease(someAppId, someClusterName,
         someNamespaceName, someNotificationMessages);

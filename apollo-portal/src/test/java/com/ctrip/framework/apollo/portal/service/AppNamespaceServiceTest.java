@@ -76,6 +76,18 @@ public class AppNamespaceServiceTest extends AbstractIntegrationTest {
     appNamespaceService.createAppNamespaceInLocal(appNamespace);
   }
 
+  @Test(expected = BadRequestException.class)
+  @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void testCreatePublicAppNamespaceExistedAsPrivateAppNamespace() {
+    AppNamespace appNamespace = assmbleBaseAppNamespace();
+    appNamespace.setPublic(true);
+    appNamespace.setName("private-01");
+    appNamespace.setFormat(ConfigFileFormat.Properties.getValue());
+
+    appNamespaceService.createAppNamespaceInLocal(appNamespace);
+  }
+
   @Test
   @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -122,8 +134,39 @@ public class AppNamespaceServiceTest extends AbstractIntegrationTest {
   public void testCreatePrivateAppNamespaceExisted() {
     AppNamespace appNamespace = assmbleBaseAppNamespace();
     appNamespace.setPublic(false);
-    appNamespace.setName("datasource.xml");
+    appNamespace.setName("datasource");
     appNamespace.setAppId("100003173");
+
+    appNamespaceService.createAppNamespaceInLocal(appNamespace);
+  }
+
+  @Test
+  @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void testCreatePrivateAppNamespaceExistedInAnotherAppId() {
+    AppNamespace appNamespace = assmbleBaseAppNamespace();
+    appNamespace.setPublic(false);
+    appNamespace.setName("datasource");
+    appNamespace.setAppId("song0711-01");
+
+    appNamespaceService.createAppNamespaceInLocal(appNamespace);
+
+    AppNamespace createdAppNamespace =
+        appNamespaceService.findByAppIdAndName(appNamespace.getAppId(), appNamespace.getName());
+
+    Assert.assertNotNull(createdAppNamespace);
+    Assert.assertEquals(appNamespace.getName(), createdAppNamespace.getName());
+  }
+
+  @Test(expected = BadRequestException.class)
+  @Sql(scripts = "/sql/appnamespaceservice/init-appnamespace.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void testCreatePrivateAppNamespaceExistedInAnotherAppIdAsPublic() {
+    AppNamespace appNamespace = assmbleBaseAppNamespace();
+    appNamespace.setPublic(false);
+    appNamespace.setName("SCC.song0711-03");
+    appNamespace.setAppId("100003173");
+    appNamespace.setFormat(ConfigFileFormat.Properties.getValue());
 
     appNamespaceService.createAppNamespaceInLocal(appNamespace);
   }

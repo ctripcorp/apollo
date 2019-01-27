@@ -3,8 +3,6 @@ package com.ctrip.framework.apollo.metaservice.controller;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.metaservice.service.DiscoveryService;
 import com.netflix.appinfo.InstanceInfo;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +15,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/services")
 public class ServiceController {
 
-  @Autowired
-  private DiscoveryService discoveryService;
+  private final DiscoveryService discoveryService;
+
+  public ServiceController(final DiscoveryService discoveryService) {
+    this.discoveryService = discoveryService;
+  }
 
 
   @RequestMapping("/meta")

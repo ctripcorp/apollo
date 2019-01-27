@@ -1,20 +1,16 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.biz.entity.ReleaseHistory;
 import com.ctrip.framework.apollo.biz.service.ReleaseHistoryService;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,11 +29,13 @@ public class ReleaseHistoryController {
   private Type configurationTypeReference = new TypeToken<Map<String, Object>>() {
   }.getType();
 
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
+  private final ReleaseHistoryService releaseHistoryService;
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories",
-      method = RequestMethod.GET)
+  public ReleaseHistoryController(final ReleaseHistoryService releaseHistoryService) {
+    this.releaseHistoryService = releaseHistoryService;
+  }
+
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories")
   public PageDTO<ReleaseHistoryDTO> findReleaseHistoriesByNamespace(
       @PathVariable String appId, @PathVariable String clusterName,
       @PathVariable String namespaceName,
@@ -49,7 +47,7 @@ public class ReleaseHistoryController {
   }
 
 
-  @RequestMapping(value = "/releases/histories/by_release_id_and_operation", method = RequestMethod.GET)
+  @GetMapping("/releases/histories/by_release_id_and_operation")
   public PageDTO<ReleaseHistoryDTO> findReleaseHistoryByReleaseIdAndOperation(
       @RequestParam("releaseId") long releaseId,
       @RequestParam("operation") int operation,
@@ -60,7 +58,7 @@ public class ReleaseHistoryController {
     return transform2PageDTO(result, pageable);
   }
 
-  @RequestMapping(value = "/releases/histories/by_previous_release_id_and_operation", method = RequestMethod.GET)
+  @GetMapping("/releases/histories/by_previous_release_id_and_operation")
   public PageDTO<ReleaseHistoryDTO> findReleaseHistoryByPreviousReleaseIdAndOperation(
       @RequestParam("previousReleaseId") long previousReleaseId,
       @RequestParam("operation") int operation,

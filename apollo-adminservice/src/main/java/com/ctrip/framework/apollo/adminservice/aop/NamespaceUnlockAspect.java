@@ -1,10 +1,6 @@
 package com.ctrip.framework.apollo.adminservice.aop;
 
 
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
@@ -18,10 +14,11 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,16 +39,24 @@ public class NamespaceUnlockAspect {
 
   private Gson gson = new Gson();
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private BizConfig bizConfig;
+  private final NamespaceLockService namespaceLockService;
+  private final NamespaceService namespaceService;
+  private final ItemService itemService;
+  private final ReleaseService releaseService;
+  private final BizConfig bizConfig;
+
+  public NamespaceUnlockAspect(
+      final NamespaceLockService namespaceLockService,
+      final NamespaceService namespaceService,
+      final ItemService itemService,
+      final ReleaseService releaseService,
+      final BizConfig bizConfig) {
+    this.namespaceLockService = namespaceLockService;
+    this.namespaceService = namespaceService;
+    this.itemService = itemService;
+    this.releaseService = releaseService;
+    this.bizConfig = bizConfig;
+  }
 
 
   //create item

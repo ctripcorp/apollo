@@ -30,6 +30,8 @@ function itemModalDirective(toastr, $sce, AppUtil, EventManager, ConfigService) 
                 scope.valueWithHiddenChars = $sce.trustAsHtml('');
             });
 
+            $("#valueEditor").textareafullscreen();
+            
             function doItem() {
 
                 if (!scope.item.value) {

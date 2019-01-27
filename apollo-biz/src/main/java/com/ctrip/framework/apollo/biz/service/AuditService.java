@@ -2,8 +2,6 @@ package com.ctrip.framework.apollo.biz.service;
 
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.repository.AuditRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +10,11 @@ import java.util.List;
 @Service
 public class AuditService {
 
-  @Autowired
-  private AuditRepository auditRepository;
+  private final AuditRepository auditRepository;
+
+  public AuditService(final AuditRepository auditRepository) {
+    this.auditRepository = auditRepository;
+  }
 
   List<Audit> findByOwner(String owner) {
     return auditRepository.findByOwner(owner);
@@ -32,7 +33,7 @@ public class AuditService {
     audit.setDataChangeCreatedBy(owner);
     auditRepository.save(audit);
   }
-  
+
   @Transactional
   void audit(Audit audit){
     auditRepository.save(audit);

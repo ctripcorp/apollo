@@ -1,31 +1,29 @@
 package com.ctrip.framework.apollo.portal.controller;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.apollo.portal.entity.vo.NamespaceEnvRolesAssignedUsers;
-import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
-import com.google.common.collect.Sets;
-
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
+import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.enums.EnvUtils;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.vo.AppRolesAssignedUsers;
+import com.ctrip.framework.apollo.portal.entity.vo.NamespaceEnvRolesAssignedUsers;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceRolesAssignedUsers;
 import com.ctrip.framework.apollo.portal.entity.vo.PermissionCondition;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Sets;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,22 +33,29 @@ import java.util.Set;
 @RestController
 public class PermissionController {
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private UserService userService;
-  @Autowired
-  private RoleInitializationService roleInitializationService;
+  private final UserInfoHolder userInfoHolder;
+  private final RolePermissionService rolePermissionService;
+  private final UserService userService;
+  private final RoleInitializationService roleInitializationService;
 
-  @RequestMapping(value = "/apps/{appId}/initPermission", method = RequestMethod.POST)
+  public PermissionController(
+      final UserInfoHolder userInfoHolder,
+      final RolePermissionService rolePermissionService,
+      final UserService userService,
+      final RoleInitializationService roleInitializationService) {
+    this.userInfoHolder = userInfoHolder;
+    this.rolePermissionService = rolePermissionService;
+    this.userService = userService;
+    this.roleInitializationService = roleInitializationService;
+  }
+
+  @PostMapping("/apps/{appId}/initPermission")
   public ResponseEntity<Void> initAppPermission(@PathVariable String appId, @RequestBody String namespaceName) {
     roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/apps/{appId}/permissions/{permissionType}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/permissions/{permissionType}")
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String permissionType) {
     PermissionCondition permissionCondition = new PermissionCondition();
 
@@ -60,7 +65,7 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
-  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/permissions/{permissionType}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/namespaces/{namespaceName}/permissions/{permissionType}")
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String namespaceName,
                                                            @PathVariable String permissionType) {
     PermissionCondition permissionCondition = new PermissionCondition();
@@ -72,7 +77,7 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/permissions/{permissionType}", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/envs/{env}/namespaces/{namespaceName}/permissions/{permissionType}")
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
                                                            @PathVariable String permissionType) {
     PermissionCondition permissionCondition = new PermissionCondition();
@@ -84,7 +89,7 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
-  @RequestMapping(value = "/permissions/root", method = RequestMethod.GET)
+  @GetMapping("/permissions/root")
   public ResponseEntity<PermissionCondition> hasRootPermission() {
     PermissionCondition permissionCondition = new PermissionCondition();
 
@@ -94,7 +99,7 @@ public class PermissionController {
   }
 
 
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/envs/{env}/namespaces/{namespaceName}/role_users")
   public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
 
     // validate env parameter
@@ -119,7 +124,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}")
   public ResponseEntity<Void> assignNamespaceEnvRoleToUser(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
                                                            @PathVariable String roleType, @RequestBody String user) {
     checkUserExists(user);
@@ -143,7 +148,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/envs/{env}/namespaces/{namespaceName}/roles/{roleType}")
   public ResponseEntity<Void> removeNamespaceEnvRoleFromUser(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName,
                                                              @PathVariable String roleType, @RequestParam String user) {
     RequestPrecondition.checkArgumentsNotEmpty(user);
@@ -160,7 +165,7 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/role_users", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/namespaces/{namespaceName}/role_users")
   public NamespaceRolesAssignedUsers getNamespaceRoles(@PathVariable String appId, @PathVariable String namespaceName) {
 
     NamespaceRolesAssignedUsers assignedUsers = new NamespaceRolesAssignedUsers();
@@ -179,7 +184,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/namespaces/{namespaceName}/roles/{roleType}")
   public ResponseEntity<Void> assignNamespaceRoleToUser(@PathVariable String appId, @PathVariable String namespaceName,
                                                         @PathVariable String roleType, @RequestBody String user) {
     checkUserExists(user);
@@ -198,7 +203,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/namespaces/{namespaceName}/roles/{roleType}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/namespaces/{namespaceName}/roles/{roleType}")
   public ResponseEntity<Void> removeNamespaceRoleFromUser(@PathVariable String appId, @PathVariable String namespaceName,
                                                           @PathVariable String roleType, @RequestParam String user) {
     RequestPrecondition.checkArgumentsNotEmpty(user);
@@ -211,7 +216,7 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
-  @RequestMapping(value = "/apps/{appId}/role_users", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/role_users")
   public AppRolesAssignedUsers getAppRoles(@PathVariable String appId) {
     AppRolesAssignedUsers users = new AppRolesAssignedUsers();
     users.setAppId(appId);
@@ -223,7 +228,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/roles/{roleType}", method = RequestMethod.POST)
+  @PostMapping("/apps/{appId}/roles/{roleType}")
   public ResponseEntity<Void> assignAppRoleToUser(@PathVariable String appId, @PathVariable String roleType,
                                                   @RequestBody String user) {
     checkUserExists(user);
@@ -242,7 +247,7 @@ public class PermissionController {
   }
 
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
-  @RequestMapping(value = "/apps/{appId}/roles/{roleType}", method = RequestMethod.DELETE)
+  @DeleteMapping("/apps/{appId}/roles/{roleType}")
   public ResponseEntity<Void> removeAppRoleFromUser(@PathVariable String appId, @PathVariable String roleType,
                                                     @RequestParam String user) {
     RequestPrecondition.checkArgumentsNotEmpty(user);
