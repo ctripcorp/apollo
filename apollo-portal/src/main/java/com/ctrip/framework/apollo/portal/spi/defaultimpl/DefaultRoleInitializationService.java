@@ -1,13 +1,10 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
+import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.common.entity.BaseEntity;
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import com.ctrip.framework.apollo.common.entity.App;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
@@ -16,11 +13,15 @@ import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -114,7 +115,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>
         appPermissionIds =
-        FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
+        createdAppPermissions.stream().map(BaseEntity::getId).collect(Collectors.toSet());
 
     //create app master role
     Role appMasterRole = createRole(RoleUtils.buildAppMasterRoleName(appId), operator);
