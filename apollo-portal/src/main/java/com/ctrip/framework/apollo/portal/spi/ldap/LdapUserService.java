@@ -90,4 +90,14 @@ public class LdapUserService implements UserService {
     }
   }
 
+  /**
+   * 查询所有用户列表
+   *
+   * @return
+   */
+  @Override
+  public List<UserInfo> selectUserList() {
+    return null;
+  }
+
 }

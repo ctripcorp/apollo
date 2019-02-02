@@ -96,6 +96,16 @@ public class CtripUserService implements UserService {
     return result;
   }
 
+  /**
+   * 查询所有用户列表
+   *
+   * @return
+   */
+  @Override
+  public List<UserInfo> selectUserList() {
+    return null;
+  }
+
   private UserInfo transformUserServiceResponseToUserInfo(UserServiceResponse userServiceResponse) {
     UserInfo userInfo = new UserInfo();
     userInfo.setUserId(userServiceResponse.getEmpaccount());

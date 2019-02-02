@@ -14,4 +14,10 @@ public interface UserService {
 
   List<UserInfo> findByUserIds(List<String> userIds);
 
+  /**
+   * 查询所有用户列表
+   * @return
+   */
+  List<UserInfo> selectUserList();
+
 }

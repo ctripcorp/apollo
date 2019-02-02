@@ -30,15 +30,17 @@
                     <h5>创建项目</h5>
                 </div>
             </div>
-            <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps"
-                 ng-click="goToAppHomePage(app.appId)">
+
+            <!-- 应用列表 -->
+            <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps" ng-click="goToAppHomePage(app.appId)">
                 <div href="#" class="thumbnail hover cursor-pointer">
                     <h4 ng-bind="app.appId"></h4>
                     <h5 ng-bind="app.name"></h5>
                 </div>
             </div>
-            <div class="app-panel col-md-2 text-center" ng-show="hasMoreCreatedApps"
-                 ng-click="getUserCreatedApps()">
+
+            <!-- 加载更多 -->
+            <div class="app-panel col-md-2 text-center" ng-show="hasMoreCreatedApps" ng-click="getUserCreatedApps()">
                 <div href="#" class="thumbnail hover cursor-pointer">
                     <img class="more-img" src="img/more.png"/>
                     <h5>加载更多</h5>

@@ -23,5 +23,9 @@ public interface PermissionType {
 
   String RELEASE_NAMESPACE = "ReleaseNamespace";
 
+  /**
+   * 查看配置的权限
+   */
+  String BROWSE_CONFIG = "BorwseConfig";
 
 }

@@ -1,131 +1,129 @@
 /** navbar */
-directive_module.directive('apollonav',
-                           function ($compile, $window, toastr, AppUtil, AppService, EnvService,
-                           UserService, CommonService, PermissionService) {
-                               return {
-                                   restrict: 'E',
-                                   templateUrl: '../../views/common/nav.html',
-                                   transclude: true,
-                                   replace: true,
-                                   link: function (scope, element, attrs) {
+directive_module.directive('apollonav', function ($compile, $window, toastr, AppUtil, AppService, EnvService, UserService, CommonService, PermissionService) {
+    return {
+       restrict: 'E',
+       templateUrl: '../../views/common/nav.html',
+       transclude: true,
+       replace: true,
+       link: function (scope, element, attrs) {
 
-                                       CommonService.getPageSetting().then(function (setting) {
-                                           scope.pageSetting = setting;
-                                       });
+           CommonService.getPageSetting().then(function (setting) {
+               scope.pageSetting = setting;
+           });
 
-                                       scope.sourceApps = [];
-                                       scope.copiedApps = [];
+           scope.sourceApps = [];
+           scope.copiedApps = [];
 
-                                       AppService.find_apps().then(function (result) {
-                                           result.forEach(function (app) {
-                                               app.selected = false;
-                                               scope.sourceApps.push(app);
-                                           });
-                                           scope.copiedApps = angular.copy(scope.sourceApps);
-                                       }, function (result) {
-                                           toastr.error(AppUtil.errorMsg(result), "load apps error");
-                                       });
+           AppService.find_apps().then(function (result) {
+               result.forEach(function (app) {
+                   app.selected = false;
+                   scope.sourceApps.push(app);
+               });
+               scope.copiedApps = angular.copy(scope.sourceApps);
+           }, function (result) {
+               toastr.error(AppUtil.errorMsg(result), "load apps error");
+           });
 
-                                       scope.searchKey = '';
-                                       scope.shouldShowAppList = false;
+           scope.searchKey = '';
+           scope.shouldShowAppList = false;
 
-                                       var selectedApp = {};
-                                       scope.selectApp = function (app) {
-                                           select(app);
-                                           scope.jumpToConfigPage();
-                                       };
+           var selectedApp = {};
+           scope.selectApp = function (app) {
+               select(app);
+               scope.jumpToConfigPage();
+           };
 
-                                       scope.changeSearchKey = function () {
-                                           scope.copiedApps = [];
-                                           var searchKey = scope.searchKey.toLocaleLowerCase();
-                                           scope.sourceApps.forEach(function (app) {
-                                               if (app.name.toLocaleLowerCase().indexOf(searchKey) > -1
-                                                   || app.appId.toLocaleLowerCase().indexOf(searchKey) > -1) {
-                                                   scope.copiedApps.push(app);
-                                               }
-                                           });
-                                           scope.shouldShowAppList = true;
-                                       };
+           scope.changeSearchKey = function () {
+               scope.copiedApps = [];
+               var searchKey = scope.searchKey.toLocaleLowerCase();
+               scope.sourceApps.forEach(function (app) {
+                   if (app.name.toLocaleLowerCase().indexOf(searchKey) > -1
+                       || app.appId.toLocaleLowerCase().indexOf(searchKey) > -1) {
+                       scope.copiedApps.push(app);
+                   }
+               });
+               scope.shouldShowAppList = true;
+           };
 
-                                       scope.jumpToConfigPage = function () {
-                                           if (selectedApp.appId) {
-                                               if ($window.location.href.indexOf("config.html") > -1) {
-                                                   $window.location.hash = "appid=" + selectedApp.appId;
-                                                   $window.location.reload();
-                                               } else {
-                                                   $window.location.href = '/config.html?#appid=' + selectedApp.appId;
-                                               }
-                                           }
-                                       };
+           scope.jumpToConfigPage = function () {
+               if (selectedApp.appId) {
+                   if ($window.location.href.indexOf("config.html") > -1) {
+                       $window.location.hash = "appid=" + selectedApp.appId;
+                       $window.location.reload();
+                   } else {
+                       $window.location.href = '/config.html?#appid=' + selectedApp.appId;
+                   }
+               }
+           };
 
-                                       //up:38 down:40 enter:13
-                                       var selectedAppIdx = -1;
-                                       element.bind("keydown keypress", function (event) {
+           //up:38 down:40 enter:13
+           var selectedAppIdx = -1;
+           element.bind("keydown keypress", function (event) {
 
-                                           if (event.keyCode == 40) {
-                                               if (selectedAppIdx < scope.copiedApps.length - 1) {
-                                                   clearAppsSelectedStatus();
-                                                   scope.copiedApps[++selectedAppIdx].selected = true;
-                                               }
-                                           } else if (event.keyCode == 38) {
-                                               if (selectedAppIdx >= 1) {
-                                                   clearAppsSelectedStatus();
-                                                   scope.copiedApps[--selectedAppIdx].selected = true;
-                                               }
-                                           } else if (event.keyCode == 13) {
-                                               if (scope.shouldShowAppList && selectedAppIdx > -1) {
-                                                   select(scope.copiedApps[selectedAppIdx]);
-                                                   event.preventDefault();
-                                               } else {
-                                                   scope.jumpToConfigPage();
-                                               }
+               if (event.keyCode == 40) {
+                   if (selectedAppIdx < scope.copiedApps.length - 1) {
+                       clearAppsSelectedStatus();
+                       scope.copiedApps[++selectedAppIdx].selected = true;
+                   }
+               } else if (event.keyCode == 38) {
+                   if (selectedAppIdx >= 1) {
+                       clearAppsSelectedStatus();
+                       scope.copiedApps[--selectedAppIdx].selected = true;
+                   }
+               } else if (event.keyCode == 13) {
+                   if (scope.shouldShowAppList && selectedAppIdx > -1) {
+                       select(scope.copiedApps[selectedAppIdx]);
+                       event.preventDefault();
+                   } else {
+                       scope.jumpToConfigPage();
+                   }
 
-                                           }
-                                           //强制刷新
-                                           scope.$apply(function () {
-                                               scope.copiedApps = scope.copiedApps;
-                                           });
-                                       });
+               }
+               //强制刷新
+               scope.$apply(function () {
+                   scope.copiedApps = scope.copiedApps;
+               });
+           });
 
-                                       $(".search-input").on("click", function (event) {
-                                           event.stopPropagation();
-                                       });
+           $(".search-input").on("click", function (event) {
+               event.stopPropagation();
+           });
 
-                                       $(document).on('click', function () {
-                                           scope.$apply(function () {
-                                               scope.shouldShowAppList = false;
-                                           });
-                                       });
+           $(document).on('click', function () {
+               scope.$apply(function () {
+                   scope.shouldShowAppList = false;
+               });
+           });
 
-                                       function clearAppsSelectedStatus() {
-                                           scope.copiedApps.forEach(function (app) {
-                                               app.selected = false;
-                                           })
+           function clearAppsSelectedStatus() {
+               scope.copiedApps.forEach(function (app) {
+                   app.selected = false;
+               })
 
-                                       }
+           }
 
-                                       function select(app) {
-                                           selectedApp = app;
-                                           scope.searchKey = app.name;
-                                           scope.shouldShowAppList = false;
-                                           clearAppsSelectedStatus();
-                                           selectedAppIdx = -1;
+           function select(app) {
+               selectedApp = app;
+               scope.searchKey = app.name;
+               scope.shouldShowAppList = false;
+               clearAppsSelectedStatus();
+               selectedAppIdx = -1;
 
-                                       }
+           }
 
-                                       UserService.load_user().then(function (result) {
-                                           scope.userName = result.userId;
-                                       }, function (result) {
+           UserService.load_user().then(function (result) {
+               scope.userName = result.userId;
+           }, function (result) {
 
-                                       });
+           });
 
-                                       PermissionService.has_root_permission().then(function(result) {
-                                           scope.hasRootPermission = result.hasPermission;
-                                       })
-                                   }
-                               }
+           PermissionService.has_root_permission().then(function(result) {
+               scope.hasRootPermission = result.hasPermission;
+           })
+       }
+    }
 
-                           });
+});
 
 /** env cluster selector*/
 directive_module.directive('apolloclusterselector', function ($compile, $window, AppService, AppUtil, toastr) {

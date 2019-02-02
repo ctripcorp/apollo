@@ -75,5 +75,14 @@ public class UserInfoController {
     return userService.findByUserId(userId);
   }
 
+  /**
+   * 查询用户列表
+   * @return
+   */
+  @GetMapping("/users/list")
+  public List<UserInfo> getUserList() {
+    return userService.selectUserList();
+  }
+
 
 }

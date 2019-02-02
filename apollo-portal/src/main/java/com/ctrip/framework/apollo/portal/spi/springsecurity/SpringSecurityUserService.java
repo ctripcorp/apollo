@@ -102,5 +102,21 @@ public class SpringSecurityUserService implements UserService {
     return result;
   }
 
+  /**
+   * 查询所有用户列表
+   *
+   * @return
+   */
+  @Override
+  public List<UserInfo> selectUserList() {
+
+    List<UserPO> userList = userRepository.findAll();
+
+    List<UserInfo> result = Lists.newArrayList();
+    result.addAll(userList.stream().map(UserPO::toUserInfo).collect(Collectors.toList()));
+
+    return result;
+  }
+
 
 }

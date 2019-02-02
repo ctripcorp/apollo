@@ -25,10 +25,9 @@
                         <span class="glyphicon glyphicon-question-sign"></span> 帮助
                     </a>
                 </li>
-                <li class="dropdown" ng-if="hasRootPermission">
+                <li class="dropdown" >
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <span class="glyphicon glyphicon-cog"></span>&nbsp;管理员工具
-                        <span class="caret"></span></a>
+                        <span class="glyphicon glyphicon-cog"></span>&nbsp;管理员工具<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/user-manage.html" target="_blank">用户管理</a></li>
                         <li><a href="/open/manage.html" target="_blank">开放平台授权管理</a></li>
@@ -42,6 +41,7 @@
                         <span class="glyphicon glyphicon-user"></span>&nbsp;{{userName}}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="/user/logout">个人信息</a></li>
                         <li><a href="/user/logout">退出</a></li>
                     </ul>
                 </li>

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 /**
+ * 初始化角色
  * Created by timothy on 2017/4/26.
  */
 public class DefaultRoleInitializationService implements RoleInitializationService {
@@ -34,6 +35,11 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Autowired
   private PortalConfig portalConfig;
 
+  /**
+   * 初始化应用角色
+   * @param app
+   */
+  @Override
   @Transactional
   public void initAppRoles(App app) {
     String appId = app.getAppId();
@@ -66,6 +72,14 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   }
 
+
+  /**
+   * 初始化配置角色
+   * @param appId
+   * @param namespaceName
+   * @param operator
+   */
+  @Override
   @Transactional
   public void initNamespaceRoles(String appId, String namespaceName, String operator) {
 
@@ -82,6 +96,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     }
   }
 
+  @Override
   @Transactional
   public void initNamespaceEnvRoles(String appId, String namespaceName, String operator) {
     List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
@@ -91,6 +106,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     }
   }
 
+  @Override
   @Transactional
   public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator) {
     String modifyNamespaceEnvRoleName = RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env);
@@ -109,7 +125,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   private void createAppMasterRole(String appId, String operator) {
     Set<Permission> appPermissions =
         FluentIterable.from(Lists.newArrayList(
-            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE))
+            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE, PermissionType.BROWSE_CONFIG))
             .transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>

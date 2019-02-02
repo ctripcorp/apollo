@@ -33,6 +33,9 @@ function IndexController($scope, $window, toastr, AppUtil, AppService, UserServi
         initUserVisitedApps();
     });
 
+    /**
+     * 获取当前用户创建的应用列表
+     */
     function getUserCreatedApps() {
         var size = 10;
         AppService.find_app_by_owner($scope.userId, $scope.createdAppPage, size)

@@ -64,10 +64,10 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
         find_app_by_owner: function (owner, page, size) {
             var d = $q.defer();
             app_resource.find_app_by_owner({
-                                               owner: owner,
-                                               page: page,
-                                               size: size
-                                           }, function (result) {
+               owner: owner,
+               page: page,
+               size: size
+            }, function (result) {
                 d.resolve(result);
             }, function (result) {
                 d.reject(result);

@@ -40,14 +40,17 @@
 
             <div class="col-md-6 col-sm-6 text-right header-buttons">
 
+                <!-- 拥有发布权限的时候才显示发布按钮 -->
                 <button type="button" class="btn btn-success btn-sm"
                         data-tooltip="tooltip" data-placement="bottom" title="发布配置"
-                        ng-show="(namespace.hasReleasePermission || namespace.hasModifyPermission)"
+                        ng-show="(namespace.hasReleasePermission)"
                         ng-disabled="namespace.isTextEditing"
                         ng-click="publish(namespace)">
                     <img src="img/release.png">
                     发布
                 </button>
+
+                <!-- 拥有发布权限的时候才显示发布回滚按钮 -->
                 <button type="button" class="btn btn-default btn-sm"
                         data-tooltip="tooltip" data-placement="bottom" title="回滚已发布配置"
                         ng-show="namespace.hasReleasePermission"
@@ -55,7 +58,10 @@
                     <img src="img/rollback.png">
                     回滚
                 </button>
-                <a type="button" class="btn btn-default btn-sm"
+
+
+                <!-- 拥有发布权限的时候才显示发布历史按钮 -->
+                <a type="button" class="btn btn-default btn-sm" ng-show="(namespace.hasReleasePermission)"
                    data-tooltip="tooltip" data-placement="bottom" title="查看发布历史"
                    href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}">
                     <img src="img/release-history.png">

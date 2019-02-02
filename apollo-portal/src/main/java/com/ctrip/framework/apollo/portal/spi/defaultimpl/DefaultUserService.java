@@ -34,6 +34,16 @@ public class DefaultUserService implements UserService {
     return null;
   }
 
+  /**
+   * 查询所有用户列表
+   *
+   * @return
+   */
+  @Override
+  public List<UserInfo> selectUserList() {
+    return null;
+  }
+
   private UserInfo assembleDefaultUser() {
     UserInfo defaultUser = new UserInfo();
     defaultUser.setUserId("apollo");
