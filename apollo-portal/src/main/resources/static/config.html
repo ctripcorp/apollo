@@ -257,7 +257,7 @@
         <deletenamespacemodal env="pageContext.env"></deletenamespacemodal>
 
         <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
-                             apollo-detail="'确定要删除配置吗?'"
+                             apollo-detail="'您正在删除 Key 为 <b>' + config.key + '</b> Value 为 <b>' + config.value + '</b> 的配置.<br>确定要删除配置吗?'"
                              apollo-show-cancel-btn="true" apollo-confirm="deleteItem"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'releaseNoPermissionDialog'" apollo-title="'发布'"
