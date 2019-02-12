@@ -6,12 +6,16 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserService;
+import com.ctrip.framework.apollo.portal.spi.configuration.LdapExtendProperties;
+import com.ctrip.framework.apollo.portal.spi.configuration.LdapProperties;
 import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+import javax.naming.Name;
+import javax.naming.ldap.LdapName;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +25,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.SearchScope;
+import org.springframework.ldap.support.LdapUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -34,6 +39,12 @@ import org.springframework.util.CollectionUtils;
  * @date 18-8-9 下午4:42
  */
 public class LdapUserService implements UserService {
+
+  @Autowired
+  private LdapProperties ldapProperties;
+
+  @Autowired
+  private LdapExtendProperties ldapExtendProperties;
 
   /**
    * ldap search base
@@ -68,20 +79,14 @@ public class LdapUserService implements UserService {
   /**
    * rdn
    */
-  @Value("${ldap.mapping.rdn:}")
-  private String rdn;
+  @Value("${ldap.mapping.rdnKey:}")
+  private String rdnKey;
 
   /**
    * memberOf
    */
   @Value("#{'${ldap.filter.memberOf:}'.split('\\|')}")
   private String[] memberOf;
-
-  /**
-   * group objectClassName
-   */
-  @Value("${ldap.group.objectClass:}")
-  private String groupObjectClassName;
 
   /**
    * group search base
@@ -106,6 +111,7 @@ public class LdapUserService implements UserService {
   private LdapTemplate ldapTemplate;
 
   private static final String MEMBER_OF_ATTR_NAME = "memberOf";
+  private static final String MEMBER_UID_ATTR_NAME = "memberUid";
 
   /**
    * 用户信息Mapper
@@ -148,7 +154,7 @@ public class LdapUserService implements UserService {
       tmp.setUserId(attributes.get(loginIdAttrName).get().toString());
       tmp.setName(attributes.get(userDisplayNameAttrName).get().toString());
       if (userIds != null) {
-        if (userIds.stream().filter(c -> c.equals(tmp.getUserId())).count() > 0) {
+        if (userIds.stream().anyMatch(c -> c.equals(tmp.getUserId()))) {
           return tmp;
         } else {
           return null;
@@ -160,6 +166,17 @@ public class LdapUserService implements UserService {
     });
   }
 
+  private UserInfo searchUserById(String userId) {
+    return ldapTemplate.searchForObject(query().where(loginIdAttrName).is(userId),
+        ctx -> {
+          UserInfo userInfo = new UserInfo();
+          DirContextAdapter contextAdapter = (DirContextAdapter) ctx;
+          userInfo.setEmail(contextAdapter.getStringAttribute(emailAttrName));
+          userInfo.setName(contextAdapter.getStringAttribute(userDisplayNameAttrName));
+          userInfo.setUserId(contextAdapter.getStringAttribute(loginIdAttrName));
+          return userInfo;
+        });
+  }
 
   /**
    * 按照group搜索用户
@@ -169,39 +186,64 @@ public class LdapUserService implements UserService {
    * @param keyword user search keywords
    * @param userIds user id list
    */
-  private List<List<UserInfo>> searchUserInfoByGroup(String groupBase, String groupSearch,
+  private List<UserInfo> searchUserInfoByGroup(String groupBase, String groupSearch,
       String keyword, List<String> userIds) {
-    return ldapTemplate.search(groupBase, groupSearch, (ContextMapper<List<UserInfo>>) ctx -> {
-      String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
-      List<UserInfo> userInfos = new ArrayList<>();
-      for (String item : members) {
-        String member = StringUtils.strip(item.replace(base, ""), ",");
-        if (keyword != null) {
-          if (member.contains(String.format("%s=%s", rdn, keyword))) {
-            UserInfo userInfo = lookupUser(member, userIds);
-            userInfos.add(userInfo);
-          }
-        } else {
-          UserInfo userInfo = lookupUser(member, userIds);
-          if (userInfo != null) {
-            userInfos.add(userInfo);
-          }
-        }
 
-      }
-      return userInfos;
-    });
+    return ldapTemplate
+        .searchForObject(groupBase, groupSearch, ctx -> {
+          String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
+
+          if (!MEMBER_UID_ATTR_NAME.equals(groupMembershipAttrName)) {
+            List<UserInfo> userInfos = new ArrayList<>();
+            for (String item : members) {
+              LdapName ldapName = LdapUtils.newLdapName(item);
+              LdapName memberRdn = LdapUtils.removeFirst(ldapName, LdapUtils.newLdapName(base));
+              if (keyword != null) {
+                String rdnValue = LdapUtils.getValue(memberRdn, rdnKey).toString();
+                if (rdnValue.toLowerCase().contains(keyword.toLowerCase())) {
+                  UserInfo userInfo = lookupUser(memberRdn.toString(), userIds);
+                  userInfos.add(userInfo);
+                }
+              } else {
+                UserInfo userInfo = lookupUser(memberRdn.toString(), userIds);
+                if (userInfo != null) {
+                  userInfos.add(userInfo);
+                }
+              }
+
+            }
+            return userInfos;
+          } else {
+            List<UserInfo> userInfos = new ArrayList<>();
+            String[] memberUids = ((DirContextAdapter) ctx)
+                .getStringAttributes(groupMembershipAttrName);
+            for (String memberUid : memberUids) {
+              UserInfo userInfo = searchUserById(memberUid);
+              if (userInfo != null) {
+                if (keyword != null) {
+                  if (userInfo.getUserId().toLowerCase().contains(keyword.toLowerCase())) {
+                    userInfos.add(userInfo);
+                  }
+                } else {
+                  userInfos.add(userInfo);
+                }
+              }
+
+            }
+            return userInfos;
+          }
+
+
+        });
   }
 
   @Override
   public List<UserInfo> searchUsers(String keyword, int offset, int limit) {
     List<UserInfo> users = new ArrayList<>();
     if (StringUtils.isNotBlank(groupSearch)) {
-      List<List<UserInfo>> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, keyword,
+      List<UserInfo> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, keyword,
           null);
-      for (List<UserInfo> userInfos : userListByGroup) {
-        users.addAll(userInfos);
-      }
+      users.addAll(userListByGroup);
       return users.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>((o1, o2) -> {
         if (o1.getUserId().equals(o2.getUserId())) {
           return 0;
@@ -222,11 +264,11 @@ public class LdapUserService implements UserService {
   @Override
   public UserInfo findByUserId(String userId) {
     if (StringUtils.isNotBlank(groupSearch)) {
-      List<List<UserInfo>> lists = searchUserInfoByGroup(groupBase, groupSearch, null,
+      List<UserInfo> lists = searchUserInfoByGroup(groupBase, groupSearch, null,
           Collections.singletonList(userId));
       if (lists != null && !lists.isEmpty() && lists.get(0) != null
-          && lists.get(0).get(0) != null) {
-        return lists.get(0).get(0);
+          && lists.get(0) != null) {
+        return lists.get(0);
       }
       return null;
     } else {
@@ -243,11 +285,9 @@ public class LdapUserService implements UserService {
     } else {
       List<UserInfo> userList = new ArrayList<>();
       if (StringUtils.isNotBlank(groupSearch)) {
-        List<List<UserInfo>> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, null,
+        List<UserInfo> userListByGroup = searchUserInfoByGroup(groupBase, groupSearch, null,
             userIds);
-        for (List<UserInfo> userInfos : userListByGroup) {
-          userList.addAll(userInfos);
-        }
+        userList.addAll(userListByGroup);
         return userList;
       } else {
         ContainerCriteria criteria = ldapQueryCriteria()
