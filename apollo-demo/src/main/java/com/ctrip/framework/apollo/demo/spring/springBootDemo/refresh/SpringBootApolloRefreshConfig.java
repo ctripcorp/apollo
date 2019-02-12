@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.demo.spring.springBootDemo.refresh;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.demo.spring.springBootDemo.config.SampleRedisConfig;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
@@ -27,7 +28,7 @@ public class SpringBootApolloRefreshConfig {
     this.refreshScope = refreshScope;
   }
 
-  @ApolloConfigChangeListener
+  @ApolloConfigChangeListener({ConfigConsts.NAMESPACE_APPLICATION, "TEST1.apollo", "application.yaml"})
   public void onChange(ConfigChangeEvent changeEvent) {
     boolean redisCacheKeysChanged = false;
     for (String changedKey : changeEvent.changedKeys()) {

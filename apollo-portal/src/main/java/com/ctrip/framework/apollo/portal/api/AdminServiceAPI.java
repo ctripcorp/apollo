@@ -295,9 +295,7 @@ public class AdminServiceAPI {
       parameters.add("comment", releaseComment);
       parameters.add("operator", operator);
       parameters.add("isEmergencyPublish", String.valueOf(isEmergencyPublish));
-      grayDelKeys.forEach(key ->{
-        parameters.add("grayDelKeys",key);
-      });
+      grayDelKeys.forEach(key -> parameters.add("grayDelKeys",key));
       HttpEntity<MultiValueMap<String, String>> entity =
               new HttpEntity<>(parameters, headers);
       ReleaseDTO response = restTemplate.post(

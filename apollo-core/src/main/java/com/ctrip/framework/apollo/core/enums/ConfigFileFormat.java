@@ -45,4 +45,8 @@ public enum ConfigFileFormat {
       return false;
     }
   }
+
+  public static boolean isPropertiesCompatible(ConfigFileFormat format) {
+    return format == YAML || format == YML;
+  }
 }
