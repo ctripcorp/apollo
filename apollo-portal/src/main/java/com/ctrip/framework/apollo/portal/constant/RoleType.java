@@ -17,10 +17,13 @@ public class RoleType {
    */
   public static final String RELEASE_NAMESPACE = "ReleaseNamespace";
 
-
+  /**
+   * 配置查看角色
+   */
+  public static final String VIEWER = "Viewer";
 
   public static boolean isValidRoleType(String roleType) {
-    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType);
+    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType) || VIEWER.equals(roleType);
   }
 
 }

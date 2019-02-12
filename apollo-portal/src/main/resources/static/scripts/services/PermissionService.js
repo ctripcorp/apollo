@@ -175,6 +175,23 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         return d.promise;
     }
 
+
+    function removeViewerRoleFromUser(appId, namespaceName, roleType, user) {
+        var d = $q.defer();
+        permission_resource.remove_app_role_from_user({
+                                                                appId: appId,
+                                                                namespaceName: namespaceName,
+                                                                roleType: roleType,
+                                                                user: user
+                                                            },
+                                                            function (result) {
+                                                                d.resolve(result);
+                                                            }, function (result) {
+                d.reject(result);
+            });
+        return d.promise;
+    }
+
     function removeNamespaceEnvRoleFromUser(appId, env, namespaceName, roleType, user) {
         var d = $q.defer();
         permission_resource.remove_namespace_env_role_from_user({
@@ -231,6 +248,7 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         assign_modify_namespace_role: function (appId, namespaceName, user) {
             return assignNamespaceRoleToUser(appId, namespaceName, 'ModifyNamespace', user);
         },
+
         assign_modify_namespace_env_role: function (appId, env, namespaceName, user) {
             return assignNamespaceEnvRoleToUser(appId, env, namespaceName, 'ModifyNamespace', user);
         },
@@ -317,6 +335,33 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
                     d.reject(result);
                 });
             return d.promise;
-        }
+        },
+        assign_viewer_role: function (appId, user) {
+            var d = $q.defer();
+            permission_resource.assign_app_role_to_user({
+                    appId: appId,
+                    roleType: 'Viewer'
+                }, user,
+                function (result) {
+                    d.resolve(result);
+                }, function (result) {
+                    d.reject(result);
+                });
+            return d.promise;
+        },
+        remove_viewer_role: function (appId, user) {
+        var d = $q.defer();
+        permission_resource.remove_app_role_from_user({
+                appId: appId,
+                roleType: 'Viewer',
+                user: user
+            },
+            function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+        return d.promise;
+    }
     }
 }]);

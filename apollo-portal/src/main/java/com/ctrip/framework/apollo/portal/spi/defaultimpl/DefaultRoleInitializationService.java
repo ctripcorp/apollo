@@ -42,33 +42,34 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   @Override
   @Transactional
   public void initAppRoles(App app) {
-    String appId = app.getAppId();
 
+    String appId = app.getAppId();
+    // 创建 App 拥有者的角色名
     String appMasterRoleName = RoleUtils.buildAppMasterRoleName(appId);
 
-    //has created before
+    // 校验角色是否已经存在。若是，直接返回
     if (rolePermissionService.findRoleByRoleName(appMasterRoleName) != null) {
       return;
     }
     String operator = app.getDataChangeCreatedBy();
+
     //create app permissions
     createAppMasterRole(appId, operator);
 
+    // 初始化查看角色
+    createAppViewerRole(appId, operator);
+
     //assign master role to user
-    rolePermissionService
-        .assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()),
-            operator);
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
+    // 授予查看角色
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildViewerAppRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
 
     initNamespaceRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
     initNamespaceEnvRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
 
     //assign modify、release namespace role to user
-    rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
-        Sets.newHashSet(operator), operator);
-    rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
-        Sets.newHashSet(operator), operator);
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE), Sets.newHashSet(operator), operator);
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE), Sets.newHashSet(operator), operator);
 
   }
 
@@ -123,9 +124,8 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   }
 
   private void createAppMasterRole(String appId, String operator) {
-    Set<Permission> appPermissions =
-        FluentIterable.from(Lists.newArrayList(
-            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE, PermissionType.BROWSE_CONFIG))
+    Set<Permission> appPermissions = FluentIterable.from(Lists.newArrayList(
+            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE))
             .transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>
@@ -136,6 +136,24 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     Role appMasterRole = createRole(RoleUtils.buildAppMasterRoleName(appId), operator);
 
     rolePermissionService.createRoleWithPermissions(appMasterRole, appPermissionIds);
+  }
+
+
+  /**
+   * 创建查看角色
+   * @param appId
+   * @param operator
+   */
+  private void createAppViewerRole(String appId, String operator) {
+
+    Set<Permission> appPermissions = FluentIterable.from(Lists.newArrayList(PermissionType.BROWSE_CONFIG)).transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
+    Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
+    Set<Long> appPermissionIds = FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
+
+    // 创建查看角色
+    Role appViewerRole = createRole(RoleUtils.buildViewerAppRoleName(appId), operator);
+
+    rolePermissionService.createRoleWithPermissions(appViewerRole, appPermissionIds);
   }
 
   private Permission createPermission(String targetId, String permissionType, String operator) {

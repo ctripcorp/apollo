@@ -86,5 +86,14 @@ public class RoleUtils {
     return STRING_JOINER.join(appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
 
+  /**
+   * 创建查看角色
+   * @param appId
+   * @return
+   */
+  public static String buildViewerAppRoleName(String appId) {
+    return STRING_JOINER.join(RoleType.VIEWER, appId);
+  }
+
 
 }

@@ -12,12 +12,15 @@ role_module.controller('NamespaceRoleController',
 
             $scope.modifyRoleSubmitBtnDisabled = false;
             $scope.ReleaseRoleSubmitBtnDisabled = false;
+            $scope.viewerRoleSubmitBtnDisabled = false;
 
             $scope.releaseRoleWidgetId = 'releaseRoleWidgetId';
             $scope.modifyRoleWidgetId = 'modifyRoleWidgetId';
+            $scope.viewerRoleWidgetId = 'viewerRoleWidgetId';
 
             $scope.modifyRoleSelectedEnv = "";
             $scope.releaseRoleSelectedEnv = "";
+            $scope.viewerRoleSelectedEnv = "";
 
             PermissionService.init_app_namespace_permission($scope.pageContext.appId, $scope.pageContext.namespaceName)
                 .then(function (result) {
@@ -56,7 +59,13 @@ role_module.controller('NamespaceRoleController',
                     toastr.error(AppUtil.errorMsg(result), "加载授权用户出错");
                 });
 
+            /**
+             * 给用户授权
+             * @param roleType
+             */
             $scope.assignRoleToUser = function (roleType) {
+
+                // 发布权
                 if ("ReleaseNamespace" === roleType) {
                     var user = $('.' + $scope.releaseRoleWidgetId).select2('data')[0];
                     if (!user) {
@@ -92,7 +101,10 @@ role_module.controller('NamespaceRoleController',
                             $scope.ReleaseRoleSubmitBtnDisabled = false;
                             toastr.error(AppUtil.errorMsg(result), "添加失败");
                         });
-                } else {
+                }
+
+                // 修改权
+                if('ModifyNamespace' === roleType) {
                     var user = $('.' + $scope.modifyRoleWidgetId).select2('data')[0];
                     if (!user) {
                         toastr.warning("请选择用户");
@@ -127,6 +139,31 @@ role_module.controller('NamespaceRoleController',
                             toastr.error(AppUtil.errorMsg(result), "添加失败");
                         });
                 }
+
+                // 查看权
+                if("Viewer" === roleType) {
+                    var user = $('.' + $scope.viewerRoleWidgetId).select2('data')[0];
+                    if (!user) {
+                        toastr.warning("请选择用户");
+                        return;
+                    }
+                    $scope.viewerRoleSubmitBtnDisabled = true;
+                    var toAssignViewerRoleUser = user.id;
+
+                    var assignViewerRoleFunc =  PermissionService.assign_viewer_role;
+
+                    assignViewerRoleFunc($scope.pageContext.appId, toAssignViewerRoleUser).then(function (result) {
+                            toastr.success("添加成功");
+                            $scope.viewerRoleSubmitBtnDisabled = false;
+                            $scope.rolesAssignedUsers.viewerRoleUsers.push({userId: toAssignViewerRoleUser});
+                            $('.' + $scope.viewerRoleWidgetId).select2("val", "");
+                            $scope.viewerRoleSelectedEnv = "";
+                        }, function (result) {
+                            $scope.viewerRoleSubmitBtnDisabled = false;
+                            toastr.error(AppUtil.errorMsg(result), "添加失败");
+                        });
+                }
+
             };
 
             $scope.removeUserRole = function (roleType, user, env) {
@@ -150,7 +187,9 @@ role_module.controller('NamespaceRoleController',
                         }, function (result) {
                             toastr.error(AppUtil.errorMsg(result), "删除失败");
                         });
-                } else {
+                }
+
+                if('ModifyNamespace' === roleType) {
                     var removeModifyNamespaceRoleFunc = !env ?
                         PermissionService.remove_modify_namespace_role :
                         function (appId, namespaceName, user) {
@@ -158,6 +197,24 @@ role_module.controller('NamespaceRoleController',
                         };
 
                     removeModifyNamespaceRoleFunc($scope.pageContext.appId,
+                        $scope.pageContext.namespaceName,
+                        user)
+                        .then(function (result) {
+                            toastr.success("删除成功");
+                            if (!env) {
+                                removeUserFromList($scope.rolesAssignedUsers.modifyRoleUsers, user);
+                            } else {
+                                removeUserFromList($scope.envRolesAssignedUsers[env].modifyRoleUsers, user);
+                            }
+                        }, function (result) {
+                            toastr.error(AppUtil.errorMsg(result), "删除失败");
+                        });
+                }
+
+                if('Viewer' === roleType) {
+                    var removeViewerRoleFunc = PermissionService.remove_viewer_role;
+
+                    removeViewerRoleFunc($scope.pageContext.appId,
                         $scope.pageContext.namespaceName,
                         user)
                         .then(function (result) {
