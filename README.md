@@ -107,6 +107,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 
 # Publication
   * [开源配置中心Apollo的设计与实现](http://www.infoq.com/cn/articles/open-source-configuration-center-apollo)
+  * [配置中心，让微服务更『智能』](https://mp.weixin.qq.com/s/iDmYJre_ULEIxuliu1EbIQ)
 
 # Support
 <table>
@@ -260,6 +261,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![橙红科技](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/oraro.png) 
 ![龙腾出行](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/dragonpass.png) 
 ![荔枝](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/lizhi.fm.png) 
+![汇通达](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/known-users/htd.png) 
 
 # Awards
 

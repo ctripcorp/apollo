@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.ctrip.com/schema/apollo http://www.ctrip.com/schema/apollo.xsd">
     <apollo:config order="10"/>
-    <apollo:config namespaces="TEST1.apollo" order="11"/>
+    <apollo:config namespaces="TEST1.apollo,application.yaml" order="11"/>
 
     <bean class="com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.bean.XmlBean">
         <property name="timeout" value="${timeout:200}"/>

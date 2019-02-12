@@ -151,13 +151,14 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     var toDeleteItemId = 0;
 
-    function preDeleteItem(namespace, itemId) {
+    function preDeleteItem(namespace, item) {
         if (!lockCheck(namespace)) {
             return;
         }
 
+        $scope.config = item;
         $scope.toOperationNamespace = namespace;
-        toDeleteItemId = itemId;
+        toDeleteItemId = item.id;
 
         $("#deleteConfirmDialog").modal("show");
     }

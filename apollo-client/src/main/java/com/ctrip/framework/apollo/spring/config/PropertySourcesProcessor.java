@@ -137,4 +137,10 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     //make it as early as possible
     return Ordered.HIGHEST_PRECEDENCE;
   }
+
+  // for test only
+  static void reset() {
+    NAMESPACE_NAMES.clear();
+    AUTO_UPDATE_INITIALIZED_BEAN_FACTORIES.clear();
+  }
 }
