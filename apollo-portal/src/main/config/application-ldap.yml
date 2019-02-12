@@ -18,4 +18,4 @@ ldap:
     objectClass: "groupOfNames"  # 配置groupClassName
     groupBase: "ou=group" # group search base
     groupSearch: "(&(cn=apollo-admins)(&(member=*)))" # group filter
-    groupMembership: "member" # group memberShip
+    groupMembership: "member" # group memberShip eg. member or memberUid
