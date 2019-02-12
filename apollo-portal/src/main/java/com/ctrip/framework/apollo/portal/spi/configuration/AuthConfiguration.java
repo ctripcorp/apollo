@@ -285,7 +285,7 @@ public class AuthConfiguration {
    */
   @Configuration
   @Profile("ldap")
-  @EnableConfigurationProperties(LdapProperties.class)
+  @EnableConfigurationProperties({LdapProperties.class,LdapExtendProperties.class})
   static class SpringSecurityLDAPAuthAutoConfiguration {
 
     private final LdapProperties properties;
