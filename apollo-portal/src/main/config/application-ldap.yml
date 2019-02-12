@@ -11,7 +11,7 @@ ldap:
   mapping: # 配置 ldap 属性
     objectClass: "inetOrgPerson" # ldap 用户 objectClass 配置
     loginId: "uid" # ldap 用户惟一 id，用来作为登录的 id
-    rdn: "cn" # ldap rdn
+    rdnKey: "cn" # ldap rdn key
     userDisplayName: "displayName" # ldap 用户名，用来作为显示名
     email: "mail" # ldap 邮箱属性
   group: # 配置ldap group
