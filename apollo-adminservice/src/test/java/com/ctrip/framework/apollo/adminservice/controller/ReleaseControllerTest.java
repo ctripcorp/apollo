@@ -1,8 +1,5 @@
 package com.ctrip.framework.apollo.adminservice.controller;
 
-import com.google.common.base.Joiner;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.message.MessageSender;
 import com.ctrip.framework.apollo.biz.message.Topics;
@@ -15,7 +12,8 @@ import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-
+import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +24,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ReleaseControllerTest extends AbstractControllerTest {
 
@@ -112,10 +106,7 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     MessageSender someMessageSender = mock(MessageSender.class);
     Namespace someNamespace = mock(Namespace.class);
 
-    ReleaseController releaseController = new ReleaseController();
-    ReflectionTestUtils.setField(releaseController, "releaseService", someReleaseService);
-    ReflectionTestUtils.setField(releaseController, "namespaceService", someNamespaceService);
-    ReflectionTestUtils.setField(releaseController, "messageSender", someMessageSender);
+    ReleaseController releaseController = new ReleaseController(someReleaseService, someNamespaceService, someMessageSender, null);
 
     when(someNamespaceService.findOne(someAppId, someCluster, someNamespaceName))
         .thenReturn(someNamespace);

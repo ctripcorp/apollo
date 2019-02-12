@@ -1,15 +1,12 @@
 package com.ctrip.framework.apollo.biz.config;
 
+import com.ctrip.framework.apollo.biz.service.BizDBPropertySource;
+import com.ctrip.framework.apollo.common.config.RefreshableConfig;
+import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import com.ctrip.framework.apollo.biz.service.BizDBPropertySource;
-import com.ctrip.framework.apollo.common.config.RefreshableConfig;
-import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -36,8 +33,11 @@ public class BizConfig extends RefreshableConfig {
       new TypeToken<Map<Long, Integer>>() {
       }.getType();
 
-  @Autowired
-  private BizDBPropertySource propertySource;
+  private final BizDBPropertySource propertySource;
+
+  public BizConfig(final BizDBPropertySource propertySource) {
+    this.propertySource = propertySource;
+  }
 
   @Override
   protected List<RefreshablePropertySource> getRefreshablePropertySources() {

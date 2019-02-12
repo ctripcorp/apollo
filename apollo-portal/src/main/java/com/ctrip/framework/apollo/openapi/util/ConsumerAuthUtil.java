@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.openapi.util;
 
 import com.ctrip.framework.apollo.openapi.service.ConsumerService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class ConsumerAuthUtil {
   static final String CONSUMER_ID = "ApolloConsumerId";
-  @Autowired
-  private ConsumerService consumerService;
+  private final ConsumerService consumerService;
+
+  public ConsumerAuthUtil(final ConsumerService consumerService) {
+    this.consumerService = consumerService;
+  }
 
   public Long getConsumerId(String token) {
     return consumerService.getConsumerIdByToken(token);

@@ -8,25 +8,27 @@ import com.ctrip.framework.apollo.biz.service.NamespaceService;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class NamespaceLockController {
 
+  private final NamespaceLockService namespaceLockService;
+  private final NamespaceService namespaceService;
+  private final BizConfig bizConfig;
 
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private BizConfig bizConfig;
+  public NamespaceLockController(
+      final NamespaceLockService namespaceLockService,
+      final NamespaceService namespaceService,
+      final BizConfig bizConfig) {
+    this.namespaceLockService = namespaceLockService;
+    this.namespaceService = namespaceService;
+    this.bizConfig = bizConfig;
+  }
 
-  @RequestMapping(value = "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock", method = RequestMethod.GET)
+  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock")
   public NamespaceLockDTO getNamespaceLockOwner(@PathVariable String appId, @PathVariable String clusterName,
                                                 @PathVariable String namespaceName) {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
@@ -44,7 +46,7 @@ public class NamespaceLockController {
       return null;
     }
 
-    return BeanUtils.transfrom(NamespaceLockDTO.class, lock);
+    return BeanUtils.transform(NamespaceLockDTO.class, lock);
   }
 
 }

@@ -18,12 +18,6 @@ import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
 import com.google.common.collect.Maps;
-import java.util.Collections;
-import java.util.EventListener;
-import java.util.Map;
-import javax.servlet.Filter;
-import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -51,6 +45,12 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
+import javax.servlet.Filter;
+import javax.sql.DataSource;
+import java.util.Collections;
+import java.util.EventListener;
+import java.util.Map;
+
 @Configuration
 public class AuthConfiguration {
 
@@ -61,8 +61,11 @@ public class AuthConfiguration {
   @Profile("ctrip")
   static class CtripAuthAutoConfiguration {
 
-    @Autowired
-    private PortalConfig portalConfig;
+    private final PortalConfig portalConfig;
+
+    public CtripAuthAutoConfiguration(final PortalConfig portalConfig) {
+      this.portalConfig = portalConfig;
+    }
 
     @Bean
     public ServletListenerRegistrationBean redisAppSettingListner() {
@@ -285,11 +288,13 @@ public class AuthConfiguration {
   @EnableConfigurationProperties(LdapProperties.class)
   static class SpringSecurityLDAPAuthAutoConfiguration {
 
-    @Autowired
-    private LdapProperties properties;
+    private final LdapProperties properties;
+    private final Environment environment;
 
-    @Autowired
-    private Environment environment;
+    public SpringSecurityLDAPAuthAutoConfiguration(final LdapProperties properties, final Environment environment) {
+      this.properties = properties;
+      this.environment = environment;
+    }
 
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
@@ -345,10 +350,13 @@ public class AuthConfiguration {
   @EnableGlobalMethodSecurity(prePostEnabled = true)
   static class SpringSecurityLDAPConfigurer extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private LdapProperties ldapProperties;
-    @Autowired
-    private LdapContextSource ldapContextSource;
+    private final LdapProperties ldapProperties;
+    private final LdapContextSource ldapContextSource;
+
+    public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties, final LdapContextSource ldapContextSource) {
+      this.ldapProperties = ldapProperties;
+      this.ldapContextSource = ldapContextSource;
+    }
 
     @Bean
     public FilterBasedLdapUserSearch userSearch() {

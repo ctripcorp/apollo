@@ -31,6 +31,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,26 +41,39 @@ public class NamespaceService {
   private Logger logger = LoggerFactory.getLogger(NamespaceService.class);
   private Gson gson = new Gson();
 
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private InstanceService instanceService;
-  @Autowired
-  private NamespaceBranchService branchService;
-  @Autowired
-  private RolePermissionService rolePermissionService;
+  private final PortalConfig portalConfig;
+  private final PortalSettings portalSettings;
+  private final UserInfoHolder userInfoHolder;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final ItemService itemService;
+  private final ReleaseService releaseService;
+  private final AppNamespaceService appNamespaceService;
+  private final InstanceService instanceService;
+  private final NamespaceBranchService branchService;
+  private final RolePermissionService rolePermissionService;
+
+  public NamespaceService(
+      final PortalConfig portalConfig,
+      final PortalSettings portalSettings,
+      final UserInfoHolder userInfoHolder,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI,
+      final ItemService itemService,
+      final ReleaseService releaseService,
+      final AppNamespaceService appNamespaceService,
+      final InstanceService instanceService,
+      final @Lazy NamespaceBranchService branchService,
+      final RolePermissionService rolePermissionService) {
+    this.portalConfig = portalConfig;
+    this.portalSettings = portalSettings;
+    this.userInfoHolder = userInfoHolder;
+    this.namespaceAPI = namespaceAPI;
+    this.itemService = itemService;
+    this.releaseService = releaseService;
+    this.appNamespaceService = appNamespaceService;
+    this.instanceService = instanceService;
+    this.branchService = branchService;
+    this.rolePermissionService = rolePermissionService;
+  }
 
 
   public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {

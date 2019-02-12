@@ -1,12 +1,9 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.ctrip.framework.apollo.portal.spi.ctrip.filters.UserAccessFilter;
-import com.google.common.base.Strings;
-
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ctrip.framework.apollo.portal.spi.ctrip.filters.UserAccessFilter;
+import com.google.common.base.Strings;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +17,13 @@ import javax.servlet.ServletException;
 @Profile("ctrip")
 public class WebContextConfiguration {
 
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
+  private final PortalConfig portalConfig;
+  private final UserInfoHolder userInfoHolder;
+
+  public WebContextConfiguration(final PortalConfig portalConfig, final UserInfoHolder userInfoHolder) {
+    this.portalConfig = portalConfig;
+    this.userInfoHolder = userInfoHolder;
+  }
 
   @Bean
   public ServletContextInitializer servletContextInitializer() {

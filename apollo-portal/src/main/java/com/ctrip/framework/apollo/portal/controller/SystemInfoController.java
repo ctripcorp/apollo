@@ -8,18 +8,18 @@ import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.component.RestTemplateFactory;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvironmentInfo;
 import com.ctrip.framework.apollo.portal.entity.vo.SystemInfo;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 @RestController
 @RequestMapping("/system-info")
@@ -30,12 +30,15 @@ public class SystemInfoController {
   private static final String ADMIN_SERVICE_URL_PATH = "/services/admin";
 
   private RestTemplate restTemplate;
+  private final PortalSettings portalSettings;
+  private final RestTemplateFactory restTemplateFactory;
 
-  @Autowired
-  private PortalSettings portalSettings;
-
-  @Autowired
-  private RestTemplateFactory restTemplateFactory;
+  public SystemInfoController(
+      final PortalSettings portalSettings,
+      final RestTemplateFactory restTemplateFactory) {
+    this.portalSettings = portalSettings;
+    this.restTemplateFactory = restTemplateFactory;
+  }
 
   @PostConstruct
   private void init() {
@@ -43,7 +46,7 @@ public class SystemInfoController {
   }
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public SystemInfo getSystemInfo() {
     SystemInfo systemInfo = new SystemInfo();
 
@@ -80,7 +83,7 @@ public class SystemInfoController {
   }
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
-  @RequestMapping(value = "/health", method = RequestMethod.GET)
+  @GetMapping(value = "/health")
   public Health checkHealth(@RequestParam String host) {
     return restTemplate.getForObject(host + "/health", Health.class);
   }

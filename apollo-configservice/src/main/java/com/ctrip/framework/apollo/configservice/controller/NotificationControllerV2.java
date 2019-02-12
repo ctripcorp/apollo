@@ -1,17 +1,5 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
@@ -26,14 +14,24 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -65,30 +63,32 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
   private final ExecutorService largeNotificationBatchExecutorService;
 
-  @Autowired
-  private WatchKeysUtil watchKeysUtil;
+  private final WatchKeysUtil watchKeysUtil;
+  private final ReleaseMessageServiceWithCache releaseMessageService;
+  private final EntityManagerUtil entityManagerUtil;
+  private final NamespaceUtil namespaceUtil;
+  private final Gson gson;
+  private final BizConfig bizConfig;
 
   @Autowired
-  private ReleaseMessageServiceWithCache releaseMessageService;
-
-  @Autowired
-  private EntityManagerUtil entityManagerUtil;
-
-  @Autowired
-  private NamespaceUtil namespaceUtil;
-
-  @Autowired
-  private Gson gson;
-
-  @Autowired
-  private BizConfig bizConfig;
-
-  public NotificationControllerV2() {
+  public NotificationControllerV2(
+      final WatchKeysUtil watchKeysUtil,
+      final ReleaseMessageServiceWithCache releaseMessageService,
+      final EntityManagerUtil entityManagerUtil,
+      final NamespaceUtil namespaceUtil,
+      final Gson gson,
+      final BizConfig bizConfig) {
     largeNotificationBatchExecutorService = Executors.newSingleThreadExecutor(ApolloThreadFactory.create
         ("NotificationControllerV2", true));
+    this.watchKeysUtil = watchKeysUtil;
+    this.releaseMessageService = releaseMessageService;
+    this.entityManagerUtil = entityManagerUtil;
+    this.namespaceUtil = namespaceUtil;
+    this.gson = gson;
+    this.bizConfig = bizConfig;
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @GetMapping
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> pollNotification(
       @RequestParam(value = "appId") String appId,
       @RequestParam(value = "cluster") String cluster,

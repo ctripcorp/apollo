@@ -1,11 +1,18 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import com.ctrip.framework.apollo.common.utils.InputValidator;
+import javax.validation.constraints.Pattern;
+
 public class AppDTO extends BaseDTO{
 
   private long id;
 
   private String name;
 
+  @Pattern(
+      regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
+      message = "AppId格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+  )
   private String appId;
 
   private String orgId;

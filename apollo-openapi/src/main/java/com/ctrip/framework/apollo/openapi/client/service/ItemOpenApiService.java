@@ -54,7 +54,6 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     checkNotEmpty(appId, "App id");
     checkNotEmpty(env, "Env");
     checkNotEmpty(itemDTO.getKey(), "Item key");
-    checkNotEmpty(itemDTO.getValue(), "Item value");
     checkNotEmpty(itemDTO.getDataChangeCreatedBy(), "Item created by");
 
     String path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items",
@@ -80,7 +79,6 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     checkNotEmpty(appId, "App id");
     checkNotEmpty(env, "Env");
     checkNotEmpty(itemDTO.getKey(), "Item key");
-    checkNotEmpty(itemDTO.getValue(), "Item value");
     checkNotEmpty(itemDTO.getDataChangeLastModifiedBy(), "Item modified by");
 
     String path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s",
@@ -106,7 +104,6 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     checkNotEmpty(appId, "App id");
     checkNotEmpty(env, "Env");
     checkNotEmpty(itemDTO.getKey(), "Item key");
-    checkNotEmpty(itemDTO.getValue(), "Item value");
     checkNotEmpty(itemDTO.getDataChangeCreatedBy(), "Item created by");
 
     if (Strings.isNullOrEmpty(itemDTO.getDataChangeLastModifiedBy())) {

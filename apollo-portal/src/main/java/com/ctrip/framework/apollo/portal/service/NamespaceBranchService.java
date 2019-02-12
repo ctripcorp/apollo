@@ -13,8 +13,6 @@ import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +22,27 @@ import java.util.List;
 @Service
 public class NamespaceBranchService {
 
-  @Autowired
-  private ItemsComparator itemsComparator;
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private AdminServiceAPI.NamespaceBranchAPI namespaceBranchAPI;
-  @Autowired
-  private ReleaseService releaseService;
+  private final ItemsComparator itemsComparator;
+  private final UserInfoHolder userInfoHolder;
+  private final NamespaceService namespaceService;
+  private final ItemService itemService;
+  private final AdminServiceAPI.NamespaceBranchAPI namespaceBranchAPI;
+  private final ReleaseService releaseService;
+
+  public NamespaceBranchService(
+      final ItemsComparator itemsComparator,
+      final UserInfoHolder userInfoHolder,
+      final NamespaceService namespaceService,
+      final ItemService itemService,
+      final AdminServiceAPI.NamespaceBranchAPI namespaceBranchAPI,
+      final ReleaseService releaseService) {
+    this.itemsComparator = itemsComparator;
+    this.userInfoHolder = userInfoHolder;
+    this.namespaceService = namespaceService;
+    this.itemService = itemService;
+    this.namespaceBranchAPI = namespaceBranchAPI;
+    this.releaseService = releaseService;
+  }
 
 
   @Transactional

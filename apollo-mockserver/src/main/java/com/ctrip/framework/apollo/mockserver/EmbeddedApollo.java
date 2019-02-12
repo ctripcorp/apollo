@@ -151,7 +151,9 @@ public class EmbeddedApollo extends ExternalResource {
     if (addedOrModifiedPropertiesOfNamespace.containsKey(namespace)) {
       addedOrModifiedPropertiesOfNamespace.get(namespace).put(someKey, someValue);
     } else {
-      addedOrModifiedPropertiesOfNamespace.put(namespace, ImmutableMap.of(someKey, someValue));
+      Map<String, String> m = new HashMap<>();
+      m.put(someKey, someValue);
+      addedOrModifiedPropertiesOfNamespace.put(namespace, m);
     }
   }
 

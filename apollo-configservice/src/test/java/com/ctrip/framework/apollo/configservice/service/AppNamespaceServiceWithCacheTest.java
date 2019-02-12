@@ -1,18 +1,15 @@
 package com.ctrip.framework.apollo.configservice.service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.repository.AppNamespaceRepository;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,9 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -46,10 +41,7 @@ public class AppNamespaceServiceWithCacheTest {
 
   @Before
   public void setUp() throws Exception {
-    appNamespaceServiceWithCache = new AppNamespaceServiceWithCache();
-    ReflectionTestUtils.setField(appNamespaceServiceWithCache, "appNamespaceRepository",
-        appNamespaceRepository);
-    ReflectionTestUtils.setField(appNamespaceServiceWithCache, "bizConfig", bizConfig);
+    appNamespaceServiceWithCache = new AppNamespaceServiceWithCache(appNamespaceRepository, bizConfig);
 
     scanInterval = 50;
     scanIntervalTimeUnit = TimeUnit.MILLISECONDS;
@@ -213,6 +205,14 @@ public class AppNamespaceServiceWithCacheTest {
         (somePublicAppNamespace.getDataChangeLastModifiedTime(), 1));
 
     // Delete 1 private and 1 public
+
+    // should prepare for the case after deleted first, or in 2 rebuild intervals, all will be deleted
+    List<Long> appNamespaceIdsAfterDelete = Lists
+        .newArrayList(somePrivateNamespaceId, somePublicNamespaceId, yetAnotherPrivateNamespaceId);
+    when(appNamespaceRepository.findAllById(appNamespaceIdsAfterDelete)).thenReturn(Lists.newArrayList
+        (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
+
+    // do delete
     when(appNamespaceRepository.findAllById(appNamespaceIds)).thenReturn(Lists.newArrayList
         (somePrivateAppNamespaceNew, yetAnotherPrivateAppNamespaceNew, somePublicAppNamespaceNew));
 

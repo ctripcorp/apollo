@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
 public class OpenAppNamespaceDTO extends BaseDTO {
-
     private String name;
 
     private String appId;

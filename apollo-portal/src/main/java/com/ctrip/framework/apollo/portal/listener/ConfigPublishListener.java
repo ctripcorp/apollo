@@ -14,37 +14,45 @@ import com.ctrip.framework.apollo.portal.service.ReleaseHistoryService;
 import com.ctrip.framework.apollo.portal.spi.EmailService;
 import com.ctrip.framework.apollo.portal.spi.MQService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class ConfigPublishListener {
 
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
-  @Autowired
-  private EmailService emailService;
-  @Autowired
-  private NormalPublishEmailBuilder normalPublishEmailBuilder;
-  @Autowired
-  private GrayPublishEmailBuilder grayPublishEmailBuilder;
-  @Autowired
-  private RollbackEmailBuilder rollbackEmailBuilder;
-  @Autowired
-  private MergeEmailBuilder mergeEmailBuilder;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private MQService mqService;
+  private final ReleaseHistoryService releaseHistoryService;
+  private final EmailService emailService;
+  private final NormalPublishEmailBuilder normalPublishEmailBuilder;
+  private final GrayPublishEmailBuilder grayPublishEmailBuilder;
+  private final RollbackEmailBuilder rollbackEmailBuilder;
+  private final MergeEmailBuilder mergeEmailBuilder;
+  private final PortalConfig portalConfig;
+  private final MQService mqService;
 
   private ExecutorService executorService;
+
+  public ConfigPublishListener(
+      final ReleaseHistoryService releaseHistoryService,
+      final EmailService emailService,
+      final NormalPublishEmailBuilder normalPublishEmailBuilder,
+      final GrayPublishEmailBuilder grayPublishEmailBuilder,
+      final RollbackEmailBuilder rollbackEmailBuilder,
+      final MergeEmailBuilder mergeEmailBuilder,
+      final PortalConfig portalConfig,
+      final MQService mqService) {
+    this.releaseHistoryService = releaseHistoryService;
+    this.emailService = emailService;
+    this.normalPublishEmailBuilder = normalPublishEmailBuilder;
+    this.grayPublishEmailBuilder = grayPublishEmailBuilder;
+    this.rollbackEmailBuilder = rollbackEmailBuilder;
+    this.mergeEmailBuilder = mergeEmailBuilder;
+    this.portalConfig = portalConfig;
+    this.mqService = mqService;
+  }
 
   @PostConstruct
   public void init() {

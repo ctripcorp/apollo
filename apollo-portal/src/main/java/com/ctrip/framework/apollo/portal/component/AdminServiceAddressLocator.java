@@ -1,21 +1,19 @@
 package com.ctrip.framework.apollo.portal.component;
 
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class AdminServiceAddressLocator {
@@ -41,12 +37,16 @@ public class AdminServiceAddressLocator {
   private List<Env> allEnvs;
   private Map<Env, List<ServiceDTO>> cache = new ConcurrentHashMap<>();
 
-  @Autowired
-  private HttpMessageConverters httpMessageConverters;
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private RestTemplateFactory restTemplateFactory;
+  private final PortalSettings portalSettings;
+  private final RestTemplateFactory restTemplateFactory;
+
+  public AdminServiceAddressLocator(
+      final HttpMessageConverters httpMessageConverters,
+      final PortalSettings portalSettings,
+      final RestTemplateFactory restTemplateFactory) {
+    this.portalSettings = portalSettings;
+    this.restTemplateFactory = restTemplateFactory;
+  }
 
   @PostConstruct
   public void init() {

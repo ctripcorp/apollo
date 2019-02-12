@@ -45,10 +45,10 @@ public class InstanceConfigAuditUtil implements InitializingBean {
   private Cache<String, Long> instanceCache;
   private Cache<String, String> instanceConfigReleaseKeyCache;
 
-  @Autowired
-  private InstanceService instanceService;
+  private final InstanceService instanceService;
 
-  public InstanceConfigAuditUtil() {
+  public InstanceConfigAuditUtil(final InstanceService instanceService) {
+    this.instanceService = instanceService;
     auditExecutorService = Executors.newSingleThreadExecutor(
         ApolloThreadFactory.create("InstanceConfigAuditUtil", true));
     auditStopped = new AtomicBoolean(false);

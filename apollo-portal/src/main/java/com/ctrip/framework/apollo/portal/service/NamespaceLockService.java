@@ -5,17 +5,18 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.vo.LockInfo;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NamespaceLockService {
 
-  @Autowired
-  private AdminServiceAPI.NamespaceLockAPI namespaceLockAPI;
-  @Autowired
-  private PortalConfig portalConfig;
+  private final AdminServiceAPI.NamespaceLockAPI namespaceLockAPI;
+  private final PortalConfig portalConfig;
+
+  public NamespaceLockService(final AdminServiceAPI.NamespaceLockAPI namespaceLockAPI, final PortalConfig portalConfig) {
+    this.namespaceLockAPI = namespaceLockAPI;
+    this.portalConfig = portalConfig;
+  }
 
 
   public NamespaceLockDTO getNamespaceLock(String appId, Env env, String clusterName, String namespaceName) {

@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
@@ -14,8 +12,8 @@ import com.ctrip.framework.apollo.common.constants.ReleaseOperationContext;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.GrayReleaseRuleItemTransformer;
 import com.ctrip.framework.apollo.common.utils.UniqueKeyGenerator;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Maps;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +22,27 @@ import java.util.Map;
 @Service
 public class NamespaceBranchService {
 
-  @Autowired
-  private AuditService auditService;
-  @Autowired
-  private GrayReleaseRuleRepository grayReleaseRuleRepository;
-  @Autowired
-  private ClusterService clusterService;
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
+  private final AuditService auditService;
+  private final GrayReleaseRuleRepository grayReleaseRuleRepository;
+  private final ClusterService clusterService;
+  private final ReleaseService releaseService;
+  private final NamespaceService namespaceService;
+  private final ReleaseHistoryService releaseHistoryService;
+
+  public NamespaceBranchService(
+      final AuditService auditService,
+      final GrayReleaseRuleRepository grayReleaseRuleRepository,
+      final ClusterService clusterService,
+      final @Lazy ReleaseService releaseService,
+      final NamespaceService namespaceService,
+      final ReleaseHistoryService releaseHistoryService) {
+    this.auditService = auditService;
+    this.grayReleaseRuleRepository = grayReleaseRuleRepository;
+    this.clusterService = clusterService;
+    this.releaseService = releaseService;
+    this.namespaceService = namespaceService;
+    this.releaseHistoryService = releaseHistoryService;
+  }
 
   @Transactional
   public Namespace createBranch(String appId, String parentClusterName, String namespaceName, String operator){
