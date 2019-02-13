@@ -150,6 +150,10 @@
                          data-clipboard-text="{{namespace.text}}"
                          data-tooltip="tooltip" data-placement="bottom" title="复制文本"
                          ng-show="!namespace.isTextEditing && namespace.viewType == 'text' && namespace.hasModifyPermission">
+                    <img src="img/syntax.png" class="ns_btn cursor-pointer"
+                         data-tooltip="tooltip" data-placement="bottom" title="语法检查"
+                         ng-show="namespace.isTextEditing && namespace.viewType == 'text' && namespace.isSyntaxCheckable"
+                         ng-click="syntaxCheck(namespace)">
                     &nbsp;
                     <img src="img/cancel.png" class="ns_btn cursor-pointer"
                          data-tooltip="tooltip" data-placement="bottom" title="取消修改"

@@ -370,6 +370,11 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     });
 
+    EventManager.subscribe(EventManager.EventType.SYNTAX_CHECK_TEXT_FAILED, function (context) {
+        $scope.syntaxCheckContext = context;
+
+        AppUtil.showModal('#syntaxCheckFailedDialog');
+    });
 
     new Clipboard('.clipboard');
 

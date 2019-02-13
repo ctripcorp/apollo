@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
@@ -12,6 +13,8 @@ import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -183,6 +186,34 @@ public class ItemController {
     }
     else
       throw new AccessDeniedException(String.format("您没有修改环境%s的权限", envNoPermission));
+  }
+
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
+  @PostMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/syntax-check", consumes = {
+      "application/json"})
+  public ResponseEntity<Void> syntaxCheckText(@PathVariable String appId, @PathVariable String env,
+      @PathVariable String clusterName, @PathVariable String namespaceName, @RequestBody NamespaceTextModel model) {
+
+    doSyntaxCheck(model);
+
+    return ResponseEntity.ok().build();
+  }
+
+  private void doSyntaxCheck(NamespaceTextModel model) {
+    if (StringUtils.isBlank(model.getConfigText())) {
+      return;
+    }
+
+    // only support yaml syntax check
+    if (model.getFormat() != ConfigFileFormat.YAML && model.getFormat() != ConfigFileFormat.YML) {
+      return;
+    }
+
+    // use YamlPropertiesFactoryBean to check the yaml syntax
+    YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+    yamlPropertiesFactoryBean.setResources(new ByteArrayResource(model.getConfigText().getBytes()));
+    // this call converts yaml to properties and will throw exception if the conversion fails
+    yamlPropertiesFactoryBean.getObject();
   }
 
   private boolean isValidItem(ItemDTO item) {
