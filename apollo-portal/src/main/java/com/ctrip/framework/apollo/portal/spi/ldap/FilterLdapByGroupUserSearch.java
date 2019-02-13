@@ -7,10 +7,13 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.ldap.support.LdapUtils;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
@@ -20,7 +23,7 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
  * @author wuzishu
  */
 public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
-
+  private static final Log logger = LogFactory.getLog(FilterLdapByGroupUserSearch.class);
   private static final String MEMBER_UID_ATTR_NAME = "memberUid";
   private String searchBase;
   private String groupBase;
@@ -57,6 +60,9 @@ public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
 
   @Override
   public DirContextOperations searchForUser(String username) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Searching for user '" + username + "', with user search " + this);
+    }
     SpringSecurityLdapTemplate template = new SpringSecurityLdapTemplate(this.contextSource);
     template.setSearchControls(searchControls);
     return template
@@ -69,16 +75,16 @@ public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
               LdapName memberRdn = LdapUtils
                   .removeFirst(memberDn, LdapUtils.newLdapName(searchBase));
               String rdnValue = LdapUtils.getValue(memberRdn, rdnKey).toString();
-              if (rdnValue.toLowerCase().equals(username.toLowerCase())) {
+              if (rdnValue.equalsIgnoreCase(username)) {
                 return new DirContextAdapter(memberRdn.toString());
               }
             }
-            return null;
+            throw new UsernameNotFoundException("User " + username + " not found in directory.");
           } else {
             String[] memberUids = ((DirContextAdapter) ctx)
                 .getStringAttributes(groupMembershipAttrName);
             for (String memberUid : memberUids) {
-              if (memberUid.toLowerCase().equals(username.toLowerCase())) {
+              if (memberUid.equalsIgnoreCase(username)) {
                 Name name = searchUserById(memberUid);
                 LdapName ldapName = LdapUtils.newLdapName(name);
                 LdapName ldapRdn = LdapUtils
@@ -87,7 +93,7 @@ public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
               }
             }
           }
-          return null;
+          throw new UsernameNotFoundException("User " + username + " not found in directory.");
         });
   }
 }

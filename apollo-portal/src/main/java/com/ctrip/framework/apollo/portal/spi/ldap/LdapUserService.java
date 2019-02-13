@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 import javax.naming.Name;
+import javax.naming.directory.Attribute;
 import javax.naming.ldap.LdapName;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,9 +151,19 @@ public class LdapUserService implements UserService {
   private UserInfo lookupUser(String member, List<String> userIds) {
     return ldapTemplate.lookup(member, (AttributesMapper<UserInfo>) attributes -> {
       UserInfo tmp = new UserInfo();
-      tmp.setEmail(attributes.get(emailAttrName).get().toString());
-      tmp.setUserId(attributes.get(loginIdAttrName).get().toString());
-      tmp.setName(attributes.get(userDisplayNameAttrName).get().toString());
+      Attribute emailAttribute = attributes.get(emailAttrName);
+      if (emailAttribute != null && emailAttribute.get() != null) {
+        tmp.setEmail(emailAttribute.get().toString());
+      }
+      Attribute loginIdAttribute = attributes.get(loginIdAttrName);
+      if (loginIdAttribute != null && loginIdAttribute.get() != null) {
+        tmp.setUserId(loginIdAttribute.get().toString());
+      }
+      Attribute userDisplayNameAttribute = attributes.get(userDisplayNameAttrName);
+      if (userDisplayNameAttribute != null && userDisplayNameAttribute.get() != null) {
+        tmp.setName(userDisplayNameAttribute.get().toString());
+      }
+
       if (userIds != null) {
         if (userIds.stream().anyMatch(c -> c.equals(tmp.getUserId()))) {
           return tmp;
@@ -228,12 +239,9 @@ public class LdapUserService implements UserService {
                   userInfos.add(userInfo);
                 }
               }
-
             }
             return userInfos;
           }
-
-
         });
   }
 
@@ -266,8 +274,7 @@ public class LdapUserService implements UserService {
     if (StringUtils.isNotBlank(groupSearch)) {
       List<UserInfo> lists = searchUserInfoByGroup(groupBase, groupSearch, null,
           Collections.singletonList(userId));
-      if (lists != null && !lists.isEmpty() && lists.get(0) != null
-          && lists.get(0) != null) {
+      if (lists != null && !lists.isEmpty() && lists.get(0) != null) {
         return lists.get(0);
       }
       return null;
@@ -290,9 +297,9 @@ public class LdapUserService implements UserService {
         userList.addAll(userListByGroup);
         return userList;
       } else {
-       ContainerCriteria criteria = query().where(loginIdAttrName).is(userIds.get(0));
-      userIds.stream().skip(1).forEach(userId -> criteria.or(loginIdAttrName).is(userId));
-      return ldapTemplate.search(ldapQueryCriteria().and(criteria), ldapUserInfoMapper);
+        ContainerCriteria criteria = query().where(loginIdAttrName).is(userIds.get(0));
+        userIds.stream().skip(1).forEach(userId -> criteria.or(loginIdAttrName).is(userId));
+        return ldapTemplate.search(ldapQueryCriteria().and(criteria), ldapUserInfoMapper);
       }
     }
   }
