@@ -234,6 +234,7 @@ directive_module.directive('apolloconfirmdialog', function ($compile, $window, $
             detail: '=apolloDetail',
             showCancelBtn: '=apolloShowCancelBtn',
             doConfirm: '=apolloConfirm',
+            extraClass: '=apolloExtraClass',
             confirmBtnText: '=?',
             cancel: '='
         },

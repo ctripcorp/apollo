@@ -52,6 +52,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             scope.toggleTextEditStatus = toggleTextEditStatus;
             scope.goToSyncPage = goToSyncPage;
             scope.modifyByText = modifyByText;
+            scope.syntaxCheck = syntaxCheck;
             scope.goToParentAppConfigPage = goToParentAppConfigPage;
             scope.switchInstanceViewType = switchInstanceViewType;
             scope.switchBranch = switchBranch;
@@ -115,6 +116,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 scope.showNamespaceBody = namespace.showNamespaceBody ? true : scope.showBody;
                 namespace.viewItems = namespace.items;
                 namespace.isPropertiesFormat = namespace.format == 'properties';
+                namespace.isSyntaxCheckable = namespace.format == 'yaml' || namespace.format == 'yml';
                 namespace.isTextEditing = false;
                 namespace.instanceViewType = namespace_instance_view_type.LATEST_RELEASE;
                 namespace.latestReleaseInstancesPage = 0;
@@ -733,6 +735,28 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 );
                 namespace.commited = true;
                 toggleTextEditStatus(namespace);
+            }
+
+            function syntaxCheck(namespace) {
+                var model = {
+                    configText: namespace.editText,
+                    namespaceId: namespace.baseInfo.id,
+                    format: namespace.format
+                };
+                ConfigService.syntax_check_text(scope.appId,
+                                                scope.env,
+                                                scope.cluster,
+                                                namespace.baseInfo.namespaceName,
+                                                model).then(
+                    function (result) {
+                        toastr.success("语法正确！");
+
+                    }, function (result) {
+                        EventManager.emit(EventManager.EventType.SYNTAX_CHECK_TEXT_FAILED, {
+                            syntaxCheckMessage: AppUtil.pureErrorMsg(result)
+                        });
+                    }
+                );
             }
 
             function goToParentAppConfigPage(namespace) {
