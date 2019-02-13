@@ -7,8 +7,8 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
@@ -23,7 +23,8 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
  * @author wuzishu
  */
 public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
-  private static final Log logger = LogFactory.getLog(FilterLdapByGroupUserSearch.class);
+
+  private static final Logger logger = LoggerFactory.getLogger(FilterLdapByGroupUserSearch.class);
   private static final String MEMBER_UID_ATTR_NAME = "memberUid";
   private String searchBase;
   private String groupBase;

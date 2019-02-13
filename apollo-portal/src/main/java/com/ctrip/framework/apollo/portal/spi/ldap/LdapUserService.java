@@ -288,7 +288,7 @@ public class LdapUserService implements UserService {
   @Override
   public List<UserInfo> findByUserIds(List<String> userIds) {
     if (CollectionUtils.isEmpty(userIds)) {
-      return new ArrayList<>();
+      return Collections.emptyList();
     } else {
       List<UserInfo> userList = new ArrayList<>();
       if (StringUtils.isNotBlank(groupSearch)) {
