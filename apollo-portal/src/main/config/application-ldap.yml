@@ -1,21 +1,20 @@
 spring:
   ldap:
-    base: "dc=example,dc=com"
-    username: "uid=admin,ou=system" # 配置管理员账号，用于搜索、匹配用户
-    password: "password"
-    searchFilter: "(uid={0})"  # 用户过滤器，登录的时候用这个过滤器来搜索用户
+    base: "dc=ceair,dc=com"
+    username: "cn=Manager,dc=ceair,dc=com" # 配置管理员账号，用于搜索、匹配用户
+    password: "111111"
+    searchFilter: "(uid={0})" # 用户过滤器，登录的时候用这个过滤器来搜索用户
     urls:
-    - "ldap://localhost:10389"
+    - "ldap://10.66.29.173:389"
 
 ldap:
   mapping: # 配置 ldap 属性
     objectClass: "inetOrgPerson" # ldap 用户 objectClass 配置
     loginId: "uid" # ldap 用户惟一 id，用来作为登录的 id
-    rdnKey: "cn" # ldap rdn key
+    rdnKey: "uid" # ldap rdn key
     userDisplayName: "displayName" # ldap 用户名，用来作为显示名
     email: "mail" # ldap 邮箱属性
   group: # 配置ldap group
-    objectClass: "groupOfNames"  # 配置groupClassName
-    groupBase: "ou=group" # group search base
-    groupSearch: "(&(cn=apollo-admins)(&(member=*)))" # group filter
-    groupMembership: "member" # group memberShip eg. member or memberUid
+    groupBase: "ou=Group" # group search base
+    groupSearch: "(&(cn=apollo-admins))" # group filter
+    groupMembership: "memberUid" # group memberShip

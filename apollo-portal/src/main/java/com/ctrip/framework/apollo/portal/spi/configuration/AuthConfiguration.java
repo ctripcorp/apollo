@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
@@ -14,6 +15,7 @@ import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultSsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
+import com.ctrip.framework.apollo.portal.spi.ldap.FilterLdapByGroupUserSearch;
 import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
@@ -353,17 +355,33 @@ public class AuthConfiguration {
     private final LdapProperties ldapProperties;
     private final LdapContextSource ldapContextSource;
 
-    public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties, final LdapContextSource ldapContextSource) {
+    private final LdapExtendProperties ldapExtendProperties;
+
+    public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties,
+        final LdapContextSource ldapContextSource,
+       final LdapExtendProperties ldapExtendProperties) {
       this.ldapProperties = ldapProperties;
       this.ldapContextSource = ldapContextSource;
+      this.ldapExtendProperties = ldapExtendProperties;
     }
 
     @Bean
     public FilterBasedLdapUserSearch userSearch() {
-      FilterBasedLdapUserSearch filterBasedLdapUserSearch = new FilterBasedLdapUserSearch("",
-          ldapProperties.getSearchFilter(), ldapContextSource);
-      filterBasedLdapUserSearch.setSearchSubtree(true);
-      return filterBasedLdapUserSearch;
+      if (ldapExtendProperties.getGroup() == null || StringUtils
+          .isBlank(ldapExtendProperties.getGroup().getGroupSearch())) {
+        FilterBasedLdapUserSearch filterBasedLdapUserSearch = new FilterBasedLdapUserSearch("",
+            ldapProperties.getSearchFilter(), ldapContextSource);
+        filterBasedLdapUserSearch.setSearchSubtree(true);
+        return filterBasedLdapUserSearch;
+      } else {
+        FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
+            ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
+            ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
+            ldapExtendProperties.getMapping().getRdnKey(),
+            ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
+        filterLdapByGroupUserSearch.setSearchSubtree(true);
+        return filterLdapByGroupUserSearch;
+      }
     }
 
     @Bean
