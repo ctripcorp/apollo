@@ -7,10 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import java.util.List;
+import java.util.Properties;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,38 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   @Test
+  public void testPropertiesCompatiblePropertySource() throws Exception {
+    int someTimeout = 1000;
+    int someBatch = 2000;
+    Properties properties = mock(Properties.class);
+
+    when(properties.getProperty(TIMEOUT_PROPERTY)).thenReturn(String.valueOf(someTimeout));
+    when(properties.getProperty(BATCH_PROPERTY)).thenReturn(String.valueOf(someBatch));
+    PropertiesCompatibleConfigFile configFile = mock(PropertiesCompatibleConfigFile.class);
+    when(configFile.asProperties()).thenReturn(properties);
+
+    mockConfigFile("application.yaml", configFile);
+
+    check(someTimeout, someBatch, AppConfig9.class);
+  }
+
+  @Test
+  public void testPropertiesCompatiblePropertySourceWithNonNormalizedCase() throws Exception {
+    int someTimeout = 1000;
+    int someBatch = 2000;
+    Properties properties = mock(Properties.class);
+
+    when(properties.getProperty(TIMEOUT_PROPERTY)).thenReturn(String.valueOf(someTimeout));
+    when(properties.getProperty(BATCH_PROPERTY)).thenReturn(String.valueOf(someBatch));
+    PropertiesCompatibleConfigFile configFile = mock(PropertiesCompatibleConfigFile.class);
+    when(configFile.asProperties()).thenReturn(properties);
+
+    mockConfigFile("application.yaml", configFile);
+
+    check(someTimeout, someBatch, AppConfig10.class);
+  }
+
+  @Test
   public void testMultiplePropertySources() throws Exception {
     int someTimeout = 1000;
     int someBatch = 2000;
@@ -87,26 +121,48 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   }
 
   @Test
-  public void testMultiplePropertySourcesWithSameProperties() throws Exception {
+  public void testMultiplePropertiesCompatiblePropertySourcesWithSameProperties() throws Exception {
     int someTimeout = 1000;
     int anotherTimeout = someTimeout + 1;
     int someBatch = 2000;
 
-    Config application = mock(Config.class);
-    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
-    when(application.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
-    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
+    Properties properties = mock(Properties.class);
+
+    when(properties.getProperty(TIMEOUT_PROPERTY)).thenReturn(String.valueOf(someTimeout));
+    when(properties.getProperty(BATCH_PROPERTY)).thenReturn(String.valueOf(someBatch));
+    PropertiesCompatibleConfigFile configFile = mock(PropertiesCompatibleConfigFile.class);
+    when(configFile.asProperties()).thenReturn(properties);
+
+    mockConfigFile("application.yml", configFile);
 
     Config fxApollo = mock(Config.class);
     when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
     mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
 
-    check(someTimeout, someBatch, AppConfig3.class);
+    check(someTimeout, someBatch, AppConfig11.class);
   }
-
 
   @Test
   public void testMultiplePropertySourcesCoverWithSameProperties() throws Exception {
+    //Multimap does not maintain the strict input order of namespace.
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+
+    Config fxApollo = mock(Config.class);
+    when(fxApollo.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(someTimeout));
+    when(fxApollo.getProperty(eq(BATCH_PROPERTY), anyString())).thenReturn(String.valueOf(someBatch));
+    mockConfig(FX_APOLLO_NAMESPACE, fxApollo);
+
+    Config application = mock(Config.class);
+    when(application.getProperty(eq(TIMEOUT_PROPERTY), anyString())).thenReturn(String.valueOf(anotherTimeout));
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, application);
+
+    check(someTimeout, someBatch, AppConfig6.class);
+  }
+
+  @Test
+  public void testMultiplePropertySourcesCoverWithSamePropertiesWithPropertiesCompatiblePropertySource() throws Exception {
     //Multimap does not maintain the strict input order of namespace.
     int someTimeout = 1000;
     int anotherTimeout = someTimeout + 1;
@@ -421,6 +477,33 @@ public class JavaConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     @Bean
     TestJsonPropertyBean testJavaConfigBean() {
       return new TestJsonPropertyBean();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig("application.yaml")
+  static class AppConfig9 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig("application.yaMl")
+  static class AppConfig10 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig({"application.yml", "FX.apollo"})
+  static class AppConfig11 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
     }
   }
 
