@@ -36,6 +36,9 @@ role_module.controller('NamespaceRoleController',
 
                 });
 
+            /**
+             * 获取所有环境，并根据环境信息获取环境下的用户角色列表
+             */
             EnvService.find_all_envs()
                 .then(function (result){
                     $scope.envs = result;
@@ -51,6 +54,9 @@ role_module.controller('NamespaceRoleController',
                     }
                 });
 
+            /**
+             * 获取所有环境下的用户角色列表
+             */
             PermissionService.get_namespace_role_users($scope.pageContext.appId,
                 $scope.pageContext.namespaceName)
                 .then(function (result) {
@@ -142,22 +148,36 @@ role_module.controller('NamespaceRoleController',
 
                 // 查看权
                 if("Viewer" === roleType) {
+                    // 获取选中的用户ID
                     var user = $('.' + $scope.viewerRoleWidgetId).select2('data')[0];
                     if (!user) {
                         toastr.warning("请选择用户");
                         return;
                     }
+                    // 设置按钮可用
                     $scope.viewerRoleSubmitBtnDisabled = true;
-                    var toAssignViewerRoleUser = user.id;
 
-                    var assignViewerRoleFunc =  PermissionService.assign_viewer_role;
+                    // 需要授权的用户id
+                    var toAssignViewerRoleUser = user.id;
+                    // 授权函数
+                    var assignViewerRoleFunc =  $scope.viewerRoleSelectedEnv === "" ? PermissionService.assign_viewer_role :
+                        function(appId, user) {
+                            return PermissionService.assign_viewer_env_role(appId, $scope.viewerRoleSelectedEnv,user);
+                        };
 
                     assignViewerRoleFunc($scope.pageContext.appId, toAssignViewerRoleUser).then(function (result) {
                             toastr.success("添加成功");
                             $scope.viewerRoleSubmitBtnDisabled = false;
-                            $scope.rolesAssignedUsers.viewerRoleUsers.push({userId: toAssignViewerRoleUser});
+                            if($scope.viewerRoleSelectedEnv === "") {
+                                $scope.rolesAssignedUsers.viewerRoleUsers.push({userId: toAssignViewerRoleUser});
+                            } else {
+                                $scope.envRolesAssignedUsers[$scope.viewerRoleSelectedEnv].viewerRoleUsers.push(
+                                    {userId: toAssignViewerRoleUser});
+                            }
+
                             $('.' + $scope.viewerRoleWidgetId).select2("val", "");
                             $scope.viewerRoleSelectedEnv = "";
+
                         }, function (result) {
                             $scope.viewerRoleSubmitBtnDisabled = false;
                             toastr.error(AppUtil.errorMsg(result), "添加失败");
@@ -212,18 +232,19 @@ role_module.controller('NamespaceRoleController',
                 }
 
                 if('Viewer' === roleType) {
-                    var removeViewerRoleFunc = PermissionService.remove_viewer_role;
+                    var removeViewerRoleFunc = !env ? PermissionService.remove_viewer_role :
+                        function (appId, user) {
+                            return PermissionService.remove_viewer_env_role(appId, env, user);
+                        }
 
-                    removeViewerRoleFunc($scope.pageContext.appId,
-                        $scope.pageContext.namespaceName,
-                        user)
-                        .then(function (result) {
+                    removeViewerRoleFunc($scope.pageContext.appId, user).then(function (result) {
                             toastr.success("删除成功");
-                            if (!env) {
-                                removeUserFromList($scope.rolesAssignedUsers.modifyRoleUsers, user);
+                            if(!env) {
+                                removeUserFromList($scope.rolesAssignedUsers.viewerRoleUsers, user);
                             } else {
-                                removeUserFromList($scope.envRolesAssignedUsers[env].modifyRoleUsers, user);
+                                removeUserFromList($scope.envRolesAssignedUsers[env].viewerRoleUsers, user);
                             }
+
                         }, function (result) {
                             toastr.error(AppUtil.errorMsg(result), "删除失败");
                         });

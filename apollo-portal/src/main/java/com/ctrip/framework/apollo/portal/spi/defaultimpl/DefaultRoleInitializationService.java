@@ -58,6 +58,12 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
     // 初始化查看角色
     createAppViewerRole(appId, operator);
+    List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
+    for (Env env : portalEnvs) {
+      // 根据环境初始化查看角色
+      createAppViewerEnvRole(appId, operator, env.toString());
+    }
+
 
     //assign master role to user
     rolePermissionService.assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
@@ -121,6 +127,11 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
       createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE, env,
           releaseNamespaceEnvRoleName, operator);
     }
+
+    String viewerEnvRoleName = RoleUtils.buildViewerAppEnvRoleName(appId, env);
+    if(rolePermissionService.findRoleByRoleName(viewerEnvRoleName) == null) {
+      createAppViewerEnvRole(appId, operator, env);
+    }
   }
 
   private void createAppMasterRole(String appId, String operator) {
@@ -153,6 +164,23 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     // 创建查看角色
     Role appViewerRole = createRole(RoleUtils.buildViewerAppRoleName(appId), operator);
 
+    rolePermissionService.createRoleWithPermissions(appViewerRole, appPermissionIds);
+  }
+
+  /**
+   * 根据环境创建查看角色
+   * @param appId
+   * @param operator
+   * @param env
+   */
+  private void createAppViewerEnvRole(String appId, String operator, String env) {
+
+    Set<Permission> appPermissions = FluentIterable.from(Lists.newArrayList(PermissionType.BROWSE_CONFIG)).transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
+    Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
+    Set<Long> appPermissionIds = FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
+
+    // 创建查看角色
+    Role appViewerRole = createRole(RoleUtils.buildViewerAppEnvRoleName(appId, env), operator);
     rolePermissionService.createRoleWithPermissions(appViewerRole, appPermissionIds);
   }
 

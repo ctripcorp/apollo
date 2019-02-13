@@ -198,7 +198,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
     }
 
     public boolean isSuperAdmin(String userId) {
-        return portalConfig.superAdmins().contains(userId);
+                return portalConfig.superAdmins().contains(userId);
     }
 
     /**

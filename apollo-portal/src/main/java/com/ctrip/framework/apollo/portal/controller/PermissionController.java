@@ -99,6 +99,13 @@ public class PermissionController {
   }
 
 
+  /**
+   * 获取以环境区分的用户角色列表(以用户拥有的角色分类)
+   * @param appId
+   * @param env
+   * @param namespaceName
+   * @return
+   */
   @GetMapping("/apps/{appId}/envs/{env}/namespaces/{namespaceName}/role_users")
   public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
 
@@ -112,13 +119,19 @@ public class PermissionController {
     assignedUsers.setAppId(appId);
     assignedUsers.setEnv(Env.fromString(env));
 
+    // 具有当前配置发布权限的用户
     Set<UserInfo> releaseNamespaceUsers =
         rolePermissionService.queryUsersWithRole(RoleUtils.buildReleaseNamespaceRoleName(appId, namespaceName, env));
     assignedUsers.setReleaseRoleUsers(releaseNamespaceUsers);
 
+    // 具有当前配置修改权限的用户
     Set<UserInfo> modifyNamespaceUsers =
         rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
+
+    // 具有当前配置查看权限的用户
+    Set<UserInfo> viewerUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewerAppEnvRoleName(appId, env));
+    assignedUsers.setViewerRoleUsers(viewerUsers);
 
     return assignedUsers;
   }
@@ -165,6 +178,13 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
+
+  /**
+   * 获取用户角色列表(所有环境)
+   * @param appId
+   * @param namespaceName
+   * @return
+   */
   @GetMapping("/apps/{appId}/namespaces/{namespaceName}/role_users")
   public NamespaceRolesAssignedUsers getNamespaceRoles(@PathVariable String appId, @PathVariable String namespaceName) {
 
@@ -179,6 +199,10 @@ public class PermissionController {
     Set<UserInfo> modifyNamespaceUsers =
         rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
+
+    // 具有当前配置查看权限的用户
+    Set<UserInfo> viewerUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewerAppRoleName(appId));
+    assignedUsers.setViewerRoleUsers(viewerUsers);
 
     return assignedUsers;
   }
@@ -216,6 +240,12 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
+
+  /**
+   * 获取所有环境下的授权
+   * @param appId
+   * @return
+   */
   @GetMapping("/apps/{appId}/role_users")
   public AppRolesAssignedUsers getAppRoles(@PathVariable String appId) {
     AppRolesAssignedUsers users = new AppRolesAssignedUsers();
@@ -227,6 +257,31 @@ public class PermissionController {
     return users;
   }
 
+
+  /**
+   * 获取指定环境下的授权
+   * @param appId
+   * @param env
+   * @return
+   */
+  @GetMapping("/apps/{appId}/envs/{env}/role_users")
+  public AppRolesAssignedUsers getAppEnvRoles(@PathVariable String appId, @PathVariable String env) {
+    AppRolesAssignedUsers users = new AppRolesAssignedUsers();
+    users.setAppId(appId);
+
+    Set<UserInfo> masterUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildAppMasterRoleName(appId));
+    users.setMasterUsers(masterUsers);
+
+    return users;
+  }
+
+  /**
+   * 授权到所有环境下
+   * @param appId
+   * @param roleType
+   * @param user
+   * @return
+   */
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
   @PostMapping("/apps/{appId}/roles/{roleType}")
   public ResponseEntity<Void> assignAppRoleToUser(@PathVariable String appId, @PathVariable String roleType,
@@ -246,6 +301,38 @@ public class PermissionController {
     return ResponseEntity.ok().build();
   }
 
+
+  /**
+   * 授权到指定环境
+   * @param appId
+   * @param roleType
+   * @param user
+   * @return
+   */
+  @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
+  @PostMapping("/apps/{appId}/envs/{env}/roles/{roleType}")
+  public ResponseEntity<Void> assignAppEnvRoleToUser(@PathVariable String appId, @PathVariable String env, @PathVariable String roleType, @RequestBody String user) {
+    checkUserExists(user);
+    RequestPrecondition.checkArgumentsNotEmpty(user);
+
+    if (!RoleType.isValidRoleType(roleType)) {
+      throw new BadRequestException("role type is illegal");
+    }
+
+    // validate env parameter
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+      throw new BadRequestException("env is illegal");
+    }
+
+    Set<String> assignedUsers = rolePermissionService.assignRoleToUsers(RoleUtils.buildAppEnvRoleName(appId, roleType, env),
+            Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
+    if (CollectionUtils.isEmpty(assignedUsers)) {
+      throw new BadRequestException(user + "已授权");
+    }
+
+    return ResponseEntity.ok().build();
+  }
+
   @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
   @DeleteMapping("/apps/{appId}/roles/{roleType}")
   public ResponseEntity<Void> removeAppRoleFromUser(@PathVariable String appId, @PathVariable String roleType,
@@ -257,6 +344,33 @@ public class PermissionController {
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildAppRoleName(appId, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
+    return ResponseEntity.ok().build();
+  }
+
+
+  /**
+   * 删除指定环境的授权
+   * @param appId
+   * @param roleType
+   * @param user
+   * @return
+   */
+  @PreAuthorize(value = "@permissionValidator.hasAssignRolePermission(#appId)")
+  @DeleteMapping("/apps/{appId}/envs/{env}/roles/{roleType}")
+  public ResponseEntity<Void> removeAppEnvRoleFromUser(@PathVariable String appId, @PathVariable String env, @PathVariable String roleType,
+                                                    @RequestParam String user) {
+    RequestPrecondition.checkArgumentsNotEmpty(user);
+
+    if (!RoleType.isValidRoleType(roleType)) {
+      throw new BadRequestException("role type is illegal");
+    }
+
+    // validate env parameter
+    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+      throw new BadRequestException("env is illegal");
+    }
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildAppEnvRoleName(appId, roleType, env),
+            Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }
 

@@ -39,7 +39,11 @@ public class RoleUtils {
   }
 
   public static String buildAppRoleName(String appId, String roleType) {
-    return STRING_JOINER.join(roleType, appId);
+    return buildAppEnvRoleName(appId, roleType, null);
+  }
+
+  public static String buildAppEnvRoleName(String appId, String roleType, String env) {
+    return STRING_JOINER.join(roleType, appId, env);
   }
 
   public static String buildModifyNamespaceRoleName(String appId, String namespaceName) {
@@ -92,7 +96,17 @@ public class RoleUtils {
    * @return
    */
   public static String buildViewerAppRoleName(String appId) {
-    return STRING_JOINER.join(RoleType.VIEWER, appId);
+    return buildViewerAppEnvRoleName(appId, null);
+  }
+
+  /**
+   * 创建查看角色（区分环境）
+   * @param appId
+   * @param env
+   * @return
+   */
+  public static String buildViewerAppEnvRoleName(String appId, String env) {
+    return STRING_JOINER.join(RoleType.VIEWER, appId, env);
   }
 
 

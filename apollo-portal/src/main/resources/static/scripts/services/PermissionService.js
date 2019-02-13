@@ -53,10 +53,17 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             method: 'DELETE',
             url: '/apps/:appId/envs/:env/namespaces/:namespaceName/roles/:roleType?user=:user'
         },
+        // 获取所有环境的授权
         get_app_role_users: {
             method: 'GET',
             url: '/apps/:appId/role_users'    
         },
+        // 根据环境获取授权
+        get_app_env_role_users: {
+            method: 'GET',
+            url: '/apps/:appId/envs/:env/role_users'
+        },
+        // 所有环境授权
         assign_app_role_to_user: {
             method: 'POST',
             url: '/apps/:appId/roles/:roleType',
@@ -64,9 +71,22 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
                  'Content-Type': 'text/plain;charset=UTF-8'
             }
         },
+        // 根据环境授权
+        assign_app_env_role_to_user: {
+            method: 'POST',
+            url: '/apps/:appId/envs/:env/roles/:roleType',
+            headers: {
+                'Content-Type': 'text/plain;charset=UTF-8'
+            }
+        },
         remove_app_role_from_user: {
             method: 'DELETE',
             url: '/apps/:appId/roles/:roleType?user=:user'
+        },
+        // 删除指定环境的授权
+        remove_app_env_role_from_user: {
+            method: 'DELETE',
+            url: '/apps/:appId/envs/:env/roles/:roleType?user=:user'
         }
     });
 
@@ -176,17 +196,79 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
     }
 
 
-    function removeViewerRoleFromUser(appId, namespaceName, roleType, user) {
+    /**
+     * 将查看权限赋予User
+     * @param appId
+     * @param roleType
+     * @param user
+     * @returns {*|promise|d}
+     */
+    function assignViewerRoleToUser(appId, roleType, user) {
+        var d = $q.defer();
+        permission_resource.assign_app_role_to_user({
+                appId: appId,
+                roleType: roleType,
+                env: env
+            }, user,
+            function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+        return d.promise;
+    }
+
+    function assignViewerEnvRoleToUser(appId, roleType, env, user) {
+        var d = $q.defer();
+        permission_resource.assign_app_env_role_to_user({
+                appId: appId,
+                roleType: roleType,
+                env: env
+            }, user,
+            function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+        return d.promise;
+    }
+
+
+    /**
+     * 将查看权限从User删除
+     * @param appId
+     * @param roleType
+     * @param user
+     * @returns {*|promise|d}
+     */
+    function removeViewerRoleFromUser(appId, roleType, user) {
         var d = $q.defer();
         permission_resource.remove_app_role_from_user({
-                                                                appId: appId,
-                                                                namespaceName: namespaceName,
-                                                                roleType: roleType,
-                                                                user: user
-                                                            },
-                                                            function (result) {
-                                                                d.resolve(result);
-                                                            }, function (result) {
+            appId: appId,
+            roleType: roleType,
+            user: user
+        },
+        function (result) {
+            d.resolve(result);
+        },
+        function (result) {
+                d.reject(result);
+        });
+        return d.promise;
+    }
+
+    function removeViewerEnvRoleFromUser(appId, roleType, env, user) {
+        var d = $q.defer();
+        permission_resource.remove_app_env_role_from_user({
+                appId: appId,
+                roleType: roleType,
+                env: env,
+                user: user
+            },
+            function (result) {
+                d.resolve(result);
+            },
+            function (result) {
                 d.reject(result);
             });
         return d.promise;
@@ -270,6 +352,33 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         remove_release_namespace_env_role: function (appId, env, namespaceName, user) {
             return removeNamespaceEnvRoleFromUser(appId, env, namespaceName, 'ReleaseNamespace', user);
         },
+
+        /**
+         * 授予查看权限
+         * @param appId
+         * @param user
+         * @returns {*|promise|d}
+         */
+        assign_viewer_role: function (appId, user) {
+          return assignViewerRoleToUser(appId, 'Viewer', user);
+        },
+        assign_viewer_env_role: function(appId, env, user) {
+            return assignViewerEnvRoleToUser(appId, "Viewer", env, user);
+        },
+
+        /**
+         * 移除查看权
+         * @param appId
+         * @param user
+         */
+        remove_viewer_role: function (appId, user) {
+            return removeViewerRoleFromUser(appId, 'Viewer', user);
+        },
+
+        remove_viewer_env_role: function(appId, env, user) {
+            return removeViewerEnvRoleFromUser(appId, 'Viewer', env, user);
+        },
+
         get_namespace_role_users: function (appId, namespaceName) {
             var d = $q.defer();
             permission_resource.get_namespace_role_users({
