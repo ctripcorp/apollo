@@ -58,7 +58,7 @@
                                 通过创建一个私有的Namespace可以实现分组管理配置
                             </li>
                             <li>私有Namespace的格式可以是xml、yml、yaml、json. 您可以通过apollo-client中ConfigFile接口来获取非properties格式Namespace的内容</li>
-                            <li>1.3.0及以上版本的apollo-client针对yaml/yml提供了更好的支持，可以通过ConfigService.getConfig("someNamespace.yaml")直接获取Config对象，也可以通过@EnableApolloConfig("someNamespace.yaml")注入yaml配置到Spring中去</li>
+                            <li>1.3.0及以上版本的apollo-client针对yaml/yml提供了更好的支持，可以通过ConfigService.getConfig("someNamespace.yml")直接获取Config对象，也可以通过@EnableApolloConfig("someNamespace.yml")或apollo.bootstrap.namespaces=someNamespace.yml注入yml配置到Spring/Spring Boot中去</li>
                         </ul>
                     </div>
                     <div class="row text-right" style="padding-right: 20px;">

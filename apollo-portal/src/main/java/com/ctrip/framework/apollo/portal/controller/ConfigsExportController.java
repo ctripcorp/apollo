@@ -48,7 +48,6 @@ public class ConfigsExportController {
   @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/import")
   public void importConfigFile(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
-      @RequestParam Integer namespaceId,
       @RequestParam("file") MultipartFile file) {
     if (file.isEmpty()) {
       throw new BadRequestException("The file is empty.");
@@ -73,7 +72,7 @@ public class ConfigsExportController {
     model.setEnv(env);
     model.setClusterName(clusterName);
     model.setNamespaceName(namespaceName);
-    model.setNamespaceId(namespaceId);
+    model.setNamespaceId(namespaceDTO.getId());
     String configText;
     try(InputStream in = file.getInputStream()){
       configText = ConfigToFileUtils.fileToString(in);
