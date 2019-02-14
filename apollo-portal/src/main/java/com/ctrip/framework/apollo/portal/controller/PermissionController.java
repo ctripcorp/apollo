@@ -65,6 +65,24 @@ public class PermissionController {
     return ResponseEntity.ok().body(permissionCondition);
   }
 
+
+  /**
+   * 是否拥有App级别的以环境区分的权限
+   * @param appId
+   * @param env
+   * @param permissionType
+   * @return
+   */
+  @GetMapping("/apps/{appId}/envs/{env}/permissions/{permissionType}")
+  public ResponseEntity<PermissionCondition> hasEnvPermission(@PathVariable String appId, @PathVariable String env, @PathVariable String permissionType) {
+    PermissionCondition permissionCondition = new PermissionCondition();
+
+    permissionCondition.setHasPermission(
+            rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType, RoleUtils.buildViewverTargetId(appId, env)));
+
+    return ResponseEntity.ok().body(permissionCondition);
+  }
+
   @GetMapping("/apps/{appId}/namespaces/{namespaceName}/permissions/{permissionType}")
   public ResponseEntity<PermissionCondition> hasPermission(@PathVariable String appId, @PathVariable String namespaceName,
                                                            @PathVariable String permissionType) {

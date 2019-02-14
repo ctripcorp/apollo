@@ -175,13 +175,14 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
    */
   private void createAppViewerEnvRole(String appId, String operator, String env) {
 
-    Set<Permission> appPermissions = FluentIterable.from(Lists.newArrayList(PermissionType.BROWSE_CONFIG)).transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
-    Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
-    Set<Long> appPermissionIds = FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
-
+    Permission permission = createPermission(RoleUtils.buildViewverTargetId(appId, env), PermissionType.BROWSE_CONFIG, operator);
+    Permission createdPermission = rolePermissionService.createPermission(permission);
     // 创建查看角色
     Role appViewerRole = createRole(RoleUtils.buildViewerAppEnvRoleName(appId, env), operator);
-    rolePermissionService.createRoleWithPermissions(appViewerRole, appPermissionIds);
+    rolePermissionService.createRoleWithPermissions(appViewerRole, Sets.newHashSet(createdPermission.getId()));
+
+
+
   }
 
   private Permission createPermission(String targetId, String permissionType, String operator) {

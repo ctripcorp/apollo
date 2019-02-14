@@ -230,7 +230,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
             Collection<String> permissionTypes = targetIdPermissionTypes.get(targetId);
             List<Permission> current =
                     permissionRepository.findByPermissionTypeInAndTargetId(permissionTypes, targetId);
-            Preconditions.checkState(CollectionUtils.isEmpty(current),
+             Preconditions.checkState(CollectionUtils.isEmpty(current),
                     "Permission with permissionType %s targetId %s already exists!", permissionTypes,
                     targetId);
         }

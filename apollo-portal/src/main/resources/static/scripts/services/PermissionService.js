@@ -11,6 +11,10 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             method: 'GET',
             url: '/apps/:appId/permissions/:permissionType'
         },
+        has_app_env_permission: {
+            method: 'GET',
+            url: '/apps/:appId/envs/:env/permissions/:permissionType'
+        },
         has_namespace_permission: {
             method: 'GET',
             url: '/apps/:appId/namespaces/:namespaceName/permissions/:permissionType'
@@ -117,6 +121,28 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         return d.promise;
     }
 
+    /**
+     * 是否拥有app级别的以环境区分的权限
+     * @param appId
+     * @param env
+     * @param permissionType
+     * @returns {*|promise|d}
+     */
+    function hasAppEnvPermission(appId, env, permissionType) {
+        var d = $q.defer();
+        permission_resource.has_app_env_permission({
+                appId: appId,
+                permissionType: permissionType,
+                env: env
+            },
+            function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+        return d.promise;
+    }
+
     function hasNamespacePermission(appId, namespaceName, permissionType) {
         var d = $q.defer();
         permission_resource.has_namespace_permission({
@@ -147,6 +173,8 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             });
         return d.promise;
     }
+
+
 
     function assignNamespaceRoleToUser(appId, namespaceName, roleType, user) {
         var d = $q.defer();
@@ -315,6 +343,12 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         },
         has_release_namespace_env_permission: function (appId, env, namespaceName) {
             return hasNamespaceEnvPermission(appId, env, namespaceName, 'ReleaseNamespace');
+        },
+        has_viewer_permission: function(appId){
+            return hasAppPermission(appId, 'BrowseConfig');
+        },
+        has_viewer_env_permission: function(appId, env) {
+            return hasAppEnvPermission(appId, env, 'BrowseConfig');
         },
         has_root_permission: function () {
             var d = $q.defer();

@@ -84,6 +84,13 @@
                 </a>
 
                 <a type="button" class="btn btn-default btn-sm J_tableview_btn"
+                   data-tooltip="tooltip" data-placement="bottom" title="您没有查看配置的权限,请申请"
+                   ng-click="showNoViewPermissionDialog()"
+                   ng-show="!namespace.hasViewerPermission">
+                    申请查看权限
+                </a>
+
+                <a type="button" class="btn btn-default btn-sm J_tableview_btn"
                    data-tooltip="tooltip" data-placement="bottom" title="您没有任何配置权限,请申请"
                    ng-click="showNoModifyPermissionDialog()"
                    ng-show="!namespace.hasModifyPermission && !namespace.hasReleasePermission">
@@ -205,7 +212,8 @@
         </header>
 
         <!--namespace body-->
-        <section ng-show="!namespace.isConfigHidden">
+        <!-- 拥有查看权限才给显示 -->
+        <section ng-show="!namespace.isConfigHidden && namespace.hasViewerPermission">
             <!--table view-->
             <div class="namespace-view-table" ng-show="namespace.viewType == 'table'">
 

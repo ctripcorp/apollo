@@ -110,4 +110,9 @@ public class RoleUtils {
   }
 
 
+  public static String buildViewverTargetId(String appId, String env) {
+    return STRING_JOINER.join(appId, env);
+  }
+
+
 }
