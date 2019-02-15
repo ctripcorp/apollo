@@ -45,15 +45,12 @@ public class ServiceController {
     return result;
   }
 
-  private static Function<InstanceInfo, ServiceDTO> InstanceInfo_To_ServiceDTO_Func = new Function<InstanceInfo, ServiceDTO>() {
-      @Override
-      public ServiceDTO apply(InstanceInfo instance) {
-          ServiceDTO service = new ServiceDTO();
-          service.setAppName(instance.getAppName());
-          service.setInstanceId(instance.getInstanceId());
-          service.setHomepageUrl(instance.getHomePageUrl());
-          return service;
-      }
+  private static Function<InstanceInfo, ServiceDTO> InstanceInfo_To_ServiceDTO_Func = instance -> {
+      ServiceDTO service = new ServiceDTO();
+      service.setAppName(instance.getAppName());
+      service.setInstanceId(instance.getInstanceId());
+      service.setHomepageUrl(instance.getHomePageUrl());
+      return service;
   };
 
 }

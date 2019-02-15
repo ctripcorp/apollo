@@ -61,14 +61,11 @@ public class ConsumerAuditUtilTest {
 
     SettableFuture<List<ConsumerAudit>> result = SettableFuture.create();
 
-    doAnswer(new Answer<Void>() {
-      @Override
-      public Void answer(InvocationOnMock invocation) throws Throwable {
-        Object[] args = invocation.getArguments();
-        result.set((List<ConsumerAudit>) args[0]);
+    doAnswer((Answer<Void>) invocation -> {
+      Object[] args = invocation.getArguments();
+      result.set((List<ConsumerAudit>) args[0]);
 
-        return null;
-      }
+      return null;
     }).when(consumerService).createConsumerAudits(anyCollection());
 
     consumerAuditUtil.audit(request, someConsumerId);
