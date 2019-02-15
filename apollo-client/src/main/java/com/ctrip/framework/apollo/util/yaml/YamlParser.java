@@ -66,7 +66,7 @@ public class YamlParser {
   @SuppressWarnings("unchecked")
   private Map<String, Object> asMap(Object object) {
     // YAML can have numbers as keys
-    Map<String, Object> result = new LinkedHashMap<String, Object>();
+    Map<String, Object> result = new LinkedHashMap<>();
     if (!(object instanceof Map)) {
       // A document can be a text literal
       result.put("document", object);
@@ -102,7 +102,7 @@ public class YamlParser {
   }
 
   private Map<String, Object> getFlattenedMap(Map<String, Object> source) {
-    Map<String, Object> result = new LinkedHashMap<String, Object>();
+    Map<String, Object> result = new LinkedHashMap<>();
     buildFlattenedMap(result, source, null);
     return result;
   }

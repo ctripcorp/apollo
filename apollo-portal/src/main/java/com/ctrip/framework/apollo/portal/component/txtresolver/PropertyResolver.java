@@ -40,7 +40,7 @@ public class PropertyResolver implements ConfigTextResolver {
     }
 
     ItemChangeSets changeSets = new ItemChangeSets();
-    Map<Integer, String> newLineNumMapItem = new HashMap<Integer, String>();//use for delete blank and comment item
+    Map<Integer, String> newLineNumMapItem = new HashMap<>();//use for delete blank and comment item
     int lineCounter = 1;
     for (String newItem : newItems) {
       newItem = newItem.trim();

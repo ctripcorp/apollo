@@ -390,7 +390,7 @@ public class ReleaseService {
 
   private Map<String, String> getNamespaceItems(Namespace namespace) {
     List<Item> items = itemService.findItemsWithoutOrdered(namespace.getId());
-    Map<String, String> configurations = new HashMap<String, String>();
+    Map<String, String> configurations = new HashMap<>();
     for (Item item : items) {
       if (StringUtils.isEmpty(item.getKey())) {
         continue;

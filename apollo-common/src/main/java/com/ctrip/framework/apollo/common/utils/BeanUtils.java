@@ -63,7 +63,7 @@ public class BeanUtils {
     final BeanWrapper src = new BeanWrapperImpl(source);
     PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-    Set<String> emptyNames = new HashSet<String>();
+    Set<String> emptyNames = new HashSet<>();
     for (PropertyDescriptor pd : pds) {
       Object srcValue = src.getPropertyValue(pd.getName());
       if (srcValue == null) emptyNames.add(pd.getName());
@@ -84,7 +84,7 @@ public class BeanUtils {
    */
   @SuppressWarnings("unchecked")
   public static <K, V> Map<K, V> mapByKey(String key, List<? extends Object> list) {
-    Map<K, V> map = new HashMap<K, V>();
+    Map<K, V> map = new HashMap<>();
     if (CollectionUtils.isEmpty(list)) {
       return map;
     }
@@ -112,7 +112,7 @@ public class BeanUtils {
    */
   @SuppressWarnings("unchecked")
   public static <K, V> Map<K, List<V>> aggByKeyToList(String key, List<? extends Object> list) {
-    Map<K, List<V>> map = new HashMap<K, List<V>>();
+    Map<K, List<V>> map = new HashMap<>();
     if (CollectionUtils.isEmpty(list)) {// 防止外面传入空list
       return map;
     }
@@ -124,7 +124,7 @@ public class BeanUtils {
       for (Object o : list) {
         K k = (K) field.get(o);
         if (map.get(k) == null) {
-          map.put(k, new ArrayList<V>());
+          map.put(k, new ArrayList<>());
         }
         map.get(k).add((V) o);
       }
@@ -144,7 +144,7 @@ public class BeanUtils {
    */
   @SuppressWarnings("unchecked")
   public static <K> Set<K> toPropertySet(String key, List<? extends Object> list) {
-    Set<K> set = new HashSet<K>();
+    Set<K> set = new HashSet<>();
     if (CollectionUtils.isEmpty(list)) {// 防止外面传入空list
       return set;
     }
