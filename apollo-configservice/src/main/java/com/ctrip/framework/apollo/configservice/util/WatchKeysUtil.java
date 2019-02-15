@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithC
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -15,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -137,6 +137,6 @@ public class WatchKeysUtil {
       return Collections.emptySet();
     }
 
-    return FluentIterable.from(appNamespaces).transform(AppNamespace::getName).toSet();
+    return appNamespaces.stream().map(AppNamespace::getName).collect(Collectors.toSet());
   }
 }

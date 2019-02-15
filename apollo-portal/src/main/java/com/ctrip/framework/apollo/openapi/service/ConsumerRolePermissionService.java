@@ -6,12 +6,12 @@ import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.RolePermission;
 import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
-import com.google.common.collect.FluentIterable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -47,7 +47,7 @@ public class ConsumerRolePermissionService {
     }
 
     Set<Long> roleIds =
-        FluentIterable.from(consumerRoles).transform(ConsumerRole::getRoleId).toSet();
+        consumerRoles.stream().map(ConsumerRole::getRoleId).collect(Collectors.toSet());
     List<RolePermission> rolePermissions = rolePermissionRepository.findByRoleIdIn(roleIds);
     if (CollectionUtils.isEmpty(rolePermissions)) {
       return false;
