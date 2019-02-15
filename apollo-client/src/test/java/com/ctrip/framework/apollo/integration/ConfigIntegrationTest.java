@@ -446,14 +446,8 @@ public class ConfigIntegrationTest extends BaseIntegrationTest {
 
   private File createLocalCachePropertyFile(Properties properties) throws IOException {
     File file = new File(configDir, assembleLocalCacheFileName());
-    FileOutputStream in = null;
-    try {
-      in = new FileOutputStream(file);
+    try (FileOutputStream in = new FileOutputStream(file)) {
       properties.store(in, "Persisted by ConfigIntegrationTest");
-    } finally {
-      if (in != null) {
-        in.close();
-      }
     }
     return file;
   }
