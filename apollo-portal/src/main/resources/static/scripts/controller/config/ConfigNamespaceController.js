@@ -17,7 +17,6 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
     $scope.preCreateBranch = preCreateBranch;
     $scope.preDeleteBranch = preDeleteBranch;
     $scope.deleteBranch = deleteBranch;
-    $scope.showNoViewPermissionDialog = showNoViewPermissionDialog;
     $scope.showNoModifyPermissionDialog = showNoModifyPermissionDialog;
     $scope.lockCheck = lockCheck;
     $scope.emergencyPublish = emergencyPublish;
@@ -262,10 +261,6 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
     function showText(text) {
         $scope.text = text;
         $('#showTextModal').modal('show');
-    }
-
-    function showNoViewPermissionDialog() {
-        $("#viewNoPermissionDialog").modal('show');
     }
 
     function showNoModifyPermissionDialog() {

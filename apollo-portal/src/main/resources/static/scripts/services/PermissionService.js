@@ -478,33 +478,6 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
                     d.reject(result);
                 });
             return d.promise;
-        },
-        assign_viewer_role: function (appId, user) {
-            var d = $q.defer();
-            permission_resource.assign_app_role_to_user({
-                    appId: appId,
-                    roleType: 'Viewer'
-                }, user,
-                function (result) {
-                    d.resolve(result);
-                }, function (result) {
-                    d.reject(result);
-                });
-            return d.promise;
-        },
-        remove_viewer_role: function (appId, user) {
-        var d = $q.defer();
-        permission_resource.remove_app_role_from_user({
-                appId: appId,
-                roleType: 'Viewer',
-                user: user
-            },
-            function (result) {
-                d.resolve(result);
-            }, function (result) {
-                d.reject(result);
-            });
-        return d.promise;
-    }
+        }
     }
 }]);
