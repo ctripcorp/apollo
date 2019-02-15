@@ -31,6 +31,14 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             method: 'GET',
             url: '/apps/:appId/namespaces/:namespaceName/role_users'
         },
+        get_app_role_users: {
+            method: 'GET',
+            url: '/apps/:appId/role_users'
+        },
+        get_app_env_role_users: {
+            method: 'GET',
+            url: '/apps/:appId/envs/:env/role_users'
+        },
         get_namespace_env_role_users: {
             method: 'GET',
             url: '/apps/:appId/envs/:env/namespaces/:namespaceName/role_users'
@@ -57,17 +65,6 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             method: 'DELETE',
             url: '/apps/:appId/envs/:env/namespaces/:namespaceName/roles/:roleType?user=:user'
         },
-        // 获取所有环境的授权
-        get_app_role_users: {
-            method: 'GET',
-            url: '/apps/:appId/role_users'    
-        },
-        // 根据环境获取授权
-        get_app_env_role_users: {
-            method: 'GET',
-            url: '/apps/:appId/envs/:env/role_users'
-        },
-        // 所有环境授权
         assign_app_role_to_user: {
             method: 'POST',
             url: '/apps/:appId/roles/:roleType',
@@ -75,7 +72,6 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
                  'Content-Type': 'text/plain;charset=UTF-8'
             }
         },
-        // 根据环境授权
         assign_app_env_role_to_user: {
             method: 'POST',
             url: '/apps/:appId/envs/:env/roles/:roleType',
@@ -87,7 +83,6 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
             method: 'DELETE',
             url: '/apps/:appId/roles/:roleType?user=:user'
         },
-        // 删除指定环境的授权
         remove_app_env_role_from_user: {
             method: 'DELETE',
             url: '/apps/:appId/envs/:env/roles/:roleType?user=:user'
@@ -231,12 +226,11 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
      * @param user
      * @returns {*|promise|d}
      */
-    function assignViewerRoleToUser(appId, roleType, user) {
+    function assignViewRoleToUser(appId, roleType, user) {
         var d = $q.defer();
         permission_resource.assign_app_role_to_user({
                 appId: appId,
-                roleType: roleType,
-                env: env
+                roleType: roleType
             }, user,
             function (result) {
                 d.resolve(result);
@@ -246,7 +240,7 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         return d.promise;
     }
 
-    function assignViewerEnvRoleToUser(appId, roleType, env, user) {
+    function assignViewEnvRoleToUser(appId, roleType, env, user) {
         var d = $q.defer();
         permission_resource.assign_app_env_role_to_user({
                 appId: appId,
@@ -269,7 +263,7 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
      * @param user
      * @returns {*|promise|d}
      */
-    function removeViewerRoleFromUser(appId, roleType, user) {
+    function removeViewRoleFromUser(appId, roleType, user) {
         var d = $q.defer();
         permission_resource.remove_app_role_from_user({
             appId: appId,
@@ -285,7 +279,7 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         return d.promise;
     }
 
-    function removeViewerEnvRoleFromUser(appId, roleType, env, user) {
+    function removeViewEnvRoleFromUser(appId, roleType, env, user) {
         var d = $q.defer();
         permission_resource.remove_app_env_role_from_user({
                 appId: appId,
@@ -344,10 +338,10 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         has_release_namespace_env_permission: function (appId, env, namespaceName) {
             return hasNamespaceEnvPermission(appId, env, namespaceName, 'ReleaseNamespace');
         },
-        has_viewer_permission: function(appId){
+        has_view_permission: function(appId){
             return hasAppPermission(appId, 'BrowseConfig');
         },
-        has_viewer_env_permission: function(appId, env) {
+        has_view_env_permission: function(appId, env) {
             return hasAppEnvPermission(appId, env, 'BrowseConfig');
         },
         has_root_permission: function () {
@@ -393,11 +387,11 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
          * @param user
          * @returns {*|promise|d}
          */
-        assign_viewer_role: function (appId, user) {
-          return assignViewerRoleToUser(appId, 'Viewer', user);
+        assign_view_role: function (appId, user) {
+          return assignViewRoleToUser(appId, 'View', user);
         },
-        assign_viewer_env_role: function(appId, env, user) {
-            return assignViewerEnvRoleToUser(appId, "Viewer", env, user);
+        assign_view_env_role: function(appId, env, user) {
+            return assignViewEnvRoleToUser(appId, "View", env, user);
         },
 
         /**
@@ -405,12 +399,12 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
          * @param appId
          * @param user
          */
-        remove_viewer_role: function (appId, user) {
-            return removeViewerRoleFromUser(appId, 'Viewer', user);
+        remove_view_role: function (appId, user) {
+            return removeViewRoleFromUser(appId, 'View', user);
         },
 
-        remove_viewer_env_role: function(appId, env, user) {
-            return removeViewerEnvRoleFromUser(appId, 'Viewer', env, user);
+        remove_view_env_role: function(appId, env, user) {
+            return removeViewEnvRoleFromUser(appId, 'View', env, user);
         },
 
         get_namespace_role_users: function (appId, namespaceName) {

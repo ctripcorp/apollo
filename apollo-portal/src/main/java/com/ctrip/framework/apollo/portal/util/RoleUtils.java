@@ -95,8 +95,8 @@ public class RoleUtils {
    * @param appId
    * @return
    */
-  public static String buildViewerAppRoleName(String appId) {
-    return buildViewerAppEnvRoleName(appId, null);
+  public static String buildViewAppRoleName(String appId) {
+    return buildViewAppEnvRoleName(appId, null);
   }
 
   /**
@@ -105,12 +105,12 @@ public class RoleUtils {
    * @param env
    * @return
    */
-  public static String buildViewerAppEnvRoleName(String appId, String env) {
-    return STRING_JOINER.join(RoleType.VIEWER, appId, env);
+  public static String buildViewAppEnvRoleName(String appId, String env) {
+    return STRING_JOINER.join(RoleType.VIEW, appId, env);
   }
 
 
-  public static String buildViewverTargetId(String appId, String env) {
+  public static String buildViewTargetId(String appId, String env) {
     return STRING_JOINER.join(appId, env);
   }
 

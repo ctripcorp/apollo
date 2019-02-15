@@ -20,10 +20,10 @@ public class RoleType {
   /**
    * 配置查看角色
    */
-  public static final String VIEWER = "Viewer";
+  public static final String VIEW = "View";
 
   public static boolean isValidRoleType(String roleType) {
-    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType) || VIEWER.equals(roleType);
+    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType) || VIEW.equals(roleType);
   }
 
 }

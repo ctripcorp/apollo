@@ -39,23 +39,23 @@
                         <label class="control-label">查看配置权限<br><small>(仅可以查看配置)</small></label>
                     </div>
                     <div class="col-sm-8">
-                        <form class="form-inline" ng-submit="assignRoleToUser('Viewer')">
+                        <form class="form-inline" ng-submit="assignRoleToUser('View')">
                             <div class="form-group">
-                                <apollouserselector apollo-id="viewerRoleWidgetId"></apollouserselector>
-                                <select class="form-control input-sm" ng-model="viewerRoleSelectedEnv">
+                                <apollouserselector apollo-id="viewRoleWidgetId"></apollouserselector>
+                                <select class="form-control input-sm" ng-model="viewRoleSelectedEnv">
                                     <option value="">所有环境</option>
                                     <option ng-repeat="env in envs" ng-value="env">{{env}}</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-default" style="margin-left: 20px;" ng-disabled="viewerRoleSubmitBtnDisabled">添加</button>
+                            <button type="submit" class="btn btn-default" style="margin-left: 20px;" ng-disabled="viewRoleSubmitBtnDisabled">添加</button>
                         </form>
                         <!-- Split button -->
                         <div class="item-container">
                             <h5>所有环境</h5>
-                            <div class="btn-group item-info" ng-repeat="user in rolesAssignedUsers.viewerRoleUsers">
+                            <div class="btn-group item-info" ng-repeat="user in rolesAssignedUsers.viewRoleUsers">
                                 <button type="button" class="btn btn-default" ng-bind="user.userId"></button>
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" ng-click="removeUserRole('Viewer', user.userId, null)">
+                                        aria-haspopup="true" aria-expanded="false" ng-click="removeUserRole('View', user.userId, null)">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </button>
                             </div>
@@ -63,10 +63,10 @@
 
                         <div class="item-container" ng-repeat="env in envs">
                             <h5>{{env}}</h5>
-                            <div class="btn-group item-info" ng-repeat="user in envRolesAssignedUsers[env].viewerRoleUsers">
+                            <div class="btn-group item-info" ng-repeat="user in envRolesAssignedUsers[env].viewRoleUsers">
                                 <button type="button" class="btn btn-default" ng-bind="user.userId"></button>
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false" ng-click="removeUserRole('Viewer', user.userId, env)">
+                                        aria-haspopup="true" aria-expanded="false" ng-click="removeUserRole('View', user.userId, env)">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </button>
                             </div>

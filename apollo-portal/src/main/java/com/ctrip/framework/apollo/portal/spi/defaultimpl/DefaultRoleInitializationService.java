@@ -57,18 +57,18 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     createAppMasterRole(appId, operator);
 
     // 初始化查看角色
-    createAppViewerRole(appId, operator);
+    createAppViewRole(appId, operator);
     List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
     for (Env env : portalEnvs) {
       // 根据环境初始化查看角色
-      createAppViewerEnvRole(appId, operator, env.toString());
+      createAppViewEnvRole(appId, operator, env.toString());
     }
 
 
     //assign master role to user
     rolePermissionService.assignRoleToUsers(RoleUtils.buildAppMasterRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
     // 授予查看角色
-    rolePermissionService.assignRoleToUsers(RoleUtils.buildViewerAppRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildViewAppRoleName(appId), Sets.newHashSet(app.getOwnerName()), operator);
 
     initNamespaceRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
     initNamespaceEnvRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
@@ -128,9 +128,9 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
           releaseNamespaceEnvRoleName, operator);
     }
 
-    String viewerEnvRoleName = RoleUtils.buildViewerAppEnvRoleName(appId, env);
-    if(rolePermissionService.findRoleByRoleName(viewerEnvRoleName) == null) {
-      createAppViewerEnvRole(appId, operator, env);
+    String viewEnvRoleName = RoleUtils.buildViewAppEnvRoleName(appId, env);
+    if(rolePermissionService.findRoleByRoleName(viewEnvRoleName) == null) {
+      createAppViewEnvRole(appId, operator, env);
     }
   }
 
@@ -155,16 +155,16 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
    * @param appId
    * @param operator
    */
-  private void createAppViewerRole(String appId, String operator) {
+  private void createAppViewRole(String appId, String operator) {
 
     Set<Permission> appPermissions = FluentIterable.from(Lists.newArrayList(PermissionType.BROWSE_CONFIG)).transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long> appPermissionIds = FluentIterable.from(createdAppPermissions).transform(permission -> permission.getId()).toSet();
 
     // 创建查看角色
-    Role appViewerRole = createRole(RoleUtils.buildViewerAppRoleName(appId), operator);
+    Role appViewRole = createRole(RoleUtils.buildViewAppRoleName(appId), operator);
 
-    rolePermissionService.createRoleWithPermissions(appViewerRole, appPermissionIds);
+    rolePermissionService.createRoleWithPermissions(appViewRole, appPermissionIds);
   }
 
   /**
@@ -173,13 +173,13 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
    * @param operator
    * @param env
    */
-  private void createAppViewerEnvRole(String appId, String operator, String env) {
+  private void createAppViewEnvRole(String appId, String operator, String env) {
 
-    Permission permission = createPermission(RoleUtils.buildViewverTargetId(appId, env), PermissionType.BROWSE_CONFIG, operator);
+    Permission permission = createPermission(RoleUtils.buildViewTargetId(appId, env), PermissionType.BROWSE_CONFIG, operator);
     Permission createdPermission = rolePermissionService.createPermission(permission);
     // 创建查看角色
-    Role appViewerRole = createRole(RoleUtils.buildViewerAppEnvRoleName(appId, env), operator);
-    rolePermissionService.createRoleWithPermissions(appViewerRole, Sets.newHashSet(createdPermission.getId()));
+    Role appViewRole = createRole(RoleUtils.buildViewAppEnvRoleName(appId, env), operator);
+    rolePermissionService.createRoleWithPermissions(appViewRole, Sets.newHashSet(createdPermission.getId()));
 
 
 

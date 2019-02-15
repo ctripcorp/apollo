@@ -289,22 +289,21 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                             }
                         });
 
-                    // 配置查看权限
-                    PermissionService.has_viewer_permission(scope.appId).then(function (result) {
+                    PermissionService.has_view_permission(scope.appId).then(function (result) {
                         if (!result.hasPermission) {
-                            PermissionService.has_viewer_env_permission(scope.appId, scope.env).then(function (result) {
+                            PermissionService.has_view_env_permission(scope.appId, scope.env).then(function (result) {
                                 //branch has same permission
-                                namespace.hasViewerPermission = result.hasPermission;
+                                namespace.hasViewPermission = result.hasPermission;
                                 if (namespace.branch) {
-                                    namespace.branch.hasViewerPermission = result.hasPermission;
+                                    namespace.branch.hasViewPermission = result.hasPermission;
                                 }
                             });
                         }
                         else {
                             //branch has same permission
-                            namespace.hasViewerPermission = result.hasPermission;
+                            namespace.hasViewPermission = result.hasPermission;
                             if (namespace.branch) {
-                                namespace.branch.hasViewerPermission = result.hasPermission;
+                                namespace.branch.hasViewPermission = result.hasPermission;
                             }
                         }
                     });

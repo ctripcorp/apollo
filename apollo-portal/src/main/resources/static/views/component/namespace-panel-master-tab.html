@@ -206,7 +206,7 @@
 
         <!--namespace body-->
         <!-- 拥有查看权限才给显示 -->
-        <section ng-show="!namespace.isConfigHidden && namespace.hasViewerPermission">
+        <section ng-show="!namespace.isConfigHidden && namespace.hasViewPermission">
             <!--table view-->
             <div class="namespace-view-table" ng-show="namespace.viewType == 'table'">
 
@@ -951,7 +951,7 @@
             </div>
         </section>
 
-        <section class="context" ng-show="!namespace.hasViewerPermission">
+        <section class="context" ng-show="!namespace.hasViewPermission">
             <div class="panel-body text-center">
                 <h4>您没有权限查看该配置，请找管理员授权</h4>
             </div>

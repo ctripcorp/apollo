@@ -12,15 +12,15 @@ role_module.controller('NamespaceRoleController',
 
             $scope.modifyRoleSubmitBtnDisabled = false;
             $scope.ReleaseRoleSubmitBtnDisabled = false;
-            $scope.viewerRoleSubmitBtnDisabled = false;
+            $scope.viewRoleSubmitBtnDisabled = false;
 
             $scope.releaseRoleWidgetId = 'releaseRoleWidgetId';
             $scope.modifyRoleWidgetId = 'modifyRoleWidgetId';
-            $scope.viewerRoleWidgetId = 'viewerRoleWidgetId';
+            $scope.viewRoleWidgetId = 'viewRoleWidgetId';
 
             $scope.modifyRoleSelectedEnv = "";
             $scope.releaseRoleSelectedEnv = "";
-            $scope.viewerRoleSelectedEnv = "";
+            $scope.viewRoleSelectedEnv = "";
 
             PermissionService.init_app_namespace_permission($scope.pageContext.appId, $scope.pageContext.namespaceName)
                 .then(function (result) {
@@ -147,39 +147,39 @@ role_module.controller('NamespaceRoleController',
                 }
 
                 // 查看权
-                if("Viewer" === roleType) {
+                if("View" === roleType) {
                     // 获取选中的用户ID
-                    var user = $('.' + $scope.viewerRoleWidgetId).select2('data')[0];
+                    var user = $('.' + $scope.viewRoleWidgetId).select2('data')[0];
                     if (!user) {
                         toastr.warning("请选择用户");
                         return;
                     }
                     // 设置按钮可用
-                    $scope.viewerRoleSubmitBtnDisabled = true;
+                    $scope.viewRoleSubmitBtnDisabled = true;
 
                     // 需要授权的用户id
-                    var toAssignViewerRoleUser = user.id;
+                    var toAssignViewRoleUser = user.id;
                     // 授权函数
-                    var assignViewerRoleFunc =  $scope.viewerRoleSelectedEnv === "" ? PermissionService.assign_viewer_role :
+                    var assignViewRoleFunc =  $scope.viewRoleSelectedEnv === "" ? PermissionService.assign_view_role :
                         function(appId, user) {
-                            return PermissionService.assign_viewer_env_role(appId, $scope.viewerRoleSelectedEnv,user);
+                            return PermissionService.assign_view_env_role(appId, $scope.viewRoleSelectedEnv,user);
                         };
 
-                    assignViewerRoleFunc($scope.pageContext.appId, toAssignViewerRoleUser).then(function (result) {
+                    assignViewRoleFunc($scope.pageContext.appId, toAssignViewRoleUser).then(function (result) {
                             toastr.success("添加成功");
-                            $scope.viewerRoleSubmitBtnDisabled = false;
-                            if($scope.viewerRoleSelectedEnv === "") {
-                                $scope.rolesAssignedUsers.viewerRoleUsers.push({userId: toAssignViewerRoleUser});
+                            $scope.viewRoleSubmitBtnDisabled = false;
+                            if($scope.viewRoleSelectedEnv === "") {
+                                $scope.rolesAssignedUsers.viewRoleUsers.push({userId: toAssignViewRoleUser});
                             } else {
-                                $scope.envRolesAssignedUsers[$scope.viewerRoleSelectedEnv].viewerRoleUsers.push(
-                                    {userId: toAssignViewerRoleUser});
+                                $scope.envRolesAssignedUsers[$scope.viewRoleSelectedEnv].viewRoleUsers.push(
+                                    {userId: toAssignViewRoleUser});
                             }
 
-                            $('.' + $scope.viewerRoleWidgetId).select2("val", "");
-                            $scope.viewerRoleSelectedEnv = "";
+                            $('.' + $scope.viewRoleWidgetId).select2("val", "");
+                            $scope.viewRoleSelectedEnv = "";
 
                         }, function (result) {
-                            $scope.viewerRoleSubmitBtnDisabled = false;
+                            $scope.viewRoleSubmitBtnDisabled = false;
                             toastr.error(AppUtil.errorMsg(result), "添加失败");
                         });
                 }
@@ -231,18 +231,18 @@ role_module.controller('NamespaceRoleController',
                         });
                 }
 
-                if('Viewer' === roleType) {
-                    var removeViewerRoleFunc = !env ? PermissionService.remove_viewer_role :
+                if('View' === roleType) {
+                    var removeViewRoleFunc = !env ? PermissionService.remove_view_role :
                         function (appId, user) {
-                            return PermissionService.remove_viewer_env_role(appId, env, user);
+                            return PermissionService.remove_view_env_role(appId, env, user);
                         }
 
-                    removeViewerRoleFunc($scope.pageContext.appId, user).then(function (result) {
+                    removeViewRoleFunc($scope.pageContext.appId, user).then(function (result) {
                             toastr.success("删除成功");
                             if(!env) {
-                                removeUserFromList($scope.rolesAssignedUsers.viewerRoleUsers, user);
+                                removeUserFromList($scope.rolesAssignedUsers.viewRoleUsers, user);
                             } else {
-                                removeUserFromList($scope.envRolesAssignedUsers[env].viewerRoleUsers, user);
+                                removeUserFromList($scope.envRolesAssignedUsers[env].viewRoleUsers, user);
                             }
 
                         }, function (result) {

@@ -78,7 +78,7 @@ public class PermissionController {
     PermissionCondition permissionCondition = new PermissionCondition();
 
     permissionCondition.setHasPermission(
-            rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType, RoleUtils.buildViewverTargetId(appId, env)));
+            rolePermissionService.userHasPermission(userInfoHolder.getUser().getUserId(), permissionType, RoleUtils.buildViewTargetId(appId, env)));
 
     return ResponseEntity.ok().body(permissionCondition);
   }
@@ -148,8 +148,8 @@ public class PermissionController {
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
 
     // 具有当前配置查看权限的用户
-    Set<UserInfo> viewerUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewerAppEnvRoleName(appId, env));
-    assignedUsers.setViewerRoleUsers(viewerUsers);
+    Set<UserInfo> viewUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewAppEnvRoleName(appId, env));
+    assignedUsers.setViewRoleUsers(viewUsers);
 
     return assignedUsers;
   }
@@ -219,8 +219,8 @@ public class PermissionController {
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
 
     // 具有当前配置查看权限的用户
-    Set<UserInfo> viewerUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewerAppRoleName(appId));
-    assignedUsers.setViewerRoleUsers(viewerUsers);
+    Set<UserInfo> viewUsers = rolePermissionService.queryUsersWithRole(RoleUtils.buildViewAppRoleName(appId));
+    assignedUsers.setViewRoleUsers(viewUsers);
 
     return assignedUsers;
   }
