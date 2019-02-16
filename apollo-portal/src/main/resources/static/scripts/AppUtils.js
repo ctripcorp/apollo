@@ -42,7 +42,6 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', function (toastr, $window
             if (!query) {
                 //如果不传这个参数或者false则返回到首页(参数出错)
                 if (!notJumpToHomePage) {
-                    debugger;
                     $window.location.href = '/index.html';
                 } else {
                     return {};
