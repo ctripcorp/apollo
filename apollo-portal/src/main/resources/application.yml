@@ -13,7 +13,9 @@ server:
   port: 8070
   compression:
     enabled: true
-  
+  tomcat:
+    use-relative-redirects: true
+
 logging:
   file: /opt/logs/100003173/apollo-portal.log
 
