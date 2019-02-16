@@ -217,6 +217,12 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         has_release_namespace_env_permission: function (appId, env, namespaceName) {
             return hasNamespaceEnvPermission(appId, env, namespaceName, 'ReleaseNamespace');
         },
+        has_view_namespace_permission: function (appId, namespaceName) {
+            return hasNamespacePermission(appId, namespaceName, 'ViewNamespace');
+        },
+        has_view_namespace_env_permission: function (appId, env, namespaceName) {
+            return hasNamespaceEnvPermission(appId, env, namespaceName, 'ViewNamespace');
+        },
         has_root_permission: function () {
             var d = $q.defer();
             permission_resource.has_root_permission({ },
@@ -240,6 +246,12 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         assign_release_namespace_env_role: function (appId, env, namespaceName, user) {
             return assignNamespaceEnvRoleToUser(appId, env, namespaceName, 'ReleaseNamespace', user);
         },
+        assign_view_namespace_role: function (appId, namespaceName, user) {
+            return assignNamespaceRoleToUser(appId, namespaceName, 'ViewNamespace', user);
+        },
+        assign_view_namespace_env_role: function (appId, env, namespaceName, user) {
+            return assignNamespaceEnvRoleToUser(appId, env, namespaceName, 'ViewNamespace', user);
+        },
         remove_modify_namespace_role: function (appId, namespaceName, user) {
             return removeNamespaceRoleFromUser(appId, namespaceName, 'ModifyNamespace', user);
         },
@@ -251,6 +263,12 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         },
         remove_release_namespace_env_role: function (appId, env, namespaceName, user) {
             return removeNamespaceEnvRoleFromUser(appId, env, namespaceName, 'ReleaseNamespace', user);
+        },
+        remove_view_namespace_role: function (appId, namespaceName, user) {
+          return removeNamespaceRoleFromUser(appId, namespaceName, 'ViewNamespace', user);
+        },
+        remove_view_namespace_env_role: function (appId, env, namespaceName, user) {
+          return removeNamespaceEnvRoleFromUser(appId, env, namespaceName, 'ViewNamespace', user);
         },
         get_namespace_role_users: function (appId, namespaceName) {
             var d = $q.defer();

@@ -62,6 +62,14 @@ public class RoleUtils {
     return STRING_JOINER.join(RoleType.RELEASE_NAMESPACE, appId, namespaceName, env);
   }
 
+  public static String buildViewNamespaceRoleName(String appId, String namespaceName) {
+    return buildViewNamespaceRoleName(appId, namespaceName, null);
+  }
+
+  public static String buildViewNamespaceRoleName(String appId, String namespaceName, String env) {
+    return STRING_JOINER.join(RoleType.VIEW_NAMESPACE, appId, namespaceName, env);
+  }
+
   public static String buildNamespaceRoleName(String appId, String namespaceName, String roleType) {
     return buildNamespaceRoleName(appId, namespaceName, roleType, null);
   }

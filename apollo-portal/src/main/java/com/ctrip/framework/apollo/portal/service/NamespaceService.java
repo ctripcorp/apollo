@@ -322,7 +322,7 @@ public class NamespaceService {
   }
 
   public void assignNamespaceRoleToOperator(String appId, String namespaceName, String operator) {
-    //default assign modify、release namespace role to namespace creator
+    //default assign modify、release、view namespace role to namespace creator
 
     rolePermissionService
         .assignRoleToUsers(
@@ -332,5 +332,11 @@ public class NamespaceService {
         .assignRoleToUsers(
             RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE),
             Sets.newHashSet(operator), operator);
+    rolePermissionService
+        .assignRoleToUsers(
+            RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.VIEW_NAMESPACE),
+            Sets.newHashSet(operator), operator);
+
+
   }
 }

@@ -290,6 +290,33 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                 }
                             }
                         });
+
+                    PermissionService.has_view_namespace_permission(
+                        scope.appId,
+                        namespace.baseInfo.namespaceName)
+                        .then(function (result) {
+                            if (!result.hasPermission) {
+                                PermissionService.has_view_namespace_env_permission(
+                                    scope.appId,
+                                    scope.env,
+                                    namespace.baseInfo.namespaceName
+                                    )
+                                    .then(function (result) {
+                                        //branch has same permission
+                                        namespace.hasViewPermission = result.hasPermission;
+                                        if (namespace.branch) {
+                                            namespace.branch.hasViewPermission = result.hasPermission;
+                                        }
+                                    });
+                            }
+                            else {
+                                //branch has same permission
+                                namespace.hasViewPermission = result.hasPermission;
+                                if (namespace.branch) {
+                                    namespace.branch.hasViewPermission = result.hasPermission;
+                                }
+                            }
+                        });
                 }
 
                 function initLinkedNamespace(namespace) {

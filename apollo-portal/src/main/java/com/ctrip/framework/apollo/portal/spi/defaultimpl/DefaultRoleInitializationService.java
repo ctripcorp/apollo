@@ -57,12 +57,17 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     initNamespaceRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
     initNamespaceEnvRoles(appId, ConfigConsts.NAMESPACE_APPLICATION, operator);
 
-    //assign modify、release namespace role to user
+    //assign modify、release、view namespace role to user
     rolePermissionService.assignRoleToUsers(
         RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.MODIFY_NAMESPACE),
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
         RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
+        Sets.newHashSet(operator), operator);rolePermissionService.assignRoleToUsers(
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.VIEW_NAMESPACE),
+        Sets.newHashSet(operator), operator);
+    rolePermissionService.assignRoleToUsers(
+        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.VIEW_NAMESPACE),
         Sets.newHashSet(operator), operator);
 
   }
@@ -80,6 +85,12 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceRoleName) == null) {
       createNamespaceRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE,
           releaseNamespaceRoleName, operator);
+    }
+
+    String viewNamespaceRoleName = RoleUtils.buildViewNamespaceRoleName(appId, namespaceName);
+    if (rolePermissionService.findRoleByRoleName(viewNamespaceRoleName) == null) {
+      createNamespaceRole(appId, namespaceName, PermissionType.VIEW_NAMESPACE,
+          viewNamespaceRoleName, operator);
     }
   }
 
@@ -104,6 +115,12 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
     if (rolePermissionService.findRoleByRoleName(releaseNamespaceEnvRoleName) == null) {
       createNamespaceEnvRole(appId, namespaceName, PermissionType.RELEASE_NAMESPACE, env,
           releaseNamespaceEnvRoleName, operator);
+    }
+
+    String viewNamespaceEnvRoleName = RoleUtils.buildViewNamespaceRoleName(appId, namespaceName, env);
+    if (rolePermissionService.findRoleByRoleName(viewNamespaceEnvRoleName) == null) {
+      createNamespaceEnvRole(appId, namespaceName, PermissionType.VIEW_NAMESPACE, env,
+          viewNamespaceEnvRoleName, operator);
     }
   }
 

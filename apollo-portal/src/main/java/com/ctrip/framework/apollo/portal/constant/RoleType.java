@@ -8,8 +8,10 @@ public class RoleType {
 
   public static final String RELEASE_NAMESPACE = "ReleaseNamespace";
 
+  public static final String VIEW_NAMESPACE = "ViewNamespace";
+
   public static boolean isValidRoleType(String roleType) {
-    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType);
+    return MASTER.equals(roleType) || MODIFY_NAMESPACE.equals(roleType) || RELEASE_NAMESPACE.equals(roleType) || VIEW_NAMESPACE.equals(roleType);
   }
 
 }

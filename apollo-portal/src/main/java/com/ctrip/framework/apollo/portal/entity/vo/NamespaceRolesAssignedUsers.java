@@ -11,6 +11,7 @@ public class NamespaceRolesAssignedUsers {
 
   private Set<UserInfo> modifyRoleUsers;
   private Set<UserInfo> releaseRoleUsers;
+  private Set<UserInfo> viewRoleUsers;
 
   public String getAppId() {
     return appId;
@@ -44,5 +45,14 @@ public class NamespaceRolesAssignedUsers {
   public void setReleaseRoleUsers(
       Set<UserInfo> releaseRoleUsers) {
     this.releaseRoleUsers = releaseRoleUsers;
+  }
+
+  public Set<UserInfo> getViewRoleUsers() {
+    return viewRoleUsers;
+  }
+
+  public void setViewRoleUsers(
+      Set<UserInfo> viewRoleUsers) {
+    this.viewRoleUsers = viewRoleUsers;
   }
 }

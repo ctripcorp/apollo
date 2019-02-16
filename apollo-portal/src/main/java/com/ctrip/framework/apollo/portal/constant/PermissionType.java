@@ -23,5 +23,7 @@ public interface PermissionType {
 
   String RELEASE_NAMESPACE = "ReleaseNamespace";
 
+  String VIEW_NAMESPACE = "ViewNamespace";
+
 
 }

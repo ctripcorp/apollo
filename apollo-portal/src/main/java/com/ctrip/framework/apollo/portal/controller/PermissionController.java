@@ -120,6 +120,10 @@ public class PermissionController {
         rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName, env));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
 
+    Set<UserInfo> viewNamespaceUsers =
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildViewNamespaceRoleName(appId, namespaceName, env));
+    assignedUsers.setViewRoleUsers(viewNamespaceUsers);
+
     return assignedUsers;
   }
 
@@ -179,6 +183,10 @@ public class PermissionController {
     Set<UserInfo> modifyNamespaceUsers =
         rolePermissionService.queryUsersWithRole(RoleUtils.buildModifyNamespaceRoleName(appId, namespaceName));
     assignedUsers.setModifyRoleUsers(modifyNamespaceUsers);
+
+    Set<UserInfo> viewNamespaceUsers =
+        rolePermissionService.queryUsersWithRole(RoleUtils.buildViewNamespaceRoleName(appId, namespaceName));
+    assignedUsers.setViewRoleUsers(viewNamespaceUsers);
 
     return assignedUsers;
   }
