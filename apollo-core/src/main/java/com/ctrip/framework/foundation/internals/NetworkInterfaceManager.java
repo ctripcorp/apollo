@@ -99,7 +99,7 @@ public enum NetworkInterfaceManager {
     try {
       Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
       List<NetworkInterface> nis = interfaces == null ? Collections.<NetworkInterface>emptyList() : Collections.list(interfaces);
-      List<InetAddress> addresses = new ArrayList<InetAddress>();
+      List<InetAddress> addresses = new ArrayList<>();
       InetAddress local = null;
 
       try {

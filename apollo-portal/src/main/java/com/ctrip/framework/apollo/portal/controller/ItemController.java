@@ -117,7 +117,7 @@ public class ItemController {
 
     List<ItemDTO> items = configService.findItems(appId, Env.valueOf(env), clusterName, namespaceName);
     if ("lastModifiedTime".equals(orderBy)) {
-      Collections.sort(items, (o1, o2) -> {
+      items.sort((o1, o2) -> {
         if (o1.getDataChangeLastModifiedTime().after(o2.getDataChangeLastModifiedTime())) {
           return -1;
         }

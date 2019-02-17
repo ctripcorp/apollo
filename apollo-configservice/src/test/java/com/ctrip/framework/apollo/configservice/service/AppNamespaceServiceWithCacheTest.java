@@ -244,8 +244,8 @@ public class AppNamespaceServiceWithCacheTest {
   }
 
   private void check(List<AppNamespace> someList, List<AppNamespace> anotherList) {
-    Collections.sort(someList, appNamespaceComparator);
-    Collections.sort(anotherList, appNamespaceComparator);
+    someList.sort(appNamespaceComparator);
+    anotherList.sort(appNamespaceComparator);
     assertEquals(someList, anotherList);
   }
 

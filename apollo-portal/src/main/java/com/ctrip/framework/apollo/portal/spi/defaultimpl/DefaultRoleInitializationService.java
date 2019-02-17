@@ -13,7 +13,6 @@ import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -109,9 +109,8 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   private void createAppMasterRole(String appId, String operator) {
     Set<Permission> appPermissions =
-        FluentIterable.from(Lists.newArrayList(
-            PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE))
-            .transform(permissionType -> createPermission(appId, permissionType, operator)).toSet();
+        Stream.of(PermissionType.CREATE_CLUSTER, PermissionType.CREATE_NAMESPACE, PermissionType.ASSIGN_ROLE)
+            .map(permissionType -> createPermission(appId, permissionType, operator)).collect(Collectors.toSet());
     Set<Permission> createdAppPermissions = rolePermissionService.createPermissions(appPermissions);
     Set<Long>
         appPermissionIds =

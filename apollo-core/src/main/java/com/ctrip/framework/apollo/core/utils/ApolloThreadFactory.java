@@ -33,8 +33,8 @@ public class ApolloThreadFactory implements ThreadFactory {
     ThreadGroup group = getThreadGroup();
     Thread[] activeThreads = new Thread[group.activeCount()];
     group.enumerate(activeThreads);
-    Set<Thread> alives = new HashSet<Thread>(Arrays.asList(activeThreads));
-    Set<Thread> dies = new HashSet<Thread>();
+    Set<Thread> alives = new HashSet<>(Arrays.asList(activeThreads));
+    Set<Thread> dies = new HashSet<>();
     log.info("Current ACTIVE thread count is: {}", alives.size());
     long expire = System.currentTimeMillis() + timeoutInMillis;
     while (System.currentTimeMillis() < expire) {
