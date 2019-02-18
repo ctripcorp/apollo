@@ -63,8 +63,6 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
         RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.RELEASE_NAMESPACE),
-        Sets.newHashSet(operator), operator);rolePermissionService.assignRoleToUsers(
-        RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.VIEW_NAMESPACE),
         Sets.newHashSet(operator), operator);
     rolePermissionService.assignRoleToUsers(
         RoleUtils.buildNamespaceRoleName(appId, ConfigConsts.NAMESPACE_APPLICATION, RoleType.VIEW_NAMESPACE),
