@@ -73,6 +73,10 @@ public class AppNamespaceService {
     return appNamespaceRepository.findByAppId(appId);
   }
 
+  /**
+   * 针对初始化使用的方法，这个方法将会创建那个application
+   * @param appId
+   */
   @Transactional
   public void createDefaultAppNamespace(String appId) {
     if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
@@ -88,6 +92,7 @@ public class AppNamespaceService {
     appNs.setDataChangeCreatedBy(userId);
     appNs.setDataChangeLastModifiedBy(userId);
 
+    //在本地创建namespace
     appNamespaceRepository.save(appNs);
   }
 

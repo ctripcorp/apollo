@@ -1,5 +1,8 @@
 package com.ctrip.framework.apollo.portal.entity.bo;
 
+/**
+ * 不大符合软件规范的
+ */
 public class UserInfo {
 
   private String userId;

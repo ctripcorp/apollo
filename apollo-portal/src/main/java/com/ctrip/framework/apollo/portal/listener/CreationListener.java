@@ -32,12 +32,19 @@ public class CreationListener {
     this.namespaceAPI = namespaceAPI;
   }
 
+  /**
+   * 监听创建appilcation的Event
+   * @param event
+   */
   @EventListener
   public void onAppCreationEvent(AppCreationEvent event) {
+    //使用反射技术将event中的app的参数和AppDTO一一对应
     AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
+    //获得当前的系统环境，比如PROD UAT等等
     List<Env> envs = portalSettings.getActiveEnvs();
     for (Env env : envs) {
       try {
+        //使用spring cloud的技术，在config中创建
         appAPI.createApp(env, appDTO);
       } catch (Throwable e) {
         logger.error("Create app failed. appId = {}, env = {})", appDTO.getAppId(), env, e);

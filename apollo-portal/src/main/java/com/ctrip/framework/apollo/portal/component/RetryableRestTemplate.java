@@ -91,7 +91,7 @@ public class RetryableRestTemplate {
     ct.addData("Env", env);
 
     List<ServiceDTO> services = getAdminServices(env, ct);
-
+    //超时轮询
     for (ServiceDTO serviceDTO : services) {
       try {
 

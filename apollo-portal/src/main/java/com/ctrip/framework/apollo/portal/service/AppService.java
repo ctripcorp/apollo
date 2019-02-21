@@ -97,27 +97,35 @@ public class AppService {
   @Transactional
   public App createAppInLocal(App app) {
     String appId = app.getAppId();
+
+    //查local库信息找到本地的同id对象，
     App managedApp = appRepository.findByAppId(appId);
 
     if (managedApp != null) {
       throw new BadRequestException(String.format("App already exists. AppId = %s", appId));
     }
 
+    // 这里初始化是用的是spring 安全组的方法查本地库，远程的admin和config不提供用户校验
     UserInfo owner = userService.findByUserId(app.getOwnerName());
     if (owner == null) {
       throw new BadRequestException("Application's owner not exist.");
     }
+    //设置邮件地址
     app.setOwnerEmail(owner.getEmail());
 
+    //这三行是设置application的创建者和修改者
     String operator = userInfoHolder.getUser().getUserId();
     app.setDataChangeCreatedBy(operator);
     app.setDataChangeLastModifiedBy(operator);
 
+    //本地持久化
     App createdApp = appRepository.save(app);
 
     appNamespaceService.createDefaultAppNamespace(appId);
+    //初始化app角色
     roleInitializationService.initAppRoles(createdApp);
 
+    //大日志
     Tracer.logEvent(TracerEventType.CREATE_APP, appId);
 
     return createdApp;

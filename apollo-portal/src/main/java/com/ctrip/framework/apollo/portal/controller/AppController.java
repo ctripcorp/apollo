@@ -97,15 +97,23 @@ public class AppController {
     return appService.findByAppIds(appIds, page);
   }
 
+  /**
+   * 创建application实现，并初始化一个默认的namespace名称叫做application
+   * @param appModel
+   * @return
+   */
   @PostMapping
   public App create(@Valid @RequestBody AppModel appModel) {
 
+    //对象转换
     App app = transformToApp(appModel);
-
+    //使用事务操作，在本地落库application信息
     App createdApp = appService.createAppInLocal(app);
 
+    //在本地添加一条spring evnet事件，之后异步地推信息
     publisher.publishEvent(new AppCreationEvent(createdApp));
 
+    //可能是为了在创建的时候批量授权，这里暂时不是到有什么用,涉及到用户管理
     Set<String> admins = appModel.getAdmins();
     if (!CollectionUtils.isEmpty(admins)) {
       rolePermissionService
