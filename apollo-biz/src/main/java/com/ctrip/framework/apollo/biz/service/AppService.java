@@ -58,6 +58,7 @@ public class AppService {
 
   @Transactional
   public App save(App entity) {
+    //判断app是否存在
     if (!isAppIdUnique(entity.getAppId())) {
       throw new ServiceException("appId not unique");
     }

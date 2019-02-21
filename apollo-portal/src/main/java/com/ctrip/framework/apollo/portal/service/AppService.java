@@ -125,7 +125,7 @@ public class AppService {
     //初始化app角色
     roleInitializationService.initAppRoles(createdApp);
 
-    //大日志
+    //日志
     Tracer.logEvent(TracerEventType.CREATE_APP, appId);
 
     return createdApp;

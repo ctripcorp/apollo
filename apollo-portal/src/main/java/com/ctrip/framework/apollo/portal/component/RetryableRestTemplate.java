@@ -85,24 +85,26 @@ public class RetryableRestTemplate {
         if (path.startsWith("/")) {
             path = path.substring(1, path.length());
         }
-
+        //获取地址
         String uri = uriTemplateHandler.expand(path, uriVariables).getPath();
+
         Transaction ct = Tracer.newTransaction("AdminAPI", uri);
+
         ct.addData("Env", env);
 
+        //获取server路径url地址
         List<ServiceDTO> services = getAdminServices(env, ct);
         //超时轮询
         for (ServiceDTO serviceDTO : services) {
             try {
-
                 T result = doExecute(method, serviceDTO, path, request, responseType, uriVariables);
-
                 ct.setStatus(Transaction.SUCCESS);
                 ct.complete();
                 return result;
             } catch (Throwable t) {
                 logger.error("Http request failed, uri: {}, method: {}", uri, method, t);
                 Tracer.logError(t);
+                //如果可以重试就更换其他地址充实
                 if (canRetry(t, method)) {
                     Tracer.logEvent(TracerEventType.API_RETRY, uri);
                 } else {//biz exception rethrow
@@ -112,7 +114,6 @@ public class RetryableRestTemplate {
                 }
             }
         }
-
         //all admin server down
         ServiceException e =
                 new ServiceException(String.format("Admin servers are unresponsive. meta server address: %s, admin servers: %s",

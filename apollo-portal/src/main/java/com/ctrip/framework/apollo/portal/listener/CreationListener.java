@@ -17,54 +17,55 @@ import java.util.List;
 @Component
 public class CreationListener {
 
-  private static Logger logger = LoggerFactory.getLogger(CreationListener.class);
+    private static Logger logger = LoggerFactory.getLogger(CreationListener.class);
 
-  private final PortalSettings portalSettings;
-  private final AdminServiceAPI.AppAPI appAPI;
-  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+    private final PortalSettings portalSettings;
+    private final AdminServiceAPI.AppAPI appAPI;
+    private final AdminServiceAPI.NamespaceAPI namespaceAPI;
 
-  public CreationListener(
-      final PortalSettings portalSettings,
-      final AdminServiceAPI.AppAPI appAPI,
-      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
-    this.portalSettings = portalSettings;
-    this.appAPI = appAPI;
-    this.namespaceAPI = namespaceAPI;
-  }
-
-  /**
-   * 监听创建appilcation的Event
-   * @param event
-   */
-  @EventListener
-  public void onAppCreationEvent(AppCreationEvent event) {
-    //使用反射技术将event中的app的参数和AppDTO一一对应
-    AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
-    //获得当前的系统环境，比如PROD UAT等等
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
-      try {
-        //使用spring cloud的技术，在config中创建
-        appAPI.createApp(env, appDTO);
-      } catch (Throwable e) {
-        logger.error("Create app failed. appId = {}, env = {})", appDTO.getAppId(), env, e);
-        Tracer.logError(String.format("Create app failed. appId = %s, env = %s", appDTO.getAppId(), env), e);
-      }
+    public CreationListener(
+            final PortalSettings portalSettings,
+            final AdminServiceAPI.AppAPI appAPI,
+            final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+        this.portalSettings = portalSettings;
+        this.appAPI = appAPI;
+        this.namespaceAPI = namespaceAPI;
     }
-  }
 
-  @EventListener
-  public void onAppNamespaceCreationEvent(AppNamespaceCreationEvent event) {
-    AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
-      try {
-        namespaceAPI.createAppNamespace(env, appNamespace);
-      } catch (Throwable e) {
-        logger.error("Create appNamespace failed. appId = {}, env = {}", appNamespace.getAppId(), env, e);
-        Tracer.logError(String.format("Create appNamespace failed. appId = %s, env = %s", appNamespace.getAppId(), env), e);
-      }
+    /**
+     * 监听创建appilcation的Event
+     *
+     * @param event
+     */
+    @EventListener
+    public void onAppCreationEvent(AppCreationEvent event) {
+        //使用反射技术将event中的app的参数和AppDTO一一对应
+        AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
+        //获得当前的系统环境，比如PROD UAT等等
+        List<Env> envs = portalSettings.getActiveEnvs();
+        for (Env env : envs) {
+            try {
+                //使用spring cloud的技术，在config中创建
+                appAPI.createApp(env, appDTO);
+            } catch (Throwable e) {
+                logger.error("Create app failed. appId = {}, env = {})", appDTO.getAppId(), env, e);
+                Tracer.logError(String.format("Create app failed. appId = %s, env = %s", appDTO.getAppId(), env), e);
+            }
+        }
     }
-  }
+
+    @EventListener
+    public void onAppNamespaceCreationEvent(AppNamespaceCreationEvent event) {
+        AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
+        List<Env> envs = portalSettings.getActiveEnvs();
+        for (Env env : envs) {
+            try {
+                namespaceAPI.createAppNamespace(env, appNamespace);
+            } catch (Throwable e) {
+                logger.error("Create appNamespace failed. appId = {}, env = {}", appNamespace.getAppId(), env, e);
+                Tracer.logError(String.format("Create appNamespace failed. appId = %s, env = %s", appNamespace.getAppId(), env), e);
+            }
+        }
+    }
 
 }

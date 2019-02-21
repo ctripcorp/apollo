@@ -42,7 +42,7 @@ public class AdminService {
         appNamespaceService.createDefaultAppNamespace(appId, createBy);
         //创建默认集群
         clusterService.createDefaultCluster(appId, createBy);
-        //保存namespace
+        //添加
         namespaceService.instanceOfAppNamespaces(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, createBy);
         return app;
     }
