@@ -47,7 +47,6 @@ diff_item_module.controller("DiffItemController",
                   });
               });
         });
-        console.info($scope.itemsKeyedByKey)
         $scope.syncItemNextStep(1);
     }
 
