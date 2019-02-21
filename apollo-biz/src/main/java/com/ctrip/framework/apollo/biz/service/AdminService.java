@@ -14,59 +14,58 @@ import java.util.Objects;
 
 @Service
 public class AdminService {
-  private final static Logger logger = LoggerFactory.getLogger(AdminService.class);
+    private final static Logger logger = LoggerFactory.getLogger(AdminService.class);
 
-  private final AppService appService;
-  private final AppNamespaceService appNamespaceService;
-  private final ClusterService clusterService;
-  private final NamespaceService namespaceService;
+    private final AppService appService;
+    private final AppNamespaceService appNamespaceService;
+    private final ClusterService clusterService;
+    private final NamespaceService namespaceService;
 
-  public AdminService(
-      final AppService appService,
-      final @Lazy AppNamespaceService appNamespaceService,
-      final @Lazy ClusterService clusterService,
-      final @Lazy NamespaceService namespaceService) {
-    this.appService = appService;
-    this.appNamespaceService = appNamespaceService;
-    this.clusterService = clusterService;
-    this.namespaceService = namespaceService;
-  }
-
-  @Transactional
-  public App createNewApp(App app) {
-    String createBy = app.getDataChangeCreatedBy();
-    App createdApp = appService.save(app);
-
-    String appId = createdApp.getAppId();
-
-    appNamespaceService.createDefaultAppNamespace(appId, createBy);
-
-    clusterService.createDefaultCluster(appId, createBy);
-
-    namespaceService.instanceOfAppNamespaces(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, createBy);
-
-    return app;
-  }
-
-  @Transactional
-  public void deleteApp(App app, String operator) {
-    String appId = app.getAppId();
-
-    logger.info("{} is deleting App:{}", operator, appId);
-
-    List<Cluster> managedClusters = clusterService.findClusters(appId);
-
-    // 1. delete clusters
-    if (Objects.nonNull(managedClusters)) {
-      for (Cluster cluster : managedClusters) {
-        clusterService.delete(cluster.getId(), operator);
-      }
+    public AdminService(
+            final AppService appService,
+            final @Lazy AppNamespaceService appNamespaceService,
+            final @Lazy ClusterService clusterService,
+            final @Lazy NamespaceService namespaceService) {
+        this.appService = appService;
+        this.appNamespaceService = appNamespaceService;
+        this.clusterService = clusterService;
+        this.namespaceService = namespaceService;
     }
 
-    // 2. delete appNamespace
-    appNamespaceService.batchDelete(appId, operator);
+    @Transactional
+    public App createNewApp(App app) {
+        String createBy = app.getDataChangeCreatedBy();
+        App createdApp = appService.save(app);
 
-    // 3. delete app
-    appService.delete(app.getId(), operator);
-  }
+        String appId = createdApp.getAppId();
+        //创建默认namespace
+        appNamespaceService.createDefaultAppNamespace(appId, createBy);
+        //创建默认集群
+        clusterService.createDefaultCluster(appId, createBy);
+        //保存namespace
+        namespaceService.instanceOfAppNamespaces(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, createBy);
+        return app;
+    }
+
+    @Transactional
+    public void deleteApp(App app, String operator) {
+        String appId = app.getAppId();
+
+        logger.info("{} is deleting App:{}", operator, appId);
+
+        List<Cluster> managedClusters = clusterService.findClusters(appId);
+
+        // 1. delete clusters
+        if (Objects.nonNull(managedClusters)) {
+            for (Cluster cluster : managedClusters) {
+                clusterService.delete(cluster.getId(), operator);
+            }
+        }
+
+        // 2. delete appNamespace
+        appNamespaceService.batchDelete(appId, operator);
+
+        // 3. delete app
+        appService.delete(app.getId(), operator);
+    }
 }

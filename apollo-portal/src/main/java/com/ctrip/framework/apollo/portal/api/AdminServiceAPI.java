@@ -44,6 +44,9 @@ public class AdminServiceAPI {
     }
   }
 
+  /**
+   * 针对Admin系统的App功能模块封装的api
+   */
   @Service
   public static class AppAPI extends API {
 
