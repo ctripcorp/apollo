@@ -51,6 +51,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             scope.loadCommitHistory = loadCommitHistory;
             scope.toggleTextEditStatus = toggleTextEditStatus;
             scope.goToSyncPage = goToSyncPage;
+            scope.goToDiffPage = goToDiffPage;
             scope.modifyByText = modifyByText;
             scope.syntaxCheck = syntaxCheck;
             scope.goToParentAppConfigPage = goToParentAppConfigPage;
@@ -696,6 +697,17 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                 }
                 $window.location.href =
                     "config/sync.html?#/appid=" + scope.appId + "&env="
+                    + scope.env + "&clusterName="
+                    + scope.cluster
+                    + "&namespaceName=" + namespace.baseInfo.namespaceName;
+            }
+
+            function goToDiffPage(namespace) {
+                if (!scope.lockCheck(namespace)) {
+                    return false;
+                }
+                $window.location.href =
+                    "config/diff.html?#/appid=" + scope.appId + "&env="
                     + scope.env + "&clusterName="
                     + scope.cluster
                     + "&namespaceName=" + namespace.baseInfo.namespaceName;
