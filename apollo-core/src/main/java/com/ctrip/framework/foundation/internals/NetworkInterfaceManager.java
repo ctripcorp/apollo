@@ -105,11 +105,7 @@ public enum NetworkInterfaceManager {
       Collections.sort(nis, new Comparator<NetworkInterface>() {
         @Override
         public int compare(NetworkInterface nis1, NetworkInterface nis2) {
-          if (nis1.getIndex() > nis2.getIndex()) {
-            return 1;
-          } else {
-            return -1;
-          }
+          return Integer.compare(nis1.getIndex(), nis2.getIndex());
         }
       });
       List<InetAddress> addresses = new ArrayList<>();
