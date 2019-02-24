@@ -61,6 +61,15 @@ public class ItemController {
         configService.updateConfigItemByText(model);
     }
 
+    /**
+     * 创建一个配置
+     * @param appId
+     * @param env
+     * @param clusterName
+     * @param namespaceName
+     * @param item
+     * @return
+     */
     @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
     @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/item")
     public ItemDTO createItem(@PathVariable String appId, @PathVariable String env,
@@ -76,7 +85,6 @@ public class ItemController {
         item.setDataChangeLastModifiedBy(userId);
         item.setDataChangeCreatedTime(null);
         item.setDataChangeLastModifiedTime(null);
-
         return configService.createItem(appId, Env.valueOf(env), clusterName, namespaceName, item);
     }
 
