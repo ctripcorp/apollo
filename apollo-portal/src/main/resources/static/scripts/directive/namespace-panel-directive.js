@@ -703,9 +703,6 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             }
 
             function goToDiffPage(namespace) {
-                if (!scope.lockCheck(namespace)) {
-                    return false;
-                }
                 $window.location.href =
                     "config/diff.html?#/appid=" + scope.appId + "&env="
                     + scope.env + "&clusterName="
