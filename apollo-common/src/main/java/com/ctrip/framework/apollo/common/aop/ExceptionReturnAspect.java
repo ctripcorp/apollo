@@ -15,10 +15,8 @@ import java.util.Enumeration;
 
 /**
  * @Auther: jiangcaijun
- * @Date: 2018/4/16 15:58
- * @Description:
- * @Component：注册到Spring容器，必须加入这个注解
- * @Aspect // 该注解标示该类为切面类，切面是由通知和切点组成的。
+ * @Date: 2019/02/26 15:58
+ * @Description: aop AfterThrowing, when an exception occurs to an HTTP request
  */
 @Component
 @Aspect
