@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -75,7 +76,7 @@ public class GlobalDefaultExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
-      HttpServletRequest request, MethodArgumentNotValidException ex
+          HttpServletRequest request, MethodArgumentNotValidException ex
   ) {
     final Optional<ObjectError> firstError = ex.getBindingResult().getAllErrors().stream().findFirst();
     if (firstError.isPresent()) {
@@ -87,7 +88,7 @@ public class GlobalDefaultExceptionHandler {
 
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
-      HttpServletRequest request, ConstraintViolationException ex
+          HttpServletRequest request, ConstraintViolationException ex
   ) {
     return handleError(request, BAD_REQUEST, new BadRequestException(ex.getMessage()));
   }
@@ -100,7 +101,7 @@ public class GlobalDefaultExceptionHandler {
   private ResponseEntity<Map<String, Object>> handleError(HttpServletRequest request,
                                                           HttpStatus status, Throwable ex, Level logLevel) {
     String message = ex.getMessage();
-    printLog(message, ex, logLevel);
+    printLog(message, ex, logLevel, request);
 
     Map<String, Object> errorAttributes = new HashMap<>();
     boolean errorHandled = false;
@@ -120,7 +121,7 @@ public class GlobalDefaultExceptionHandler {
       errorAttributes.put("status", status.value());
       errorAttributes.put("message", message);
       errorAttributes.put("timestamp",
-          LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+              LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
       errorAttributes.put("exception", ex.getClass().getName());
 
     }
@@ -131,7 +132,9 @@ public class GlobalDefaultExceptionHandler {
   }
 
   //打印日志, 其中logLevel为日志级别: ERROR/WARN/DEBUG/INFO/TRACE
-  private void printLog(String message, Throwable ex, Level logLevel) {
+  private void printLog(String message, Throwable ex, Level logLevel, HttpServletRequest request) {
+    message = String.format("message:%s;url:%s,httpInputParams:%s,ip:%s",
+            message, request.getRequestURL(), getInputParams(request), getIpAddr(request));
     switch (logLevel) {
       case ERROR:
         logger.error(message, ex);
@@ -151,6 +154,46 @@ public class GlobalDefaultExceptionHandler {
     }
 
     Tracer.logError(ex);
+  }
+
+  /**
+   * 获取请求参数
+   * @param request
+   * @return
+   */
+  private Map getInputParams(HttpServletRequest request) {
+    Map<String, String> map = new HashMap();
+    Enumeration paramNames = request.getParameterNames();
+    while (paramNames.hasMoreElements()) {
+      String paramName = (String) paramNames.nextElement();
+      String[] paramValues = request.getParameterValues(paramName);
+      if (paramValues.length == 1) {
+        String paramValue = paramValues[0];
+        if (paramValue.length() != 0) {
+          map.put(paramName, paramValue);
+        }
+      }
+    }
+    return map;
+  }
+
+  /**
+   * 获取 ip 地址
+   * @param request
+   * @return
+   */
+  public String getIpAddr(HttpServletRequest request) {
+    String ip = request.getHeader("x-forwarded-for");
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getHeader("Proxy-Client-IP");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getHeader("WL-Proxy-Client-IP");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+      ip = request.getRemoteAddr();
+    }
+    return ip;
   }
 
 }
