@@ -236,14 +236,14 @@ public class AuthConfiguration {
       jdbcUserDetailsManager
           .setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
       jdbcUserDetailsManager
-          .setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where Username = ?");
-      jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where Username = ?");
+          .setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+      jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
       jdbcUserDetailsManager
           .setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
       jdbcUserDetailsManager
-          .setDeleteUserAuthoritiesSql("delete from `Authorities` where Username = ?");
+          .setDeleteUserAuthoritiesSql("delete from `Authorities` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
       jdbcUserDetailsManager
-          .setChangePasswordSql("update `Users` set Password = ? where Username = ?");
+          .setChangePasswordSql("update `Users` set Password = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
 
       return jdbcUserDetailsManager;
     }
