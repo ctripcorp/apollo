@@ -9,6 +9,11 @@
     <link rel="stylesheet" type="text/css" media='all' href="../vendor/angular/loading-bar.min.css">
     <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
     <title>比较配置</title>
+    <style>
+        .comment-toggele {
+            margin-left: 8px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -56,6 +61,15 @@
                                                    apollo-default-checked-cluster="pageContext.clusterName"></apolloclusterselector>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">是否比较注释</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox"
+                                   class="comment-toggele"
+                                   ng-checked="showCommentDiff"
+                                   ng-click="toggleEnvsCheckedStatus=!toggleEnvsCheckedStatus">
+                        </div>
+                    </div>
                 </div>
                 <hr>
             </div>
@@ -72,7 +86,8 @@
                                     <td ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName + ':Value'"
                                     ></td>
-                                    <td ng-repeat="cluster in syncData.syncToNamespaces"
+                                    <td ng-if="showCommentDiff"
+                                        ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName + ':Comment'"
                                     ></td>
                                 </tr>
@@ -82,7 +97,8 @@
                                     <td width="15%" ng-bind="key"></td>
                                     <td ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="(itemsKeyedByCluster[cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName] || {}).value"></td>
-                                    <td ng-repeat="cluster in syncData.syncToNamespaces"
+                                    <td ng-if="showCommentDiff"
+                                        ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="(itemsKeyedByCluster[cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName] || {}).comment"></td>
                                 </tr>
                                 </tbody>

@@ -13,6 +13,7 @@ diff_item_module.controller("DiffItemController",
 
     $scope.diff = diff;
     $scope.syncBtnDisabled = false;
+    $scope.showCommentDiff = false;
 
     $scope.collectSelectedClusters = collectSelectedClusters;
 
