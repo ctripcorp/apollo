@@ -270,6 +270,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![中泰证券网络金融部](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zts.png)
 ![网易易盾](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/163dun.png)
 ![享物说](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xiangwushuo.png)
+![申通](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sto.png) 
+![金和网络](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jinhe.png) 
 
 # Awards
 
