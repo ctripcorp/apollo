@@ -10,8 +10,11 @@
     <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
     <title>比较配置</title>
     <style>
-        .comment-toggele {
+        .comment-toggle {
             margin-left: 8px !important;
+        }
+        .diff-content {
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -61,15 +64,6 @@
                                                    apollo-default-checked-cluster="pageContext.clusterName"></apolloclusterselector>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">是否比较注释</label>
-                        <div class="col-sm-6">
-                            <input type="checkbox"
-                                   class="comment-toggele"
-                                   ng-checked="showCommentDiff"
-                                   ng-click="toggleEnvsCheckedStatus=!toggleEnvsCheckedStatus">
-                        </div>
-                    </div>
                 </div>
                 <hr>
             </div>
@@ -79,6 +73,15 @@
                 <div class="row" style="margin-top: 10px;">
                     <div class="form-horizontal">
                         <div class="col-sm-12">
+                            <label class="col-sm-2 control-label">是否比较注释</label>
+                            <div class="col-sm-6">
+                                <input type="checkbox"
+                                       class="comment-toggle"
+                                       ng-checked="showCommentDiff"
+                                       ng-click="showCommentDiff=!showCommentDiff">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 diff-content">
                             <table class="table table-bordered table-striped table-hover">
                                 <thead>
                                 <tr>
@@ -86,7 +89,7 @@
                                     <td ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName + ':Value'"
                                     ></td>
-                                    <td ng-if="showCommentDiff"
+                                    <td ng-show="showCommentDiff"
                                         ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName + ':Comment'"
                                     ></td>
@@ -97,7 +100,7 @@
                                     <td width="15%" ng-bind="key"></td>
                                     <td ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="(itemsKeyedByCluster[cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName] || {}).value"></td>
-                                    <td ng-if="showCommentDiff"
+                                    <td ng-show="showCommentDiff"
                                         ng-repeat="cluster in syncData.syncToNamespaces"
                                         ng-bind="(itemsKeyedByCluster[cluster.env + ':' + cluster.clusterName + ':' + cluster.namespaceName] || {}).comment"></td>
                                 </tr>
