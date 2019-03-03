@@ -155,7 +155,7 @@ public class PropertyResolver implements ConfigTextResolver {
   }
 
   private boolean isBlankItem(String line) {
-    return "".equals(line);
+    return  "".equals(line.trim());
   }
 
   private void deleteNormalKVItem(Map<String, ItemDTO> baseKeyMapItem, ItemChangeSets changeSets) {
