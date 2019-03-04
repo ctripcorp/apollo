@@ -169,13 +169,14 @@ public class NamespaceService {
     }
 
     public int countPublicAppNamespaceAssociatedNamespaces(String publicNamespaceName) {
+        //获取普遍理睬 statis 的 app namespace
         AppNamespace publicAppNamespace = appNamespaceService.findPublicNamespaceByName(publicNamespaceName);
 
         if (publicAppNamespace == null) {
             throw new BadRequestException(
                     String.format("Public appNamespace not exists. NamespaceName = %s", publicNamespaceName));
         }
-
+        //简单的sql 搜索数据
         return namespaceRepository.countByNamespaceNameAndAppIdNot(publicNamespaceName, publicAppNamespace.getAppId());
     }
 
@@ -273,7 +274,7 @@ public class NamespaceService {
     }
 
     /**
-     *
+     * 删除最核心的东西
      * @param namespace
      * @param operator 指定的操作者
      * @return

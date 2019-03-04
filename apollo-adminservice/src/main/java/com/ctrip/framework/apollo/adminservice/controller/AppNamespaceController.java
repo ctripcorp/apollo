@@ -67,6 +67,12 @@ public class AppNamespaceController {
         return BeanUtils.transform(AppNamespaceDTO.class, entity);
     }
 
+    /**
+     * deleteAppNamespace
+     * @param appId
+     * @param namespaceName
+     * @param operator
+     */
     @DeleteMapping("/apps/{appId}/appnamespaces/{namespaceName:.+}")
     public void delete(@PathVariable("appId") String appId, @PathVariable("namespaceName") String namespaceName,
                        @RequestParam String operator) {
@@ -91,6 +97,11 @@ public class AppNamespaceController {
         return BeanUtils.batchTransform(NamespaceDTO.class, namespaces);
     }
 
+    /**
+     * countPublicAppNamespaceAssociatedNamespaces
+     * @param publicNamespaceName
+     * @return
+     */
     @GetMapping("/appnamespaces/{publicNamespaceName}/associated-namespaces/count")
     public int countPublicAppNamespaceAssociatedNamespaces(@PathVariable String publicNamespaceName) {
         return namespaceService.countPublicAppNamespaceAssociatedNamespaces(publicNamespaceName);

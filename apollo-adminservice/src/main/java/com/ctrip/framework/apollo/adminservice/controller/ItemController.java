@@ -128,6 +128,13 @@ public class ItemController {
     commitService.save(commit);
   }
 
+  /**
+   * 配置项的查询参数
+   * @param appId
+   * @param clusterName
+   * @param namespaceName
+   * @return
+   */
   @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
   public List<ItemDTO> findItems(@PathVariable("appId") String appId,
                                  @PathVariable("clusterName") String clusterName,

@@ -17,92 +17,92 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class ItemSetService {
 
-  private final AuditService auditService;
-  private final CommitService commitService;
-  private final ItemService itemService;
+    private final AuditService auditService;
+    private final CommitService commitService;
+    private final ItemService itemService;
 
-  public ItemSetService(
-      final AuditService auditService,
-      final CommitService commitService,
-      final ItemService itemService) {
-    this.auditService = auditService;
-    this.commitService = commitService;
-    this.itemService = itemService;
-  }
-
-  @Transactional
-  public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets){
-    return updateSet(namespace.getAppId(), namespace.getClusterName(), namespace.getNamespaceName(), changeSets);
-  }
-
-  @Transactional
-  public ItemChangeSets updateSet(String appId, String clusterName,
-                                  String namespaceName, ItemChangeSets changeSet) {
-    String operator = changeSet.getDataChangeLastModifiedBy();
-    ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
-
-    if (!CollectionUtils.isEmpty(changeSet.getCreateItems())) {
-      for (ItemDTO item : changeSet.getCreateItems()) {
-        Item entity = BeanUtils.transform(Item.class, item);
-        entity.setDataChangeCreatedBy(operator);
-        entity.setDataChangeLastModifiedBy(operator);
-        Item createdItem = itemService.save(entity);
-        configChangeContentBuilder.createItem(createdItem);
-      }
-      auditService.audit("ItemSet", null, Audit.OP.INSERT, operator);
+    public ItemSetService(
+            final AuditService auditService,
+            final CommitService commitService,
+            final ItemService itemService) {
+        this.auditService = auditService;
+        this.commitService = commitService;
+        this.itemService = itemService;
     }
 
-    if (!CollectionUtils.isEmpty(changeSet.getUpdateItems())) {
-      for (ItemDTO item : changeSet.getUpdateItems()) {
-        Item entity = BeanUtils.transform(Item.class, item);
+    @Transactional
+    public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets) {
+        return updateSet(namespace.getAppId(), namespace.getClusterName(), namespace.getNamespaceName(), changeSets);
+    }
 
-        Item managedItem = itemService.findOne(entity.getId());
-        if (managedItem == null) {
-          throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
+    @Transactional
+    public ItemChangeSets updateSet(String appId, String clusterName,
+                                    String namespaceName, ItemChangeSets changeSet) {
+        String operator = changeSet.getDataChangeLastModifiedBy();//修改时间
+        ConfigChangeContentBuilder configChangeContentBuilder = new ConfigChangeContentBuilder();
+
+        if (!CollectionUtils.isEmpty(changeSet.getCreateItems())) {
+            for (ItemDTO item : changeSet.getCreateItems()) {
+                Item entity = BeanUtils.transform(Item.class, item);
+                entity.setDataChangeCreatedBy(operator);
+                entity.setDataChangeLastModifiedBy(operator);
+                Item createdItem = itemService.save(entity);
+                configChangeContentBuilder.createItem(createdItem);
+            }
+            auditService.audit("ItemSet", null, Audit.OP.INSERT, operator);
         }
-        Item beforeUpdateItem = BeanUtils.transform(Item.class, managedItem);
 
-        //protect. only value,comment,lastModifiedBy,lineNum can be modified
-        managedItem.setValue(entity.getValue());
-        managedItem.setComment(entity.getComment());
-        managedItem.setLineNum(entity.getLineNum());
-        managedItem.setDataChangeLastModifiedBy(operator);
+        if (!CollectionUtils.isEmpty(changeSet.getUpdateItems())) {
+            for (ItemDTO item : changeSet.getUpdateItems()) {
+                Item entity = BeanUtils.transform(Item.class, item);
 
-        Item updatedItem = itemService.update(managedItem);
-        configChangeContentBuilder.updateItem(beforeUpdateItem, updatedItem);
+                Item managedItem = itemService.findOne(entity.getId());
+                if (managedItem == null) {
+                    throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
+                }
+                Item beforeUpdateItem = BeanUtils.transform(Item.class, managedItem);
 
-      }
-      auditService.audit("ItemSet", null, Audit.OP.UPDATE, operator);
+                //protect. only value,comment,lastModifiedBy,lineNum can be modified
+                managedItem.setValue(entity.getValue());
+                managedItem.setComment(entity.getComment());
+                managedItem.setLineNum(entity.getLineNum());
+                managedItem.setDataChangeLastModifiedBy(operator);
+
+                Item updatedItem = itemService.update(managedItem);
+                configChangeContentBuilder.updateItem(beforeUpdateItem, updatedItem);
+
+            }
+            auditService.audit("ItemSet", null, Audit.OP.UPDATE, operator);
+        }
+
+        if (!CollectionUtils.isEmpty(changeSet.getDeleteItems())) {
+            for (ItemDTO item : changeSet.getDeleteItems()) {
+                Item deletedItem = itemService.delete(item.getId(), operator);
+                configChangeContentBuilder.deleteItem(deletedItem);
+            }
+            auditService.audit("ItemSet", null, Audit.OP.DELETE, operator);
+        }
+
+        if (configChangeContentBuilder.hasContent()) {
+            createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(),
+                    changeSet.getDataChangeLastModifiedBy());
+        }
+
+        return changeSet;
+
     }
 
-    if (!CollectionUtils.isEmpty(changeSet.getDeleteItems())) {
-      for (ItemDTO item : changeSet.getDeleteItems()) {
-        Item deletedItem = itemService.delete(item.getId(), operator);
-        configChangeContentBuilder.deleteItem(deletedItem);
-      }
-      auditService.audit("ItemSet", null, Audit.OP.DELETE, operator);
+    private void createCommit(String appId, String clusterName, String namespaceName, String configChangeContent,
+                              String operator) {
+
+        Commit commit = new Commit();
+        commit.setAppId(appId);
+        commit.setClusterName(clusterName);
+        commit.setNamespaceName(namespaceName);
+        commit.setChangeSets(configChangeContent);
+        commit.setDataChangeCreatedBy(operator);
+        commit.setDataChangeLastModifiedBy(operator);
+        commitService.save(commit);
     }
-
-    if (configChangeContentBuilder.hasContent()){
-      createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(),
-                   changeSet.getDataChangeLastModifiedBy());
-    }
-
-    return changeSet;
-
-  }
-
-  private void createCommit(String appId, String clusterName, String namespaceName, String configChangeContent,
-                            String operator) {
-
-    Commit commit = new Commit();
-    commit.setAppId(appId);
-    commit.setClusterName(clusterName);
-    commit.setNamespaceName(namespaceName);
-    commit.setChangeSets(configChangeContent);
-    commit.setDataChangeCreatedBy(operator);
-    commit.setDataChangeLastModifiedBy(operator);
-    commitService.save(commit);
-  }
 
 }

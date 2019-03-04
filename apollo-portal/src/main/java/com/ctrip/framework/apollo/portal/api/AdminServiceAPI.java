@@ -140,6 +140,14 @@ public class AdminServiceAPI {
             return restTemplate.get(env, "apps/{appId}/namespaces/publish_info", typeReference, appId).getBody();
         }
 
+        /**
+         *
+         * @param env
+         * @param publicNamespaceName
+         * @param page
+         * @param size
+         * @return
+         */
         public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(Env env, String publicNamespaceName,
                                                                      int page, int size) {
             NamespaceDTO[] namespaceDTOs =
@@ -171,18 +179,18 @@ public class AdminServiceAPI {
                             ItemDTO[].class, appId, clusterName, namespaceName);
             return Arrays.asList(itemDTOs);
         }
-
+        //查询某一个key的信息
         public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
             return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}",
                     ItemDTO.class, appId, clusterName, namespaceName, key);
         }
-
+        //批量更新接口
         public void updateItemsByChangeSet(String appId, Env env, String clusterName, String namespace,
                                            ItemChangeSets changeSets) {
             restTemplate.post(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset",
                     changeSets, Void.class, appId, clusterName, namespace);
         }
-
+        //单独更新接口
         public void updateItem(String appId, Env env, String clusterName, String namespace, long itemId, ItemDTO item) {
             restTemplate.put(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}",
                     item, appId, clusterName, namespace, itemId);
