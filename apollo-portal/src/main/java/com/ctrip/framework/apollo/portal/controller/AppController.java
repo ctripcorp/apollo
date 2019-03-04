@@ -186,6 +186,7 @@ public class AppController {
         MultiResponseEntity<Env> response = MultiResponseEntity.ok();
         for (Env env : portalSettings.getActiveEnvs()) {
             try {
+                //这段代码很迷 --- 貌似没啥用
                 appService.load(env, appId);
             } catch (Exception e) {
                 if (e instanceof HttpClientErrorException &&

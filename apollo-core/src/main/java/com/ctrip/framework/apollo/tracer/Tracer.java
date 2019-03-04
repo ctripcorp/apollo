@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 描图者
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class Tracer {
@@ -28,6 +29,7 @@ public abstract class Tracer {
             if (producerManager == null) {
                 synchronized (lock) {
                     if (producerManager == null) {
+                        //从当前的环境变量中获取一个MessageProducerManager实例，这个是获取方法是针对spi的特殊优化
                         producerManager = ServiceBootstrap.loadFirst(MessageProducerManager.class);
                     }
                 }
@@ -36,7 +38,9 @@ public abstract class Tracer {
             logger.error(
                     "Failed to initialize message producer manager, use null message producer manager.", ex);
             producerManager = NULL_MESSAGE_PRODUCER_MANAGER;
+            //这里如果出现错误，将会使用默认的MessageProducer
         }
+        //获取一个定制化的MessageProducer
         return producerManager.getProducer();
     }
 
@@ -73,6 +77,12 @@ public abstract class Tracer {
         }
     }
 
+    /**
+     *
+     * @param type
+     * @param name
+     * @return
+     */
     public static Transaction newTransaction(String type, String name) {
         try {
             return getProducer().newTransaction(type, name);

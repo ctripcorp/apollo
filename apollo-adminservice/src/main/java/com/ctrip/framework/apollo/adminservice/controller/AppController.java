@@ -49,7 +49,7 @@ public class AppController {
         }
 
         entity = adminService.createNewApp(entity);
-
+        //利用反射将同名的参数统一到相同的地方
         return BeanUtils.transform(AppDTO.class, entity);
     }
 
@@ -83,6 +83,11 @@ public class AppController {
         return BeanUtils.batchTransform(AppDTO.class, app);
     }
 
+    /**
+     * 通过appId 查询对应的APP
+     * @param appId
+     * @return
+     */
     @GetMapping("/apps/{appId:.+}")
     public AppDTO get(@PathVariable("appId") String appId) {
         App app = appService.findOne(appId);

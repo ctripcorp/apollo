@@ -62,11 +62,12 @@ public class AdminServiceAddressLocator {
   }
 
   public List<ServiceDTO> getServiceList(Env env) {
-    List<ServiceDTO> services = cache.get(env);
+    List<ServiceDTO> services = cache.get(env);//获得本环境下所有的对应环境的Service服务信息
     if (CollectionUtils.isEmpty(services)) {
       return Collections.emptyList();
     }
     List<ServiceDTO> randomConfigServices = Lists.newArrayList(services);
+    //重新乱序，随即选取节点
     Collections.shuffle(randomConfigServices);
     return randomConfigServices;
   }

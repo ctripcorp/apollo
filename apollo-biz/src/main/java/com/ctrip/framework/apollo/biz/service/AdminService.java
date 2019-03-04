@@ -34,15 +34,17 @@ public class AdminService {
 
     @Transactional
     public App createNewApp(App app) {
+        //获取一个创建时间
         String createBy = app.getDataChangeCreatedBy();
         App createdApp = appService.save(app);
 
+        //app appNameSpace cluster 使用appId 进行关联
         String appId = createdApp.getAppId();
         //创建默认namespace
         appNamespaceService.createDefaultAppNamespace(appId, createBy);
         //创建默认集群
         clusterService.createDefaultCluster(appId, createBy);
-        //添加
+        //在namespace表中添加 appid 和 namespace
         namespaceService.instanceOfAppNamespaces(appId, ConfigConsts.CLUSTER_NAME_DEFAULT, createBy);
         return app;
     }

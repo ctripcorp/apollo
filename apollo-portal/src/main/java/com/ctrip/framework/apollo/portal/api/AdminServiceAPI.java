@@ -52,10 +52,12 @@ public class AdminServiceAPI {
     @Service
     public static class AppAPI extends API {
 
+        //不知到干啥，调用admin中的查询app接口
         public AppDTO loadApp(Env env, String appId) {
             return restTemplate.get(env, "apps/{appId}", AppDTO.class, appId);
         }
 
+        //调用admin中的创建接口
         public AppDTO createApp(Env env, AppDTO app) {
             return restTemplate.post(env, "apps", app, AppDTO.class);
         }
