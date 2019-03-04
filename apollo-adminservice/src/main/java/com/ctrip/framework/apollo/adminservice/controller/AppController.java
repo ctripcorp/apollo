@@ -53,6 +53,11 @@ public class AppController {
         return BeanUtils.transform(AppDTO.class, entity);
     }
 
+    /**
+     * 删除app信息
+     * @param appId
+     * @param operator
+     */
     @DeleteMapping("/apps/{appId:.+}")
     public void delete(@PathVariable("appId") String appId, @RequestParam String operator) {
         App entity = appService.findOne(appId);
@@ -67,7 +72,7 @@ public class AppController {
         if (!Objects.equals(appId, app.getAppId())) {
             throw new BadRequestException("The App Id of path variable and request body is different");
         }
-
+        //简单的更新app表中的相关信息
         appService.update(app);
     }
 

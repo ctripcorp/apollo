@@ -106,15 +106,16 @@ public class AppNamespaceService {
   @Transactional
   public AppNamespace createAppNamespace(AppNamespace appNamespace) {
     String createBy = appNamespace.getDataChangeCreatedBy();
-    if (!isAppNamespaceNameUnique(appNamespace.getAppId(), appNamespace.getName())) {
+    if (!isAppNamespaceNameUnique(appNamespace.getAppId(), appNamespace.getName())) {//查看这个namespace是否存在
       throw new ServiceException("appnamespace not unique");
     }
     appNamespace.setId(0);//protection
     appNamespace.setDataChangeCreatedBy(createBy);
     appNamespace.setDataChangeLastModifiedBy(createBy);
 
-    appNamespace = appNamespaceRepository.save(appNamespace);
+    appNamespace = appNamespaceRepository.save(appNamespace);//创建一个namespace
 
+    //修改更新namespace和cluster appid 三者的对应关系
     createNamespaceForAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(), createBy);
 
     auditService.audit(AppNamespace.class.getSimpleName(), appNamespace.getId(), Audit.OP.INSERT, createBy);

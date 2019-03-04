@@ -226,6 +226,11 @@ public class NamespaceService {
         return findParentNamespace(new Namespace(appId, clusterName, namespaceName));
     }
 
+    /**
+     * 集群有父子的定义 但是在客户端中没有体现出来这一点表会怀疑
+     * @param namespace
+     * @return
+     */
     public Namespace findParentNamespace(Namespace namespace) {
         String appId = namespace.getAppId();
         String namespaceName = namespace.getNamespaceName();
@@ -267,18 +272,26 @@ public class NamespaceService {
         }
     }
 
+    /**
+     *
+     * @param namespace
+     * @param operator 指定的操作者
+     * @return
+     */
     @Transactional
     public Namespace deleteNamespace(Namespace namespace, String operator) {
         String appId = namespace.getAppId();
         String clusterName = namespace.getClusterName();
         String namespaceName = namespace.getNamespaceName();
 
+        //配置的参数删除-- 不是真正的删除而是标记
         itemService.batchDelete(namespace.getId(), operator);
+        //配套的更新提交记录表
         commitService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
 
         // Child namespace releases should retain as long as the parent namespace exists, because parent namespaces' release
         // histories need them
-        if (!isChildNamespace(namespace)) {
+        if (!isChildNamespace(namespace)) {//TODO  没看懂
             releaseService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
         }
 
@@ -290,11 +303,12 @@ public class NamespaceService {
             //delete child namespace's releases. Notice: delete child namespace will not delete child namespace's releases
             releaseService.batchDelete(appId, childNamespace.getClusterName(), namespaceName, operator);
         }
-
+        //发布历史纪律修改
         releaseHistoryService.batchDelete(appId, clusterName, namespaceName, operator);
-
+        //删除namespace对应应用实例配置
         instanceService.batchDeleteInstanceConfig(appId, clusterName, namespaceName);
 
+        //TODO 暂时不知道干啥
         namespaceLockService.unlock(namespace.getId());
 
         namespace.setDeleted(true);
@@ -302,8 +316,10 @@ public class NamespaceService {
 
         auditService.audit(Namespace.class.getSimpleName(), namespace.getId(), Audit.OP.DELETE, operator);
 
+        //更新namespace状态
         Namespace deleted = namespaceRepository.save(namespace);
 
+        //这个是使用spi动态夹在的，如果没有配置，这个messageSender使用的是NullMessageSender
         //Publish release message to do some clean up in config service, such as updating the cache
         messageSender.sendMessage(ReleaseMessageKeyGenerator.generate(appId, clusterName, namespaceName),
                 Topics.APOLLO_RELEASE_TOPIC);
@@ -357,6 +373,7 @@ public class NamespaceService {
     }
 
     public Map<String, Boolean> namespacePublishInfo(String appId) {
+        //获得这个appid下所有的集群信息
         List<Cluster> clusters = clusterService.findParentClusters(appId);
         if (CollectionUtils.isEmpty(clusters)) {
             throw new BadRequestException("app not exist");
@@ -369,6 +386,7 @@ public class NamespaceService {
             List<Namespace> namespaces = findNamespaces(appId, clusterName);
 
             for (Namespace namespace : namespaces) {
+                //判断这个namespace是否需要发布
                 boolean isNamespaceNotPublished = isNamespaceNotPublished(namespace);
 
                 if (isNamespaceNotPublished) {
@@ -376,7 +394,7 @@ public class NamespaceService {
                     break;
                 }
             }
-
+            //如果这个集群没有添加进去，就默认设置为false
             clusterHasNotPublishedItems.putIfAbsent(clusterName, false);
         }
 

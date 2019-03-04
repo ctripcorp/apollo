@@ -62,10 +62,12 @@ public class AdminServiceAPI {
             return restTemplate.post(env, "apps", app, AppDTO.class);
         }
 
+        //更新升级借口
         public void updateApp(Env env, AppDTO app) {
             restTemplate.put(env, "apps/{appId}", app, app.getAppId());
         }
 
+        //删除app
         public void deleteApp(Env env, String appId, String operator) {
             restTemplate.delete(env, "/apps/{appId}?operator={operator}", appId, operator);
         }
@@ -75,6 +77,7 @@ public class AdminServiceAPI {
     @Service
     public static class NamespaceAPI extends API {
 
+        //spring 参数校验模型用来进行参数校验
         private ParameterizedTypeReference<Map<String, Boolean>>
                 typeReference = new ParameterizedTypeReference<Map<String, Boolean>>() {
         };
@@ -107,11 +110,13 @@ public class AdminServiceAPI {
                             namespace.getAppId(), namespace.getClusterName());
         }
 
+        //update 和create 而这合一
         public AppNamespaceDTO createAppNamespace(Env env, AppNamespaceDTO appNamespace) {
             return restTemplate
                     .post(env, "apps/{appId}/appnamespaces", appNamespace, AppNamespaceDTO.class, appNamespace.getAppId());
         }
 
+        //增量更新 appNameSpace
         public AppNamespaceDTO createMissingAppNamespace(Env env, AppNamespaceDTO appNamespace) {
             return restTemplate
                     .post(env, "apps/{appId}/appnamespaces?silentCreation=true", appNamespace, AppNamespaceDTO.class,
@@ -130,6 +135,7 @@ public class AdminServiceAPI {
                             namespaceName, operator);
         }
 
+        //发布app信息的状态信息
         public Map<String, Boolean> getNamespacePublishInfo(Env env, String appId) {
             return restTemplate.get(env, "apps/{appId}/namespaces/publish_info", typeReference, appId).getBody();
         }
