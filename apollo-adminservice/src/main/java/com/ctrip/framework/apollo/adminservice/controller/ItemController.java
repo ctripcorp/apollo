@@ -36,6 +36,14 @@ public class ItemController {
         this.commitService = commitService;
     }
 
+    /**
+     * createItem
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @param dto
+     * @return
+     */
     @PreAcquireNamespaceLock
     @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
     public ItemDTO create(@PathVariable("appId") String appId,
@@ -65,6 +73,15 @@ public class ItemController {
         return dto;
     }
 
+    /**
+     * 标识方法需要获取到namespace的lock才能执行
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @param itemId
+     * @param itemDTO
+     * @return
+     */
     @PreAcquireNamespaceLock
     @PutMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}")
     public ItemDTO update(@PathVariable("appId") String appId,
@@ -93,6 +110,7 @@ public class ItemController {
         builder.updateItem(beforeUpdateItem, entity);
         itemDTO = BeanUtils.transform(ItemDTO.class, entity);
 
+        //记录提交信息
         if (builder.hasContent()) {
             Commit commit = new Commit();
             commit.setAppId(appId);

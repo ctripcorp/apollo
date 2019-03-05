@@ -267,7 +267,7 @@ public class NamespaceService {
         List<Namespace> toDeleteNamespaces = findNamespaces(appId, clusterName);
 
         for (Namespace namespace : toDeleteNamespaces) {
-
+            //循环遍历删除关联关系
             deleteNamespace(namespace, operator);
 
         }

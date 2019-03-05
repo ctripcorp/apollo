@@ -83,6 +83,7 @@ public class ItemSetService {
             auditService.audit("ItemSet", null, Audit.OP.DELETE, operator);
         }
 
+        //储存提交日志
         if (configChangeContentBuilder.hasContent()) {
             createCommit(appId, clusterName, namespaceName, configChangeContentBuilder.build(),
                     changeSet.getDataChangeLastModifiedBy());

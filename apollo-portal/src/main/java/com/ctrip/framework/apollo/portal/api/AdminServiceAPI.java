@@ -221,7 +221,12 @@ public class AdminServiceAPI {
             return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}", ClusterDTO.class,
                     appId, clusterName);
         }
-
+        /**
+         * isNull
+         * @param appId
+         * @param clusterName
+         * @return
+         */
         public boolean isClusterUnique(String appId, Env env, String clusterName) {
             return restTemplate
                     .get(env, "apps/{appId}/cluster/{clusterName}/unique", Boolean.class,
@@ -249,6 +254,12 @@ public class AdminServiceAPI {
             return restTemplate.get(env, "releases/{releaseId}", ReleaseDTO.class, releaseId);
         }
 
+        /**
+         * 批量查询relesase
+         * @param env
+         * @param releaseIds
+         * @return
+         */
         public List<ReleaseDTO> findReleaseByIds(Env env, Set<Long> releaseIds) {
             if (CollectionUtils.isEmpty(releaseIds)) {
                 return Collections.emptyList();
@@ -306,6 +317,19 @@ public class AdminServiceAPI {
             return response;
         }
 
+        /**
+         * 灰度发布
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param operator
+         * @param isEmergencyPublish
+         * @param grayDelKeys
+         * @return
+         */
         public ReleaseDTO createGrayDeletionRelease(String appId, Env env, String clusterName, String namespace,
                                                     String releaseName, String releaseComment, String operator,
                                                     boolean isEmergencyPublish, Set<String> grayDelKeys) {
