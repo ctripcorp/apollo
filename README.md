@@ -95,6 +95,9 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
   * [Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
   * [分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
 
+# Release Notes
+  * [版本发布历史](https://github.com/ctripcorp/apollo/releases)
+
 # FAQ
   * [常见问题回答](https://github.com/ctripcorp/apollo/wiki/FAQ)
   * [部署&开发遇到的常见问题](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
@@ -270,6 +273,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![中泰证券网络金融部](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zts.png)
 ![网易易盾](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/163dun.png)
 ![享物说](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xiangwushuo.png)
+![申通](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sto.png) 
+![金和网络](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jinhe.png) 
+![二三四五](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/2345.png) 
 
 # Awards
 
