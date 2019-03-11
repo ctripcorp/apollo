@@ -211,18 +211,31 @@ public class AdminServiceAPI {
     @Service
     public static class ClusterAPI extends API {
 
+        /**
+         * 查询 集群信息
+         * @param appId
+         * @param env
+         * @return
+         */
         public List<ClusterDTO> findClustersByApp(String appId, Env env) {
             ClusterDTO[] clusterDTOs = restTemplate.get(env, "apps/{appId}/clusters", ClusterDTO[].class,
                     appId);
             return Arrays.asList(clusterDTOs);
         }
 
+        /**
+         * 加载集群信息
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @return
+         */
         public ClusterDTO loadCluster(String appId, Env env, String clusterName) {
             return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}", ClusterDTO.class,
                     appId, clusterName);
         }
         /**
-         * isNull
+         * isNull 这个cluster是否存在
          * @param appId
          * @param clusterName
          * @return
@@ -255,7 +268,7 @@ public class AdminServiceAPI {
         }
 
         /**
-         * 批量查询relesase
+         * 批量查询relesase 和上面的区别是一个和多个的差别
          * @param env
          * @param releaseIds
          * @return
@@ -272,6 +285,16 @@ public class AdminServiceAPI {
 
         }
 
+        /**
+         * 所有的releases
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespaceName
+         * @param page
+         * @param size
+         * @return
+         */
         public List<ReleaseDTO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
                                                 int size) {
             ReleaseDTO[] releaseDTOs = restTemplate.get(
@@ -291,6 +314,14 @@ public class AdminServiceAPI {
             return Arrays.asList(releaseDTOs);
         }
 
+        /**
+         * 获得最近提交的一个release
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @return
+         */
         public ReleaseDTO loadLatestRelease(String appId, Env env, String clusterName,
                                             String namespace) {
             ReleaseDTO releaseDTO = restTemplate
@@ -299,6 +330,18 @@ public class AdminServiceAPI {
             return releaseDTO;
         }
 
+        /**
+         * 调用了publish方法，
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param operator
+         * @param isEmergencyPublish
+         * @return
+         */
         public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
                                         String releaseName, String releaseComment, String operator,
                                         boolean isEmergencyPublish) {

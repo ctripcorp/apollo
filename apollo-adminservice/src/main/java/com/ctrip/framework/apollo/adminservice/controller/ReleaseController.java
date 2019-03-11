@@ -51,6 +51,11 @@ public class ReleaseController {
         this.namespaceBranchService = namespaceBranchService;
     }
 
+    /**
+     * loadRelease 查找版本号
+     * @param releaseId
+     * @return
+     */
 
     @GetMapping("/releases/{releaseId}")
     public ReleaseDTO get(@PathVariable("releaseId") long releaseId) {
@@ -96,6 +101,14 @@ public class ReleaseController {
     }
 
 
+    /**
+     * 查找所有非丢弃的releases
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @param page
+     * @return
+     */
     @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/active")
     public List<ReleaseDTO> findActiveReleases(@PathVariable("appId") String appId,
                                                @PathVariable("clusterName") String clusterName,
@@ -106,7 +119,7 @@ public class ReleaseController {
     }
 
     /**
-     * loadLatestRelease 查找最近提交的版本
+     * loadLatestRelease 查找最近提交的非遗弃的版本
      *
      * @param appId
      * @param clusterName
