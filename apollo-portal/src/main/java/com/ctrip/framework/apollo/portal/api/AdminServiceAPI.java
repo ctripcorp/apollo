@@ -392,6 +392,20 @@ public class AdminServiceAPI {
             return response;
         }
 
+        /**
+         *
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param branchName
+         * @param isEmergencyPublish
+         * @param deleteBranch
+         * @param changeSets
+         * @return
+         */
         public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
                                            String releaseName, String releaseComment, String branchName,
                                            boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
@@ -402,7 +416,6 @@ public class AdminServiceAPI {
                             + "&deleteBranch={deleteBranch}&isEmergencyPublish={isEmergencyPublish}",
                     changeSets, ReleaseDTO.class, appId, clusterName, namespace,
                     releaseName, releaseComment, branchName, deleteBranch, isEmergencyPublish);
-
         }
 
         public void rollback(Env env, long releaseId, String operator) {

@@ -178,7 +178,7 @@ public class ReleaseController {
 
     /**
      * merge branch items to master and publish master
-     *
+     * 灰度版本全量发布的时候采用进行合并的逻辑
      * @return published result
      */
     @Transactional
