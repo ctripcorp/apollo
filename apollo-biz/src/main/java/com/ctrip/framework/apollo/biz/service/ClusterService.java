@@ -51,7 +51,7 @@ public class ClusterService {
         if (Strings.isNullOrEmpty(appId)) {
             return Collections.emptyList();
         }
-
+        //父子cluster 0L 是默认的父cluster值
         List<Cluster> clusters = clusterRepository.findByAppIdAndParentClusterId(appId, 0L);
         if (clusters == null) {
             return Collections.emptyList();
@@ -66,7 +66,7 @@ public class ClusterService {
     public Cluster saveWithInstanceOfAppNamespaces(Cluster entity) {
 
         Cluster savedCluster = saveWithoutInstanceOfAppNamespaces(entity);
-
+        //app中添加一个新的app
         namespaceService.instanceOfAppNamespaces(savedCluster.getAppId(), savedCluster.getName(),
                 savedCluster.getDataChangeCreatedBy());
 
@@ -79,6 +79,7 @@ public class ClusterService {
             throw new BadRequestException("cluster not unique");
         }
         entity.setId(0);//protection
+
         Cluster cluster = clusterRepository.save(entity);
 
         auditService.audit(Cluster.class.getSimpleName(), cluster.getId(), Audit.OP.INSERT,

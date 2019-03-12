@@ -189,6 +189,15 @@
                         同步配置
                     </button>
 
+                    <button type="button" class="btn btn-default btn-sm J_tableview_btn"
+                            data-tooltip="tooltip" data-placement="bottom" title="比较各环境间配置"
+                            ng-click="goToDiffPage(namespace)"
+                            ng-show="namespace.viewType == 'table' && namespace.displayControl.currentOperateBranch == 'master'
+                             && namespace.isPropertiesFormat">
+                        <img src="img/diff.png">
+                        比较配置
+                    </button>
+
                     <button type="button" class="btn btn-primary btn-sm"
                             ng-show="!namespace.isLinkedNamespace
                              && namespace.viewType == 'table'

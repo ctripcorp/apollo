@@ -26,135 +26,161 @@ import java.util.List;
 @RestController
 public class ItemController {
 
-  private final ItemService itemService;
-  private final NamespaceService namespaceService;
-  private final CommitService commitService;
+    private final ItemService itemService;
+    private final NamespaceService namespaceService;
+    private final CommitService commitService;
 
-  public ItemController(final ItemService itemService, final NamespaceService namespaceService, final CommitService commitService) {
-    this.itemService = itemService;
-    this.namespaceService = namespaceService;
-    this.commitService = commitService;
-  }
-
-  @PreAcquireNamespaceLock
-  @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
-  public ItemDTO create(@PathVariable("appId") String appId,
-                        @PathVariable("clusterName") String clusterName,
-                        @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
-    Item entity = BeanUtils.transform(Item.class, dto);
-
-    ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
-    Item managedEntity = itemService.findOne(appId, clusterName, namespaceName, entity.getKey());
-    if (managedEntity != null) {
-      throw new BadRequestException("item already exists");
-    } else {
-      entity = itemService.save(entity);
-      builder.createItem(entity);
-    }
-    dto = BeanUtils.transform(ItemDTO.class, entity);
-
-    Commit commit = new Commit();
-    commit.setAppId(appId);
-    commit.setClusterName(clusterName);
-    commit.setNamespaceName(namespaceName);
-    commit.setChangeSets(builder.build());
-    commit.setDataChangeCreatedBy(dto.getDataChangeLastModifiedBy());
-    commit.setDataChangeLastModifiedBy(dto.getDataChangeLastModifiedBy());
-    commitService.save(commit);
-
-    return dto;
-  }
-
-  @PreAcquireNamespaceLock
-  @PutMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}")
-  public ItemDTO update(@PathVariable("appId") String appId,
-                        @PathVariable("clusterName") String clusterName,
-                        @PathVariable("namespaceName") String namespaceName,
-                        @PathVariable("itemId") long itemId,
-                        @RequestBody ItemDTO itemDTO) {
-
-    Item entity = BeanUtils.transform(Item.class, itemDTO);
-
-    ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
-
-    Item managedEntity = itemService.findOne(itemId);
-    if (managedEntity == null) {
-      throw new BadRequestException("item not exist");
+    public ItemController(final ItemService itemService, final NamespaceService namespaceService, final CommitService commitService) {
+        this.itemService = itemService;
+        this.namespaceService = namespaceService;
+        this.commitService = commitService;
     }
 
-    Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);
+    /**
+     * createItem
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @param dto
+     * @return
+     */
+    @PreAcquireNamespaceLock
+    @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
+    public ItemDTO create(@PathVariable("appId") String appId,
+                          @PathVariable("clusterName") String clusterName,
+                          @PathVariable("namespaceName") String namespaceName, @RequestBody ItemDTO dto) {
+        Item entity = BeanUtils.transform(Item.class, dto);
 
-    //protect. only value,comment,lastModifiedBy can be modified
-    managedEntity.setValue(entity.getValue());
-    managedEntity.setComment(entity.getComment());
-    managedEntity.setDataChangeLastModifiedBy(entity.getDataChangeLastModifiedBy());
+        ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+        Item managedEntity = itemService.findOne(appId, clusterName, namespaceName, entity.getKey());
+        if (managedEntity != null) {
+            throw new BadRequestException("item already exists");
+        } else {
+            entity = itemService.save(entity);
+            builder.createItem(entity);
+        }
+        dto = BeanUtils.transform(ItemDTO.class, entity);
 
-    entity = itemService.update(managedEntity);
-    builder.updateItem(beforeUpdateItem, entity);
-    itemDTO = BeanUtils.transform(ItemDTO.class, entity);
+        Commit commit = new Commit();
+        commit.setAppId(appId);
+        commit.setClusterName(clusterName);
+        commit.setNamespaceName(namespaceName);
+        commit.setChangeSets(builder.build());
+        commit.setDataChangeCreatedBy(dto.getDataChangeLastModifiedBy());
+        commit.setDataChangeLastModifiedBy(dto.getDataChangeLastModifiedBy());
+        commitService.save(commit);
 
-    if (builder.hasContent()) {
-      Commit commit = new Commit();
-      commit.setAppId(appId);
-      commit.setClusterName(clusterName);
-      commit.setNamespaceName(namespaceName);
-      commit.setChangeSets(builder.build());
-      commit.setDataChangeCreatedBy(itemDTO.getDataChangeLastModifiedBy());
-      commit.setDataChangeLastModifiedBy(itemDTO.getDataChangeLastModifiedBy());
-      commitService.save(commit);
+        return dto;
     }
 
-    return itemDTO;
-  }
+    /**
+     * 标识方法需要获取到namespace的lock才能执行
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @param itemId
+     * @param itemDTO
+     * @return
+     */
+    @PreAcquireNamespaceLock
+    @PutMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}")
+    public ItemDTO update(@PathVariable("appId") String appId,
+                          @PathVariable("clusterName") String clusterName,
+                          @PathVariable("namespaceName") String namespaceName,
+                          @PathVariable("itemId") long itemId,
+                          @RequestBody ItemDTO itemDTO) {
 
-  @PreAcquireNamespaceLock
-  @DeleteMapping("/items/{itemId}")
-  public void delete(@PathVariable("itemId") long itemId, @RequestParam String operator) {
-    Item entity = itemService.findOne(itemId);
-    if (entity == null) {
-      throw new NotFoundException("item not found for itemId " + itemId);
+        Item entity = BeanUtils.transform(Item.class, itemDTO);
+
+        ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
+
+        Item managedEntity = itemService.findOne(itemId);
+        if (managedEntity == null) {
+            throw new BadRequestException("item not exist");
+        }
+
+        Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);
+
+        //protect. only value,comment,lastModifiedBy can be modified
+        managedEntity.setValue(entity.getValue());
+        managedEntity.setComment(entity.getComment());
+        managedEntity.setDataChangeLastModifiedBy(entity.getDataChangeLastModifiedBy());
+
+        entity = itemService.update(managedEntity);
+        builder.updateItem(beforeUpdateItem, entity);
+        itemDTO = BeanUtils.transform(ItemDTO.class, entity);
+
+        //记录提交信息
+        if (builder.hasContent()) {
+            Commit commit = new Commit();
+            commit.setAppId(appId);
+            commit.setClusterName(clusterName);
+            commit.setNamespaceName(namespaceName);
+            commit.setChangeSets(builder.build());
+            commit.setDataChangeCreatedBy(itemDTO.getDataChangeLastModifiedBy());
+            commit.setDataChangeLastModifiedBy(itemDTO.getDataChangeLastModifiedBy());
+            commitService.save(commit);
+        }
+
+        return itemDTO;
     }
-    itemService.delete(entity.getId(), operator);
 
-    Namespace namespace = namespaceService.findOne(entity.getNamespaceId());
+    @PreAcquireNamespaceLock
+    @DeleteMapping("/items/{itemId}")
+    public void delete(@PathVariable("itemId") long itemId, @RequestParam String operator) {
+        Item entity = itemService.findOne(itemId);
+        if (entity == null) {
+            throw new NotFoundException("item not found for itemId " + itemId);
+        }
+        itemService.delete(entity.getId(), operator);
 
-    Commit commit = new Commit();
-    commit.setAppId(namespace.getAppId());
-    commit.setClusterName(namespace.getClusterName());
-    commit.setNamespaceName(namespace.getNamespaceName());
-    commit.setChangeSets(new ConfigChangeContentBuilder().deleteItem(entity).build());
-    commit.setDataChangeCreatedBy(operator);
-    commit.setDataChangeLastModifiedBy(operator);
-    commitService.save(commit);
-  }
+        Namespace namespace = namespaceService.findOne(entity.getNamespaceId());
 
-  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
-  public List<ItemDTO> findItems(@PathVariable("appId") String appId,
-                                 @PathVariable("clusterName") String clusterName,
-                                 @PathVariable("namespaceName") String namespaceName) {
-    return BeanUtils.batchTransform(ItemDTO.class, itemService.findItemsWithOrdered(appId, clusterName, namespaceName));
-  }
-
-  @GetMapping("/items/{itemId}")
-  public ItemDTO get(@PathVariable("itemId") long itemId) {
-    Item item = itemService.findOne(itemId);
-    if (item == null) {
-      throw new NotFoundException("item not found for itemId " + itemId);
+        Commit commit = new Commit();
+        commit.setAppId(namespace.getAppId());
+        commit.setClusterName(namespace.getClusterName());
+        commit.setNamespaceName(namespace.getNamespaceName());
+        commit.setChangeSets(new ConfigChangeContentBuilder().deleteItem(entity).build());
+        commit.setDataChangeCreatedBy(operator);
+        commit.setDataChangeLastModifiedBy(operator);
+        commitService.save(commit);
     }
-    return BeanUtils.transform(ItemDTO.class, item);
-  }
 
-  @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
-  public ItemDTO get(@PathVariable("appId") String appId,
-                     @PathVariable("clusterName") String clusterName,
-                     @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {
-    Item item = itemService.findOne(appId, clusterName, namespaceName, key);
-    if (item == null) {
-      throw new NotFoundException(
-          String.format("item not found for %s %s %s %s", appId, clusterName, namespaceName, key));
+    /**
+     * 配置项的查询参数
+     *
+     * @param appId
+     * @param clusterName
+     * @param namespaceName
+     * @return
+     */
+    @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items")
+    public List<ItemDTO> findItems(@PathVariable("appId") String appId,
+                                   @PathVariable("clusterName") String clusterName,
+                                   @PathVariable("namespaceName") String namespaceName) {
+        return BeanUtils.batchTransform(ItemDTO.class, itemService.findItemsWithOrdered(appId, clusterName, namespaceName));
     }
-    return BeanUtils.transform(ItemDTO.class, item);
-  }
+
+    @GetMapping("/items/{itemId}")
+    public ItemDTO get(@PathVariable("itemId") long itemId) {
+        Item item = itemService.findOne(itemId);
+        if (item == null) {
+            throw new NotFoundException("item not found for itemId " + itemId);
+        }
+        return BeanUtils.transform(ItemDTO.class, item);
+    }
+
+    @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key:.+}")
+    public ItemDTO get(@PathVariable("appId") String appId,
+                       @PathVariable("clusterName") String clusterName,
+                       @PathVariable("namespaceName") String namespaceName, @PathVariable("key") String key) {
+        Item item = itemService.findOne(appId, clusterName, namespaceName, key);
+        if (item == null) {
+            throw new NotFoundException(
+                    String.format("item not found for %s %s %s %s", appId, clusterName, namespaceName, key));
+        }
+        return BeanUtils.transform(ItemDTO.class, item);
+    }
 
 
 }

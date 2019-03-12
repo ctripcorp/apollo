@@ -85,16 +85,16 @@ public class RetryableRestTemplate {
         if (path.startsWith("/")) {
             path = path.substring(1, path.length());
         }
-        //获取地址
+        // 拼接uri地址
         String uri = uriTemplateHandler.expand(path, uriVariables).getPath();
 
         Transaction ct = Tracer.newTransaction("AdminAPI", uri);
 
-        ct.addData("Env", env);
+        ct.addData("Env", env);//添加请求参数
 
         //获取server路径url地址
         List<ServiceDTO> services = getAdminServices(env, ct);
-        //超时轮询
+        //轮询乱序之后的节点
         for (ServiceDTO serviceDTO : services) {
             try {
                 T result = doExecute(method, serviceDTO, path, request, responseType, uriVariables);

@@ -52,18 +52,22 @@ public class AdminServiceAPI {
     @Service
     public static class AppAPI extends API {
 
+        //不知到干啥，调用admin中的查询app接口
         public AppDTO loadApp(Env env, String appId) {
             return restTemplate.get(env, "apps/{appId}", AppDTO.class, appId);
         }
 
+        //调用admin中的创建接口
         public AppDTO createApp(Env env, AppDTO app) {
             return restTemplate.post(env, "apps", app, AppDTO.class);
         }
 
+        //更新升级借口
         public void updateApp(Env env, AppDTO app) {
             restTemplate.put(env, "apps/{appId}", app, app.getAppId());
         }
 
+        //删除app
         public void deleteApp(Env env, String appId, String operator) {
             restTemplate.delete(env, "/apps/{appId}?operator={operator}", appId, operator);
         }
@@ -73,6 +77,7 @@ public class AdminServiceAPI {
     @Service
     public static class NamespaceAPI extends API {
 
+        //spring 参数校验模型用来进行参数校验
         private ParameterizedTypeReference<Map<String, Boolean>>
                 typeReference = new ParameterizedTypeReference<Map<String, Boolean>>() {
         };
@@ -105,11 +110,13 @@ public class AdminServiceAPI {
                             namespace.getAppId(), namespace.getClusterName());
         }
 
+        //update 和create 而这合一
         public AppNamespaceDTO createAppNamespace(Env env, AppNamespaceDTO appNamespace) {
             return restTemplate
                     .post(env, "apps/{appId}/appnamespaces", appNamespace, AppNamespaceDTO.class, appNamespace.getAppId());
         }
 
+        //增量更新 appNameSpace
         public AppNamespaceDTO createMissingAppNamespace(Env env, AppNamespaceDTO appNamespace) {
             return restTemplate
                     .post(env, "apps/{appId}/appnamespaces?silentCreation=true", appNamespace, AppNamespaceDTO.class,
@@ -128,10 +135,19 @@ public class AdminServiceAPI {
                             namespaceName, operator);
         }
 
+        //发布app信息的状态信息
         public Map<String, Boolean> getNamespacePublishInfo(Env env, String appId) {
             return restTemplate.get(env, "apps/{appId}/namespaces/publish_info", typeReference, appId).getBody();
         }
 
+        /**
+         *
+         * @param env
+         * @param publicNamespaceName
+         * @param page
+         * @param size
+         * @return
+         */
         public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(Env env, String publicNamespaceName,
                                                                      int page, int size) {
             NamespaceDTO[] namespaceDTOs =
@@ -163,18 +179,18 @@ public class AdminServiceAPI {
                             ItemDTO[].class, appId, clusterName, namespaceName);
             return Arrays.asList(itemDTOs);
         }
-
+        //查询某一个key的信息
         public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
             return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}",
                     ItemDTO.class, appId, clusterName, namespaceName, key);
         }
-
+        //批量更新接口
         public void updateItemsByChangeSet(String appId, Env env, String clusterName, String namespace,
                                            ItemChangeSets changeSets) {
             restTemplate.post(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset",
                     changeSets, Void.class, appId, clusterName, namespace);
         }
-
+        //单独更新接口
         public void updateItem(String appId, Env env, String clusterName, String namespace, long itemId, ItemDTO item) {
             restTemplate.put(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}",
                     item, appId, clusterName, namespace, itemId);
@@ -195,17 +211,35 @@ public class AdminServiceAPI {
     @Service
     public static class ClusterAPI extends API {
 
+        /**
+         * 查询 集群信息
+         * @param appId
+         * @param env
+         * @return
+         */
         public List<ClusterDTO> findClustersByApp(String appId, Env env) {
             ClusterDTO[] clusterDTOs = restTemplate.get(env, "apps/{appId}/clusters", ClusterDTO[].class,
                     appId);
             return Arrays.asList(clusterDTOs);
         }
 
+        /**
+         * 加载集群信息
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @return
+         */
         public ClusterDTO loadCluster(String appId, Env env, String clusterName) {
             return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}", ClusterDTO.class,
                     appId, clusterName);
         }
-
+        /**
+         * isNull 这个cluster是否存在
+         * @param appId
+         * @param clusterName
+         * @return
+         */
         public boolean isClusterUnique(String appId, Env env, String clusterName) {
             return restTemplate
                     .get(env, "apps/{appId}/cluster/{clusterName}/unique", Boolean.class,
@@ -233,6 +267,12 @@ public class AdminServiceAPI {
             return restTemplate.get(env, "releases/{releaseId}", ReleaseDTO.class, releaseId);
         }
 
+        /**
+         * 批量查询relesase 和上面的区别是一个和多个的差别
+         * @param env
+         * @param releaseIds
+         * @return
+         */
         public List<ReleaseDTO> findReleaseByIds(Env env, Set<Long> releaseIds) {
             if (CollectionUtils.isEmpty(releaseIds)) {
                 return Collections.emptyList();
@@ -245,6 +285,16 @@ public class AdminServiceAPI {
 
         }
 
+        /**
+         * 所有的releases
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespaceName
+         * @param page
+         * @param size
+         * @return
+         */
         public List<ReleaseDTO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
                                                 int size) {
             ReleaseDTO[] releaseDTOs = restTemplate.get(
@@ -264,6 +314,14 @@ public class AdminServiceAPI {
             return Arrays.asList(releaseDTOs);
         }
 
+        /**
+         * 获得最近提交的一个release
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @return
+         */
         public ReleaseDTO loadLatestRelease(String appId, Env env, String clusterName,
                                             String namespace) {
             ReleaseDTO releaseDTO = restTemplate
@@ -272,6 +330,18 @@ public class AdminServiceAPI {
             return releaseDTO;
         }
 
+        /**
+         * 调用了publish方法，
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param operator
+         * @param isEmergencyPublish
+         * @return
+         */
         public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
                                         String releaseName, String releaseComment, String operator,
                                         boolean isEmergencyPublish) {
@@ -290,6 +360,19 @@ public class AdminServiceAPI {
             return response;
         }
 
+        /**
+         * 灰度发布
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param operator
+         * @param isEmergencyPublish
+         * @param grayDelKeys
+         * @return
+         */
         public ReleaseDTO createGrayDeletionRelease(String appId, Env env, String clusterName, String namespace,
                                                     String releaseName, String releaseComment, String operator,
                                                     boolean isEmergencyPublish, Set<String> grayDelKeys) {
