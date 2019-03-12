@@ -10,32 +10,37 @@ import org.springframework.stereotype.Component;
 @Component
 public class NamespaceUtil {
 
-  private final AppNamespaceServiceWithCache appNamespaceServiceWithCache;
+    private final AppNamespaceServiceWithCache appNamespaceServiceWithCache;
 
-  public NamespaceUtil(final AppNamespaceServiceWithCache appNamespaceServiceWithCache) {
-    this.appNamespaceServiceWithCache = appNamespaceServiceWithCache;
-  }
-
-  public String filterNamespaceName(String namespaceName) {
-    if (namespaceName.toLowerCase().endsWith(".properties")) {
-      int dotIndex = namespaceName.lastIndexOf(".");
-      return namespaceName.substring(0, dotIndex);
+    public NamespaceUtil(final AppNamespaceServiceWithCache appNamespaceServiceWithCache) {
+        this.appNamespaceServiceWithCache = appNamespaceServiceWithCache;
     }
 
-    return namespaceName;
-  }
+    /**
+     * 返回标准namespace字符转
+     * @param namespaceName
+     * @return
+     */
+    public String filterNamespaceName(String namespaceName) {
+        if (namespaceName.toLowerCase().endsWith(".properties")) {
+            int dotIndex = namespaceName.lastIndexOf(".");
+            return namespaceName.substring(0, dotIndex);
+        }
 
-  public String normalizeNamespace(String appId, String namespaceName) {
-    AppNamespace appNamespace = appNamespaceServiceWithCache.findByAppIdAndNamespace(appId, namespaceName);
-    if (appNamespace != null) {
-      return appNamespace.getName();
+        return namespaceName;
     }
 
-    appNamespace = appNamespaceServiceWithCache.findPublicNamespaceByName(namespaceName);
-    if (appNamespace != null) {
-      return appNamespace.getName();
-    }
+    public String normalizeNamespace(String appId, String namespaceName) {
+        AppNamespace appNamespace = appNamespaceServiceWithCache.findByAppIdAndNamespace(appId, namespaceName);
+        if (appNamespace != null) {
+            return appNamespace.getName();
+        }
 
-    return namespaceName;
-  }
+        appNamespace = appNamespaceServiceWithCache.findPublicNamespaceByName(namespaceName);
+        if (appNamespace != null) {
+            return appNamespace.getName();
+        }
+
+        return namespaceName;
+    }
 }

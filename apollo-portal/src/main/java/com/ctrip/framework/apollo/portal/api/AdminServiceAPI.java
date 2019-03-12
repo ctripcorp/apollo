@@ -392,6 +392,20 @@ public class AdminServiceAPI {
             return response;
         }
 
+        /**
+         * 合并灰度发布的信息和merge
+         * @param appId
+         * @param env
+         * @param clusterName
+         * @param namespace
+         * @param releaseName
+         * @param releaseComment
+         * @param branchName
+         * @param isEmergencyPublish
+         * @param deleteBranch
+         * @param changeSets
+         * @return
+         */
         public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
                                            String releaseName, String releaseComment, String branchName,
                                            boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {

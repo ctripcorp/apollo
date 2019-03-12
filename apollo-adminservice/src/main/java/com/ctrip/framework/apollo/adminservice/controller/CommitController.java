@@ -24,7 +24,7 @@ public class CommitController {
   @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/commit")
   public List<CommitDTO> find(@PathVariable String appId, @PathVariable String clusterName,
                               @PathVariable String namespaceName, Pageable pageable){
-
+    //查询提交记录
     List<Commit> commits = commitService.find(appId, clusterName, namespaceName, pageable);
     return BeanUtils.batchTransform(CommitDTO.class, commits);
   }
