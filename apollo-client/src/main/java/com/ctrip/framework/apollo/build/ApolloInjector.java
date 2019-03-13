@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 
 /**
+ * 反射工具专用类
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ApolloInjector {
