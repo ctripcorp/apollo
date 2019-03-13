@@ -393,7 +393,7 @@ public class AdminServiceAPI {
         }
 
         /**
-         *
+         * 合并灰度发布的信息和merge
          * @param appId
          * @param env
          * @param clusterName

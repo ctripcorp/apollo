@@ -62,14 +62,14 @@ public class ConfigController {
     }
 
     /**
-     * 查询配置信息
+     * 查询配置
      * @param appId
      * @param clusterName
      * @param namespace
      * @param dataCenter
-     * @param clientSideReleaseKey
+     * @param clientSideReleaseKey 密钥干啥用
      * @param clientIp
-     * @param messagesAsString
+     * @param messagesAsString 消息
      * @param request
      * @param response
      * @return
@@ -89,15 +89,19 @@ public class ConfigController {
         //fix the character case issue, such as FX.apollo <-> fx.apollo
         namespace = namespaceUtil.normalizeNamespace(appId, namespace);
 
+        //获得客户端ip地址
         if (Strings.isNullOrEmpty(clientIp)) {
             clientIp = tryToGetClientIp(request);
         }
 
+        //apollo消息解析
         ApolloNotificationMessages clientMessages = transformMessages(messagesAsString);
 
         List<Release> releases = Lists.newLinkedList();
 
         String appClusterNameLoaded = clusterName;
+
+        //如果没有传递namespace站位置符号
         if (!ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             Release currentAppRelease = configService.loadConfig(appId, clientIp, appId, clusterName, namespace,
                     dataCenter, clientMessages);
