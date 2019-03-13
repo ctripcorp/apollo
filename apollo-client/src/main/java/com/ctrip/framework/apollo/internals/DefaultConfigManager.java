@@ -45,8 +45,8 @@ public class DefaultConfigManager implements ConfigManager {
 
   @Override
   public ConfigFile getConfigFile(String namespace, ConfigFileFormat configFileFormat) {
-    String namespaceFileName = String.format("%s.%s", namespace, configFileFormat.getValue());
-    ConfigFile configFile = m_configFiles.get(namespaceFileName);
+    String namespaceFileName = String.format("%s.%s", namespace, configFileFormat.getValue());//将之前分离的namespace又合并成心的namespace
+    ConfigFile configFile = m_configFiles.get(namespaceFileName);//从缓存中获取
 
     if (configFile == null) {
       synchronized (this) {

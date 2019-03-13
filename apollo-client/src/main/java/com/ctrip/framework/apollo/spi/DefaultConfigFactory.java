@@ -35,7 +35,7 @@ public class DefaultConfigFactory implements ConfigFactory {
     @Override
     public Config create(String namespace) {
         ConfigFileFormat format = determineFileFormat(namespace);
-        if (ConfigFileFormat.isPropertiesCompatible(format)) {
+        if (ConfigFileFormat.isPropertiesCompatible(format)) {//针对yml文件特殊处理的方法
             return new DefaultConfig(namespace, createPropertiesCompatibleFileConfigRepository(namespace, format));
         }
         return new DefaultConfig(namespace, createLocalConfigRepository(namespace));
@@ -70,19 +70,29 @@ public class DefaultConfigFactory implements ConfigFactory {
         return new LocalFileConfigRepository(namespace, createRemoteConfigRepository(namespace));
     }
 
+    /**
+     * 创建远程配置存储库
+     * @param namespace
+     * @return
+     */
     RemoteConfigRepository createRemoteConfigRepository(String namespace) {
         return new RemoteConfigRepository(namespace);
     }
 
     PropertiesCompatibleFileConfigRepository createPropertiesCompatibleFileConfigRepository(String namespace,
                                                                                             ConfigFileFormat format) {
-        String actualNamespaceName = trimNamespaceFormat(namespace, format);
+        String actualNamespaceName = trimNamespaceFormat(namespace, format);//获得去掉后缀的namespace
         PropertiesCompatibleConfigFile configFile = (PropertiesCompatibleConfigFile) ConfigService
                 .getConfigFile(actualNamespaceName, format);
 
         return new PropertiesCompatibleFileConfigRepository(configFile);
     }
 
+    /**
+     * 这是一个通用方法，筛选出可以使用的配置文件信息
+     * @param namespaceName
+     * @return
+     */
     // for namespaces whose format are not properties, the file extension must be present, e.g. application.yaml
     ConfigFileFormat determineFileFormat(String namespaceName) {
         String lowerCase = namespaceName.toLowerCase();
@@ -96,8 +106,9 @@ public class DefaultConfigFactory implements ConfigFactory {
     }
 
     String trimNamespaceFormat(String namespaceName, ConfigFileFormat format) {
-        String extension = "." + format.getValue();
-        if (!namespaceName.toLowerCase().endsWith(extension)) {
+        String extension = "." + format.getValue();//获得文件的后缀
+        if (!namespaceName.toLowerCase().endsWith(extension)) {//不满足就返回原来的namespace否则就是处理后的namespace
+            //默认的namesapce
             return namespaceName;
         }
 
