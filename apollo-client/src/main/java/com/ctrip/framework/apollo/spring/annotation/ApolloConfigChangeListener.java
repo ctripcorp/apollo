@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -34,7 +33,7 @@ public @interface ApolloConfigChangeListener {
   /**
    * Apollo namespace for the config, if not specified then default to application
    */
-  String[] value() default {ConfigConsts.NAMESPACE_APPLICATION};
+  String[] value() default {};
 
   /**
    * The keys interested by the listener, will only be notified if any of the interested keys is changed.

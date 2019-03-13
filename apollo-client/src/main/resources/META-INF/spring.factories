@@ -1,5 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ctrip.framework.apollo.spring.boot.ApolloAutoConfiguration
+com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer
 org.springframework.context.ApplicationContextInitializer=\
 com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer
 org.springframework.boot.env.EnvironmentPostProcessor=\

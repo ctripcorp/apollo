@@ -9,7 +9,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-
 import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
 import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
 
@@ -18,8 +17,16 @@ import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor
-    implements BeanDefinitionRegistryPostProcessor {
+public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor implements BeanDefinitionRegistryPostProcessor {
+
+  /**
+   * The namespaces in the configuration file
+   */
+  private String[] configuredNamespaces;
+
+  public ConfigPropertySourcesProcessor(String[] configuredNamespaces){
+    this.configuredNamespaces = configuredNamespaces;
+  }
 
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -28,12 +35,13 @@ public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor
     propertySourcesPlaceholderPropertyValues.put("order", 0);
 
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, PropertySourcesPlaceholderConfigurer.class.getName(),
-        PropertySourcesPlaceholderConfigurer.class, propertySourcesPlaceholderPropertyValues);
+            PropertySourcesPlaceholderConfigurer.class, propertySourcesPlaceholderPropertyValues);
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloAnnotationProcessor.class.getName(),
-        ApolloAnnotationProcessor.class);
-    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueProcessor.class.getName(), SpringValueProcessor.class);
+            ApolloAnnotationProcessor.class, new Object[]{ configuredNamespaces });
+    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueProcessor.class.getName(),
+            SpringValueProcessor.class);
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloJsonValueProcessor.class.getName(),
-        ApolloJsonValueProcessor.class);
+            ApolloJsonValueProcessor.class);
 
     processSpringValueDefinition(registry);
   }
@@ -48,4 +56,5 @@ public class ConfigPropertySourcesProcessor extends PropertySourcesProcessor
 
     springValueDefinitionProcessor.postProcessBeanDefinitionRegistry(registry);
   }
+
 }
