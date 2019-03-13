@@ -63,13 +63,14 @@ public class ConfigController {
 
     /**
      * 查询配置
+     *
      * @param appId
      * @param clusterName
      * @param namespace
      * @param dataCenter
      * @param clientSideReleaseKey 密钥干啥用
      * @param clientIp
-     * @param messagesAsString 消息
+     * @param messagesAsString     消息
      * @param request
      * @param response
      * @return
@@ -101,7 +102,7 @@ public class ConfigController {
 
         String appClusterNameLoaded = clusterName;
 
-        //如果没有传递namespace站位置符号
+        //如果没有传递app站位置符号
         if (!ConfigConsts.NO_APPID_PLACEHOLDER.equalsIgnoreCase(appId)) {
             Release currentAppRelease = configService.loadConfig(appId, clientIp, appId, clusterName, namespace,
                     dataCenter, clientMessages);
@@ -113,6 +114,7 @@ public class ConfigController {
             }
         }
 
+        //使用引用配置的时候，所属的namespace并不是相同的地址
         //if namespace does not belong to this appId, should check if there is a public configuration
         if (!namespaceBelongsToAppId(appId, namespace)) {
             Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, namespace,
@@ -154,6 +156,13 @@ public class ConfigController {
         return apolloConfig;
     }
 
+    /**
+     * 判断namespcae 时候否是属于这个appid的，因为其他应用可能会是用这个namespace
+     *
+     * @param appId
+     * @param namespaceName
+     * @return
+     */
     private boolean namespaceBelongsToAppId(String appId, String namespaceName) {
         //Every app has an 'application' namespace
         if (Objects.equals(ConfigConsts.NAMESPACE_APPLICATION, namespaceName)) {
@@ -171,6 +180,8 @@ public class ConfigController {
     }
 
     /**
+     * 搜索公共配置
+     *
      * @param clientAppId the application which uses public config
      * @param namespace   the namespace
      * @param dataCenter  the datacenter
@@ -191,6 +202,7 @@ public class ConfigController {
     }
 
     /**
+     * 多个版本的release合并成同一个releases
      * Merge configurations of releases.
      * Release in lower index override those in higher index
      */
@@ -202,6 +214,14 @@ public class ConfigController {
         return result;
     }
 
+    /**
+     * 生成一个字符串
+     * @param appId
+     * @param cluster
+     * @param namespace
+     * @param dataCenter
+     * @return
+     */
     private String assembleKey(String appId, String cluster, String namespace, String dataCenter) {
         List<String> keyParts = Lists.newArrayList(appId, cluster, namespace);
         if (!Strings.isNullOrEmpty(dataCenter)) {
@@ -210,6 +230,14 @@ public class ConfigController {
         return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
     }
 
+    /**
+     * 生成记录针对外部使用的情况来说
+     * @param appId
+     * @param cluster
+     * @param dataCenter
+     * @param clientIp
+     * @param releases
+     */
     private void auditReleases(String appId, String cluster, String dataCenter, String clientIp,
                                List<Release> releases) {
         if (Strings.isNullOrEmpty(clientIp)) {
@@ -223,6 +251,11 @@ public class ConfigController {
         }
     }
 
+    /**
+     * 封装一层用来获取Ip地址信息的方法
+     * @param request
+     * @return
+     */
     private String tryToGetClientIp(HttpServletRequest request) {
         String forwardedFor = request.getHeader("X-FORWARDED-FOR");
         if (!Strings.isNullOrEmpty(forwardedFor)) {
@@ -231,6 +264,11 @@ public class ConfigController {
         return request.getRemoteAddr();
     }
 
+    /**
+     * json解析成对象
+     * @param messagesAsString
+     * @return
+     */
     ApolloNotificationMessages transformMessages(String messagesAsString) {
         ApolloNotificationMessages notificationMessages = null;
         if (!Strings.isNullOrEmpty(messagesAsString)) {

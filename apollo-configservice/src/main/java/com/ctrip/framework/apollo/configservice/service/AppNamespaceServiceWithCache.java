@@ -74,7 +74,7 @@ public class AppNamespaceServiceWithCache implements InitializingBean {
     }
 
     public AppNamespace findByAppIdAndNamespace(String appId, String namespaceName) {
-        //if判断的简化
+        //if判断的简化 判读这两个是不是都是null
         Preconditions.checkArgument(!StringUtils.isContainEmpty(appId, namespaceName), "appId and namespaceName must not be empty");
         //返回一个xxx+xxx的一个代表
         return appNamespaceCache.get(STRING_JOINER.join(appId, namespaceName));
