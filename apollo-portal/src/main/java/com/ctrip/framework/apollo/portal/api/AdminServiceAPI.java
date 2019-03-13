@@ -416,7 +416,6 @@ public class AdminServiceAPI {
                             + "&deleteBranch={deleteBranch}&isEmergencyPublish={isEmergencyPublish}",
                     changeSets, ReleaseDTO.class, appId, clusterName, namespace,
                     releaseName, releaseComment, branchName, deleteBranch, isEmergencyPublish);
-
         }
 
         public void rollback(Env env, long releaseId, String operator) {

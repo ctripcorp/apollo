@@ -145,7 +145,7 @@ public class ReleaseService {
                                                    ItemChangeSets changeSets) {
 
         checkLock(namespace, isEmergencyPublish, changeSets.getDataChangeLastModifiedBy());
-
+        //简单的将主方法和次要方法合并在一起
         itemSetService.updateSet(namespace, changeSets);
 
         Release branchRelease = findLatestActiveRelease(namespace.getAppId(), branchName, namespace
@@ -210,6 +210,7 @@ public class ReleaseService {
                                            String releaseName, String releaseComment,
                                            String operator, boolean isEmergencyPublish, Set<String> grayDelKeys) {
         Release parentLatestRelease = findLatestActiveRelease(parentNamespace);
+        //获得了最后一次发布的配置信息
         Map<String, String> parentConfigurations = parentLatestRelease != null ?
                 gson.fromJson(parentLatestRelease.getConfigurations(),
                         GsonType.CONFIG) : new HashMap<>();
@@ -235,6 +236,7 @@ public class ReleaseService {
 
         checkLock(namespace, isEmergencyPublish, operator);
 
+        //获得这个配置项的item Map 集合
         Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
         //自定义集群的时候将会出现父子namespace
@@ -323,11 +325,15 @@ public class ReleaseService {
     private Release masterRelease(Namespace namespace, String releaseName, String releaseComment,
                                   Map<String, String> configurations, String operator,
                                   int releaseOperation, Map<String, Object> operationContext) {
+
         Release lastActiveRelease = findLatestActiveRelease(namespace);
+
         long previousReleaseId = lastActiveRelease == null ? 0 : lastActiveRelease.getId();
+
         Release release = createRelease(namespace, releaseName, releaseComment,
                 configurations, operator);
 
+        //创建历史记录
         releaseHistoryService.createReleaseHistory(namespace.getAppId(), namespace.getClusterName(),
                 namespace.getNamespaceName(), namespace.getClusterName(),
                 release.getId(), previousReleaseId, releaseOperation,
@@ -350,6 +356,7 @@ public class ReleaseService {
         releaseOperationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
         releaseOperationContext.put(ReleaseOperationContext.BRANCH_RELEASE_KEYS, branchReleaseKeys);
 
+        //存一下
         Release release =
                 createRelease(childNamespace, releaseName, releaseComment, configurations, operator);
 
@@ -365,6 +372,7 @@ public class ReleaseService {
                     .batchTransformFromJSON(grayReleaseRule.getRules()));
         }
 
+        //记录灰度信息提交历史
         releaseHistoryService.createReleaseHistory(parentNamespace.getAppId(), parentNamespace.getClusterName(),
                 parentNamespace.getNamespaceName(), childNamespace.getClusterName(),
                 release.getId(),
