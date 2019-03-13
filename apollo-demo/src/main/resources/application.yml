@@ -1,5 +1,5 @@
 apollo:
   bootstrap:
-    enabled: true
+    enabled: false
     # will inject 'application' and 'TEST1.apollo' namespaces in bootstrap phase
     namespaces: application,TEST1.apollo,application.yaml

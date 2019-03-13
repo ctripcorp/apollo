@@ -17,6 +17,14 @@ public class ConfigPropertySourceFactory {
     return configPropertySource;
   }
 
+  public ConfigPropertySource getConfigPropertySource(String name, Config source, int order) {
+    ConfigPropertySource configPropertySource = new ConfigPropertySource(name, source, order);
+
+    configPropertySources.add(configPropertySource);
+
+    return configPropertySource;
+  }
+
   public List<ConfigPropertySource> getAllConfigPropertySources() {
     return Lists.newLinkedList(configPropertySources);
   }

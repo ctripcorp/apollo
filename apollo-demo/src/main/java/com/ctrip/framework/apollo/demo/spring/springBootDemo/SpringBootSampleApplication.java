@@ -5,7 +5,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.ctrip.framework.apollo.spi.DefaultConfigFactory;
+import com.ctrip.framework.apollo.spring.config.DynamicDefaultConfigManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -36,6 +39,10 @@ public class SpringBootSampleApplication {
     while (true) {
       System.out.print("> ");
       String input = new BufferedReader(new InputStreamReader(System.in, Charsets.UTF_8)).readLine();
+      if (!Strings.isNullOrEmpty(input) && input.trim().equalsIgnoreCase("dynamic")){
+          DynamicDefaultConfigManager dynamicDefaultConfigManager = new DynamicDefaultConfigManager();
+          dynamicDefaultConfigManager.addNamespace("dynamic",1);
+      }
       if (!Strings.isNullOrEmpty(input) && input.trim().equalsIgnoreCase("quit")) {
         System.exit(0);
       }

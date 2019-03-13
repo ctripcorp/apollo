@@ -7,6 +7,8 @@ import org.springframework.core.env.EnumerablePropertySource;
 
 import com.ctrip.framework.apollo.Config;
 
+import static com.ctrip.framework.apollo.core.spi.Ordered.LOWEST_PRECEDENCE;
+
 /**
  * Property source wrapper for Config
  *
@@ -14,9 +16,19 @@ import com.ctrip.framework.apollo.Config;
  */
 public class ConfigPropertySource extends EnumerablePropertySource<Config> {
   private static final String[] EMPTY_ARRAY = new String[0];
+  private int order = LOWEST_PRECEDENCE;
 
   ConfigPropertySource(String name, Config source) {
     super(name, source);
+  }
+
+  ConfigPropertySource(String name, Config source, int order) {
+    super(name, source);
+    this.order = order;
+  }
+
+  public int getOrder(){
+    return order;
   }
 
   @Override
