@@ -80,6 +80,17 @@ public abstract class AbstractConfig implements Config {
         addChangeListener(listener, interestedKeys, null);
     }
 
+    /**
+     * 添加监听方法前缀
+     * @param listener the config change listener
+     * @param interestedKeys the keys that the listener is interested in
+     * @param interestedKeyPrefixes the key prefixes that the listener is interested in,
+     *                              e.g. "spring." means that {@code listener} is interested in keys that starts with "spring.", such as "spring.banner", "spring.jpa", etc.
+     *                              and "application" means that {@code listener} is interested in keys that starts with "application", such as "applicationName", "application.port", etc.
+     *                              For more details, see {@link com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener#interestedKeyPrefixes()}
+     *                              and {@link java.lang.String#startsWith(String)}
+     *
+     */
     @Override
     public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
         if (!m_listeners.contains(listener)) {

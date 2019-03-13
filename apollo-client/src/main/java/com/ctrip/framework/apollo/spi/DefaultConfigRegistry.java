@@ -26,7 +26,6 @@ public class DefaultConfigRegistry implements ConfigRegistry {
   @Override
   public ConfigFactory getFactory(String namespace) {
     ConfigFactory config = m_instances.get(namespace);
-
     return config;
   }
 }
