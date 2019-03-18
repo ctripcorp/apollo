@@ -4,6 +4,7 @@ eureka:
     preferIpAddress: true
     status-page-url-path: /info
     health-check-url-path: /health
+    ip-address: 192.168.56.101
   server:
     peerEurekaNodesUpdateIntervalMs: 60000
     enableSelfPreservation: false

@@ -57,6 +57,7 @@
 					<artifactId>aws-java-sdk-route53</artifactId>
 					<groupId>com.amazonaws</groupId>
 				</exclusion>
+
 				<!-- duplicated with spring-security-core -->
 				<exclusion>
 					<groupId>org.springframework.security</groupId>
@@ -64,6 +65,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<!-- end of eureka -->
 		<dependency>
 			<groupId>com.h2database</groupId>
