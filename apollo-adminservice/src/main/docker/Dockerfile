@@ -8,17 +8,13 @@ MAINTAINER ameizi <sxyx2008@163.com>
 
 ENV VERSION 1.4.0-SNAPSHOT
 
-RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
-    && apk update upgrade \
-    && apk add --no-cache procps unzip curl bash tzdata \
-    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
-ADD apollo-adminservice-${VERSION}-github.zip /apollo-adminservice/apollo-adminservice-${VERSION}-github.zip
+ADD apollo-adminservice-${VERSION}-github.tar.gz /apollo-adminservice/apollo-adminservice-${VERSION}-github.tar.gz
 
-RUN unzip /apollo-adminservice/apollo-adminservice-${VERSION}-github.zip -d /apollo-adminservice \
-    && rm -rf /apollo-adminservice/apollo-adminservice-${VERSION}-github.zip \
+RUN tar -zxvf /apollo-adminservice/apollo-adminservice-${VERSION}-github.tar.gz -C /apollo-adminservice \
+    && rm -rf /apollo-adminservice/apollo-adminservice-${VERSION}-github.tar.gz \
     && sed -i '$d' /apollo-adminservice/scripts/startup.sh \
     && echo "tail -f /dev/null" >> /apollo-adminservice/scripts/startup.sh
 
