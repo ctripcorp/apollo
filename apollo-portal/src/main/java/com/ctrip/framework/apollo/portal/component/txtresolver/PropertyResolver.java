@@ -89,6 +89,12 @@ public class PropertyResolver implements ConfigTextResolver {
       lineCounter++;
     }
 
+    keys.forEach(item -> {
+      if (keys.stream().filter(i -> !i.equals(item)).anyMatch(item::equalsIgnoreCase)) {
+        throw new BadRequestException("key: [" + item + "] has repeated");
+      }
+    });
+
     return keyCount > keys.size();
   }
 
