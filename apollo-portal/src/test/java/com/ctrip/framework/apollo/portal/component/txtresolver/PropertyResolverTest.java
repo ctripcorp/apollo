@@ -31,7 +31,7 @@ public class PropertyResolverTest extends AbstractUnitTest {
   @Test
   public void testRepeatKey() {
     try {
-      resolver.resolve(1, "a=b\nb=c\nA=b\nB=c", Collections.emptyList());
+      resolver.resolve(1, "a=b\nb=c\nA=d\nB=e", Collections.emptyList());
     } catch (Exception e) {
       Assert.assertTrue(e instanceof BadRequestException);
     }
