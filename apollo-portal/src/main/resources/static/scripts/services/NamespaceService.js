@@ -153,6 +153,10 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         return d.promise;
     }
 
+    function downloadNamespace(baseInfo,env) {
+        window.location.href = '/apps/'+baseInfo.appId+'/envs/'+env+'/clusters/'+baseInfo.clusterName+'/namespaces/'+baseInfo.namespaceName+'/download';
+    }
+
     return {
         find_public_namespaces: find_public_namespaces,
         createNamespace: createNamespace,
@@ -161,7 +165,8 @@ appService.service("NamespaceService", ['$resource', '$q', function ($resource, 
         deleteNamespace: deleteNamespace,
         getPublicAppNamespaceAllNamespaces: getPublicAppNamespaceAllNamespaces,
         loadAppNamespace: loadAppNamespace,
-        deleteAppNamespace: deleteAppNamespace
+        deleteAppNamespace: deleteAppNamespace,
+        downloadNamespace: downloadNamespace
     }
 
 }]);

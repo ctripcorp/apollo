@@ -1,9 +1,11 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
+import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
+import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
@@ -17,9 +19,11 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceCreationModel;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceCreationEvent;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceDeletionEvent;
 import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
+import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -28,15 +32,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +57,7 @@ public class NamespaceController {
   private final PortalConfig portalConfig;
   private final PermissionValidator permissionValidator;
   private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final ItemService itemService;
 
   public NamespaceController(
       final ApplicationEventPublisher publisher,
@@ -66,7 +67,8 @@ public class NamespaceController {
       final RoleInitializationService roleInitializationService,
       final PortalConfig portalConfig,
       final PermissionValidator permissionValidator,
-      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+      final AdminServiceAPI.NamespaceAPI namespaceAPI,
+      final ItemService itemService) {
     this.publisher = publisher;
     this.userInfoHolder = userInfoHolder;
     this.namespaceService = namespaceService;
@@ -75,6 +77,7 @@ public class NamespaceController {
     this.portalConfig = portalConfig;
     this.permissionValidator = permissionValidator;
     this.namespaceAPI = namespaceAPI;
+    this.itemService = itemService;
   }
 
 
@@ -250,6 +253,30 @@ public class NamespaceController {
 
     return ResponseEntity.ok().build();
   }
+
+    @GetMapping(value = "/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName:.+}/download")
+    public void downloadNamespace(@PathVariable String appId,
+                                  @PathVariable String env,
+                                  @PathVariable String clusterName,
+                                  @PathVariable String namespaceName,
+                                  HttpServletResponse response) {
+        String fileName = appId + "-" + env + "-" + clusterName + "-" + namespaceName;
+        boolean isProperties = ConfigToFileUtils.isPropertiesNamespace(namespaceName);
+        if (isProperties) {
+            fileName = fileName + ".properties";
+        }
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        List<ItemDTO> items = itemService.findItems(appId, Env.fromString(env), clusterName, namespaceName);
+        try {
+            if (items != null && !items.isEmpty()) {
+                ConfigToFileUtils.downloadNamespace(response.getOutputStream(), items, isProperties);
+            }
+        } catch (IOException e) {
+            throw new ServiceException(String.format("download config {%s} failed", fileName), e);
+        }
+    }
+
 
   private Set<String> findMissingNamespaceNames(String appId, String env, String clusterName) {
     List<AppNamespaceDTO> configDbAppNamespaces = namespaceAPI.getAppNamespaces(appId, Env.fromString(env));

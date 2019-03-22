@@ -1,7 +1,7 @@
 directive_module.directive('apollonspanel', directive);
 
 function directive($window, toastr, AppUtil, EventManager, PermissionService, NamespaceLockService,
-                   UserService, CommitService, ReleaseService, InstanceService, NamespaceBranchService, ConfigService) {
+                   UserService, CommitService, ReleaseService, InstanceService, NamespaceBranchService, ConfigService, NamespaceService) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/namespace-panel.html',
@@ -66,6 +66,7 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
             scope.mergeAndPublish = mergeAndPublish;
             scope.addRuleItem = addRuleItem;
             scope.editRuleItem = editRuleItem;
+            scope.download = download;
 
             scope.deleteNamespace = deleteNamespace;
 
@@ -861,6 +862,9 @@ function directive($window, toastr, AppUtil, EventManager, PermissionService, Na
                                   });
             }
 
+            function download(namespace) {
+                NamespaceService.downloadNamespace(namespace.baseInfo,scope.env);
+            }
             function mergeAndPublish(branch) {
                 var parentNamespace = branch.parentNamespace;
                 if (!parentNamespace.hasReleasePermission) {
