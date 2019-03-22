@@ -55,7 +55,10 @@ public class ConfigToFileUtils {
   public static boolean isPropertiesNamespace(String namespaceName) {
     String[] split  = namespaceName.split("\\.");
     String   suffix = split[split.length - 1];
-    return !"properties".equalsIgnoreCase(suffix);
+    return !("yaml".equalsIgnoreCase(suffix)
+            || "json".equalsIgnoreCase(suffix)
+            || "xml".equalsIgnoreCase(suffix)
+            || "yml".equalsIgnoreCase(suffix));
   }
 
 }
