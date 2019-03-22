@@ -87,10 +87,10 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     }
 
     //2. Try to get app id from OS environment variable
-    m_appId = System.getenv("APOLLO_APP_ID");
+    m_appId = System.getenv("APP_ID");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
-      logger.info("App ID is set to {} by APOLLO_APP_ID env from OS environment variable", m_appId);
+      logger.info("App ID is set to {} by APP_ID env from OS environment variable", m_appId);
       return;
     }
 
