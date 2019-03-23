@@ -81,19 +81,13 @@ public class PropertyResolver implements ConfigTextResolver {
         keyCount++;
         String[] kv = parseKeyValueFromItem(item);
         if (kv != null) {
-          keys.add(kv[0]);
+          keys.add(kv[0].toUpperCase());
         } else {
           throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
         }
       }
       lineCounter++;
     }
-
-    keys.forEach(item -> {
-      if (keys.stream().filter(i -> !i.equals(item)).anyMatch(item::equalsIgnoreCase)) {
-        throw new BadRequestException("key: [" + item + "] has repeated");
-      }
-    });
 
     return keyCount > keys.size();
   }
