@@ -1,6 +1,10 @@
 language: java
 jdk:
+  - openjdk8
+  - openjdk11
   - oraclejdk8
+  - oraclejdk11
+
 notification:
   email:
     recipients:
@@ -10,7 +14,7 @@ notification:
 
 before_script:
   - echo "MAVEN_OPTS='-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m'" > ~/.mavenrc
-  
+
 before_install:
   - pip install --user codecov
 
@@ -21,7 +25,7 @@ after_success:
 branches:
   only:
     - master
-    
+
 env:
   global:
     - secure: "DYJkJ7ArGJuIyTJsmjvUAJRyUKXEaGFWYZFAGZq6vxbrMN3tThz7drfNhhvP2YE7hdS7YX7hZBWVQEnNR+pBN+ykQFx7TpLr311eEk2/Yy3G5qegeHMsgqYXfAp3FFpYlE6Kr3Dcf4kFSWtRi735kSo5oHicoaxbyWENgmKT+uQjYERKhDXEoenMaDpcf8WO8KARzxI1cXf69ECnYP2rzNOfkNW4IGjTcJnplXPZ9BNBRn3WfyPwEHlemETAMwJxJXolNM9qn1bDBTB/35yJrneQY/pYp9Q8PbQID2lNJu7PFKYaI9mvsKHUgxjbzsC29zlMY94pDr6sQtr7IA0dSuk+qO2tEqAStTwRI5JOcozLAslTMNnUn6HLvy0/Kkq1TL+JrIohoRD58F34SzjcnuB4w0/GCWGU4BMSbzPwHsgQZM4lkHDWv+w1OSwP3dgCFI/vYYr9xNV0zqTgyZ9ITkMZPL0wOh0DZ7Bxxm80wyHfJuRwywemMtzitgjPR4BKENbpcoGN4lcKWciksAuiyX+dedOPfGoOWfnIKh1g7yeVB84LMggCSad/9cqnYf2Sm8xSyVzNmyhSOy2Ocy40RDas2uHIK3/QPy56Le/t1LD2On/x1TZBIoSavedNYA5N54s/ZCDZOcepUMvlwtjgnx/SMjU85ZLKCcliPGdTWws="
