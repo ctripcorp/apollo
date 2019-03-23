@@ -81,7 +81,7 @@ public class PropertyResolver implements ConfigTextResolver {
         keyCount++;
         String[] kv = parseKeyValueFromItem(item);
         if (kv != null) {
-          keys.add(kv[0].toUpperCase());
+          keys.add(kv[0].toLowerCase());
         } else {
           throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
         }
