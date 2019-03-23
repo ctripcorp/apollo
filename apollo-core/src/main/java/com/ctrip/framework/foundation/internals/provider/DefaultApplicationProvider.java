@@ -90,7 +90,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     m_appId = System.getenv("APP_ID");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
-      logger.info("App ID is set to {} by APP_ID env from OS environment variable", m_appId);
+      logger.info("App ID is set to {} by APP_ID property from OS environment variable", m_appId);
       return;
     }
 
