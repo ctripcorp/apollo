@@ -1,20 +1,34 @@
 package com.ctrip.framework.apollo.openapi.util;
 
-import com.ctrip.framework.apollo.common.dto.*;
-import com.ctrip.framework.apollo.openapi.dto.*;
+import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
+import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
+import com.ctrip.framework.apollo.common.dto.ItemDTO;
+import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
+import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
+import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.common.entity.AppNamespace;
+import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenGrayReleaseRuleDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenGrayReleaseRuleItemDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenReleaseDTO;
+import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
+import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-
-import com.ctrip.framework.apollo.common.entity.AppNamespace;
-import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
-import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
-
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class OpenApiBeanUtils {
@@ -134,4 +148,18 @@ public class OpenApiBeanUtils {
     return grayReleaseRuleDTO;
   }
 
+  public static List<OpenAppDTO> transformFromApps(final List<App> apps) {
+    if (CollectionUtils.isEmpty(apps)) {
+      return Collections.emptyList();
+    }
+    return apps.stream()
+        .map(OpenApiBeanUtils::transformFromApp)
+        .collect(Collectors.toList());
+  }
+
+  public static OpenAppDTO transformFromApp(final App app) {
+    Preconditions.checkArgument(app != null);
+
+    return BeanUtils.transform(OpenAppDTO.class, app);
+  }
 }
