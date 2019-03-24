@@ -29,6 +29,15 @@ public class PropertyResolverTest extends AbstractUnitTest {
   }
 
   @Test
+  public void testRepeatKey() {
+    try {
+      resolver.resolve(1, "a=b\nb=c\nA=d\nB=e", Collections.emptyList());
+    } catch (Exception e) {
+      Assert.assertTrue(e instanceof BadRequestException);
+    }
+  }
+
+  @Test
   public void testAddItemBeforeNoItem() {
     ItemChangeSets changeSets = resolver.resolve(1, "a=b\nb=c", Collections.emptyList());
     Assert.assertEquals(2, changeSets.getCreateItems().size());
