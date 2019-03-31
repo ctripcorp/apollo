@@ -56,29 +56,29 @@ if [ "$windows" == "1" ] && [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java"
     echo "Windows new JAVA_HOME is: $JAVA_HOME"
 fi
 
-if [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
-    _java="$JAVA_HOME/bin/java"
+# Find Java
+if [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]]; then
+    javaexe="$JAVA_HOME/bin/java"
+elif type -p java > /dev/null 2>&1; then
+    javaexe=$(type -p java)
+elif [[ -x "/usr/bin/java" ]];  then
+    javaexe="/usr/bin/java"
 else
-    echo "no executable java command found"
+    echo "Unable to find Java"
     exit 1
 fi
 
-if [[ "$_java" ]]; then
-    version=$("$_java" -version 2>&1 | awk -F '"' '/version/ {print $2}')
-    echo version "$version"
+if [[ "$javaexe" ]]; then
+    version=$("$javaexe" -version 2>&1 | awk -F '"' '/version/ {print $2}')
     version=$(echo "$version" | awk -F. '{printf("%03d%03d",$1,$2);}')
     # now version is of format 009003 (9.3.x)
     if [ $version -ge 011000 ]; then
-        echo "java version >= 11"
         JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
     elif [ $version -ge 010000 ]; then
-        echo "java version >= 10"
         JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
     elif [ $version -ge 009000 ]; then
-        echo "java version >= 9"
         JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
     else
-        echo "java version >= 8"
         JAVA_OPTS="$JAVA_OPTS -XX:+UseParNewGC"
         JAVA_OPTS="$JAVA_OPTS -Xloggc:$LOG_DIR/gc.log -XX:+PrintGCDetails"
         JAVA_OPTS="$JAVA_OPTS -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+CMSClassUnloadingEnabled -XX:+CMSParallelRemarkEnabled -XX:CMSFullGCsBeforeCompaction=9 -XX:+CMSClassUnloadingEnabled  -XX:+PrintGCDateStamps -XX:+PrintGCApplicationConcurrentTime -XX:+PrintHeapAtGC -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=5M"
