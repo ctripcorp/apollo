@@ -28,13 +28,13 @@ function SystemInfoController($scope, toastr, AppUtil, AppService, ClusterServic
         });
     }
 
-    function check(instanceId) {
-        SystemInfoService.check_health(instanceId).then(function (result) {
+    function check(instanceId, host) {
+        SystemInfoService.check_health(instanceId, host).then(function (result) {
             var status = result.status.code;
             if (status === 'UP') {
-                toastr.success(instanceId + ' is healthy!');
+                toastr.success(host + ' is healthy!');
             } else {
-                toastr.error(instanceId + ' is not healthy, please check /health of ' + instanceId + 'for more information!');
+                toastr.error(host + ' is not healthy, please check ' + host + '/health for more information!');
             }
         }, function (result) {
             AppUtil.showErrorMsg(result);
