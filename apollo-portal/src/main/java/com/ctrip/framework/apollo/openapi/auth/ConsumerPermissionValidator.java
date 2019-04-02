@@ -21,15 +21,16 @@ public class ConsumerPermissionValidator {
     this.consumerAuthUtil = consumerAuthUtil;
   }
 
-
   public boolean hasModifyNamespacePermission(HttpServletRequest request, String appId, String namespaceName,
       String env) {
     if (hasCreateNamespacePermission(request, appId)) {
       return true;
     }
     return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
-        PermissionType.MODIFY_NAMESPACE,
-        RoleUtils.buildNamespaceTargetId(appId, namespaceName, env));
+        PermissionType.MODIFY_NAMESPACE, RoleUtils.buildNamespaceTargetId(appId, namespaceName))
+        ||
+        permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
+        PermissionType.MODIFY_NAMESPACE, RoleUtils.buildNamespaceTargetId(appId, namespaceName, env));
 
   }
 
@@ -39,6 +40,10 @@ public class ConsumerPermissionValidator {
       return true;
     }
     return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
+        PermissionType.RELEASE_NAMESPACE,
+        RoleUtils.buildNamespaceTargetId(appId, namespaceName))
+        ||
+        permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
         PermissionType.RELEASE_NAMESPACE,
         RoleUtils.buildNamespaceTargetId(appId, namespaceName, env));
 

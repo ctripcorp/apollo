@@ -86,7 +86,15 @@ public class DefaultApplicationProvider implements ApplicationProvider {
       return;
     }
 
-    // 2. Try to get app id from app.properties.
+    //2. Try to get app id from OS environment variable
+    m_appId = System.getenv("APP_ID");
+    if (!Utils.isBlank(m_appId)) {
+      m_appId = m_appId.trim();
+      logger.info("App ID is set to {} by APP_ID property from OS environment variable", m_appId);
+      return;
+    }
+
+    // 3. Try to get app id from app.properties.
     m_appId = m_appProperties.getProperty("app.id");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();

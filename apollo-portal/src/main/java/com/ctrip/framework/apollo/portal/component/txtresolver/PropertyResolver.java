@@ -5,6 +5,7 @@ import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 
+import com.google.common.base.Strings;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class PropertyResolver implements ConfigTextResolver {
         keyCount++;
         String[] kv = parseKeyValueFromItem(item);
         if (kv != null) {
-          keys.add(kv[0]);
+          keys.add(kv[0].toLowerCase());
         } else {
           throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
         }
@@ -155,7 +156,7 @@ public class PropertyResolver implements ConfigTextResolver {
   }
 
   private boolean isBlankItem(String line) {
-    return "".equals(line);
+    return  Strings.nullToEmpty(line).trim().isEmpty();
   }
 
   private void deleteNormalKVItem(Map<String, ItemDTO> baseKeyMapItem, ItemChangeSets changeSets) {

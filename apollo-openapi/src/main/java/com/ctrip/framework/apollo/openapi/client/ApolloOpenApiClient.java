@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.openapi.client.service.ItemOpenApiService;
 import com.ctrip.framework.apollo.openapi.client.service.NamespaceOpenApiService;
 import com.ctrip.framework.apollo.openapi.client.service.ReleaseOpenApiService;
 import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenEnvClusterDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
@@ -17,11 +18,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.List;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+
+import java.util.List;
 
 /**
  * This class contains collections of methods to access Apollo Open Api.
@@ -56,6 +58,20 @@ public class ApolloOpenApiClient {
    */
   public List<OpenEnvClusterDTO> getEnvClusterInfo(String appId) {
     return appService.getEnvClusterInfo(appId);
+  }
+
+  /**
+   * Get all App information
+   */
+  public List<OpenAppDTO> getAllApps() {
+    return appService.getAppsInfo(null);
+  }
+
+  /**
+   * Get App information by app ids
+   */
+  public List<OpenAppDTO> getAppsByIds(List<String> appIds) {
+    return appService.getAppsInfo(appIds);
   }
 
   /**
