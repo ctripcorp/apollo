@@ -20,10 +20,10 @@ appService.service('SystemInfoService', ['$resource', '$q', function ($resource,
             });
             return d.promise;
         },
-        check_health: function (host) {
+        check_health: function (instanceId) {
             var d = $q.defer();
             system_info_resource.check_health({
-                host: host
+                  instanceId: instanceId
             },
             function (result) {
                 d.resolve(result);

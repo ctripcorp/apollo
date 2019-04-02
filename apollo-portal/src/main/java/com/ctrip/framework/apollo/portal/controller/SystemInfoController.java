@@ -58,23 +58,7 @@ public class SystemInfoController {
     List<Env> allEnvList = portalSettings.getAllEnvs();
 
     for (Env env : allEnvList) {
-      EnvironmentInfo environmentInfo = new EnvironmentInfo();
-      String metaServerAddresses = MetaDomainConsts.getMetaServerAddress(env);
-
-      environmentInfo.setEnv(env);
-      environmentInfo.setActive(portalSettings.isEnvActive(env));
-      environmentInfo.setMetaServerAddress(metaServerAddresses);
-
-      String selectedMetaServerAddress = MetaDomainConsts.getDomain(env);
-      try {
-        environmentInfo.setConfigServices(getServerAddress(selectedMetaServerAddress, CONFIG_SERVICE_URL_PATH));
-
-        environmentInfo.setAdminServices(getServerAddress(selectedMetaServerAddress, ADMIN_SERVICE_URL_PATH));
-      } catch (Throwable ex) {
-        String errorMessage = "Loading config/admin services from meta server: " + selectedMetaServerAddress + " failed!";
-        logger.error(errorMessage, ex);
-        environmentInfo.setErrorMessage(errorMessage + " Exception: " + ex.getMessage());
-      }
+      EnvironmentInfo environmentInfo = adaptEnv2EnvironmentInfo(env);
 
       systemInfo.addEnvironment(environmentInfo);
     }
@@ -84,8 +68,52 @@ public class SystemInfoController {
 
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @GetMapping(value = "/health")
-  public Health checkHealth(@RequestParam String host) {
-    return restTemplate.getForObject(host + "/health", Health.class);
+  public Health checkHealth(@RequestParam String instanceId) {
+    List<Env> allEnvs = portalSettings.getAllEnvs();
+
+    ServiceDTO service = null;
+    for (final Env env : allEnvs) {
+      EnvironmentInfo envInfo = adaptEnv2EnvironmentInfo(env);
+      for (final ServiceDTO s : envInfo.getAdminServices()) {
+        if (instanceId.equals(s.getInstanceId())) {
+          service = s;
+          break;
+        }
+      }
+      for (final ServiceDTO s : envInfo.getConfigServices()) {
+        if (instanceId.equals(s.getInstanceId())) {
+          service = s;
+          break;
+        }
+      }
+    }
+
+    if (service == null) {
+      throw new IllegalArgumentException("No such instance of instanceId: " + instanceId);
+    }
+
+    return restTemplate.getForObject(service.getHomepageUrl() + "/health", Health.class);
+  }
+
+  private EnvironmentInfo adaptEnv2EnvironmentInfo(final Env env) {
+    EnvironmentInfo environmentInfo = new EnvironmentInfo();
+    String metaServerAddresses = MetaDomainConsts.getMetaServerAddress(env);
+
+    environmentInfo.setEnv(env);
+    environmentInfo.setActive(portalSettings.isEnvActive(env));
+    environmentInfo.setMetaServerAddress(metaServerAddresses);
+
+    String selectedMetaServerAddress = MetaDomainConsts.getDomain(env);
+    try {
+      environmentInfo.setConfigServices(getServerAddress(selectedMetaServerAddress, CONFIG_SERVICE_URL_PATH));
+
+      environmentInfo.setAdminServices(getServerAddress(selectedMetaServerAddress, ADMIN_SERVICE_URL_PATH));
+    } catch (Throwable ex) {
+      String errorMessage = "Loading config/admin services from meta server: " + selectedMetaServerAddress + " failed!";
+      logger.error(errorMessage, ex);
+      environmentInfo.setErrorMessage(errorMessage + " Exception: " + ex.getMessage());
+    }
+    return environmentInfo;
   }
 
   private ServiceDTO[] getServerAddress(String metaServerAddress, String path) {
