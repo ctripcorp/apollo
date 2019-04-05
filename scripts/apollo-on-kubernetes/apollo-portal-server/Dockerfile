@@ -29,6 +29,6 @@ ENV PROD_META_SERVICE_NAME="service-apollo-config-server-prod.sre"
 
 EXPOSE 8070
 
-ENTRYPOINT ["/apollo-portal-server/entrypoint.sh"]
+#ENTRYPOINT ["/apollo-portal-server/entrypoint.sh"]
 
 CMD ["/apollo-portal-server/scripts/startup-kubernetes.sh"]

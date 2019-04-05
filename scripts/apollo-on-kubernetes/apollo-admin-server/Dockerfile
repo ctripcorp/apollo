@@ -24,6 +24,6 @@ ENV DATASOURCES_PASSWORD="FillInCorrectPassword"
 
 EXPOSE 8090
 
-ENTRYPOINT ["/apollo-admin-server/entrypoint.sh"]
+#ENTRYPOINT ["/apollo-admin-server/entrypoint.sh"]
 
 CMD ["/apollo-admin-server/scripts/startup-kubernetes.sh"]
