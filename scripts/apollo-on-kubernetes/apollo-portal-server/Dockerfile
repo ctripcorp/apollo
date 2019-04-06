@@ -18,9 +18,6 @@ ADD . /apollo-portal-server/
 
 ENV APOLLO_PORTAL_SERVICE_NAME="service-apollo-portal-server.sre"
 
-ENV DATASOURCES_URL="jdbc:mysql://service-mysql-for-apollo.sre:3306/ApolloPortalDB?characterEncoding=utf8"
-ENV DATASOURCES_USERNAME="FillInCorrectUser"
-ENV DATASOURCES_PASSWORD="FillInCorrectPassword"
 
 ENV DEV_META_SERVICE_NAME="service-apollo-config-server-dev.sre"
 ENV TEST_ALPHA_META_SERVICE_NAME="service-apollo-config-server-test-alpha.sre"
@@ -29,6 +26,5 @@ ENV PROD_META_SERVICE_NAME="service-apollo-config-server-prod.sre"
 
 EXPOSE 8070
 
-#ENTRYPOINT ["/apollo-portal-server/entrypoint.sh"]
 
 CMD ["/apollo-portal-server/scripts/startup-kubernetes.sh"]

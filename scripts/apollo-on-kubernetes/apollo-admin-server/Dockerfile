@@ -18,12 +18,7 @@ ADD . /apollo-admin-server/
 
 ENV APOLLO_ADMIN_SERVICE_NAME="service-apollo-admin-server.sre"
 
-ENV DATASOURCES_URL="jdbc:mysql://service-mysql-for-apollo.sre:3306/ApolloConfigDB?characterEncoding=utf8"
-ENV DATASOURCES_USERNAME="FillInCorrectUser"
-ENV DATASOURCES_PASSWORD="FillInCorrectPassword"
 
 EXPOSE 8090
-
-#ENTRYPOINT ["/apollo-admin-server/entrypoint.sh"]
 
 CMD ["/apollo-admin-server/scripts/startup-kubernetes.sh"]
