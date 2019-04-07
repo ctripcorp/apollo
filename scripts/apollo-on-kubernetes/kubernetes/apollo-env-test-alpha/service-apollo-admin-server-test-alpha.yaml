@@ -11,7 +11,7 @@ data:
     spring.datasource.url = jdbc:mysql://service-mysql-for-apollo-test-alpha-env.sre:3306/TestAlphaApolloConfigDB?characterEncoding=utf8
     spring.datasource.username = FillInCorrectUser
     spring.datasource.password = FillInCorrectPassword
-    eureka.service.url = http://statefulset-apollo-config-server-dev-0.service-apollo-meta-server-dev:8080/eureka/,http://statefulset-apollo-config-server-dev-1.service-apollo-meta-server-dev:8080/eureka/,http://statefulset-apollo-config-server-dev-2.service-apollo-meta-server-dev:8080/eureka/
+    eureka.service.url = http://statefulset-apollo-config-server-test-alpha-0.service-apollo-meta-server-test-alpha:8080/eureka/,http://statefulset-apollo-config-server-test-alpha-1.service-apollo-meta-server-test-alpha:8080/eureka/,http://statefulset-apollo-config-server-test-alpha-2.service-apollo-meta-server-test-alpha:8080/eureka/
 
 ---
 kind: Service

@@ -24,19 +24,6 @@ metadata:
 subsets:
   - addresses:
       # 更改为你的 mysql addresses, 例如 1.1.1.1
-      # 其中 1.1.1.1、2.2.2.2、3.3.3.3 为你的 mysql 集群, 例如 MySQL-Galera-WSrep 或 TiDB
-      - ip: your-mysql-addresses
-    ports:
-      - protocol: TCP
-        port: 3306
-  - addresses:
-      # 更改为你的 mysql addresses, 例如 2.2.2.2
-      - ip: your-mysql-addresses
-    ports:
-      - protocol: TCP
-        port: 3306
-  - addresses:
-      # 更改为你的 mysql addresses, 例如 3.3.3.3
       - ip: your-mysql-addresses
     ports:
       - protocol: TCP
