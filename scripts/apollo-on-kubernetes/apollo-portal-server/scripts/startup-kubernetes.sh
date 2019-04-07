@@ -35,11 +35,11 @@ if [[ "$javaexe" ]]; then
     version=$(echo "$version" | awk -F. '{printf("%03d%03d",$1,$2);}')
     # now version is of format 009003 (9.3.x)
     if [ $version -ge 011000 ]; then
-        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
+        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log:time,level,tags -Xlog:safepoint -Xlog:gc+heap=trace"
     elif [ $version -ge 010000 ]; then
-        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
+        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log:time,level,tags -Xlog:safepoint -Xlog:gc+heap=trace"
     elif [ $version -ge 009000 ]; then
-        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log -Xlog:safepoint -Xlog:gc+heap=trace"
+        JAVA_OPTS="$JAVA_OPTS -Xlog:gc*:$LOG_DIR/gc.log:time,level,tags -Xlog:safepoint -Xlog:gc+heap=trace"
     else
         JAVA_OPTS="$JAVA_OPTS -XX:+UseParNewGC"
         JAVA_OPTS="$JAVA_OPTS -Xloggc:$LOG_DIR/gc.log -XX:+PrintGCDetails"
