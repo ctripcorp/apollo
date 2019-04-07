@@ -74,16 +74,20 @@ public class SystemInfoController {
     ServiceDTO service = null;
     for (final Env env : allEnvs) {
       EnvironmentInfo envInfo = adaptEnv2EnvironmentInfo(env);
-      for (final ServiceDTO s : envInfo.getAdminServices()) {
-        if (instanceId.equals(s.getInstanceId())) {
-          service = s;
-          break;
+      if (envInfo.getAdminServices() != null) {
+        for (final ServiceDTO s : envInfo.getAdminServices()) {
+          if (instanceId.equals(s.getInstanceId())) {
+            service = s;
+            break;
+          }
         }
       }
-      for (final ServiceDTO s : envInfo.getConfigServices()) {
-        if (instanceId.equals(s.getInstanceId())) {
-          service = s;
-          break;
+      if (envInfo.getConfigServices() != null) {
+        for (final ServiceDTO s : envInfo.getConfigServices()) {
+          if (instanceId.equals(s.getInstanceId())) {
+            service = s;
+            break;
+          }
         }
       }
     }
