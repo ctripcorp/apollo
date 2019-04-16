@@ -3,11 +3,12 @@ package com.ctrip.framework.apollo.demo.spring.javaConfigDemo;
 import com.ctrip.framework.apollo.demo.spring.common.bean.AnnotatedBean;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
 /**
@@ -26,7 +27,13 @@ public class AnnotationApplication {
         System.exit(0);
       }
 
-      System.out.println(annotatedBean.toString());
+      System.out.println("【init】>> hashCode:"+ annotatedBean.hashCode()+ annotatedBean.toString());
+
+      if("new".equalsIgnoreCase(input)) {
+        AnnotatedBean annotatedBeanNew = context.getBean(AnnotatedBean.class);
+        System.out.println("【new】 >> hashCode:"+ annotatedBeanNew.hashCode() + annotatedBeanNew.toString());
+      }
+
     }
   }
 }

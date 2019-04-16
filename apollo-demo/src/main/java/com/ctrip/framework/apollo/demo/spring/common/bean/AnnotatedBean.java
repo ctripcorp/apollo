@@ -1,21 +1,25 @@
 package com.ctrip.framework.apollo.demo.spring.common.bean;
 
 import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @Component("annotatedBean")
+@Scope("prototype")
 public class AnnotatedBean {
   private static final Logger logger = LoggerFactory.getLogger(AnnotatedBean.class);
 
   private int timeout;
   private int batch;
+  private String databaseUrl;
   private List<JsonBean> jsonBeans;
 
   /**
@@ -38,6 +42,12 @@ public class AnnotatedBean {
     this.timeout = timeout;
   }
 
+  @Value("${database.url:empty}")
+  public void setDatabaseUrl(String databaseUrl) {
+    logger.info("updating databaseUrl, old value: {}, new value: {}", this.databaseUrl, databaseUrl);
+    this.databaseUrl = databaseUrl;
+  }
+
   /**
    * ApolloJsonValue annotated on methods example, the default value is specified as empty list - []
    * <br />
@@ -51,7 +61,7 @@ public class AnnotatedBean {
 
   @Override
   public String toString() {
-    return String.format("[AnnotatedBean] timeout: %d, batch: %d, jsonBeans: %s", timeout, batch, jsonBeans);
+    return String.format("[AnnotatedBean] timeout: %d, batch: %d, jsonBeans: %s, databaseUrl: %s", timeout, batch, jsonBeans, databaseUrl);
   }
 
   private static class JsonBean{

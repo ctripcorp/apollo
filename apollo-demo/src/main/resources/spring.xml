@@ -9,10 +9,10 @@
     <apollo:config order="10"/>
     <apollo:config namespaces="TEST1.apollo,application.yaml" order="11"/>
 
-    <bean class="com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.bean.XmlBean">
+    <bean class="com.ctrip.framework.apollo.demo.spring.xmlConfigDemo.bean.XmlBean" scope="prototype">
         <property name="timeout" value="${timeout:200}"/>
         <property name="batch" value="${batch:100}"/>
     </bean>
-
+    <bean class="com.ctrip.framework.apollo.spring.property.ScopeBeanPostProcessor"></bean>
     <context:annotation-config />
 </beans>
