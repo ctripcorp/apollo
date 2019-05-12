@@ -24,7 +24,6 @@ import com.ctrip.framework.apollo.spring.property.SpringValue;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
-import com.ctrip.framework.apollo.spring.util.ApolloRefreshUtil;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.LinkedListMultimap;
@@ -66,8 +65,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
-    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()
-        && ApolloRefreshUtil.hasRefresh(bean.getClass())) {
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
       super.postProcessBeforeInitialization(bean, beanName);
       processBeanPropertyValues(bean, beanName);
     }
@@ -88,10 +86,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
       return;
     }
 
-    boolean isRefresh = ApolloRefreshUtil.hasRefresh(bean.getClass(), field);
-    
     for (String key : keys) {
-      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false, isRefresh);
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
       springValueRegistry.register(beanFactory, key, springValue);
       logger.debug("Monitoring {}", springValue);
     }
@@ -121,9 +117,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
       return;
     }
     
-    boolean isRefresh = ApolloRefreshUtil.hasRefresh(bean.getClass(), method);
     for (String key : keys) {
-      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false, isRefresh);
+      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
       springValueRegistry.register(beanFactory, key, springValue);
       logger.info("Monitoring {}", springValue);
     }
@@ -145,9 +140,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
         if (method == null) {
           continue;
         }
-        boolean isRefresh = ApolloRefreshUtil.hasRefresh(bean.getClass(), method);
         SpringValue springValue = new SpringValue(definition.getKey(), definition.getPlaceholder(),
-            bean, beanName, method, false, isRefresh);
+            bean, beanName, method, false);
         springValueRegistry.register(beanFactory, definition.getKey(), springValue);
         logger.debug("Monitoring {}", springValue);
       } catch (Throwable ex) {
