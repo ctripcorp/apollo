@@ -29,7 +29,7 @@ public @interface AutoRefresh {
   public static final boolean enabled = true;
   public static final boolean disabled = false;
   /**
-   * enabled / disabled auto refresh, default disabled automatic update 
+   * enabled / disabled auto refresh, default enabled automatic update 
    */
   boolean value() default enabled;
 
