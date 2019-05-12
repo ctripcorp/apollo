@@ -30,9 +30,7 @@ public class SpringBootRefreshSampleApplication {
     AutoRefreshDisabledFiledRedisConfig autorefreshDisabledFiledRedisConfig = context.getBean(AutoRefreshDisabledFiledRedisConfig.class);
     AutoRefreshDisabledBean autorefreshDisabledBean = context.getBean(AutoRefreshDisabledBean.class);
     AutoRefreshEnabledBean autorefreshEnabledBean = context.getBean(AutoRefreshEnabledBean.class);
-    
-    RefreshConfigurationProperties refreshConfigurationProperties = context.getBean(RefreshConfigurationProperties.class);
-System.out.println(refreshConfigurationProperties);
+   
     System.out.println("SpringBootSampleApplication Demo. Input any key except quit to print the values. Input quit to exit.");
     while (true) {
       System.out.print("> ");
