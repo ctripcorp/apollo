@@ -56,6 +56,23 @@ public class ApolloRefreshConfigurationProperties extends AbstractRefreshConfigu
   private Environment environment;
 
   @Override
+  public void refreshBinding(Object bean, String beanName) {
+    Object target = bean;
+    if(bean instanceof String) {
+      target = this.applicationContext.getBean(beanName);
+    }
+    Class<?> clazz = target.getClass();
+    ConfigurationProperties annotation = ApolloRefreshUtil.findConfigurationPropertiesAnnotation(clazz, beanName, this.beanFactoryMetadata);
+    if (annotation != null) {
+      binding(target, beanName, annotation, 
+          ApolloRefreshUtil.findAutoRefreshAnnotation(clazz, beanName, this.beanFactoryMetadata),
+          ApolloRefreshUtil.findRefreshEnabledAnnotation(clazz, beanName, this.beanFactoryMetadata),
+          null);
+    }
+    
+  }
+  
+  @Override
   public void refreshBinding(Object bean, String beanName, Properties properties) {
     Object target = bean;
     if(bean instanceof String) {
@@ -72,7 +89,7 @@ public class ApolloRefreshConfigurationProperties extends AbstractRefreshConfigu
     
   }
 
-  void binding(Object bean, String beanName, ConfigurationProperties annotation, AutoRefresh autoRefresh,
+  private void binding(Object bean, String beanName, ConfigurationProperties annotation, AutoRefresh autoRefresh,
                       RefreshEnabled refreshEnabled, Properties properties) {
     if (annotation == null || properties.isEmpty()) {
       return;
@@ -101,7 +118,7 @@ public class ApolloRefreshConfigurationProperties extends AbstractRefreshConfigu
     this.binder.bind(target, this.deducePropertySources(null));
   }
 
-  void binding(Object bean, String beanName, Properties properties, Annotation[] annotations) {
+  private  void binding(Object bean, String beanName, Properties properties, Annotation[] annotations) {
     ResolvableType type = getBeanType(bean, beanName);
     Bindable<?> target = Bindable.of(type).withExistingValue(bean).withAnnotations(annotations);
     

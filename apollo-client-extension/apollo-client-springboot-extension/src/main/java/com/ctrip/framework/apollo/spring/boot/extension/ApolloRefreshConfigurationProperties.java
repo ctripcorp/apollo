@@ -188,6 +188,23 @@ public class ApolloRefreshConfigurationProperties extends AbstractRefreshConfigu
     }
 
   }
+  
+  @Override
+  public void refreshBinding(Object bean, String beanName) {
+    Object target = bean;
+    if (bean instanceof String) {
+      target = this.applicationContext.getBean(beanName);
+    }
+    Class<?> clazz = target.getClass();
+    ConfigurationProperties annotation = ApolloRefreshUtil.findConfigurationPropertiesAnnotation(clazz, beanName,
+        this.beanFactoryMetadata);
+    if (annotation != null) {
+      binding(target, beanName, annotation,
+          ApolloRefreshUtil.findAutoRefreshAnnotation(clazz, beanName, this.beanFactoryMetadata),
+          ApolloRefreshUtil.findRefreshEnabledAnnotation(clazz, beanName, this.beanFactoryMetadata), null);
+    }
+
+  }
 
   void binding(Object bean, String beanName, ConfigurationProperties annotation, AutoRefresh autoRefresh,
       RefreshEnabled refreshEnabled, Properties properties) {

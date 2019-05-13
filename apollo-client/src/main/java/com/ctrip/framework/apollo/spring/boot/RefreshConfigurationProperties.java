@@ -12,4 +12,5 @@ public interface RefreshConfigurationProperties {
   public void refreshBinding(String beanName, ConfigChangeEvent changeEvent);
   public void refreshBinding(Object bean, String beanName, ConfigChangeEvent changeEvent);
   public void refreshBinding(Object bean, String beanName, Properties properties);
+  public void refreshBinding(Object bean, String beanName);
 }
