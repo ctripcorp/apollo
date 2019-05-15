@@ -64,6 +64,6 @@ public class MockInjector implements Injector {
 
   @Override
   public int getOrder() {
-    return 1;
+    return HIGHEST_PRECEDENCE;
   }
 }
