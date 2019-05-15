@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
 
 public class DefaultServerProviderTest {
@@ -29,16 +30,16 @@ public class DefaultServerProviderTest {
   }
 
   private void cleanUp() {
-    System.clearProperty("env");
-    System.clearProperty("idc");
+    System.clearProperty(ConfigConsts.APOLLO_ENV);
+    System.clearProperty(ConfigConsts.APOLLO_IDC);
   }
 
   @Test
   public void testEnvWithSystemProperty() throws Exception {
     String someEnv = "someEnv";
     String someDc = "someDc";
-    System.setProperty("env", someEnv);
-    System.setProperty("idc", someDc);
+    System.setProperty(ConfigConsts.APOLLO_ENV, someEnv);
+    System.setProperty(ConfigConsts.APOLLO_IDC, someDc);
 
     defaultServerProvider.initialize(null);
 
@@ -71,7 +72,7 @@ public class DefaultServerProviderTest {
   @Test
   public void testWithPropertiesStreamAndEnvFromSystemProperty() throws Exception {
     String prodEnv = "pro";
-    System.setProperty("env", prodEnv);
+    System.setProperty(ConfigConsts.APOLLO_ENV, prodEnv);
 
     File baseDir = new File("src/test/resources/properties");
     File serverProperties = new File(baseDir, "server.properties");

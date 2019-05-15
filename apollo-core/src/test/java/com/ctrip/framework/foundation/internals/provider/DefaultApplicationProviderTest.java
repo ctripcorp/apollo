@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.foundation.internals.provider.DefaultApplicationProvider;
 
 public class DefaultApplicationProviderTest {
@@ -43,9 +44,9 @@ public class DefaultApplicationProviderTest {
   @Test
   public void testLoadAppPropertiesWithSystemProperty() throws Exception {
     String someAppId = "someAppId";
-    System.setProperty("app.id", someAppId);
+    System.setProperty(ConfigConsts.APOLLO_APP_ID, someAppId);
     defaultApplicationProvider.initialize();
-    System.clearProperty("app.id");
+    System.clearProperty(ConfigConsts.APOLLO_APP_ID);
 
     assertEquals(someAppId, defaultApplicationProvider.getAppId());
     assertTrue(defaultApplicationProvider.isAppIdSet());

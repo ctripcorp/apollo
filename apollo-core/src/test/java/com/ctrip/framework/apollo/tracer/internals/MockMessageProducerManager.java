@@ -20,6 +20,6 @@ public class MockMessageProducerManager implements MessageProducerManager {
 
   @Override
   public int getOrder() {
-    return 0;
+    return HIGHEST_PRECEDENCE;
   }
 }
