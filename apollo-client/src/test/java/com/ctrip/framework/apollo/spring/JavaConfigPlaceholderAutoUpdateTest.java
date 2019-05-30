@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.internals.SimpleConfig;
+import com.ctrip.framework.apollo.internals.YamlConfigFile;
 import com.ctrip.framework.apollo.spring.JavaConfigPlaceholderTest.JsonBean;
 import com.ctrip.framework.apollo.spring.XmlConfigPlaceholderTest.TestXmlBean;
 import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValue;
@@ -72,6 +73,31 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
   }
 
   @Test
+  public void testAutoUpdateWithOneYamlFile() throws Exception {
+    int initialTimeout = 1000;
+    int initialBatch = 2000;
+    int newTimeout = 1001;
+    int newBatch = 2001;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yaml",
+        readYamlContentAsConfigFileProperties("case1.yaml"));
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig12.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(initialTimeout, bean.getTimeout());
+    assertEquals(initialBatch, bean.getBatch());
+
+    configFile.onRepositoryChange("application.yaml", readYamlContentAsConfigFileProperties("case1-new.yaml"));
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertEquals(newTimeout, bean.getTimeout());
+    assertEquals(newBatch, bean.getBatch());
+  }
+
+  @Test
   public void testAutoUpdateWithValueAndXmlProperty() throws Exception {
     int initialTimeout = 1000;
     int initialBatch = 2000;
@@ -97,6 +123,36 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
         assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout), BATCH_PROPERTY, String.valueOf(newBatch));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertEquals(newTimeout, javaConfigBean.getTimeout());
+    assertEquals(newBatch, javaConfigBean.getBatch());
+    assertEquals(newTimeout, xmlBean.getTimeout());
+    assertEquals(newBatch, xmlBean.getBatch());
+  }
+
+  @Test
+  public void testAutoUpdateWithYamlFileWithValueAndXmlProperty() throws Exception {
+    int initialTimeout = 1000;
+    int initialBatch = 2000;
+    int newTimeout = 1001;
+    int newBatch = 2001;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yaml",
+        readYamlContentAsConfigFileProperties("case1.yaml"));
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig13.class);
+
+    TestJavaConfigBean javaConfigBean = context.getBean(TestJavaConfigBean.class);
+    TestXmlBean xmlBean = context.getBean(TestXmlBean.class);
+
+    assertEquals(initialTimeout, javaConfigBean.getTimeout());
+    assertEquals(initialBatch, javaConfigBean.getBatch());
+    assertEquals(initialTimeout, xmlBean.getTimeout());
+    assertEquals(initialBatch, xmlBean.getBatch());
+
+    configFile.onRepositoryChange("application.yaml", readYamlContentAsConfigFileProperties("case1-new.yaml"));
 
     TimeUnit.MILLISECONDS.sleep(100);
 
@@ -214,6 +270,35 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
   }
 
   @Test
+  public void testAutoUpdateWithMultipleNamespacesWithSamePropertiesWithYamlFile() throws Exception {
+    int someTimeout = 1000;
+    int someBatch = 2000;
+    int anotherBatch = 3000;
+    int someNewBatch = 2001;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yml",
+        readYamlContentAsConfigFileProperties("case2.yml"));
+    Properties fxApolloProperties =
+        assembleProperties(TIMEOUT_PROPERTY, String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
+
+    prepareConfig(FX_APOLLO_NAMESPACE, fxApolloProperties);
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig14.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(someTimeout, bean.getTimeout());
+    assertEquals(someBatch, bean.getBatch());
+
+    configFile.onRepositoryChange("application.yml", readYamlContentAsConfigFileProperties("case2-new.yml"));
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertEquals(someTimeout, bean.getTimeout());
+    assertEquals(someNewBatch, bean.getBatch());
+  }
+
+  @Test
   public void testAutoUpdateWithNewProperties() throws Exception {
     int initialTimeout = 1000;
     int newTimeout = 1001;
@@ -234,6 +319,30 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
         assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout), BATCH_PROPERTY, String.valueOf(newBatch));
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newApplicationProperties);
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertEquals(newTimeout, bean.getTimeout());
+    assertEquals(newBatch, bean.getBatch());
+  }
+
+  @Test
+  public void testAutoUpdateWithNewPropertiesWithYamlFile() throws Exception {
+    int initialTimeout = 1000;
+    int newTimeout = 1001;
+    int newBatch = 2001;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yaml",
+        readYamlContentAsConfigFileProperties("case3.yaml"));
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig12.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(initialTimeout, bean.getTimeout());
+    assertEquals(DEFAULT_BATCH, bean.getBatch());
+
+    configFile.onRepositoryChange("application.yaml", readYamlContentAsConfigFileProperties("case3-new.yaml"));
 
     TimeUnit.MILLISECONDS.sleep(100);
 
@@ -302,6 +411,29 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
   }
 
   @Test
+  public void testAutoUpdateWithDeletedPropertiesWithYamlFile() throws Exception {
+    int initialTimeout = 1000;
+    int initialBatch = 2000;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yaml",
+        readYamlContentAsConfigFileProperties("case4.yaml"));
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig12.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(initialTimeout, bean.getTimeout());
+    assertEquals(initialBatch, bean.getBatch());
+
+    configFile.onRepositoryChange("application.yaml", readYamlContentAsConfigFileProperties("case4-new.yaml"));
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertEquals(DEFAULT_TIMEOUT, bean.getTimeout());
+    assertEquals(DEFAULT_BATCH, bean.getBatch());
+  }
+
+  @Test
   public void testAutoUpdateWithMultipleNamespacesWithSamePropertiesDeleted() throws Exception {
     int someTimeout = 1000;
     int someBatch = 2000;
@@ -353,7 +485,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(100);
+    TimeUnit.MILLISECONDS.sleep(300);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -383,7 +515,31 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(100);
+    TimeUnit.MILLISECONDS.sleep(300);
+
+    assertEquals(newTimeout, bean.getTimeout());
+    assertEquals(initialBatch, bean.getBatch());
+  }
+
+  @Test
+  public void testAutoUpdateWithTypeMismatchWithYamlFile() throws Exception {
+    int initialTimeout = 1000;
+    int initialBatch = 2000;
+    int newTimeout = 1001;
+
+    YamlConfigFile configFile = prepareYamlConfigFile("application.yaml",
+        readYamlContentAsConfigFileProperties("case5.yaml"));
+
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig12.class);
+
+    TestJavaConfigBean bean = context.getBean(TestJavaConfigBean.class);
+
+    assertEquals(initialTimeout, bean.getTimeout());
+    assertEquals(initialBatch, bean.getBatch());
+
+    configFile.onRepositoryChange("application.yaml", readYamlContentAsConfigFileProperties("case5-new.yaml"));
+
+    TimeUnit.MILLISECONDS.sleep(300);
 
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
@@ -751,7 +907,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(100);
+    TimeUnit.MILLISECONDS.sleep(300);
 
     // should not change anything
     assertTrue(jsonBean == bean.getJsonBean());
@@ -778,7 +934,7 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
-    TimeUnit.MILLISECONDS.sleep(100);
+    TimeUnit.MILLISECONDS.sleep(300);
 
     // should not change anything
     assertTrue(jsonBean == bean.getJsonBean());
@@ -946,6 +1102,34 @@ public class JavaConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrati
     @Bean
     TestApolloJsonValueWithDefaultValue testApolloJsonValue() {
       return new TestApolloJsonValueWithDefaultValue();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig("application.yaMl")
+  static class AppConfig12 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig("application.yaml")
+  @ImportResource("spring/XmlConfigPlaceholderTest11.xml")
+  static class AppConfig13 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
+    }
+  }
+
+  @Configuration
+  @EnableApolloConfig({"application.yml", "FX.apollo"})
+  static class AppConfig14 {
+    @Bean
+    TestJavaConfigBean testJavaConfigBean() {
+      return new TestJavaConfigBean();
     }
   }
 

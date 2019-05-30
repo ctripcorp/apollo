@@ -89,13 +89,48 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
         });
     };
 
+    $scope.createMissingNamespaces = function () {
+        AppService.create_missing_namespaces($rootScope.pageContext.appId, $rootScope.pageContext.env,
+            $rootScope.pageContext.clusterName).then(function (result) {
+                toastr.success("创建成功");
+                location.reload(true);
+            }, function (result) {
+                toastr.error(AppUtil.errorMsg(result), "创建失败");
+            }
+        );
+    };
+
     function findMissEnvs() {
         $scope.missEnvs = [];
         AppService.find_miss_envs($rootScope.pageContext.appId).then(function (result) {
             $scope.missEnvs = AppUtil.collectData(result);
-        });
 
+            if ($scope.missEnvs.length > 0) {
+                toastr.warning("当前项目有环境缺失，请点击页面左侧『补缺环境』补齐数据");
+            }
+
+            $scope.findMissingNamespaces();
+        });
     }
+
+    EventManager.subscribe(EventManager.EventType.CHANGE_ENV_CLUSTER, function () {
+        $scope.findMissingNamespaces();
+    });
+
+    $scope.findMissingNamespaces = function () {
+        $scope.missingNamespaces = [];
+        // only check missing private namespaces when app exists in current env
+        if ($rootScope.pageContext.env && $scope.missEnvs.indexOf($rootScope.pageContext.env) === -1) {
+          AppService.find_missing_namespaces($rootScope.pageContext.appId, $rootScope.pageContext.env,
+              $rootScope.pageContext.clusterName).then(function (result) {
+                  $scope.missingNamespaces = AppUtil.collectData(result);
+                  if ($scope.missingNamespaces.length > 0) {
+                      toastr.warning("当前环境有Namespace缺失，请点击页面左侧『补缺Namespace』补齐数据");
+                  }
+          });
+        }
+    };
+
     function recordVisitApp() {
         //save user recent visited apps
         var VISITED_APPS_STORAGE_KEY = "VisitedAppsV2";
@@ -229,6 +264,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
                                                                     + "&cluster=" + $rootScope.pageContext.clusterName;
 
                                             EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE);
+                                            EventManager.emit(EventManager.EventType.CHANGE_ENV_CLUSTER);
                                             $rootScope.showSideBar = false;
                                         }
                                     });

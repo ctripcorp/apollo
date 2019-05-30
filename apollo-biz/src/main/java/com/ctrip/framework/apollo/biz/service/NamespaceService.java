@@ -1,8 +1,5 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Item;
@@ -19,8 +16,9 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,34 +38,49 @@ public class NamespaceService {
 
   private Gson gson = new Gson();
 
-  @Autowired
-  private NamespaceRepository namespaceRepository;
-  @Autowired
-  private AuditService auditService;
-  @Autowired
-  private AppNamespaceService appNamespaceService;
-  @Autowired
-  private ItemService itemService;
-  @Autowired
-  private CommitService commitService;
-  @Autowired
-  private ReleaseService releaseService;
-  @Autowired
-  private ClusterService clusterService;
-  @Autowired
-  private NamespaceBranchService namespaceBranchService;
-  @Autowired
-  private ReleaseHistoryService releaseHistoryService;
-  @Autowired
-  private NamespaceLockService namespaceLockService;
-  @Autowired
-  private InstanceService instanceService;
-  @Autowired
-  private MessageSender messageSender;
+  private final NamespaceRepository namespaceRepository;
+  private final AuditService auditService;
+  private final AppNamespaceService appNamespaceService;
+  private final ItemService itemService;
+  private final CommitService commitService;
+  private final ReleaseService releaseService;
+  private final ClusterService clusterService;
+  private final NamespaceBranchService namespaceBranchService;
+  private final ReleaseHistoryService releaseHistoryService;
+  private final NamespaceLockService namespaceLockService;
+  private final InstanceService instanceService;
+  private final MessageSender messageSender;
+
+  public NamespaceService(
+      final ReleaseHistoryService releaseHistoryService,
+      final NamespaceRepository namespaceRepository,
+      final AuditService auditService,
+      final @Lazy AppNamespaceService appNamespaceService,
+      final MessageSender messageSender,
+      final @Lazy ItemService itemService,
+      final CommitService commitService,
+      final @Lazy ReleaseService releaseService,
+      final @Lazy ClusterService clusterService,
+      final @Lazy NamespaceBranchService namespaceBranchService,
+      final NamespaceLockService namespaceLockService,
+      final InstanceService instanceService) {
+    this.releaseHistoryService = releaseHistoryService;
+    this.namespaceRepository = namespaceRepository;
+    this.auditService = auditService;
+    this.appNamespaceService = appNamespaceService;
+    this.messageSender = messageSender;
+    this.itemService = itemService;
+    this.commitService = commitService;
+    this.releaseService = releaseService;
+    this.clusterService = clusterService;
+    this.namespaceBranchService = namespaceBranchService;
+    this.namespaceLockService = namespaceLockService;
+    this.instanceService = instanceService;
+  }
 
 
   public Namespace findOne(Long namespaceId) {
-    return namespaceRepository.findOne(namespaceId);
+    return namespaceRepository.findById(namespaceId).orElse(null);
   }
 
   public Namespace findOne(String appId, String clusterName, String namespaceName) {
@@ -263,7 +276,11 @@ public class NamespaceService {
     itemService.batchDelete(namespace.getId(), operator);
     commitService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
 
-    releaseService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
+    // Child namespace releases should retain as long as the parent namespace exists, because parent namespaces' release
+    // histories need them
+    if (!isChildNamespace(namespace)) {
+      releaseService.batchDelete(appId, clusterName, namespace.getNamespaceName(), operator);
+    }
 
     //delete child namespace
     Namespace childNamespace = findChildNamespace(namespace);

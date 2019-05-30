@@ -2,6 +2,9 @@ package com.ctrip.framework.apollo.core.spi;
 
 import com.ctrip.framework.apollo.core.enums.Env;
 
+/**
+ * @since 1.0.0
+ */
 public interface MetaServerProvider extends Ordered {
 
   /**

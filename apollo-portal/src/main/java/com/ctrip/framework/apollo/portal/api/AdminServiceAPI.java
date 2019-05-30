@@ -105,6 +105,17 @@ public class AdminServiceAPI {
           .post(env, "apps/{appId}/appnamespaces", appNamespace, AppNamespaceDTO.class, appNamespace.getAppId());
     }
 
+    public AppNamespaceDTO createMissingAppNamespace(Env env, AppNamespaceDTO appNamespace) {
+      return restTemplate
+          .post(env, "apps/{appId}/appnamespaces?silentCreation=true", appNamespace, AppNamespaceDTO.class,
+              appNamespace.getAppId());
+    }
+
+    public List<AppNamespaceDTO> getAppNamespaces(String appId, Env env) {
+      AppNamespaceDTO[] appNamespaceDTOs = restTemplate.get(env, "apps/{appId}/appnamespaces", AppNamespaceDTO[].class, appId);
+      return Arrays.asList(appNamespaceDTOs);
+    }
+
     public void deleteNamespace(Env env, String appId, String clusterName, String namespaceName, String operator) {
       restTemplate
           .delete(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}?operator={operator}", appId,
@@ -271,6 +282,25 @@ public class AdminServiceAPI {
       ReleaseDTO response = restTemplate.post(
           env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases", entity,
           ReleaseDTO.class, appId, clusterName, namespace);
+      return response;
+    }
+
+    public ReleaseDTO createGrayDeletionRelease(String appId, Env env, String clusterName, String namespace,
+                                    String releaseName, String releaseComment, String operator,
+                                    boolean isEmergencyPublish, Set<String> grayDelKeys) {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8"));
+      MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+      parameters.add("releaseName", releaseName);
+      parameters.add("comment", releaseComment);
+      parameters.add("operator", operator);
+      parameters.add("isEmergencyPublish", String.valueOf(isEmergencyPublish));
+      grayDelKeys.forEach(key -> parameters.add("grayDelKeys",key));
+      HttpEntity<MultiValueMap<String, String>> entity =
+              new HttpEntity<>(parameters, headers);
+      ReleaseDTO response = restTemplate.post(
+              env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/gray-del-releases", entity,
+              ReleaseDTO.class, appId, clusterName, namespace);
       return response;
     }
 

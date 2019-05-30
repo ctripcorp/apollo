@@ -1,22 +1,5 @@
 package com.ctrip.framework.apollo.configservice.controller;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
@@ -33,6 +16,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -42,21 +39,29 @@ import com.google.gson.reflect.TypeToken;
 public class ConfigController {
   private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
       .trimResults();
-  @Autowired
-  private ConfigService configService;
-  @Autowired
-  private AppNamespaceServiceWithCache appNamespaceService;
-  @Autowired
-  private NamespaceUtil namespaceUtil;
-  @Autowired
-  private InstanceConfigAuditUtil instanceConfigAuditUtil;
-  @Autowired
-  private Gson gson;
+  private final ConfigService configService;
+  private final AppNamespaceServiceWithCache appNamespaceService;
+  private final NamespaceUtil namespaceUtil;
+  private final InstanceConfigAuditUtil instanceConfigAuditUtil;
+  private final Gson gson;
 
   private static final Type configurationTypeReference = new TypeToken<Map<String, String>>() {
       }.getType();
 
-  @RequestMapping(value = "/{appId}/{clusterName}/{namespace:.+}", method = RequestMethod.GET)
+  public ConfigController(
+      final ConfigService configService,
+      final AppNamespaceServiceWithCache appNamespaceService,
+      final NamespaceUtil namespaceUtil,
+      final InstanceConfigAuditUtil instanceConfigAuditUtil,
+      final Gson gson) {
+    this.configService = configService;
+    this.appNamespaceService = appNamespaceService;
+    this.namespaceUtil = namespaceUtil;
+    this.instanceConfigAuditUtil = instanceConfigAuditUtil;
+    this.gson = gson;
+  }
+
+  @GetMapping(value = "/{appId}/{clusterName}/{namespace:.+}")
   public ApolloConfig queryConfig(@PathVariable String appId, @PathVariable String clusterName,
                                   @PathVariable String namespace,
                                   @RequestParam(value = "dataCenter", required = false) String dataCenter,

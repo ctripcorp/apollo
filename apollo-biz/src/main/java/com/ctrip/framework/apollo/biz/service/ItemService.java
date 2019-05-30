@@ -10,8 +10,7 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,22 +22,26 @@ import java.util.Map;
 @Service
 public class ItemService {
 
-  @Autowired
-  private ItemRepository itemRepository;
+  private final ItemRepository itemRepository;
+  private final NamespaceService namespaceService;
+  private final AuditService auditService;
+  private final BizConfig bizConfig;
 
-  @Autowired
-  private NamespaceService namespaceService;
-
-  @Autowired
-  private AuditService auditService;
-
-  @Autowired
-  private BizConfig bizConfig;
+  public ItemService(
+      final ItemRepository itemRepository,
+      final @Lazy NamespaceService namespaceService,
+      final AuditService auditService,
+      final BizConfig bizConfig) {
+    this.itemRepository = itemRepository;
+    this.namespaceService = namespaceService;
+    this.auditService = auditService;
+    this.bizConfig = bizConfig;
+  }
 
 
   @Transactional
   public Item delete(long id, String operator) {
-    Item item = itemRepository.findOne(id);
+    Item item = itemRepository.findById(id).orElse(null);
     if (item == null) {
       throw new IllegalArgumentException("item not exist. ID:" + id);
     }
@@ -81,7 +84,7 @@ public class ItemService {
   }
 
   public Item findOne(long itemId) {
-    Item item = itemRepository.findOne(itemId);
+    Item item = itemRepository.findById(itemId).orElse(null);
     return item;
   }
 
@@ -147,7 +150,7 @@ public class ItemService {
   @Transactional
   public Item update(Item item) {
     checkItemValueLength(item.getNamespaceId(), item.getValue());
-    Item managedItem = itemRepository.findOne(item.getId());
+    Item managedItem = itemRepository.findById(item.getId()).orElse(null);
     BeanUtils.copyEntityProperties(item, managedItem);
     managedItem = itemRepository.save(managedItem);
 

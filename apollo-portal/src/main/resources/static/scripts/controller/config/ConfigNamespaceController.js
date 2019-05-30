@@ -128,6 +128,9 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
                 $scope.namespaces.forEach(function (namespace, index) {
                     if (namespace.baseInfo.namespaceName == result.baseInfo.namespaceName) {
+                        result.showNamespaceBody = true;
+                        result.initialized = true;
+                        result.show = namespace.show;
                         $scope.namespaces[index] = result;
                     }
                 });
@@ -148,13 +151,14 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     var toDeleteItemId = 0;
 
-    function preDeleteItem(namespace, itemId) {
+    function preDeleteItem(namespace, item) {
         if (!lockCheck(namespace)) {
             return;
         }
 
+        $scope.config = item;
         $scope.toOperationNamespace = namespace;
-        toDeleteItemId = itemId;
+        toDeleteItemId = item.id;
 
         $("#deleteConfirmDialog").modal("show");
     }
@@ -366,6 +370,11 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
     });
 
+    EventManager.subscribe(EventManager.EventType.SYNTAX_CHECK_TEXT_FAILED, function (context) {
+        $scope.syntaxCheckContext = context;
+
+        AppUtil.showModal('#syntaxCheckFailedDialog');
+    });
 
     new Clipboard('.clipboard');
 

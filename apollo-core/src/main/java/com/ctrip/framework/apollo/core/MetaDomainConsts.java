@@ -53,6 +53,9 @@ public class MetaDomainConsts {
 
   private static final Object LOCK = new Object();
 
+  /**
+   * Return one meta server address. If multiple meta server addresses are configured, will select one.
+   */
   public static String getDomain(Env env) {
     String metaServerAddress = getMetaServerAddress(env);
     // if there is more than one address, need to select one
@@ -62,7 +65,10 @@ public class MetaDomainConsts {
     return metaServerAddress;
   }
 
-  private static String getMetaServerAddress(Env env) {
+  /**
+   * Return meta server address. If multiple meta server addresses are configured, will return the comma separated string.
+   */
+  public static String getMetaServerAddress(Env env) {
     if (!metaServerAddressCache.containsKey(env)) {
       initMetaServerAddress(env);
     }
@@ -155,7 +161,8 @@ public class MetaDomainConsts {
 
       for (String address : metaServers) {
         address = address.trim();
-        if (NetUtil.pingUrl(address)) {
+        //check whether /services/config is accessible
+        if (NetUtil.pingUrl(address + "/services/config")) {
           // select the first available meta server
           selectedMetaServerAddressCache.put(metaServerAddresses, address);
           serverAvailable = true;

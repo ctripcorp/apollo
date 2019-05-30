@@ -1,9 +1,5 @@
 package com.ctrip.framework.apollo.configservice.service;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
 import com.ctrip.framework.apollo.biz.message.ReleaseMessageListener;
@@ -12,11 +8,12 @@ import com.ctrip.framework.apollo.biz.repository.ReleaseMessageRepository;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -36,11 +33,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReleaseMessageServiceWithCache implements ReleaseMessageListener, InitializingBean {
   private static final Logger logger = LoggerFactory.getLogger(ReleaseMessageServiceWithCache
       .class);
-  @Autowired
-  private ReleaseMessageRepository releaseMessageRepository;
-
-  @Autowired
-  private BizConfig bizConfig;
+  private final ReleaseMessageRepository releaseMessageRepository;
+  private final BizConfig bizConfig;
 
   private int scanInterval;
   private TimeUnit scanIntervalTimeUnit;
@@ -52,7 +46,11 @@ public class ReleaseMessageServiceWithCache implements ReleaseMessageListener, I
   private AtomicBoolean doScan;
   private ExecutorService executorService;
 
-  public ReleaseMessageServiceWithCache() {
+  public ReleaseMessageServiceWithCache(
+      final ReleaseMessageRepository releaseMessageRepository,
+      final BizConfig bizConfig) {
+    this.releaseMessageRepository = releaseMessageRepository;
+    this.bizConfig = bizConfig;
     initialize();
   }
 

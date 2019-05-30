@@ -64,19 +64,19 @@ public class NamespaceServiceIntegrationTest extends AbstractIntegrationTest {
     namespaceService.deleteNamespace(namespace, testUser);
 
     List<Item> items = itemService.findItemsWithoutOrdered(testApp, testCluster, testPrivateNamespace);
-    List<Commit> commits = commitService.find(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));
+    List<Commit> commits = commitService.find(testApp, testCluster, testPrivateNamespace, PageRequest.of(0, 10));
     AppNamespace appNamespace = appNamespaceService.findOne(testApp, testPrivateNamespace);
     List<Cluster> childClusters = clusterService.findChildClusters(testApp, testCluster);
-    InstanceConfig instanceConfig = instanceConfigRepository.findOne(1L);
+    InstanceConfig instanceConfig = instanceConfigRepository.findById(1L).orElse(null);
     List<Release> parentNamespaceReleases = releaseService.findActiveReleases(testApp, testCluster,
                                                                               testPrivateNamespace,
-                                                                              new PageRequest(0, 10));
+                                                                              PageRequest.of(0, 10));
     List<Release> childNamespaceReleases = releaseService.findActiveReleases(testApp, testChildCluster,
                                                                              testPrivateNamespace,
-                                                                             new PageRequest(0, 10));
+                                                                             PageRequest.of(0, 10));
     Page<ReleaseHistory> releaseHistories =
         releaseHistoryService
-            .findReleaseHistoriesByNamespace(testApp, testCluster, testPrivateNamespace, new PageRequest(0, 10));
+            .findReleaseHistoriesByNamespace(testApp, testCluster, testPrivateNamespace, PageRequest.of(0, 10));
 
     assertEquals(0, items.size());
     assertEquals(0, commits.size());

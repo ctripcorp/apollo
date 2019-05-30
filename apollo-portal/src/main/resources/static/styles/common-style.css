@@ -78,7 +78,7 @@ p, td, span {
     color: #797979;
 }
 
-pre {
+pre, .pre {
     white-space: pre-wrap; /* Since CSS 2.1 */
     white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
     white-space: -pre-wrap; /* Opera 4-6 */
@@ -298,12 +298,16 @@ table th {
 .project-info th {
     text-align: right;
     padding: 4px 6px;
-    white-space: nowrap;
+    width: 5em;
 }
 
 .project-info td {
     border-bottom: 1px dotted gray;
     padding: 4px 6px;
+}
+
+.project-info td span {
+    margin-right: 5px;
 }
 
 #config-info {
@@ -403,9 +407,7 @@ table th {
 }
 
 .namespace-panel .namespace-attribute-public {
-    background: #31708f;
-    width: 40px;
-    cursor: pointer;
+    margin-right:5px;
 }
 
 .namespace-panel .second-panel-heading .nav-tabs {

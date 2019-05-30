@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.repository.ReleaseRepository;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,13 +66,13 @@ public class ReleaseServiceTest extends AbstractUnitTest {
     secondRelease.setNamespaceName(namespaceName);
     secondRelease.setAbandoned(false);
 
-    pageRequest = new PageRequest(0, 2);
+    pageRequest = PageRequest.of(0, 2);
   }
 
   @Test(expected = BadRequestException.class)
   public void testNamespaceNotExist() {
 
-    when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
+    when(releaseRepository.findById(releaseId)).thenReturn(Optional.of(firstRelease));
 
     releaseService.rollback(releaseId, user);
   }
@@ -79,7 +80,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   @Test(expected = BadRequestException.class)
   public void testHasNoRelease() {
 
-    when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
+    when(releaseRepository.findById(releaseId)).thenReturn(Optional.of(firstRelease));
     when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
                                                                                                      clusterName,
                                                                                                      namespaceName,
@@ -92,7 +93,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   @Test
   public void testRollback() {
 
-    when(releaseRepository.findOne(releaseId)).thenReturn(firstRelease);
+    when(releaseRepository.findById(releaseId)).thenReturn(Optional.of(firstRelease));
     when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseOrderByIdDesc(appId,
                                                                                                      clusterName,
                                                                                                      namespaceName,
@@ -166,7 +167,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
     List<Release> someReleases = Lists.newArrayList(someRelease, anotherRelease);
     Set<Long> someReleaseIds = Sets.newHashSet(someReleaseId, anotherReleaseId);
 
-    when(releaseRepository.findAll(someReleaseIds)).thenReturn(someReleases);
+    when(releaseRepository.findAllById(someReleaseIds)).thenReturn(someReleases);
 
     List<Release> result = releaseService.findByReleaseIds(someReleaseIds);
 

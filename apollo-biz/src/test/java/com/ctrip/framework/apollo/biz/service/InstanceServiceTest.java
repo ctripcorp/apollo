@@ -119,7 +119,7 @@ public class InstanceServiceTest extends AbstractIntegrationTest {
     String someConfigClusterName = "someConfigClusterName";
     String someConfigNamespaceName = "someConfigNamespaceName";
     Date someValidDate = new Date();
-    Pageable pageable = new PageRequest(0, 10);
+    Pageable pageable = PageRequest.of(0, 10);
     String someReleaseKey = "someReleaseKey";
 
     Calendar calendar = Calendar.getInstance();
@@ -165,7 +165,7 @@ public class InstanceServiceTest extends AbstractIntegrationTest {
         someConfigNamespaceName, someReleaseKey, someValidDate);
 
     Page<Instance> result = instanceService.findInstancesByNamespace(someConfigAppId,
-        someConfigClusterName, someConfigNamespaceName, new PageRequest(0, 10));
+        someConfigClusterName, someConfigNamespaceName, PageRequest.of(0, 10));
 
     assertEquals(Lists.newArrayList(someInstance, anotherInstance), result.getContent());
   }
@@ -197,9 +197,9 @@ public class InstanceServiceTest extends AbstractIntegrationTest {
         someConfigNamespaceName, someReleaseKey, someValidDate);
 
     Page<Instance> result = instanceService.findInstancesByNamespaceAndInstanceAppId(someAppId,
-        someConfigAppId, someConfigClusterName, someConfigNamespaceName, new PageRequest(0, 10));
+        someConfigAppId, someConfigClusterName, someConfigNamespaceName, PageRequest.of(0, 10));
     Page<Instance> anotherResult = instanceService.findInstancesByNamespaceAndInstanceAppId(anotherAppId,
-        someConfigAppId, someConfigClusterName, someConfigNamespaceName, new PageRequest(0, 10));
+        someConfigAppId, someConfigClusterName, someConfigNamespaceName, PageRequest.of(0, 10));
 
     assertEquals(Lists.newArrayList(someInstance), result.getContent());
     assertEquals(Lists.newArrayList(anotherInstance), anotherResult.getContent());

@@ -1,24 +1,34 @@
-<!--master panel body-->
-<section class="master-panel-body"
-         ng-if="namespace.hasBranch
-         && namespace.displayControl.currentOperateBranch == 'master' ||
-          !namespace.hasBranch">
+<!--master panel body when not initialized-->
+<section class="master-panel-body" ng-if="!namespace.initialized">
     <!--main header-->
     <header class="panel-heading">
         <div class="row">
             <div class="col-md-6 col-sm-6 header-namespace">
-                <span class="cursor-pointer"
-                      data-toggle="collapse" data-target="#BODY{{namespace.id}}" aria-expanded="false"
-                      ng-click="namespace.displayControl.show = !namespace.displayControl.show">
-                    <span class="glyphicon glyphicon-triangle-bottom small"
-                          ng-show="namespace.displayControl.show"></span>
-                    <span class="glyphicon glyphicon-triangle-top small"
-                          ng-show="!namespace.displayControl.show"></span>
-                    <b class="namespace-name" ng-bind="namespace.viewName"
-                       data-tooltip="tooltip" data-placement="bottom" title="点击展开/收缩Namespace"></b>
+                <b class="namespace-name" ng-bind="namespace.viewName"></b>
+            </div>
 
-                </span>
-                <span class="label label-info no-radius namespace-label" ng-bind="namespace.format"></span>
+            <div class="col-md-6 col-sm-6 text-right header-buttons">
+
+                <button type="button" class="btn btn-default btn-sm"
+                        data-tooltip="tooltip" data-placement="bottom" title="加载Namespace"
+                        ng-click="refreshNamespace()">
+                    <img src="img/more.png">
+                    加载Namespace
+                </button>
+            </div>
+        </div>
+    </header>
+
+</section>
+<!--master panel body-->
+<section class="master-panel-body"
+         ng-if="namespace.initialized &&
+         (namespace.hasBranch && namespace.displayControl.currentOperateBranch == 'master' || !namespace.hasBranch)">
+    <!--main header-->
+    <header class="panel-heading">
+        <div class="row">
+            <div class="col-md-6 col-sm-6 header-namespace">
+                <b class="namespace-name" ng-bind="namespace.viewName"></b>
                 <span class="label label-warning no-radius namespace-label modify-tip"
                       ng-show="namespace.itemModifiedCnt > 0">
                     有修改
@@ -92,9 +102,16 @@
         </div>
     </header>
 
-    <div id="BODY{{namespace.id}}" class="collapse in">
+
+
+    <div id="BODY{{namespace.id}}" ng-class="{'collapse in': showNamespaceBody, 'collapse' : !showNamespaceBody}">
+        <div class="J_namespace-release-tip well well-sm no-radius text-center"
+             ng-show="namespace.isConfigHidden">
+            <span style="color: red">您不是该项目的管理员，也没有该Namespace的编辑或发布权限，无法查看配置信息。</span>
+        </div>
+
         <!--second header-->
-        <header class="panel-heading second-panel-heading">
+        <header class="panel-heading second-panel-heading" ng-show="!namespace.isConfigHidden">
             <div class="row">
                 <div class="col-md-6 col-sm-6 pull-left">
                     <!--master branch nav tabs-->
@@ -133,6 +150,10 @@
                          data-clipboard-text="{{namespace.text}}"
                          data-tooltip="tooltip" data-placement="bottom" title="复制文本"
                          ng-show="!namespace.isTextEditing && namespace.viewType == 'text' && namespace.hasModifyPermission">
+                    <img src="img/syntax.png" class="ns_btn cursor-pointer"
+                         data-tooltip="tooltip" data-placement="bottom" title="语法检查"
+                         ng-show="namespace.isTextEditing && namespace.viewType == 'text' && namespace.isSyntaxCheckable"
+                         ng-click="syntaxCheck(namespace)">
                     &nbsp;
                     <img src="img/cancel.png" class="ns_btn cursor-pointer"
                          data-tooltip="tooltip" data-placement="bottom" title="取消修改"
@@ -168,6 +189,15 @@
                         同步配置
                     </button>
 
+                    <button type="button" class="btn btn-default btn-sm J_tableview_btn"
+                            data-tooltip="tooltip" data-placement="bottom" title="比较各环境间配置"
+                            ng-click="goToDiffPage(namespace)"
+                            ng-show="namespace.viewType == 'table' && namespace.displayControl.currentOperateBranch == 'master'
+                             && namespace.isPropertiesFormat">
+                        <img src="img/diff.png">
+                        比较配置
+                    </button>
+
                     <button type="button" class="btn btn-primary btn-sm"
                             ng-show="!namespace.isLinkedNamespace
                              && namespace.viewType == 'table'
@@ -182,7 +212,7 @@
         </header>
 
         <!--namespace body-->
-        <section>
+        <section ng-show="!namespace.isConfigHidden">
             <!--table view-->
             <div class="namespace-view-table" ng-show="namespace.viewType == 'table'">
 
@@ -277,7 +307,7 @@
                                      ng-show="namespace.hasModifyPermission">
                                 <img style="margin-left: 5px;" src="img/cancel.png"
                                      data-tooltip="tooltip" data-placement="bottom" title="删除"
-                                     ng-click="preDeleteItem(namespace, config.item.id)"
+                                     ng-click="preDeleteItem(namespace, config.item)"
                                      ng-show="namespace.hasModifyPermission">
                             </td>
                             <td width="6%" class="text-center" ng-if="config.isDeleted">
@@ -386,7 +416,7 @@
                                      ng-show="namespace.hasModifyPermission">
                                 <img style="margin-left: 5px;" src="img/cancel.png"
                                      data-tooltip="tooltip" data-placement="bottom" title="删除"
-                                     ng-click="preDeleteItem(namespace, config.item.id)"
+                                     ng-click="preDeleteItem(namespace, config.item)"
                                      ng-show="namespace.hasModifyPermission">
                             </td>
                             <td width="6%" class="text-center" ng-if="config.isDeleted">

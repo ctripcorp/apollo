@@ -35,6 +35,14 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
             method: 'GET',
             url: '/apps/:appId/miss_envs'
         },
+        create_missing_namespaces: {
+            method: 'POST',
+            url: '/apps/:appId/envs/:env/clusters/:clusterName/missing-namespaces'
+        },
+        find_missing_namespaces: {
+            method: 'GET',
+            url: '/apps/:appId/envs/:env/clusters/:clusterName/missing-namespaces'
+        },
         delete_app: {
             method: 'DELETE',
             isArray: false
@@ -121,6 +129,32 @@ appService.service('AppService', ['$resource', '$q', function ($resource, $q) {
             var d = $q.defer();
             app_resource.find_miss_envs({
                                             appId: appId
+                                        }, function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        create_missing_namespaces: function (appId, env, clusterName) {
+            var d = $q.defer();
+            app_resource.create_missing_namespaces({
+                                            appId: appId,
+                                            env: env,
+                                            clusterName: clusterName
+                                        }, null, function (result) {
+                d.resolve(result);
+            }, function (result) {
+                d.reject(result);
+            });
+            return d.promise;
+        },
+        find_missing_namespaces: function (appId, env, clusterName) {
+            var d = $q.defer();
+            app_resource.find_missing_namespaces({
+                                            appId: appId,
+                                            env: env,
+                                            clusterName: clusterName
                                         }, function (result) {
                 d.resolve(result);
             }, function (result) {

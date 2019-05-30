@@ -12,7 +12,8 @@ public class NamespaceBO {
   private boolean isPublic;
   private String parentAppId;
   private String comment;
-
+  // is the configs hidden to current user?
+  private boolean isConfigHidden;
 
   public NamespaceDTO getBaseInfo() {
     return baseInfo;
@@ -70,4 +71,17 @@ public class NamespaceBO {
     this.comment = comment;
   }
 
+  public boolean isConfigHidden() {
+    return isConfigHidden;
+  }
+
+  public void setConfigHidden(boolean hidden) {
+    isConfigHidden = hidden;
+  }
+
+  public void hideItems() {
+    setConfigHidden(true);
+    items.clear();
+    setItemModifiedCnt(0);
+  }
 }

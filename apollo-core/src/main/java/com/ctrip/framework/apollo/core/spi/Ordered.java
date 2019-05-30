@@ -7,6 +7,8 @@ package com.ctrip.framework.apollo.core.spi;
  * <p>The actual {@link #getOrder() order} can be interpreted as prioritization,
  * with the first object (with the lowest order value) having the highest
  * priority.
+ *
+ * @since 1.0.0
  */
 public interface Ordered {
   /**

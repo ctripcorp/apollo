@@ -23,6 +23,9 @@
             <div class="panel">
                 <header class="panel-heading">
                     用户管理
+                    <small>
+                        （仅对默认的Spring Security简单认证方式有效: -Dapollo_profile=github,auth）
+                    </small>
                 </header>
 
                 <form class="form-horizontal panel-body" name="appForm" ng-controller="UserController"
@@ -32,15 +35,16 @@
                         <label class="col-sm-2 control-label">
                             <apollorequiredfield></apollorequiredfield>
                             用户名</label>
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <input type="text" class="form-control" name="username" ng-model="user.username">
+                            <small>输入的用户名如果不存在，则新建。若已存在，则更新。</small>
                         </div>
                     </div>
                     <div class="form-group" valdr-form-group>
                         <label class="col-sm-2 control-label">
                             <apollorequiredfield></apollorequiredfield>
                             密码</label>
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <input type="text" class="form-control" name="password" ng-model="user.password">
                         </div>
                     </div>
@@ -48,7 +52,7 @@
                         <label class="col-sm-2 control-label">
                             <apollorequiredfield></apollorequiredfield>
                             邮箱</label>
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <input type="text" class="form-control" name="password" ng-model="user.email">
                         </div>
                     </div>

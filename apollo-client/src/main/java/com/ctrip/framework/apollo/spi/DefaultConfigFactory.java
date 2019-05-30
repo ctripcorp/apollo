@@ -1,5 +1,9 @@
 package com.ctrip.framework.apollo.spi;
 
+import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
+import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
+import com.ctrip.framework.apollo.internals.TxtConfigFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +35,11 @@ public class DefaultConfigFactory implements ConfigFactory {
 
   @Override
   public Config create(String namespace) {
-    DefaultConfig defaultConfig =
-        new DefaultConfig(namespace, createLocalConfigRepository(namespace));
-    return defaultConfig;
+    ConfigFileFormat format = determineFileFormat(namespace);
+    if (ConfigFileFormat.isPropertiesCompatible(format)) {
+      return new DefaultConfig(namespace, createPropertiesCompatibleFileConfigRepository(namespace, format));
+    }
+    return new DefaultConfig(namespace, createLocalConfigRepository(namespace));
   }
 
   @Override
@@ -50,6 +56,8 @@ public class DefaultConfigFactory implements ConfigFactory {
         return new YamlConfigFile(namespace, configRepository);
       case YML:
         return new YmlConfigFile(namespace, configRepository);
+      case TXT:
+        return new TxtConfigFile(namespace, configRepository);
     }
 
     return null;
@@ -68,4 +76,35 @@ public class DefaultConfigFactory implements ConfigFactory {
   RemoteConfigRepository createRemoteConfigRepository(String namespace) {
     return new RemoteConfigRepository(namespace);
   }
+
+  PropertiesCompatibleFileConfigRepository createPropertiesCompatibleFileConfigRepository(String namespace,
+      ConfigFileFormat format) {
+    String actualNamespaceName = trimNamespaceFormat(namespace, format);
+    PropertiesCompatibleConfigFile configFile = (PropertiesCompatibleConfigFile) ConfigService
+        .getConfigFile(actualNamespaceName, format);
+
+    return new PropertiesCompatibleFileConfigRepository(configFile);
+  }
+
+  // for namespaces whose format are not properties, the file extension must be present, e.g. application.yaml
+  ConfigFileFormat determineFileFormat(String namespaceName) {
+    String lowerCase = namespaceName.toLowerCase();
+    for (ConfigFileFormat format : ConfigFileFormat.values()) {
+      if (lowerCase.endsWith("." + format.getValue())) {
+        return format;
+      }
+    }
+
+    return ConfigFileFormat.Properties;
+  }
+
+  String trimNamespaceFormat(String namespaceName, ConfigFileFormat format) {
+    String extension = "." + format.getValue();
+    if (!namespaceName.toLowerCase().endsWith(extension)) {
+      return namespaceName;
+    }
+
+    return namespaceName.substring(0, namespaceName.length() - extension.length());
+  }
+
 }

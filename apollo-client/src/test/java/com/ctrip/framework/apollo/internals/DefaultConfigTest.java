@@ -3,11 +3,13 @@ package com.ctrip.framework.apollo.internals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.io.File;
@@ -49,6 +51,7 @@ public class DefaultConfigTest {
   private String someNamespace;
   private ConfigRepository configRepository;
   private Properties someProperties;
+  private ConfigSourceType someSourceType;
 
   @Before
   public void setUp() throws Exception {
@@ -98,6 +101,8 @@ public class DefaultConfigTest {
     someProperties.setProperty(someKey, someLocalFileValue);
     someProperties.setProperty(anotherKey, someLocalFileValue);
     when(configRepository.getConfig()).thenReturn(someProperties);
+    someSourceType = ConfigSourceType.LOCAL;
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
 
     //set up resource file
     File resourceFile = new File(someResourceDir, someNamespace + ".properties");
@@ -121,6 +126,7 @@ public class DefaultConfigTest {
     assertEquals(someLocalFileValue, anotherKeyValue);
     assertEquals(someResourceValue, lastKeyValue);
 
+    assertEquals(someSourceType, defaultConfig.getSourceType());
   }
 
   @Test
@@ -598,6 +604,8 @@ public class DefaultConfigTest {
         .of(someKey, someLocalFileValue, anotherKey, someLocalFileValue, keyToBeDeleted,
             keyToBeDeletedValue, yetAnotherKey, yetAnotherValue));
     when(configRepository.getConfig()).thenReturn(someProperties);
+    someSourceType = ConfigSourceType.LOCAL;
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
 
     //set up resource file
     File resourceFile = new File(someResourceDir, someNamespace + ".properties");
@@ -605,6 +613,8 @@ public class DefaultConfigTest {
 
     DefaultConfig defaultConfig =
         new DefaultConfig(someNamespace, configRepository);
+
+    assertEquals(someSourceType, defaultConfig.getSourceType());
 
     final SettableFuture<ConfigChangeEvent> configChangeFuture = SettableFuture.create();
     ConfigChangeListener someListener = new ConfigChangeListener() {
@@ -623,6 +633,9 @@ public class DefaultConfigTest {
     String newValue = "newValue";
     newProperties.putAll(ImmutableMap
         .of(someKey, someKeyNewValue, anotherKey, anotherKeyNewValue, newKey, newValue));
+
+    ConfigSourceType anotherSourceType = ConfigSourceType.REMOTE;
+    when(configRepository.getSourceType()).thenReturn(anotherSourceType);
 
     defaultConfig.onRepositoryChange(someNamespace, newProperties);
 
@@ -653,6 +666,8 @@ public class DefaultConfigTest {
     assertEquals(null, newKeyChange.getOldValue());
     assertEquals(newValue, newKeyChange.getNewValue());
     assertEquals(PropertyChangeType.ADDED, newKeyChange.getChangeType());
+
+    assertEquals(anotherSourceType, defaultConfig.getSourceType());
   }
 
   @Test
@@ -703,6 +718,62 @@ public class DefaultConfigTest {
     assertEquals(someChangeEvent, changeEvent);
     assertEquals(someChangeEvent, interestedInSomeKeyFuture.get(500, TimeUnit.MILLISECONDS));
     assertFalse(interestedInSomeKeyNotChangedFuture.isDone());
+  }
+
+  @Test
+  public void testRemoveChangeListener() throws Exception {
+    String someNamespace = "someNamespace";
+    final ConfigChangeEvent someConfigChangEvent = mock(ConfigChangeEvent.class);
+    ConfigChangeEvent anotherConfigChangEvent = mock(ConfigChangeEvent.class);
+
+    final SettableFuture<ConfigChangeEvent> someListenerFuture1 = SettableFuture.create();
+    final SettableFuture<ConfigChangeEvent> someListenerFuture2 = SettableFuture.create();
+    ConfigChangeListener someListener = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        if (someConfigChangEvent == changeEvent) {
+          someListenerFuture1.set(changeEvent);
+        } else {
+          someListenerFuture2.set(changeEvent);
+        }
+      }
+    };
+
+    final SettableFuture<ConfigChangeEvent> anotherListenerFuture1 = SettableFuture.create();
+    final SettableFuture<ConfigChangeEvent> anotherListenerFuture2 = SettableFuture.create();
+    ConfigChangeListener anotherListener = new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        if (someConfigChangEvent == changeEvent) {
+          anotherListenerFuture1.set(changeEvent);
+        } else {
+          anotherListenerFuture2.set(changeEvent);
+        }
+      }
+    };
+
+    ConfigChangeListener yetAnotherListener = mock(ConfigChangeListener.class);
+
+    DefaultConfig config = new DefaultConfig(someNamespace, mock(ConfigRepository.class));
+
+    config.addChangeListener(someListener);
+    config.addChangeListener(anotherListener);
+
+    config.fireConfigChange(someConfigChangEvent);
+
+    assertEquals(someConfigChangEvent, someListenerFuture1.get(500, TimeUnit.MILLISECONDS));
+    assertEquals(someConfigChangEvent, anotherListenerFuture1.get(500, TimeUnit.MILLISECONDS));
+
+    assertFalse(config.removeChangeListener(yetAnotherListener));
+    assertTrue(config.removeChangeListener(someListener));
+
+    config.fireConfigChange(anotherConfigChangEvent);
+
+    assertEquals(anotherConfigChangEvent, anotherListenerFuture2.get(500, TimeUnit.MILLISECONDS));
+
+    TimeUnit.MILLISECONDS.sleep(100);
+
+    assertFalse(someListenerFuture2.isDone());
   }
 
   @Test
@@ -766,6 +837,34 @@ public class DefaultConfigTest {
         return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s);
       }
     }, Lists.<String>newArrayList()), Lists.newArrayList());
+  }
+
+  @Test
+  public void testLoadFromRepositoryFailedAndThenRecovered() {
+    String someKey = "someKey";
+    String someValue = "someValue";
+    String someDefaultValue = "someDefaultValue";
+    ConfigSourceType someSourceType = ConfigSourceType.REMOTE;
+
+    when(configRepository.getConfig()).thenThrow(mock(RuntimeException.class));
+
+    DefaultConfig defaultConfig =
+        new DefaultConfig(someNamespace, configRepository);
+
+    verify(configRepository, times(1)).addChangeListener(defaultConfig);
+
+    assertEquals(ConfigSourceType.NONE, defaultConfig.getSourceType());
+    assertEquals(someDefaultValue, defaultConfig.getProperty(someKey, someDefaultValue));
+
+    someProperties = new Properties();
+    someProperties.setProperty(someKey, someValue);
+
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
+
+    defaultConfig.onRepositoryChange(someNamespace, someProperties);
+
+    assertEquals(someSourceType, defaultConfig.getSourceType());
+    assertEquals(someValue, defaultConfig.getProperty(someKey, someDefaultValue));
   }
 
   private void checkDatePropertyWithFormat(Config config, Date expected, String propertyName, String format, Date

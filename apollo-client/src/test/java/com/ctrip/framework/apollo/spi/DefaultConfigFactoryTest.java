@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -79,6 +80,28 @@ public class DefaultConfigFactoryTest {
   }
 
   @Test
+  public void testCreatePropertiesCompatibleFileConfigRepository() throws Exception {
+    ConfigFileFormat somePropertiesCompatibleFormat = ConfigFileFormat.YML;
+    String someNamespace = "someName" + "." + somePropertiesCompatibleFormat;
+    Properties someProperties = new Properties();
+    String someKey = "someKey";
+    String someValue = "someValue";
+    someProperties.setProperty(someKey, someValue);
+
+    PropertiesCompatibleFileConfigRepository someRepository = mock(PropertiesCompatibleFileConfigRepository.class);
+    when(someRepository.getConfig()).thenReturn(someProperties);
+
+    doReturn(someRepository).when(defaultConfigFactory)
+        .createPropertiesCompatibleFileConfigRepository(someNamespace, somePropertiesCompatibleFormat);
+
+    Config result = defaultConfigFactory.create(someNamespace);
+
+    assertThat("DefaultConfigFactory should create DefaultConfig", result,
+        is(instanceOf(DefaultConfig.class)));
+    assertEquals(someValue, result.getProperty(someKey, null));
+  }
+
+  @Test
   public void testCreateConfigFile() throws Exception {
     String someNamespace = "someName";
     String anotherNamespace = "anotherName";
@@ -123,6 +146,47 @@ public class DefaultConfigFactoryTest {
         YamlConfigFile.class)));
     assertEquals(someNamespace, yamlConfigFile.getNamespace());
 
+  }
+
+  @Test
+  public void testDetermineFileFormat() throws Exception {
+    checkFileFormat("abc", ConfigFileFormat.Properties);
+    checkFileFormat("abc.properties", ConfigFileFormat.Properties);
+    checkFileFormat("abc.pRopErties", ConfigFileFormat.Properties);
+    checkFileFormat("abc.xml", ConfigFileFormat.XML);
+    checkFileFormat("abc.xmL", ConfigFileFormat.XML);
+    checkFileFormat("abc.json", ConfigFileFormat.JSON);
+    checkFileFormat("abc.jsOn", ConfigFileFormat.JSON);
+    checkFileFormat("abc.yaml", ConfigFileFormat.YAML);
+    checkFileFormat("abc.yAml", ConfigFileFormat.YAML);
+    checkFileFormat("abc.yml", ConfigFileFormat.YML);
+    checkFileFormat("abc.yMl", ConfigFileFormat.YML);
+    checkFileFormat("abc.properties.yml", ConfigFileFormat.YML);
+  }
+
+  @Test
+  public void testTrimNamespaceFormat() throws Exception {
+    checkNamespaceName("abc", ConfigFileFormat.Properties, "abc");
+    checkNamespaceName("abc.properties", ConfigFileFormat.Properties, "abc");
+    checkNamespaceName("abcproperties", ConfigFileFormat.Properties, "abcproperties");
+    checkNamespaceName("abc.pRopErties", ConfigFileFormat.Properties, "abc");
+    checkNamespaceName("abc.xml", ConfigFileFormat.XML, "abc");
+    checkNamespaceName("abc.xmL", ConfigFileFormat.XML, "abc");
+    checkNamespaceName("abc.json", ConfigFileFormat.JSON, "abc");
+    checkNamespaceName("abc.jsOn", ConfigFileFormat.JSON, "abc");
+    checkNamespaceName("abc.yaml", ConfigFileFormat.YAML, "abc");
+    checkNamespaceName("abc.yAml", ConfigFileFormat.YAML, "abc");
+    checkNamespaceName("abc.yml", ConfigFileFormat.YML, "abc");
+    checkNamespaceName("abc.yMl", ConfigFileFormat.YML, "abc");
+    checkNamespaceName("abc.proPerties.yml", ConfigFileFormat.YML, "abc.proPerties");
+  }
+
+  private void checkFileFormat(String namespaceName, ConfigFileFormat expectedFormat) {
+    assertEquals(expectedFormat, defaultConfigFactory.determineFileFormat(namespaceName));
+  }
+
+  private void checkNamespaceName(String namespaceName, ConfigFileFormat format, String expectedNamespaceName) {
+    assertEquals(expectedNamespaceName, defaultConfigFactory.trimNamespaceFormat(namespaceName, format));
   }
 
   public static class MockConfigUtil extends ConfigUtil {

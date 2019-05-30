@@ -11,7 +11,7 @@ public class NamespaceTextModel implements Verifiable {
   private String env;
   private String clusterName;
   private String namespaceName;
-  private int namespaceId;
+  private long namespaceId;
   private String format;
   private String configText;
 
@@ -30,7 +30,7 @@ public class NamespaceTextModel implements Verifiable {
   }
 
   public Env getEnv() {
-    return Env.valueOf(env);
+    return Env.fromString(env);
   }
 
   public void setEnv(String env) {
@@ -53,11 +53,11 @@ public class NamespaceTextModel implements Verifiable {
     this.namespaceName = namespaceName;
   }
 
-  public int getNamespaceId() {
+  public long getNamespaceId() {
     return namespaceId;
   }
 
-  public void setNamespaceId(int namespaceId) {
+  public void setNamespaceId(long namespaceId) {
     this.namespaceId = namespaceId;
   }
 

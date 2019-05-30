@@ -136,7 +136,9 @@ appService.service('EventManager', [function () {
             EMERGENCY_PUBLISH: 'emergency_publish',
             PRE_DELETE_NAMESPACE: 'pre_delete_namespace',
             DELETE_NAMESPACE: 'delete_namespace',
-            DELETE_NAMESPACE_FAILED: 'delete_namespace_failed'
+            DELETE_NAMESPACE_FAILED: 'delete_namespace_failed',
+            CHANGE_ENV_CLUSTER: "change_env_cluster",
+            SYNTAX_CHECK_TEXT_FAILED: "syntax_check_text_failed"
         }
 
     }

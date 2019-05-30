@@ -12,9 +12,11 @@ public interface AppNamespaceRepository extends PagingAndSortingRepository<AppNa
 
   AppNamespace findByName(String namespaceName);
 
-  AppNamespace findByNameAndIsPublic(String namespaceName, boolean isPublic);
+  List<AppNamespace> findByNameAndIsPublic(String namespaceName, boolean isPublic);
 
   List<AppNamespace> findByIsPublicTrue();
+
+  List<AppNamespace> findByAppId(String appId);
 
   @Modifying
   @Query("UPDATE AppNamespace SET IsDeleted=1,DataChange_LastModifiedBy=?2 WHERE AppId=?1")

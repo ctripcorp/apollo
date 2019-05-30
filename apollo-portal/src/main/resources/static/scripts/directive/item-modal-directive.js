@@ -30,6 +30,8 @@ function itemModalDirective(toastr, $sce, AppUtil, EventManager, ConfigService) 
                 scope.valueWithHiddenChars = $sce.trustAsHtml('');
             });
 
+            $("#valueEditor").textareafullscreen();
+            
             function doItem() {
 
                 if (!scope.item.value) {
@@ -144,8 +146,8 @@ function itemModalDirective(toastr, $sce, AppUtil, EventManager, ConfigService) 
 
                 var hiddenCharCounter = 0, valueWithHiddenChars = value;
 
-                for (var i = 0; i < valueWithHiddenChars.length; i++) {
-                    var c = valueWithHiddenChars[i];
+                for (var i = 0; i < value.length; i++) {
+                    var c = value[i];
                     if (isHiddenChar(c)) {
                         valueWithHiddenChars = valueWithHiddenChars.replace(c, viewHiddenChar);
                         hiddenCharCounter++;

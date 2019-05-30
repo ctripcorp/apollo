@@ -26,6 +26,8 @@ function releaseHistoryController($scope, $location, AppUtil,
     $scope.hasLoadAll = false;
     $scope.selectedReleaseHistory = 0;
     $scope.isTextNamespace = false;
+    // whether current user can view config
+    $scope.isConfigHidden = false;
 
     $scope.showReleaseHistoryDetail = showReleaseHistoryDetail;
     $scope.switchConfigViewType = switchConfigViewType;
@@ -99,6 +101,7 @@ function releaseHistoryController($scope, $location, AppUtil,
                 if ($scope.isTextNamespace) {
                   fixTextNamespaceViewType();
                 }
+                $scope.isConfigHidden = result.isConfigHidden;
             })
     }
 

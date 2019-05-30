@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="vendor/angular/angular-toastr-1.4.1.min.css">
     <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/jquery-plugin/textareafullscreen.css">
     <link rel="stylesheet" type="text/css" media='all' href="vendor/angular/loading-bar.min.css">
     <link rel="stylesheet" type="text/css" href="styles/common-style.css">
 </head>
@@ -99,6 +100,13 @@
                                 </span>
                                 </td>
                             </tr>
+                            <tr ng-show="missingNamespaces.length > 0">
+                                <th>缺失的Namespace:</th>
+                                <td>
+                                <span ng-repeat="namespace in missingNamespaces" ng-bind="namespace">
+                                </span>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
 
@@ -113,6 +121,12 @@
                     <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
                         <div class="row icon-text icon-plus-orange">
                             <p class="btn-title ng-binding">补缺环境</p>
+                        </div>
+                    </a>
+
+                    <a class="list-group-item" ng-show="missingNamespaces.length > 0" ng-click="createMissingNamespaces()">
+                        <div class="row icon-text icon-plus-orange">
+                            <p class="btn-title ng-binding">补缺Namespace</p>
                         </div>
                     </a>
 
@@ -201,6 +215,8 @@
                        pre-delete-item="preDeleteItem"
                        show-text="showText"
                        show-no-modify-permission-dialog="showNoModifyPermissionDialog"
+                       show-body="namespaces.length < 3"
+                       lazy-load="namespaces.length > 10"
                        pre-create-branch="preCreateBranch"
                        pre-delete-branch="preDeleteBranch">
         </apollonspanel>
@@ -241,7 +257,7 @@
         <deletenamespacemodal env="pageContext.env"></deletenamespacemodal>
 
         <apolloconfirmdialog apollo-dialog-id="'deleteConfirmDialog'" apollo-title="'删除配置'"
-                             apollo-detail="'确定要删除配置吗?'"
+                             apollo-detail="'您正在删除 Key 为 <b>' + config.key + '</b> Value 为 <b>' + config.value + '</b> 的配置.<br>确定要删除配置吗?'"
                              apollo-show-cancel-btn="true" apollo-confirm="deleteItem"></apolloconfirmdialog>
 
         <apolloconfirmdialog apollo-dialog-id="'releaseNoPermissionDialog'" apollo-title="'发布'"
@@ -306,6 +322,12 @@
                              apollo-detail="deleteNamespaceContext.detailReason">
         </apolloconfirmdialog>
 
+        <apolloconfirmdialog apollo-dialog-id="'syntaxCheckFailedDialog'"
+                             apollo-title="'语法检查错误'"
+                             apollo-detail="syntaxCheckContext.syntaxCheckMessage"
+                             apollo-extra-class="'pre'">
+        </apolloconfirmdialog>
+
 
         <div class="modal fade" id="createBranchTips" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
@@ -349,12 +371,10 @@
 <script src="vendor/jquery.min.js" type="text/javascript"></script>
 
 <script src="vendor/select2/select2.min.js" type="text/javascript"></script>
+<script src="vendor/jquery-plugin/jquery.textareafullscreen.js" type="text/javascript"></script>
 
 <!--lodash.js-->
 <script src="vendor/lodash.min.js" type="text/javascript"></script>
-
-<!--nicescroll-->
-<script src="vendor/jquery.nicescroll.min.js"></script>
 
 <!--angular-->
 <script src="vendor/angular/angular.min.js"></script>

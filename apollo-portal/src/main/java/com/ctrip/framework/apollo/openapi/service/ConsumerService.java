@@ -1,11 +1,5 @@
 package com.ctrip.framework.apollo.openapi.service;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.hash.Hashing;
-
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.openapi.entity.Consumer;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerAudit;
@@ -22,9 +16,12 @@ import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.hash.Hashing;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,22 +38,33 @@ public class ConsumerService {
   private static final FastDateFormat TIMESTAMP_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
   private static final Joiner KEY_JOINER = Joiner.on("|");
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private ConsumerTokenRepository consumerTokenRepository;
-  @Autowired
-  private ConsumerRepository consumerRepository;
-  @Autowired
-  private ConsumerAuditRepository consumerAuditRepository;
-  @Autowired
-  private ConsumerRoleRepository consumerRoleRepository;
-  @Autowired
-  private PortalConfig portalConfig;
-  @Autowired
-  private RolePermissionService rolePermissionService;
-  @Autowired
-  private UserService userService;
+  private final UserInfoHolder userInfoHolder;
+  private final ConsumerTokenRepository consumerTokenRepository;
+  private final ConsumerRepository consumerRepository;
+  private final ConsumerAuditRepository consumerAuditRepository;
+  private final ConsumerRoleRepository consumerRoleRepository;
+  private final PortalConfig portalConfig;
+  private final RolePermissionService rolePermissionService;
+  private final UserService userService;
+
+  public ConsumerService(
+      final UserInfoHolder userInfoHolder,
+      final ConsumerTokenRepository consumerTokenRepository,
+      final ConsumerRepository consumerRepository,
+      final ConsumerAuditRepository consumerAuditRepository,
+      final ConsumerRoleRepository consumerRoleRepository,
+      final PortalConfig portalConfig,
+      final RolePermissionService rolePermissionService,
+      final UserService userService) {
+    this.userInfoHolder = userInfoHolder;
+    this.consumerTokenRepository = consumerTokenRepository;
+    this.consumerRepository = consumerRepository;
+    this.consumerAuditRepository = consumerAuditRepository;
+    this.consumerRoleRepository = consumerRoleRepository;
+    this.portalConfig = portalConfig;
+    this.rolePermissionService = rolePermissionService;
+    this.userService = userService;
+  }
 
 
   public Consumer createConsumer(Consumer consumer) {
@@ -109,7 +117,7 @@ public class ConsumerService {
   }
 
   public Consumer getConsumerByConsumerId(long consumerId) {
-    return consumerRepository.findOne(consumerId);
+    return consumerRepository.findById(consumerId).orElse(null);
   }
 
   public List<ConsumerRole> assignNamespaceRoleToConsumer(String token, String appId, String namespaceName) {
@@ -177,7 +185,7 @@ public class ConsumerService {
 
   @Transactional
   public void createConsumerAudits(Iterable<ConsumerAudit> consumerAudits) {
-    consumerAuditRepository.save(consumerAudits);
+    consumerAuditRepository.saveAll(consumerAudits);
   }
 
   @Transactional

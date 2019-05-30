@@ -7,12 +7,11 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +19,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriTemplateHandler;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriTemplateHandler;
 
+import javax.annotation.PostConstruct;
 import java.net.SocketTimeoutException;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 封装RestTemplate. admin server集群在某些机器宕机或者超时的情况下轮询重试
@@ -36,14 +34,19 @@ public class RetryableRestTemplate {
 
   private Logger logger = LoggerFactory.getLogger(RetryableRestTemplate.class);
 
-  private UriTemplateHandler uriTemplateHandler = new DefaultUriTemplateHandler();
+  private UriTemplateHandler uriTemplateHandler = new DefaultUriBuilderFactory();
 
   private RestTemplate restTemplate;
 
-  @Autowired
-  private RestTemplateFactory restTemplateFactory;
-  @Autowired
-  private AdminServiceAddressLocator adminServiceAddressLocator;
+  private final RestTemplateFactory restTemplateFactory;
+  private final AdminServiceAddressLocator adminServiceAddressLocator;
+
+  public RetryableRestTemplate(
+      final @Lazy RestTemplateFactory restTemplateFactory,
+      final @Lazy AdminServiceAddressLocator adminServiceAddressLocator) {
+    this.restTemplateFactory = restTemplateFactory;
+    this.adminServiceAddressLocator = adminServiceAddressLocator;
+  }
 
 
   @PostConstruct

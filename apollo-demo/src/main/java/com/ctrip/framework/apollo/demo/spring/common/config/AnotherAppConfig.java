@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Jason Song(song_s@ctrip.com)
  */
 @Configuration
-@EnableApolloConfig(value = "TEST1.apollo", order = 11)
+@EnableApolloConfig(value = {"TEST1.apollo", "application.yaml"}, order = 11)
 public class AnotherAppConfig {
 }

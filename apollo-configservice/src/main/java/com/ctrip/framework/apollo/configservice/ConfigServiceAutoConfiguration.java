@@ -7,13 +7,12 @@ import com.ctrip.framework.apollo.configservice.controller.ConfigFileController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationController;
 import com.ctrip.framework.apollo.configservice.controller.NotificationControllerV2;
 import com.ctrip.framework.apollo.configservice.service.ReleaseMessageServiceWithCache;
-
 import com.ctrip.framework.apollo.configservice.service.config.ConfigService;
 import com.ctrip.framework.apollo.configservice.service.config.ConfigServiceWithCache;
 import com.ctrip.framework.apollo.configservice.service.config.DefaultConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -21,8 +20,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConfigServiceAutoConfiguration {
 
-  @Autowired
-  private BizConfig bizConfig;
+  private final BizConfig bizConfig;
+
+  public ConfigServiceAutoConfiguration(final BizConfig bizConfig) {
+    this.bizConfig = bizConfig;
+  }
 
   @Bean
   public GrayReleaseRulesHolder grayReleaseRulesHolder() {
@@ -37,20 +39,34 @@ public class ConfigServiceAutoConfiguration {
     return new DefaultConfigService();
   }
 
+  @Bean
+  public static NoOpPasswordEncoder passwordEncoder() {
+    return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+  }
+
   @Configuration
   static class MessageScannerConfiguration {
-    @Autowired
-    private NotificationController notificationController;
-    @Autowired
-    private ConfigFileController configFileController;
-    @Autowired
-    private NotificationControllerV2 notificationControllerV2;
-    @Autowired
-    private GrayReleaseRulesHolder grayReleaseRulesHolder;
-    @Autowired
-    private ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
-    @Autowired
-    private ConfigService configService;
+    private final NotificationController notificationController;
+    private final ConfigFileController configFileController;
+    private final NotificationControllerV2 notificationControllerV2;
+    private final GrayReleaseRulesHolder grayReleaseRulesHolder;
+    private final ReleaseMessageServiceWithCache releaseMessageServiceWithCache;
+    private final ConfigService configService;
+
+    public MessageScannerConfiguration(
+        final NotificationController notificationController,
+        final ConfigFileController configFileController,
+        final NotificationControllerV2 notificationControllerV2,
+        final GrayReleaseRulesHolder grayReleaseRulesHolder,
+        final ReleaseMessageServiceWithCache releaseMessageServiceWithCache,
+        final ConfigService configService) {
+      this.notificationController = notificationController;
+      this.configFileController = configFileController;
+      this.notificationControllerV2 = notificationControllerV2;
+      this.grayReleaseRulesHolder = grayReleaseRulesHolder;
+      this.releaseMessageServiceWithCache = releaseMessageServiceWithCache;
+      this.configService = configService;
+    }
 
     @Bean
     public ReleaseMessageScanner releaseMessageScanner() {

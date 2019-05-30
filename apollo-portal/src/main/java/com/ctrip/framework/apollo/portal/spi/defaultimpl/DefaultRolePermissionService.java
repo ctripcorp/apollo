@@ -13,15 +13,21 @@ import com.ctrip.framework.apollo.portal.repository.RoleRepository;
 import com.ctrip.framework.apollo.portal.repository.UserRoleRepository;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by timothy on 2017/4/26.
@@ -51,16 +57,15 @@ public class DefaultRolePermissionService implements RolePermissionService {
         Role createdRole = roleRepository.save(role);
 
         if (!CollectionUtils.isEmpty(permissionIds)) {
-            Iterable<RolePermission> rolePermissions = FluentIterable.from(permissionIds).transform(
-                    permissionId -> {
-                        RolePermission rolePermission = new RolePermission();
-                        rolePermission.setRoleId(createdRole.getId());
-                        rolePermission.setPermissionId(permissionId);
-                        rolePermission.setDataChangeCreatedBy(createdRole.getDataChangeCreatedBy());
-                        rolePermission.setDataChangeLastModifiedBy(createdRole.getDataChangeLastModifiedBy());
-                        return rolePermission;
-                    });
-            rolePermissionRepository.save(rolePermissions);
+            Iterable<RolePermission> rolePermissions = permissionIds.stream().map(permissionId -> {
+                RolePermission rolePermission = new RolePermission();
+                rolePermission.setRoleId(createdRole.getId());
+                rolePermission.setPermissionId(permissionId);
+                rolePermission.setDataChangeCreatedBy(createdRole.getDataChangeCreatedBy());
+                rolePermission.setDataChangeLastModifiedBy(createdRole.getDataChangeLastModifiedBy());
+                return rolePermission;
+            }).collect(Collectors.toList());
+            rolePermissionRepository.saveAll(rolePermissions);
         }
 
         return createdRole;
@@ -80,20 +85,20 @@ public class DefaultRolePermissionService implements RolePermissionService {
         List<UserRole> existedUserRoles =
                 userRoleRepository.findByUserIdInAndRoleId(userIds, role.getId());
         Set<String> existedUserIds =
-                FluentIterable.from(existedUserRoles).transform(userRole -> userRole.getUserId()).toSet();
+            existedUserRoles.stream().map(UserRole::getUserId).collect(Collectors.toSet());
 
         Set<String> toAssignUserIds = Sets.difference(userIds, existedUserIds);
 
-        Iterable<UserRole> toCreate = FluentIterable.from(toAssignUserIds).transform(userId -> {
+        Iterable<UserRole> toCreate = toAssignUserIds.stream().map(userId -> {
             UserRole userRole = new UserRole();
             userRole.setRoleId(role.getId());
             userRole.setUserId(userId);
             userRole.setDataChangeCreatedBy(operatorUserId);
             userRole.setDataChangeLastModifiedBy(operatorUserId);
             return userRole;
-        });
+        }).collect(Collectors.toList());
 
-        userRoleRepository.save(toCreate);
+        userRoleRepository.saveAll(toCreate);
         return toAssignUserIds;
     }
 
@@ -114,7 +119,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
             userRole.setDataChangeLastModifiedBy(operatorUserId);
         }
 
-        userRoleRepository.save(existedUserRoles);
+        userRoleRepository.saveAll(existedUserRoles);
     }
 
     /**
@@ -129,11 +134,11 @@ public class DefaultRolePermissionService implements RolePermissionService {
 
         List<UserRole> userRoles = userRoleRepository.findByRoleId(role.getId());
 
-        Set<UserInfo> users = FluentIterable.from(userRoles).transform(userRole -> {
+        Set<UserInfo> users = userRoles.stream().map(userRole -> {
             UserInfo userInfo = new UserInfo();
             userInfo.setUserId(userRole.getUserId());
             return userInfo;
-        }).toSet();
+        }).collect(Collectors.toSet());
 
         return users;
     }
@@ -165,7 +170,7 @@ public class DefaultRolePermissionService implements RolePermissionService {
         }
 
         Set<Long> roleIds =
-                FluentIterable.from(userRoles).transform(userRole -> userRole.getRoleId()).toSet();
+            userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toSet());
         List<RolePermission> rolePermissions = rolePermissionRepository.findByRoleIdIn(roleIds);
         if (CollectionUtils.isEmpty(rolePermissions)) {
             return false;
@@ -178,6 +183,18 @@ public class DefaultRolePermissionService implements RolePermissionService {
         }
 
         return false;
+    }
+
+    @Override
+    public List<Role> findUserRoles(String userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        if (CollectionUtils.isEmpty(userRoles)) {
+            return Collections.emptyList();
+        }
+
+        Set<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+
+        return Lists.newLinkedList(roleRepository.findAllById(roleIds));
     }
 
     public boolean isSuperAdmin(String userId) {
@@ -218,8 +235,8 @@ public class DefaultRolePermissionService implements RolePermissionService {
                     targetId);
         }
 
-        Iterable<Permission> results = permissionRepository.save(permissions);
-        return FluentIterable.from(results).toSet();
+        Iterable<Permission> results = permissionRepository.saveAll(permissions);
+        return StreamSupport.stream(results.spliterator(), false).collect(Collectors.toSet());
     }
 
     @Transactional

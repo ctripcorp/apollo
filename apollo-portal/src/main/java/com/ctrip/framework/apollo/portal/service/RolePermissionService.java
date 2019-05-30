@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -43,6 +44,11 @@ public interface RolePermissionService {
    * Check whether user has the permission
    */
   public boolean userHasPermission(String userId, String permissionType, String targetId);
+
+  /**
+   * Find the user's roles
+   */
+  public List<Role> findUserRoles(String userId);
 
   public boolean isSuperAdmin(String userId);
 

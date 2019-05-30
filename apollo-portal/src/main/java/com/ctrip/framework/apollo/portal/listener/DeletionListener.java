@@ -7,28 +7,34 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DeletionListener {
 
   private static final Logger logger = LoggerFactory.getLogger(DeletionListener.class);
 
-  @Autowired
-  private PortalSettings portalSettings;
-  @Autowired
-  private AdminServiceAPI.AppAPI appAPI;
-  @Autowired
-  private AdminServiceAPI.NamespaceAPI namespaceAPI;
+  private final PortalSettings portalSettings;
+  private final AdminServiceAPI.AppAPI appAPI;
+  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
+
+  public DeletionListener(
+      final PortalSettings portalSettings,
+      final AdminServiceAPI.AppAPI appAPI,
+      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
+    this.portalSettings = portalSettings;
+    this.appAPI = appAPI;
+    this.namespaceAPI = namespaceAPI;
+  }
 
   @EventListener
   public void onAppDeletionEvent(AppDeletionEvent event) {
-    AppDTO appDTO = BeanUtils.transfrom(AppDTO.class, event.getApp());
+    AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
     String appId = appDTO.getAppId();
     String operator = appDTO.getDataChangeLastModifiedBy();
 
@@ -45,7 +51,7 @@ public class DeletionListener {
 
   @EventListener
   public void onAppNamespaceDeletionEvent(AppNamespaceDeletionEvent event) {
-    AppNamespaceDTO appNamespace = BeanUtils.transfrom(AppNamespaceDTO.class, event.getAppNamespace());
+    AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
     List<Env> envs = portalSettings.getActiveEnvs();
     String appId = appNamespace.getAppId();
     String namespaceName = appNamespace.getName();

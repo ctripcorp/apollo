@@ -27,12 +27,4 @@ public class DefaultMetaServerProviderTest {
     assertEquals(someMetaAddress, defaultMetaServerProvider.getMetaServerAddress(someEnv));
   }
 
-  @Test
-  public void testWithNoSystemProperty() throws Exception {
-    Env someEnv = Env.DEV;
-
-    DefaultMetaServerProvider defaultMetaServerProvider = new DefaultMetaServerProvider();
-
-    assertNull(defaultMetaServerProvider.getMetaServerAddress(someEnv));
-  }
 }

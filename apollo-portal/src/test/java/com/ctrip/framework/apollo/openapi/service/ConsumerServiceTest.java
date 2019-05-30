@@ -16,6 +16,7 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -28,9 +29,9 @@ import java.util.GregorianCalendar;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -97,10 +98,10 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     long someConsumerId = 1;
     Consumer someConsumer = mock(Consumer.class);
 
-    when(consumerRepository.findOne(someConsumerId)).thenReturn(someConsumer);
+    when(consumerRepository.findById(someConsumerId)).thenReturn(Optional.of(someConsumer));
 
     assertEquals(someConsumer, consumerService.getConsumerByConsumerId(someConsumerId));
-    verify(consumerRepository, times(1)).findOne(someConsumerId);
+    verify(consumerRepository, times(1)).findById(someConsumerId);
   }
 
   @Test
@@ -131,7 +132,7 @@ public class ConsumerServiceTest extends AbstractUnitTest {
     Date generationTime = new Date();
     Consumer consumer = mock(Consumer.class);
 
-    when(consumerRepository.findOne(someConsumerId)).thenReturn(consumer);
+    when(consumerRepository.findById(someConsumerId)).thenReturn(Optional.of(consumer));
     when(consumer.getAppId()).thenReturn(someConsumerAppId);
     when(consumerService.generateToken(someConsumerAppId, generationTime, someTokenSalt))
         .thenReturn(someToken);

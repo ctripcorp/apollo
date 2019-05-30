@@ -6,7 +6,7 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
  * @author Jason Song(song_s@ctrip.com)
  */
 public enum ConfigFileFormat {
-  Properties("properties"), XML("xml"), JSON("json"), YML("yml"), YAML("yaml");
+  Properties("properties"), XML("xml"), JSON("json"), YML("yml"), YAML("yaml"), TXT("txt");
 
   private String value;
 
@@ -22,7 +22,7 @@ public enum ConfigFileFormat {
     if (StringUtils.isEmpty(value)) {
       throw new IllegalArgumentException("value can not be empty");
     }
-    switch (value) {
+    switch (value.toLowerCase()) {
       case "properties":
         return Properties;
       case "xml":
@@ -33,6 +33,8 @@ public enum ConfigFileFormat {
         return YML;
       case "yaml":
         return YAML;
+      case "txt":
+        return TXT;
     }
     throw new IllegalArgumentException(value + " can not map enum");
   }
@@ -44,5 +46,9 @@ public enum ConfigFileFormat {
     } catch (IllegalArgumentException e) {
       return false;
     }
+  }
+
+  public static boolean isPropertiesCompatible(ConfigFileFormat format) {
+    return format == YAML || format == YML;
   }
 }

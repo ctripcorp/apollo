@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.ctrip.framework.apollo</groupId>
 		<artifactId>apollo</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.5.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -14,6 +14,19 @@
 		<java.version>1.7</java.version>
 		<github.path>${project.artifactId}</github.path>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- Spring Boot 2 requires Java 8, so we need to manually stick to 1.5.x version in order to compile apollo-client against Java 7 -->
+			<!-- This is only for apollo-client compilation use, because optional Spring dependencies are not transitive -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>1.5.16.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<!-- apollo -->
 		<dependency>
@@ -32,6 +45,12 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
+		<!-- yml processing -->
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+		</dependency>
+		<!-- end of yml processing -->
 		<!-- optional spring dependency -->
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo;
 
-import java.io.File;
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +16,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -25,9 +26,7 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
 import com.ctrip.framework.apollo.internals.DefaultInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 
 /**
@@ -49,9 +48,12 @@ public abstract class BaseIntegrationTest{
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    File apolloEnvPropertiesFile = new File(ClassLoaderUtil.getClassPath(), "apollo-env.properties");
-    Files.write("dev.meta=" + metaServiceUrl, apolloEnvPropertiesFile, Charsets.UTF_8);
-    apolloEnvPropertiesFile.deleteOnExit();
+    System.setProperty(ConfigConsts.APOLLO_META_KEY, metaServiceUrl);
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+    System.clearProperty(ConfigConsts.APOLLO_META_KEY);
   }
 
   @Before
