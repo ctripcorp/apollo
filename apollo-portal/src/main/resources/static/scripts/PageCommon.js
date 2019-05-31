@@ -1,31 +1,13 @@
 $(document).ready(function () {
 
-    // nicescroll
-    $("html").niceScroll({
-                             styler: "fb",
-                             cursorcolor: "#e8403f",
-                             cursorwidth: '6',
-                             cursorborderradius: '10px',
-                             background: '#404040',
-                             spacebarenabled: false,
-                             cursorborder: '',
-                             zindex: '1000'
-                         });
 
     // bootstrap tooltip & textarea scroll
     setInterval(function () {
         $('[data-tooltip="tooltip"]').tooltip({
                                                   trigger : 'hover'
                                               });
-        $("textarea").niceScroll({cursoropacitymax: 0});
-        $("pre").niceScroll({cursoropacitymax: 0});
     }, 1000);
 
-    setTimeout(function () {
-
-        $(".release-history-list").niceScroll({cursoropacitymax: 0});
-
-    }, 2500);
 });
 
 // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423

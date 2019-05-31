@@ -9,8 +9,6 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -19,14 +17,18 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class ItemSetService {
 
-  @Autowired
-  private AuditService auditService;
+  private final AuditService auditService;
+  private final CommitService commitService;
+  private final ItemService itemService;
 
-  @Autowired
-  private CommitService commitService;
-
-  @Autowired
-  private ItemService itemService;
+  public ItemSetService(
+      final AuditService auditService,
+      final CommitService commitService,
+      final ItemService itemService) {
+    this.auditService = auditService;
+    this.commitService = commitService;
+    this.itemService = itemService;
+  }
 
   @Transactional
   public ItemChangeSets updateSet(Namespace namespace, ItemChangeSets changeSets){
@@ -41,7 +43,7 @@ public class ItemSetService {
 
     if (!CollectionUtils.isEmpty(changeSet.getCreateItems())) {
       for (ItemDTO item : changeSet.getCreateItems()) {
-        Item entity = BeanUtils.transfrom(Item.class, item);
+        Item entity = BeanUtils.transform(Item.class, item);
         entity.setDataChangeCreatedBy(operator);
         entity.setDataChangeLastModifiedBy(operator);
         Item createdItem = itemService.save(entity);
@@ -52,13 +54,13 @@ public class ItemSetService {
 
     if (!CollectionUtils.isEmpty(changeSet.getUpdateItems())) {
       for (ItemDTO item : changeSet.getUpdateItems()) {
-        Item entity = BeanUtils.transfrom(Item.class, item);
+        Item entity = BeanUtils.transform(Item.class, item);
 
         Item managedItem = itemService.findOne(entity.getId());
         if (managedItem == null) {
           throw new NotFoundException(String.format("item not found.(key=%s)", entity.getKey()));
         }
-        Item beforeUpdateItem = BeanUtils.transfrom(Item.class, managedItem);
+        Item beforeUpdateItem = BeanUtils.transform(Item.class, managedItem);
 
         //protect. only value,comment,lastModifiedBy,lineNum can be modified
         managedItem.setValue(entity.getValue());

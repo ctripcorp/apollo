@@ -16,7 +16,6 @@ import com.ctrip.framework.apollo.util.ExceptionUtil;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class PropertiesConfigFile extends AbstractConfigFile {
-  private static final Logger logger = LoggerFactory.getLogger(PropertiesConfigFile.class);
   protected AtomicReference<String> m_contentCache;
 
   public PropertiesConfigFile(String namespace,

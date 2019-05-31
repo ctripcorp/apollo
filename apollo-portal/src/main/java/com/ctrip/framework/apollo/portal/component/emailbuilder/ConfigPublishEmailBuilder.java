@@ -104,7 +104,7 @@ public abstract class ConfigPublishEmailBuilder {
 
     email.setSubject(subject());
     email.setSenderEmailAddress(portalConfig.emailSender());
-    email.setRecipients(recipients(releaseHistory.getAppId(), releaseHistory.getNamespaceName()));
+    email.setRecipients(recipients(releaseHistory.getAppId(), releaseHistory.getNamespaceName(), env.toString()));
 
     String emailBody = emailContent(env, releaseHistory);
     //clear not used module
@@ -208,13 +208,19 @@ public abstract class ConfigPublishEmailBuilder {
     return releaseService.compare(env, releaseHistory.getPreviousReleaseId(), releaseHistory.getReleaseId());
   }
 
-  private List<String> recipients(String appId, String namespaceName) {
+  private List<String> recipients(String appId, String namespaceName, String env) {
     Set<UserInfo> modifyRoleUsers =
             rolePermissionService
                     .queryUsersWithRole(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE));
+    Set<UserInfo> envModifyRoleUsers =
+        rolePermissionService
+            .queryUsersWithRole(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.MODIFY_NAMESPACE, env));
     Set<UserInfo> releaseRoleUsers =
             rolePermissionService
                     .queryUsersWithRole(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE));
+    Set<UserInfo> envReleaseRoleUsers =
+        rolePermissionService
+            .queryUsersWithRole(RoleUtils.buildNamespaceRoleName(appId, namespaceName, RoleType.RELEASE_NAMESPACE, env));
     Set<UserInfo> owners = rolePermissionService.queryUsersWithRole(RoleUtils.buildAppMasterRoleName(appId));
 
     Set<String> userIds = new HashSet<>(modifyRoleUsers.size() + releaseRoleUsers.size() + owners.size());
@@ -223,7 +229,15 @@ public abstract class ConfigPublishEmailBuilder {
       userIds.add(userInfo.getUserId());
     }
 
+    for (UserInfo userInfo : envModifyRoleUsers) {
+      userIds.add(userInfo.getUserId());
+    }
+
     for (UserInfo userInfo : releaseRoleUsers) {
+      userIds.add(userInfo.getUserId());
+    }
+
+    for (UserInfo userInfo : envReleaseRoleUsers) {
       userIds.add(userInfo.getUserId());
     }
 

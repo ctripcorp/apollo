@@ -1,7 +1,9 @@
 package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
 import com.ctrip.framework.apollo.common.entity.App;
+import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
@@ -15,9 +17,12 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.anyString;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class RoleInitializationServiceTest extends AbstractUnitTest {
@@ -32,6 +37,8 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
   private RolePermissionService rolePermissionService;
   @Mock
   private UserInfoHolder userInfoHolder;
+  @Mock
+  private PortalConfig portalConfig;
   @InjectMocks
   private DefaultRoleInitializationService roleInitializationService;
 
@@ -44,7 +51,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     roleInitializationService.initAppRoles(mockApp());
 
     verify(rolePermissionService, times(1)).findRoleByRoleName(RoleUtils.buildAppMasterRoleName(APP_ID));
-    verify(rolePermissionService, times(0)).assignRoleToUsers(anyString(), anySetOf(String.class), anyString());
+    verify(rolePermissionService, times(0)).assignRoleToUsers(anyString(), anySet(), anyString());
   }
 
   @Test
@@ -53,14 +60,15 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     when(rolePermissionService.findRoleByRoleName(anyString())).thenReturn(null);
     when(userInfoHolder.getUser()).thenReturn(mockUser());
     when(rolePermissionService.createPermission(any())).thenReturn(mockPermission());
+    when(portalConfig.portalSupportedEnvs()).thenReturn(mockPortalSupportedEnvs());
 
     roleInitializationService.initAppRoles(mockApp());
 
-    verify(rolePermissionService, times(3)).findRoleByRoleName(anyString());
+    verify(rolePermissionService, times(7)).findRoleByRoleName(anyString());
     verify(rolePermissionService, times(1)).assignRoleToUsers(
         RoleUtils.buildAppMasterRoleName(APP_ID), Sets.newHashSet(CURRENT_USER), CURRENT_USER);
-    verify(rolePermissionService, times(2)).createPermission(any());
-    verify(rolePermissionService, times(3)).createRoleWithPermissions(any(), anySetOf(Long.class));
+    verify(rolePermissionService, times(6)).createPermission(any());
+    verify(rolePermissionService, times(7)).createRoleWithPermissions(any(), anySet());
   }
 
   @Test
@@ -78,7 +86,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
 
     verify(rolePermissionService, times(2)).findRoleByRoleName(anyString());
     verify(rolePermissionService, times(0)).createPermission(any());
-    verify(rolePermissionService, times(0)).createRoleWithPermissions(any(), anySetOf(Long.class));
+    verify(rolePermissionService, times(0)).createRoleWithPermissions(any(), anySet());
   }
 
   @Test
@@ -99,7 +107,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
 
     verify(rolePermissionService, times(2)).findRoleByRoleName(anyString());
     verify(rolePermissionService, times(2)).createPermission(any());
-    verify(rolePermissionService, times(2)).createRoleWithPermissions(any(), anySetOf(Long.class));
+    verify(rolePermissionService, times(2)).createRoleWithPermissions(any(), anySet());
   }
 
   @Test
@@ -120,7 +128,7 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
 
     verify(rolePermissionService, times(2)).findRoleByRoleName(anyString());
     verify(rolePermissionService, times(1)).createPermission(any());
-    verify(rolePermissionService, times(1)).createRoleWithPermissions(any(), anySetOf(Long.class));
+    verify(rolePermissionService, times(1)).createRoleWithPermissions(any(), anySet());
   }
 
   private App mockApp(){
@@ -153,5 +161,11 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     return permission;
   }
 
+  private List<Env> mockPortalSupportedEnvs(){
+    List<Env> envArray = new ArrayList<>();
+    envArray.add(Env.DEV);
+    envArray.add(Env.FAT);
+    return envArray;
+  }
 
 }

@@ -1,18 +1,30 @@
 package com.ctrip.framework.apollo.portal.entity.model;
 
 
+import com.ctrip.framework.apollo.common.utils.InputValidator;
 import java.util.Set;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 public class AppModel {
 
+  @NotBlank(message = "name cannot be blank")
   private String name;
 
+  @NotBlank(message = "appId cannot be blank")
+  @Pattern(
+      regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
+      message = "AppId格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+  )
   private String appId;
 
+  @NotBlank(message = "orgId cannot be blank")
   private String orgId;
 
+  @NotBlank(message = "orgName cannot be blank")
   private String orgName;
 
+  @NotBlank(message = "ownerName cannot be blank")
   private String ownerName;
 
   private Set<String> admins;

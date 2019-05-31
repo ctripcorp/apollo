@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/font-awesome.min.css">
     <style type="text/css">
-        @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,700,500);
 
         body {
             padding-top: 90px;
@@ -22,32 +21,6 @@
             background: -webkit-linear-gradient(left, #22d686, #24d3d3, #22d686, #24d3d3);
             background: linear-gradient(to right, #22d686, #24d3d3, #22d686, #24d3d3);
             background-size: 600% 100%;
-            -webkit-animation: HeroBG 20s ease infinite;
-            animation: HeroBG 20s ease infinite;
-        }
-
-        @-webkit-keyframes HeroBG {
-            0% {
-                background-position: 0 0;
-            }
-            50% {
-                background-position: 100% 0;
-            }
-            100% {
-                background-position: 0 0;
-            }
-        }
-
-        @keyframes HeroBG {
-            0% {
-                background-position: 0 0;
-            }
-            50% {
-                background-position: 100% 0;
-            }
-            100% {
-                background-position: 0 0;
-            }
         }
 
         .panel {
@@ -270,8 +243,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <form id="login-form" action="/signin" method="post" role="form" style="display: block;">
-                                <h2 class="text-center">Apollo配置中心</h2>
-
+                                <p class="text-center"><img src="img/logo-detail.png" style="width: 500px;"></p>
                                 <div class="form-group">
                                     <input type="text" name="username" tabindex="1" class="form-control"
                                            placeholder="Username" value="">

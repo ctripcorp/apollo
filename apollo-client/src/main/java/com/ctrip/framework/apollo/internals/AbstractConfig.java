@@ -1,18 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
@@ -33,6 +20,18 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -40,10 +39,12 @@ import com.google.common.collect.Sets;
 public abstract class AbstractConfig implements Config {
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
 
-  private static ExecutorService m_executorService;
+  private static final ExecutorService m_executorService;
 
-  private List<ConfigChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
-  private ConfigUtil m_configUtil;
+  private final List<ConfigChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
+  private final Map<ConfigChangeListener, Set<String>> m_interestedKeys = Maps.newConcurrentMap();
+  private final Map<ConfigChangeListener, Set<String>> m_interestedKeyPrefixes = Maps.newConcurrentMap();
+  private final ConfigUtil m_configUtil;
   private volatile Cache<String, Integer> m_integerCache;
   private volatile Cache<String, Long> m_longCache;
   private volatile Cache<String, Short> m_shortCache;
@@ -53,9 +54,9 @@ public abstract class AbstractConfig implements Config {
   private volatile Cache<String, Boolean> m_booleanCache;
   private volatile Cache<String, Date> m_dateCache;
   private volatile Cache<String, Long> m_durationCache;
-  private Map<String, Cache<String, String[]>> m_arrayCache;
-  private List<Cache> allCaches;
-  private AtomicLong m_configVersion; //indicate config version
+  private final Map<String, Cache<String, String[]>> m_arrayCache;
+  private final List<Cache> allCaches;
+  private final AtomicLong m_configVersion; //indicate config version
 
   static {
     m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
@@ -63,17 +64,40 @@ public abstract class AbstractConfig implements Config {
   }
 
   public AbstractConfig() {
-      m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
-      m_configVersion = new AtomicLong();
-      m_arrayCache = Maps.newConcurrentMap();
-      allCaches = Lists.newArrayList();
+    m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+    m_configVersion = new AtomicLong();
+    m_arrayCache = Maps.newConcurrentMap();
+    allCaches = Lists.newArrayList();
   }
 
   @Override
   public void addChangeListener(ConfigChangeListener listener) {
+    addChangeListener(listener, null);
+  }
+
+  @Override
+  public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys) {
+    addChangeListener(listener, interestedKeys, null);
+  }
+
+  @Override
+  public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
     if (!m_listeners.contains(listener)) {
       m_listeners.add(listener);
+      if (interestedKeys != null && !interestedKeys.isEmpty()) {
+        m_interestedKeys.put(listener, Sets.newHashSet(interestedKeys));
+      }
+      if (interestedKeyPrefixes != null && !interestedKeyPrefixes.isEmpty()) {
+        m_interestedKeyPrefixes.put(listener, Sets.newHashSet(interestedKeyPrefixes));
+      }
     }
+  }
+
+  @Override
+  public boolean removeChangeListener(ConfigChangeListener listener) {
+    m_interestedKeys.remove(listener);
+    m_interestedKeyPrefixes.remove(listener);
+    return m_listeners.remove(listener);
   }
 
   @Override
@@ -340,6 +364,23 @@ public abstract class AbstractConfig implements Config {
     return defaultValue;
   }
 
+  @Override
+  public <T> T getProperty(String key, Function<String, T> function, T defaultValue) {
+    try {
+      String value = getProperty(key, null);
+
+      if (value != null) {
+        return function.apply(value);
+      }
+    } catch (Throwable ex) {
+      Tracer.logError(new ApolloConfigException(
+              String.format("getProperty for %s failed, return default value %s", key,
+                      defaultValue), ex));
+    }
+
+    return defaultValue;
+  }
+
   private <T> T getValueFromCache(String key, Function<String, T> parser, Cache<String, T> cache, T defaultValue) {
     T result = cache.getIfPresent(key);
 
@@ -395,6 +436,10 @@ public abstract class AbstractConfig implements Config {
 
   protected void fireConfigChange(final ConfigChangeEvent changeEvent) {
     for (final ConfigChangeListener listener : m_listeners) {
+      // check whether the listener is interested in this change event
+      if (!isConfigChangeListenerInterested(listener, changeEvent)) {
+        continue;
+      }
       m_executorService.submit(new Runnable() {
         @Override
         public void run() {
@@ -413,6 +458,36 @@ public abstract class AbstractConfig implements Config {
         }
       });
     }
+  }
+
+  private boolean isConfigChangeListenerInterested(ConfigChangeListener configChangeListener, ConfigChangeEvent configChangeEvent) {
+    Set<String> interestedKeys = m_interestedKeys.get(configChangeListener);
+    Set<String> interestedKeyPrefixes = m_interestedKeyPrefixes.get(configChangeListener);
+
+    if ((interestedKeys == null || interestedKeys.isEmpty())
+        && (interestedKeyPrefixes == null || interestedKeyPrefixes.isEmpty())) {
+      return true; // no interested keys means interested in all keys
+    }
+
+    if (interestedKeys != null) {
+      for (String interestedKey : interestedKeys) {
+        if (configChangeEvent.isChanged(interestedKey)) {
+          return true;
+        }
+      }
+    }
+
+    if (interestedKeyPrefixes != null) {
+      for (String prefix : interestedKeyPrefixes) {
+        for (final String changedKey : configChangeEvent.changedKeys()) {
+          if (changedKey.startsWith(prefix)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,

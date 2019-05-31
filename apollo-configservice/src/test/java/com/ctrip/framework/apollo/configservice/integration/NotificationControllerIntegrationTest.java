@@ -57,7 +57,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
     periodicSendMessage(executorService, assembleKey(someAppId, someCluster, defaultNamespace), stop);
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+        "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
         ApolloConfigNotification.class,
         getHostUrl(), someAppId, someCluster, defaultNamespace);
 
@@ -76,7 +76,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
     periodicSendMessage(executorService, assembleKey(someAppId, someCluster, defaultNamespace), stop);
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+        "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
         ApolloConfigNotification.class,
         getHostUrl(), someAppId, someCluster, defaultNamespace + ".properties");
 
@@ -98,7 +98,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate
         .getForEntity(
-            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+            "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
             ApolloConfigNotification.class,
             getHostUrl(), someAppId, someCluster, namespace);
 
@@ -115,7 +115,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testPollNotificationWithDefaultNamespaceWithNotificationIdNull() throws Exception {
     ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+        "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
         ApolloConfigNotification.class,
         getHostUrl(), someAppId, someCluster, defaultNamespace);
 
@@ -132,7 +132,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
   public void testPollNotificationWithDefaultNamespaceWithNotificationIdOutDated() throws Exception {
     long someOutDatedNotificationId = 1;
     ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
+        "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
         ApolloConfigNotification.class,
         getHostUrl(), someAppId, someCluster, defaultNamespace, someOutDatedNotificationId);
 
@@ -153,7 +153,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate
         .getForEntity(
-            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
+            "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}",
             ApolloConfigNotification.class,
             getHostUrl(), someAppId, someCluster, somePublicNamespace);
 
@@ -177,7 +177,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate
         .getForEntity(
-            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
+            "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
             ApolloConfigNotification.class,
             getHostUrl(), someAppId, someCluster, somePublicNamespace, someDC);
 
@@ -201,7 +201,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
 
     ResponseEntity<ApolloConfigNotification> result = restTemplate
         .getForEntity(
-            "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
+            "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&dataCenter={dataCenter}",
             ApolloConfigNotification.class,
             getHostUrl(), someAppId, someCluster, somePublicNamespace + ".properties", someDC);
 
@@ -220,7 +220,7 @@ public class NotificationControllerIntegrationTest extends AbstractBaseIntegrati
   public void testPollNotificationWithPublicNamespaceWithNotificationIdOutDated() throws Exception {
     long someOutDatedNotificationId = 1;
     ResponseEntity<ApolloConfigNotification> result = restTemplate.getForEntity(
-        "{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
+        "http://{baseurl}/notifications?appId={appId}&cluster={clusterName}&namespace={namespace}&notificationId={notificationId}",
         ApolloConfigNotification.class,
         getHostUrl(), someAppId, someCluster, somePublicNamespace, someOutDatedNotificationId);
 

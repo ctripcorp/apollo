@@ -29,11 +29,12 @@ appService.service('ConsumerService', ['$resource', '$q', 'AppUtil',
                 appId: appId
             });
         },
-        assignRoleToConsumer: function (token, type, appId, namespaceName) {
+        assignRoleToConsumer: function (token, type, appId, namespaceName, envs) {
             return AppUtil.ajax(resource.assign_role_to_consumer, 
                                 {
                                     token: token,
-                                    type: type 
+                                    type: type,
+                                    envs: envs
                                 },
                                 {
                                     appId: appId,

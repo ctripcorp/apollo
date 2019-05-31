@@ -2,8 +2,6 @@ package com.ctrip.framework.apollo.configservice.util;
 
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,8 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NamespaceUtil {
 
-  @Autowired
-  private AppNamespaceServiceWithCache appNamespaceServiceWithCache;
+  private final AppNamespaceServiceWithCache appNamespaceServiceWithCache;
+
+  public NamespaceUtil(final AppNamespaceServiceWithCache appNamespaceServiceWithCache) {
+    this.appNamespaceServiceWithCache = appNamespaceServiceWithCache;
+  }
 
   public String filterNamespaceName(String namespaceName) {
     if (namespaceName.toLowerCase().endsWith(".properties")) {

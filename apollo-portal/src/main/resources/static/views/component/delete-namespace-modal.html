@@ -8,8 +8,11 @@
                     删除Namespace
                 </h4>
             </div>
-            <div class="modal-body form-horizontal">
+            <div class="modal-body form-horizontal" ng-show="toDeleteNamespace.isPublic">
                 删除Namespace将导致实例获取不到此Namespace的配置，确定要删除吗?
+            </div>
+            <div class="modal-body form-horizontal" ng-show="!toDeleteNamespace.isPublic">
+                删除私有Namespace将导致实例获取不到此Namespace的配置，且页面会提示缺失Namespace（除非使用管理员工具删除AppNamespace），确定要删除吗?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">

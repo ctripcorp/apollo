@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.configservice.service.config;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -83,8 +83,6 @@ public class DefaultConfigServiceTest {
     when(grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule(someClientAppId, someClientIp,
         someConfigAppId, someClusterName, defaultNamespaceName)).thenReturn(grayReleaseId);
     when(releaseService.findActiveOne(grayReleaseId)).thenReturn(grayRelease);
-    when(releaseService.findLatestActiveRelease(someConfigAppId, someClusterName, defaultNamespaceName))
-        .thenReturn(someRelease);
 
     Release release = configService
         .loadConfig(someClientAppId, someClientIp, someConfigAppId, someClusterName, defaultNamespaceName, someDataCenter,

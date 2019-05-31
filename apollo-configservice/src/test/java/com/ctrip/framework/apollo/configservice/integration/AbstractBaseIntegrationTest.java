@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.configservice.integration;
 
+import com.ctrip.framework.apollo.biz.service.BizDBPropertySource;
 import com.google.gson.Gson;
 
 import com.ctrip.framework.apollo.ConfigServiceTestConfiguration;
@@ -14,9 +15,9 @@ import com.ctrip.framework.apollo.biz.utils.ReleaseKeyGenerator;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -36,8 +37,7 @@ import javax.annotation.PostConstruct;
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AbstractBaseIntegrationTest.TestConfiguration.class)
-@WebIntegrationTest(randomPort = true)
+@SpringBootTest(classes = AbstractBaseIntegrationTest.TestConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AbstractBaseIntegrationTest {
   @Autowired
   private ReleaseMessageRepository releaseMessageRepository;
@@ -46,7 +46,7 @@ public abstract class AbstractBaseIntegrationTest {
 
   private Gson gson = new Gson();
 
-  RestTemplate restTemplate = new TestRestTemplate();
+  protected RestTemplate restTemplate = (new TestRestTemplate()).getRestTemplate();
 
   @PostConstruct
   private void postConstruct() {
@@ -57,15 +57,15 @@ public abstract class AbstractBaseIntegrationTest {
   int port;
 
   protected String getHostUrl() {
-    return "http://localhost:" + port;
+    return "localhost:" + port;
   }
 
   @Configuration
   @Import(ConfigServiceTestConfiguration.class)
   protected static class TestConfiguration {
     @Bean
-    public BizConfig bizConfig() {
-      return new TestBizConfig();
+    public BizConfig bizConfig(final BizDBPropertySource bizDBPropertySource) {
+      return new TestBizConfig(bizDBPropertySource);
     }
   }
 
@@ -112,6 +112,10 @@ public abstract class AbstractBaseIntegrationTest {
   }
 
   private static class TestBizConfig extends BizConfig {
+    public TestBizConfig(final BizDBPropertySource propertySource) {
+      super(propertySource);
+    }
+
     @Override
     public int appNamespaceCacheScanInterval() {
       //should be short enough to update the AppNamespace cache in time

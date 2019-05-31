@@ -19,9 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -30,7 +33,7 @@ import org.springframework.context.annotation.Bean;
  * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
  * @since 2017/12/20.
  */
-public class SpringValueProcessor extends ApolloProcessor implements BeanFactoryPostProcessor {
+public class SpringValueProcessor extends ApolloProcessor implements BeanFactoryPostProcessor, BeanFactoryAware {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
@@ -38,21 +41,22 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
   private final PlaceholderHelper placeholderHelper;
   private final SpringValueRegistry springValueRegistry;
 
-  private static Multimap<String, SpringValueDefinition> beanName2SpringValueDefinitions =
-      LinkedListMultimap.create();
+  private BeanFactory beanFactory;
+  private Multimap<String, SpringValueDefinition> beanName2SpringValueDefinitions;
 
   public SpringValueProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
     placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
     springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
+    beanName2SpringValueDefinitions = LinkedListMultimap.create();
   }
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
       throws BeansException {
-    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled() && beanFactory instanceof BeanDefinitionRegistry) {
       beanName2SpringValueDefinitions = SpringValueDefinitionProcessor
-          .getBeanName2SpringValueDefinitions();
+          .getBeanName2SpringValueDefinitions((BeanDefinitionRegistry) beanFactory);
     }
   }
 
@@ -82,7 +86,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
 
     for (String key : keys) {
       SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
-      springValueRegistry.register(key, springValue);
+      springValueRegistry.register(beanFactory, key, springValue);
       logger.debug("Monitoring {}", springValue);
     }
   }
@@ -112,7 +116,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
 
     for (String key : keys) {
       SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
-      springValueRegistry.register(key, springValue);
+      springValueRegistry.register(beanFactory, key, springValue);
       logger.info("Monitoring {}", springValue);
     }
   }
@@ -135,7 +139,7 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
         }
         SpringValue springValue = new SpringValue(definition.getKey(), definition.getPlaceholder(),
             bean, beanName, method, false);
-        springValueRegistry.register(definition.getKey(), springValue);
+        springValueRegistry.register(beanFactory, definition.getKey(), springValue);
         logger.debug("Monitoring {}", springValue);
       } catch (Throwable ex) {
         logger.error("Failed to enable auto update feature for {}.{}", bean.getClass(),
@@ -147,4 +151,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
     beanName2SpringValueDefinitions.removeAll(beanName);
   }
 
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    this.beanFactory = beanFactory;
+  }
 }

@@ -2,20 +2,14 @@ package com.ctrip.framework.apollo.configservice.util;
 
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.configservice.service.AppNamespaceServiceWithCache;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -29,8 +23,7 @@ public class NamespaceUtilTest {
 
   @Before
   public void setUp() throws Exception {
-    namespaceUtil = new NamespaceUtil();
-    ReflectionTestUtils.setField(namespaceUtil, "appNamespaceServiceWithCache", appNamespaceServiceWithCache);
+    namespaceUtil = new NamespaceUtil(appNamespaceServiceWithCache);
   }
 
   @Test

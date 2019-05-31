@@ -1,8 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
@@ -16,31 +15,43 @@ import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultSsoHeartbeatHandler;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.defaultimpl.DefaultUserService;
+import com.ctrip.framework.apollo.portal.spi.ldap.FilterLdapByGroupUserSearch;
+import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
-
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Maps;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapOperations;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import javax.servlet.Filter;
+import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.EventListener;
 import java.util.Map;
-
 
 @Configuration
 public class AuthConfiguration {
@@ -52,13 +63,17 @@ public class AuthConfiguration {
   @Profile("ctrip")
   static class CtripAuthAutoConfiguration {
 
-    @Autowired
-    private PortalConfig portalConfig;
+    private final PortalConfig portalConfig;
+
+    public CtripAuthAutoConfiguration(final PortalConfig portalConfig) {
+      this.portalConfig = portalConfig;
+    }
 
     @Bean
     public ServletListenerRegistrationBean redisAppSettingListner() {
       ServletListenerRegistrationBean redisAppSettingListener = new ServletListenerRegistrationBean();
-      redisAppSettingListener.setListener(listener("org.jasig.cas.client.credis.CRedisAppSettingListner"));
+      redisAppSettingListener
+          .setListener(listener("org.jasig.cas.client.credis.CRedisAppSettingListner"));
       return redisAppSettingListener;
     }
 
@@ -92,7 +107,8 @@ public class AuthConfiguration {
       filterInitParam.put("/openapi.*", "exclude");
 
       casFilter.setInitParameters(filterInitParam);
-      casFilter.setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAuthenticationFilter"));
+      casFilter
+          .setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAuthenticationFilter"));
       casFilter.addUrlPatterns("/*");
       casFilter.setOrder(2);
 
@@ -112,15 +128,14 @@ public class AuthConfiguration {
       filterInitParam.put("redisClusterName", "casClientPrincipal");
 
       casValidationFilter
-          .setFilter(filter("org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"));
+          .setFilter(
+              filter("org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"));
       casValidationFilter.setInitParameters(filterInitParam);
       casValidationFilter.addUrlPatterns("/*");
       casValidationFilter.setOrder(3);
 
       return casValidationFilter;
-
     }
-
 
     @Bean
     public FilterRegistrationBean assertionHolder() {
@@ -131,7 +146,8 @@ public class AuthConfiguration {
 
       assertionHolderFilter.setInitParameters(filterInitParam);
 
-      assertionHolderFilter.setFilter(filter("com.ctrip.framework.apollo.sso.filter.ApolloAssertionThreadLocalFilter"));
+      assertionHolderFilter.setFilter(
+          filter("com.ctrip.framework.apollo.sso.filter.ApolloAssertionThreadLocalFilter"));
       assertionHolderFilter.addUrlPatterns("/*");
       assertionHolderFilter.setOrder(4);
 
@@ -157,7 +173,6 @@ public class AuthConfiguration {
       } catch (Exception e) {
         throw new RuntimeException("instance filter fail", e);
       }
-
     }
 
     private EventListener listener(String className) {
@@ -180,9 +195,7 @@ public class AuthConfiguration {
     public SsoHeartbeatHandler ctripSsoHeartbeatHandler() {
       return new CtripSsoHeartbeatHandler();
     }
-
   }
-
 
   /**
    * spring.profiles.active = auth
@@ -210,19 +223,27 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public JdbcUserDetailsManager jdbcUserDetailsManager(AuthenticationManagerBuilder auth, DataSource datasource) throws Exception {
-      JdbcUserDetailsManager jdbcUserDetailsManager = auth.jdbcAuthentication().passwordEncoder(new BCryptPasswordEncoder()).dataSource(datasource)
+    public JdbcUserDetailsManager jdbcUserDetailsManager(AuthenticationManagerBuilder auth,
+        DataSource datasource) throws Exception {
+      JdbcUserDetailsManager jdbcUserDetailsManager = auth.jdbcAuthentication()
+          .passwordEncoder(new BCryptPasswordEncoder()).dataSource(datasource)
           .usersByUsernameQuery("select Username,Password,Enabled from `Users` where Username = ?")
-          .authoritiesByUsernameQuery("select Username,Authority from `Authorities` where Username = ?")
+          .authoritiesByUsernameQuery(
+              "select Username,Authority from `Authorities` where Username = ?")
           .getUserDetailsService();
 
       jdbcUserDetailsManager.setUserExistsSql("select Username from `Users` where Username = ?");
-      jdbcUserDetailsManager.setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
-      jdbcUserDetailsManager.setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where Username = ?");
-      jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where Username = ?");
-      jdbcUserDetailsManager.setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
-      jdbcUserDetailsManager.setDeleteUserAuthoritiesSql("delete from `Authorities` where Username = ?");
-      jdbcUserDetailsManager.setChangePasswordSql("update `Users` set Password = ? where Username = ?");
+      jdbcUserDetailsManager
+          .setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
+      jdbcUserDetailsManager
+          .setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+      jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+      jdbcUserDetailsManager
+          .setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
+      jdbcUserDetailsManager
+          .setDeleteUserAuthoritiesSql("delete from `Authorities` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+      jdbcUserDetailsManager
+          .setChangePasswordSql("update `Users` set Password = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
 
       return jdbcUserDetailsManager;
     }
@@ -248,20 +269,160 @@ public class AuthConfiguration {
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable();
       http.headers().frameOptions().sameOrigin();
-      http.authorizeRequests().antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
-      .antMatchers("/**").hasAnyRole(USER_ROLE);
+      http.authorizeRequests()
+          .antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
+          .antMatchers("/**").hasAnyRole(USER_ROLE);
       http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
-      http.logout().invalidateHttpSession(true).clearAuthentication(true).logoutSuccessUrl("/signin?#/logout");
+      SimpleUrlLogoutSuccessHandler urlLogoutHandler = new SimpleUrlLogoutSuccessHandler();
+      urlLogoutHandler.setDefaultTargetUrl("/signin?#/logout");
+      http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
+          .logoutSuccessHandler(urlLogoutHandler);
       http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
     }
 
   }
 
   /**
+   * spring.profiles.active = ldap
+   */
+  @Configuration
+  @Profile("ldap")
+  @EnableConfigurationProperties({LdapProperties.class,LdapExtendProperties.class})
+  static class SpringSecurityLDAPAuthAutoConfiguration {
+
+    private final LdapProperties properties;
+    private final Environment environment;
+
+    public SpringSecurityLDAPAuthAutoConfiguration(final LdapProperties properties, final Environment environment) {
+      this.properties = properties;
+      this.environment = environment;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
+    public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
+      return new DefaultSsoHeartbeatHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserInfoHolder.class)
+    public UserInfoHolder springSecurityUserInfoHolder() {
+      return new SpringSecurityUserInfoHolder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LogoutHandler.class)
+    public LogoutHandler logoutHandler() {
+      return new DefaultLogoutHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserService.class)
+    public UserService springSecurityUserService() {
+      return new LdapUserService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ContextSource ldapContextSource() {
+      LdapContextSource source = new LdapContextSource();
+      source.setUserDn(this.properties.getUsername());
+      source.setPassword(this.properties.getPassword());
+      source.setAnonymousReadOnly(this.properties.getAnonymousReadOnly());
+      source.setBase(this.properties.getBase());
+      source.setUrls(this.properties.determineUrls(this.environment));
+      source.setBaseEnvironmentProperties(
+          Collections.unmodifiableMap(this.properties.getBaseEnvironment()));
+      return source;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LdapOperations.class)
+    public LdapTemplate ldapTemplate(ContextSource contextSource) {
+      LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+      ldapTemplate.setIgnorePartialResultException(true);
+      return ldapTemplate;
+    }
+  }
+
+  @Order(99)
+  @Profile("ldap")
+  @Configuration
+  @EnableWebSecurity
+  @EnableGlobalMethodSecurity(prePostEnabled = true)
+  static class SpringSecurityLDAPConfigurer extends WebSecurityConfigurerAdapter {
+
+    private final LdapProperties ldapProperties;
+    private final LdapContextSource ldapContextSource;
+
+    private final LdapExtendProperties ldapExtendProperties;
+
+    public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties,
+        final LdapContextSource ldapContextSource,
+       final LdapExtendProperties ldapExtendProperties) {
+      this.ldapProperties = ldapProperties;
+      this.ldapContextSource = ldapContextSource;
+      this.ldapExtendProperties = ldapExtendProperties;
+    }
+
+    @Bean
+    public FilterBasedLdapUserSearch userSearch() {
+      if (ldapExtendProperties.getGroup() == null || StringUtils
+          .isBlank(ldapExtendProperties.getGroup().getGroupSearch())) {
+        FilterBasedLdapUserSearch filterBasedLdapUserSearch = new FilterBasedLdapUserSearch("",
+            ldapProperties.getSearchFilter(), ldapContextSource);
+        filterBasedLdapUserSearch.setSearchSubtree(true);
+        return filterBasedLdapUserSearch;
+      } else {
+        FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
+            ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
+            ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
+            ldapExtendProperties.getMapping().getRdnKey(),
+            ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
+        filterLdapByGroupUserSearch.setSearchSubtree(true);
+        return filterLdapByGroupUserSearch;
+      }
+    }
+
+    @Bean
+    public LdapAuthenticationProvider ldapAuthProvider() {
+      BindAuthenticator bindAuthenticator = new BindAuthenticator(ldapContextSource);
+      bindAuthenticator.setUserSearch(userSearch());
+      DefaultLdapAuthoritiesPopulator defaultAuthAutoConfiguration = new DefaultLdapAuthoritiesPopulator(
+          ldapContextSource, null);
+      defaultAuthAutoConfiguration.setIgnorePartialResultException(true);
+      defaultAuthAutoConfiguration.setSearchSubtree(true);
+      LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(
+          bindAuthenticator, defaultAuthAutoConfiguration);
+      return ldapAuthenticationProvider;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.csrf().disable();
+      http.headers().frameOptions().sameOrigin();
+      http.authorizeRequests()
+          .antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
+          .antMatchers("/**").authenticated();
+      http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
+      SimpleUrlLogoutSuccessHandler urlLogoutHandler = new SimpleUrlLogoutSuccessHandler();
+      urlLogoutHandler.setDefaultTargetUrl("/signin?#/logout");
+      http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
+          .logoutSuccessHandler(urlLogoutHandler);
+      http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+      auth.authenticationProvider(ldapAuthProvider());
+    }
+  }
+
+  /**
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth"})
+  @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
   static class DefaultAuthAutoConfiguration {
 
     @Bean
@@ -289,7 +450,7 @@ public class AuthConfiguration {
     }
   }
 
-  @ConditionalOnMissingProfile("auth")
+  @ConditionalOnMissingProfile({"auth", "ldap"})
   @Configuration
   @EnableWebSecurity
   @EnableGlobalMethodSecurity(prePostEnabled = true)

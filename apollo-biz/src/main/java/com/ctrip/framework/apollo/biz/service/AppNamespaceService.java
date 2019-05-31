@@ -1,8 +1,5 @@
 package com.ctrip.framework.apollo.biz.service;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
@@ -13,8 +10,11 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +26,23 @@ import java.util.Set;
 @Service
 public class AppNamespaceService {
 
-  @Autowired
-  private AppNamespaceRepository appNamespaceRepository;
-  @Autowired
-  private NamespaceService namespaceService;
-  @Autowired
-  private ClusterService clusterService;
-  @Autowired
-  private AuditService auditService;
+  private static final Logger logger = LoggerFactory.getLogger(AppNamespaceService.class);
+
+  private final AppNamespaceRepository appNamespaceRepository;
+  private final NamespaceService namespaceService;
+  private final ClusterService clusterService;
+  private final AuditService auditService;
+
+  public AppNamespaceService(
+      final AppNamespaceRepository appNamespaceRepository,
+      final @Lazy NamespaceService namespaceService,
+      final @Lazy ClusterService clusterService,
+      final AuditService auditService) {
+    this.appNamespaceRepository = appNamespaceRepository;
+    this.namespaceService = namespaceService;
+    this.clusterService = clusterService;
+    this.auditService = auditService;
+  }
 
   public boolean isAppNamespaceNameUnique(String appId, String namespaceName) {
     Objects.requireNonNull(appId, "AppId must not be null");
@@ -106,7 +115,7 @@ public class AppNamespaceService {
 
     appNamespace = appNamespaceRepository.save(appNamespace);
 
-    instanceOfAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(), createBy);
+    createNamespaceForAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(), createBy);
 
     auditService.audit(AppNamespace.class.getSimpleName(), appNamespace.getId(), Audit.OP.INSERT, createBy);
     return appNamespace;
@@ -123,10 +132,16 @@ public class AppNamespaceService {
     return managedNs;
   }
 
-  private void instanceOfAppNamespaceInAllCluster(String appId, String namespaceName, String createBy) {
+  public void createNamespaceForAppNamespaceInAllCluster(String appId, String namespaceName, String createBy) {
     List<Cluster> clusters = clusterService.findParentClusters(appId);
 
     for (Cluster cluster : clusters) {
+
+      // in case there is some dirty data, e.g. public namespace deleted in other app and now created in this app
+      if (!namespaceService.isNamespaceUnique(appId, cluster.getName(), namespaceName)) {
+        continue;
+      }
+
       Namespace namespace = new Namespace();
       namespace.setClusterName(cluster.getName());
       namespace.setAppId(appId);
@@ -136,5 +151,30 @@ public class AppNamespaceService {
 
       namespaceService.save(namespace);
     }
+  }
+
+  @Transactional
+  public void batchDelete(String appId, String operator) {
+    appNamespaceRepository.batchDeleteByAppId(appId, operator);
+  }
+
+  @Transactional
+  public void deleteAppNamespace(AppNamespace appNamespace, String operator) {
+    String appId = appNamespace.getAppId();
+    String namespaceName = appNamespace.getName();
+
+    logger.info("{} is deleting AppNamespace, appId: {}, namespace: {}", operator, appId, namespaceName);
+
+    // 1. delete namespaces
+    List<Namespace> namespaces = namespaceService.findByAppIdAndNamespaceName(appId, namespaceName);
+
+    if (namespaces != null) {
+      for (Namespace namespace : namespaces) {
+        namespaceService.deleteNamespace(namespace, operator);
+      }
+    }
+
+    // 2. delete app namespace
+    appNamespaceRepository.delete(appId, namespaceName, operator);
   }
 }

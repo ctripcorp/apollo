@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.portal.entity.po.UserPO;
 import com.ctrip.framework.apollo.portal.repository.UserRepository;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -88,7 +89,17 @@ public class SpringSecurityUserService implements UserService {
 
   @Override
   public List<UserInfo> findByUserIds(List<String> userIds) {
-    return null;
+    List<UserPO> users = userRepository.findByUsernameIn(userIds);
+
+    if (CollectionUtils.isEmpty(users)) {
+      return Collections.emptyList();
+    }
+
+    List<UserInfo> result = Lists.newArrayList();
+
+    result.addAll(users.stream().map(UserPO::toUserInfo).collect(Collectors.toList()));
+
+    return result;
   }
 
 

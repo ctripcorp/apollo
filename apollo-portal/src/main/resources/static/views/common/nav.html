@@ -14,7 +14,7 @@
                  ng-show="viewMode == 2 && showSideBar"
                  ng-click="showSideBar = !showSideBar">
             <a class="navbar-brand logo" href="/">
-                <b>Apollo 配置中心</b>
+                <img src="../../img/logo-simple.png" style="height:45px; margin-top: -13px">
             </a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -33,6 +33,8 @@
                         <li><a href="/user-manage.html" target="_blank">用户管理</a></li>
                         <li><a href="/open/manage.html" target="_blank">开放平台授权管理</a></li>
                         <li><a href="/server_config.html" target="_blank">系统参数</a></li>
+                        <li><a href="/delete_app_cluster_namespace.html" target="_blank">删除应用、集群、AppNamespace</a></li>
+                        <li><a href="/system_info.html" target="_blank">系统信息</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -40,7 +42,7 @@
                         <span class="glyphicon glyphicon-user"></span>&nbsp;{{userName}}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/logout">退出</a></li>
+                        <li><a href="/user/logout">退出</a></li>
                     </ul>
                 </li>
 

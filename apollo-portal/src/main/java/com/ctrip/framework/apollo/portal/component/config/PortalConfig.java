@@ -1,19 +1,16 @@
 package com.ctrip.framework.apollo.portal.component.config;
 
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.common.config.RefreshableConfig;
 import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
 import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -29,8 +26,11 @@ public class PortalConfig extends RefreshableConfig {
   private static final Type ORGANIZATION = new TypeToken<List<Organization>>() {
   }.getType();
 
-  @Autowired
-  private PortalDBPropertySource portalDBPropertySource;
+  private final PortalDBPropertySource portalDBPropertySource;
+
+  public PortalConfig(final PortalDBPropertySource portalDBPropertySource) {
+    this.portalDBPropertySource = portalDBPropertySource;
+  }
 
   @Override
   public List<RefreshablePropertySource> getRefreshablePropertySources() {
@@ -72,6 +72,18 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     return result;
+  }
+
+  public boolean isConfigViewMemberOnly(String env) {
+    String[] configViewMemberOnlyEnvs = getArrayProperty("configView.memberOnly.envs", new String[0]);
+
+    for (String memberOnlyEnv : configViewMemberOnlyEnvs) {
+      if (memberOnlyEnv.equalsIgnoreCase(env)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /***

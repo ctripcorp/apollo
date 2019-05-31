@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.Properties;
 
 /**
@@ -29,4 +30,11 @@ public interface ConfigRepository {
    * @param listener the listener to remove
    */
   public void removeChangeListener(RepositoryChangeListener listener);
+
+  /**
+   * Return the config's source type, i.e. where is the config loaded from
+   *
+   * @return the config's source type
+   */
+  public ConfigSourceType getSourceType();
 }

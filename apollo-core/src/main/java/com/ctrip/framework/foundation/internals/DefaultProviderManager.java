@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultProviderManager implements ProviderManager {
   private static final Logger logger = LoggerFactory.getLogger(DefaultProviderManager.class);
-  private Map<Class<? extends Provider>, Provider> m_providers =
-      new LinkedHashMap<Class<? extends Provider>, Provider>();
+  private Map<Class<? extends Provider>, Provider> m_providers = new LinkedHashMap<>();
 
   public DefaultProviderManager() {
     // Load per-application configuration, like app id, from classpath://META-INF/app.properties

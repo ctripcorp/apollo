@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.demo.api;
 
+import com.ctrip.framework.apollo.internals.YamlConfigFile;
 import com.google.common.base.Charsets;
 
 import com.ctrip.framework.apollo.Config;
@@ -27,9 +28,11 @@ public class ApolloConfigDemo {
   private static final Logger logger = LoggerFactory.getLogger(ApolloConfigDemo.class);
   private String DEFAULT_VALUE = "undefined";
   private Config config;
+  private Config yamlConfig;
   private Config publicConfig;
   private ConfigFile applicationConfigFile;
   private ConfigFile xmlConfigFile;
+  private YamlConfigFile yamlConfigFile;
 
   public ApolloConfigDemo() {
     ConfigChangeListener changeListener = new ConfigChangeListener() {
@@ -46,9 +49,12 @@ public class ApolloConfigDemo {
     };
     config = ConfigService.getAppConfig();
     config.addChangeListener(changeListener);
+    yamlConfig = ConfigService.getConfig("application.yaml");
+    yamlConfig.addChangeListener(changeListener);
     publicConfig = ConfigService.getConfig("TEST1.apollo");
     publicConfig.addChangeListener(changeListener);
     applicationConfigFile = ConfigService.getConfigFile("application", ConfigFileFormat.Properties);
+    // datasources.xml
     xmlConfigFile = ConfigService.getConfigFile("datasources", ConfigFileFormat.XML);
     xmlConfigFile.addChangeListener(new ConfigFileChangeListener() {
       @Override
@@ -56,12 +62,17 @@ public class ApolloConfigDemo {
         logger.info(changeEvent.toString());
       }
     });
+    // application.yaml
+    yamlConfigFile = (YamlConfigFile) ConfigService.getConfigFile("application", ConfigFileFormat.YAML);
   }
 
   private String getConfig(String key) {
     String result = config.getProperty(key, DEFAULT_VALUE);
     if (DEFAULT_VALUE.equals(result)) {
       result = publicConfig.getProperty(key, DEFAULT_VALUE);
+    }
+    if (DEFAULT_VALUE.equals(result)) {
+      result = yamlConfig.getProperty(key, DEFAULT_VALUE);
     }
     logger.info(String.format("Loading key : %s with value: %s", key, result));
     return result;
@@ -75,6 +86,9 @@ public class ApolloConfigDemo {
       case "xml":
         print(xmlConfigFile);
         return;
+      case "yaml":
+        printYaml(yamlConfigFile);
+        return;
     }
   }
 
@@ -85,6 +99,11 @@ public class ApolloConfigDemo {
     }
     System.out.println("=== Config File Content for " + configFile.getNamespace() + " is as follows: ");
     System.out.println(configFile.getContent());
+  }
+
+  private void printYaml(YamlConfigFile configFile) {
+    System.out.println("=== Properties for " + configFile.getNamespace() + " is as follows: ");
+    System.out.println(configFile.asProperties());
   }
 
   private void printEnvInfo() {
@@ -106,18 +125,26 @@ public class ApolloConfigDemo {
         continue;
       }
       input = input.trim();
-      if (input.equalsIgnoreCase("application")) {
-        apolloConfigDemo.print("application");
-        continue;
+      try {
+        if (input.equalsIgnoreCase("application")) {
+          apolloConfigDemo.print("application");
+          continue;
+        }
+        if (input.equalsIgnoreCase("xml")) {
+          apolloConfigDemo.print("xml");
+          continue;
+        }
+        if (input.equalsIgnoreCase("yaml") || input.equalsIgnoreCase("yml")) {
+          apolloConfigDemo.print("yaml");
+          continue;
+        }
+        if (input.equalsIgnoreCase("quit")) {
+          System.exit(0);
+        }
+        apolloConfigDemo.getConfig(input);
+      } catch (Throwable ex) {
+        logger.error("some error occurred", ex);
       }
-      if (input.equalsIgnoreCase("xml")) {
-        apolloConfigDemo.print("xml");
-        continue;
-      }
-      if (input.equalsIgnoreCase("quit")) {
-        System.exit(0);
-      }
-      apolloConfigDemo.getConfig(input);
     }
   }
 }

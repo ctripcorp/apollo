@@ -45,6 +45,10 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
         delete_item: {
             method: 'DELETE',
             url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items/:itemId'
+        },
+        syntax_check_text: {
+            method: 'POST',
+            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/syntax-check'
         }
     });
 
@@ -192,6 +196,23 @@ appService.service("ConfigService", ['$resource', '$q', function ($resource, $q)
             }, function (result) {
                 d.reject(result);
             });
+            return d.promise;
+        },
+
+        syntax_check_text: function (appId, env, clusterName, namespaceName, model) {
+            var d = $q.defer();
+            config_source.syntax_check_text({
+                                           appId: appId,
+                                           env: env,
+                                           clusterName: clusterName,
+                                           namespaceName: namespaceName
+                                       },
+                                       model, function (result) {
+                    d.resolve(result);
+
+                }, function (result) {
+                    d.reject(result);
+                });
             return d.promise;
         }
     }

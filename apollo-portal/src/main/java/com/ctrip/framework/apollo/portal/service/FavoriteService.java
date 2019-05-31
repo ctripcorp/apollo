@@ -1,13 +1,11 @@
 package com.ctrip.framework.apollo.portal.service;
 
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
+import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.repository.FavoriteRepository;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,12 +19,18 @@ public class FavoriteService {
 
   public static final long POSITION_DEFAULT = 10000;
 
-  @Autowired
-  private UserInfoHolder userInfoHolder;
-  @Autowired
-  private FavoriteRepository favoriteRepository;
-  @Autowired
-  private UserService userService;
+  private final UserInfoHolder userInfoHolder;
+  private final FavoriteRepository favoriteRepository;
+  private final UserService userService;
+
+  public FavoriteService(
+      final UserInfoHolder userInfoHolder,
+      final FavoriteRepository favoriteRepository,
+      final UserService userService) {
+    this.userInfoHolder = userInfoHolder;
+    this.favoriteRepository = favoriteRepository;
+    this.userService = userService;
+  }
 
 
   public Favorite addFavorite(Favorite favorite) {
@@ -79,7 +83,7 @@ public class FavoriteService {
 
 
   public void deleteFavorite(long favoriteId) {
-    Favorite favorite = favoriteRepository.findOne(favoriteId);
+    Favorite favorite = favoriteRepository.findById(favoriteId).orElse(null);
 
     checkUserOperatePermission(favorite);
 
@@ -87,7 +91,7 @@ public class FavoriteService {
   }
 
   public void adjustFavoriteToFirst(long favoriteId) {
-    Favorite favorite = favoriteRepository.findOne(favoriteId);
+    Favorite favorite = favoriteRepository.findById(favoriteId).orElse(null);
 
     checkUserOperatePermission(favorite);
 
@@ -110,4 +114,7 @@ public class FavoriteService {
     }
   }
 
+  public void batchDeleteByAppId(String appId, String operator) {
+    favoriteRepository.batchDeleteByAppId(appId, operator);
+  }
 }

@@ -9,4 +9,5 @@ public interface ReleaseOperationContext {
   String OLD_RULES = "oldRules";
   String BASE_RELEASE_ID = "baseReleaseId";
   String IS_EMERGENCY_PUBLISH = "isEmergencyPublish";
+  String BRANCH_RELEASE_KEYS = "branchReleaseKeys";
 }

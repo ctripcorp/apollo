@@ -6,7 +6,7 @@ public final class EnvUtils {
   
   public static Env transformEnv(String envName) {
     if (StringUtils.isBlank(envName)) {
-      return null;
+      return Env.UNKNOWN;
     }
     switch (envName.trim().toUpperCase()) {
       case "LPT":
@@ -26,7 +26,7 @@ public final class EnvUtils {
       case "TOOLS":
         return Env.TOOLS;
       default:
-        return null;
+        return Env.UNKNOWN;
     }
   }
 }

@@ -11,6 +11,16 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', function (toastr, $window
         return msg;
     }
 
+    function parsePureErrorMsg(response) {
+        if (response.status == -1) {
+            return "您的登录信息已过期,请刷新页面后重试";
+        }
+        if (response.data.message != null) {
+            return response.data.message;
+        }
+        return "";
+    }
+
     function ajax(resource, requestParams, requestBody) {
         var d = $q.defer();
         if (requestBody) {
@@ -34,6 +44,7 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', function (toastr, $window
     
     return {
         errorMsg: parseErrorMsg,
+        pureErrorMsg: parsePureErrorMsg,
         ajax: ajax,
         showErrorMsg: function (response, title) {
             toastr.error(parseErrorMsg(response), title);

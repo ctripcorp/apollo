@@ -1,26 +1,27 @@
 package com.ctrip.framework.apollo.common.controller;
 
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.MimeMappings;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.MimeMappings;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 @Configuration
-public class WebMvcConfig extends WebMvcConfigurerAdapter implements EmbeddedServletContainerCustomizer {
+public class WebMvcConfig implements WebMvcConfigurer, WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
     PageableHandlerMethodArgumentResolver pageResolver =
             new PageableHandlerMethodArgumentResolver();
-    pageResolver.setFallbackPageable(new PageRequest(0, 10));
+    pageResolver.setFallbackPageable(PageRequest.of(0, 10));
 
     argumentResolvers.add(pageResolver);
   }
@@ -28,13 +29,30 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter implements EmbeddedSer
   @Override
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
     configurer.favorPathExtension(false);
-    configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.APPLICATION_JSON);
+    configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.APPLICATION_JSON_UTF8);
   }
 
   @Override
-  public void customize(ConfigurableEmbeddedServletContainer container) {
+  public void customize(TomcatServletWebServerFactory factory) {
     MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
     mappings.add("html", "text/html;charset=utf-8");
-    container.setMimeMappings(mappings );
+    factory.setMimeMappings(mappings );
+  }
+
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    // 10 days
+    addCacheControl(registry, "img", 864000);
+    addCacheControl(registry, "vendor", 864000);
+    // 1 day
+    addCacheControl(registry, "scripts", 86400);
+    addCacheControl(registry, "styles", 86400);
+    addCacheControl(registry, "views", 86400);
+  }
+
+  private void addCacheControl(ResourceHandlerRegistry registry, String folder, int cachePeriod) {
+    registry.addResourceHandler(String.format("/%s/**", folder))
+        .addResourceLocations(String.format("classpath:/static/%s/", folder))
+        .setCachePeriod(cachePeriod);
   }
 }

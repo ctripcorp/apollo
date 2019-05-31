@@ -30,9 +30,6 @@ public class TitanSettings {
 
   public String getTitanUrl() {
     Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    if (env == null) {
-      return "";
-    }
     switch (env) {
       case FAT:
       case FWS:
@@ -49,9 +46,6 @@ public class TitanSettings {
 
   public String getTitanDbname() {
     Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    if (env == null) {
-      return "";
-    }
     switch (env) {
       case FAT:
       case FWS:

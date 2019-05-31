@@ -8,7 +8,7 @@ import java.util.List;
 public class DNSUtil {
 
   public static List<String> resolve(String domainName) throws UnknownHostException {
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
 
     InetAddress[] addresses = InetAddress.getAllByName(domainName);
     if (addresses != null) {
