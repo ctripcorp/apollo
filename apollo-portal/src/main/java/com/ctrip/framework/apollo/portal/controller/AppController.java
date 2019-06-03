@@ -102,10 +102,11 @@ public class AppController {
 
     App app = transformToApp(appModel);
 
+    //保存 app 对象到数据库
     App createdApp = appService.createAppInLocal(app);
-
+    //发布appcreationEvent 创建事件
     publisher.publishEvent(new AppCreationEvent(createdApp));
-
+    //授予 app 管理员的角色
     Set<String> admins = appModel.getAdmins();
     if (!CollectionUtils.isEmpty(admins)) {
       rolePermissionService
