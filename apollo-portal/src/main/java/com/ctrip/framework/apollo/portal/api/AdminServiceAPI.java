@@ -201,13 +201,14 @@ public class AdminServiceAPI {
           appId, clusterName);
     }
 
+    //封装对admin service的cluster 模板的API调动
     public boolean isClusterUnique(String appId, Env env, String clusterName) {
       return restTemplate
           .get(env, "apps/{appId}/cluster/{clusterName}/unique", Boolean.class,
               appId, clusterName);
 
     }
-
+    //封装对admin service的cluster 模板的API调动
     public ClusterDTO create(Env env, ClusterDTO cluster) {
       return restTemplate.post(env, "apps/{appId}/clusters", cluster, ClusterDTO.class,
           cluster.getAppId());
