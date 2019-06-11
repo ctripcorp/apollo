@@ -109,7 +109,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
     * [Slides](https://myslide.cn/slides/10035)
 
 # Publication
-  * [开源配置中心Apollo的设计与实现](http://www.infoq.com/cn/articles/open-source-configuration-center-apollo)
+  * [开源配置中心Apollo的设计与实现](https://www.infoq.cn/article/open-source-configuration-center-apollo)
   * [配置中心，让微服务更『智能』](https://mp.weixin.qq.com/s/iDmYJre_ULEIxuliu1EbIQ)
 
 # Support
@@ -131,8 +131,12 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 </table>
 
 # Contribution
-  * Source Code: https://github.com/ctripcorp/apollo
-  * Issue Tracker: https://github.com/ctripcorp/apollo/issues
+
+Please make sure to read the [Contributing Guide](https://github.com/ctripcorp/apollo/blob/master/CONTRIBUTING.md) before making a pull request.
+
+Thanks for all the people who contributed to Apollo!
+
+<a href="https://github.com/ctripcorp/apollo/graphs/contributors"><img src="https://opencollective.com/apollo/contributors.svg?width=880&button=false" /></a>
 
 # License
 The project is licensed under the [Apache 2 license](https://github.com/ctripcorp/apollo/blob/master/LICENSE).
@@ -304,6 +308,15 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![太美医疗科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/taimeitech.png) 
 ![亿联百汇](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/yilianbaihui.png) 
 ![舟谱数据](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zhoupu123.png) 
+![芙蓉兴盛](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/frxs.png) 
+![野兽派](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/beastshop.png) 
+![凯叔讲故事](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/kaishustory.png) 
+![好大夫在线](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/haodf.png) 
+![云幂信息技术](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/insyunmi.png) 
+![兑吧](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/duiba.png) 
+![九机网](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/9ji.png) 
+![随手科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sui.png) 
+![万谷盛世](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aixiangdao.png) 
 
 # Awards
 

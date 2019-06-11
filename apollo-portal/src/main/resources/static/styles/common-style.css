@@ -805,3 +805,11 @@ table th {
     padding-left: 30px;
 }
 
+.app-search-list .select2-container, .app-search-list .select2-container .select2-selection {
+    height: 34px;
+}
+
+.app-search-list .select2-container .select2-selection .select2-selection__rendered {
+    line-height: 34px;
+    font-size: 14px;
+}

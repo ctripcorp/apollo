@@ -49,19 +49,10 @@
             </ul>
 
             <div class="navbar-form navbar-right form-inline" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control search-input" placeholder="搜索项目(AppId、项目名)"
-                           style="width: 350px"
-                           ng-model="searchKey" ng-change="changeSearchKey()" ng-focus="changeSearchKey()">
-
-                    <div class="row app-list" ng-show="shouldShowAppList">
-                        <div ng-repeat="app in copiedApps" class="app-item" ng-class="{'app-selected':app.selected}"
-                             ng-click="selectApp(app)">{{app.appId}} / {{app.name}}
-                        </div>
-                    </div>
+                <div class="form-group app-search-list">
+                    <select id="app-search-list" style="width: 350px"></select>
                 </div>
             </div>
-
         </div>
     </div>
 </nav>

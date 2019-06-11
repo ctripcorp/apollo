@@ -13,105 +13,64 @@ directive_module.directive('apollonav',
                                            scope.pageSetting = setting;
                                        });
 
-                                       scope.sourceApps = [];
-                                       scope.copiedApps = [];
+                                       $('#app-search-list').select2({
+                                           placeholder: '搜索项目(AppId、项目名)',
+                                           ajax: {
+                                               url: "/apps/search",
+                                               dataType: 'json',
+                                               delay: 400,
+                                               data: function (params) {
+                                                   return {
+                                                       query: params.term || '',
+                                                       page: params.page ? params.page - 1 : 0,
+                                                       size: 20
+                                                   };
+                                               },
+                                               processResults: function (data) {
+                                                   if (data && data.content) {
+                                                       var hasMore = data.content.length
+                                                           === data.size;
+                                                       var result = [];
+                                                       data.content.forEach(function (app) {
+                                                           result.push({
+                                                               id: app.appId,
+                                                               text: app.appId + ' / ' + app.name
+                                                           })
+                                                       });
+                                                       return {
+                                                           results: result,
+                                                           pagination: {
+                                                               more: hasMore
+                                                           }
+                                                       };
+                                                   } else {
+                                                       return {
+                                                           results: [],
+                                                           pagination: {
+                                                               more: false
+                                                           }
+                                                       };
+                                                   }
 
-                                       AppService.find_apps().then(function (result) {
-                                           result.forEach(function (app) {
-                                               app.selected = false;
-                                               scope.sourceApps.push(app);
-                                           });
-                                           scope.copiedApps = angular.copy(scope.sourceApps);
-                                       }, function (result) {
-                                           toastr.error(AppUtil.errorMsg(result), "load apps error");
-                                       });
-
-                                       scope.searchKey = '';
-                                       scope.shouldShowAppList = false;
-
-                                       var selectedApp = {};
-                                       scope.selectApp = function (app) {
-                                           select(app);
-                                           scope.jumpToConfigPage();
-                                       };
-
-                                       scope.changeSearchKey = function () {
-                                           scope.copiedApps = [];
-                                           var searchKey = scope.searchKey.toLocaleLowerCase();
-                                           scope.sourceApps.forEach(function (app) {
-                                               if (app.name.toLocaleLowerCase().indexOf(searchKey) > -1
-                                                   || app.appId.toLocaleLowerCase().indexOf(searchKey) > -1) {
-                                                   scope.copiedApps.push(app);
-                                               }
-                                           });
-                                           scope.shouldShowAppList = true;
-                                       };
-
-                                       scope.jumpToConfigPage = function () {
-                                           if (selectedApp.appId) {
-                                               if ($window.location.href.indexOf("config.html") > -1) {
-                                                   $window.location.hash = "appid=" + selectedApp.appId;
-                                                   $window.location.reload();
-                                               } else {
-                                                   $window.location.href = '/config.html?#appid=' + selectedApp.appId;
                                                }
                                            }
-                                       };
+                                       });
 
-                                       //up:38 down:40 enter:13
-                                       var selectedAppIdx = -1;
-                                       element.bind("keydown keypress", function (event) {
-
-                                           if (event.keyCode == 40) {
-                                               if (selectedAppIdx < scope.copiedApps.length - 1) {
-                                                   clearAppsSelectedStatus();
-                                                   scope.copiedApps[++selectedAppIdx].selected = true;
-                                               }
-                                           } else if (event.keyCode == 38) {
-                                               if (selectedAppIdx >= 1) {
-                                                   clearAppsSelectedStatus();
-                                                   scope.copiedApps[--selectedAppIdx].selected = true;
-                                               }
-                                           } else if (event.keyCode == 13) {
-                                               if (scope.shouldShowAppList && selectedAppIdx > -1) {
-                                                   select(scope.copiedApps[selectedAppIdx]);
-                                                   event.preventDefault();
-                                               } else {
-                                                   scope.jumpToConfigPage();
-                                               }
-
+                                       $('#app-search-list').on('select2:select', function () {
+                                           var selected = $('#app-search-list').select2('data');
+                                           if (selected && selected.length) {
+                                               jumpToConfigPage(selected[0].id)
                                            }
-                                           //强制刷新
-                                           scope.$apply(function () {
-                                               scope.copiedApps = scope.copiedApps;
-                                           });
                                        });
 
-                                       $(".search-input").on("click", function (event) {
-                                           event.stopPropagation();
-                                       });
-
-                                       $(document).on('click', function () {
-                                           scope.$apply(function () {
-                                               scope.shouldShowAppList = false;
-                                           });
-                                       });
-
-                                       function clearAppsSelectedStatus() {
-                                           scope.copiedApps.forEach(function (app) {
-                                               app.selected = false;
-                                           })
-
-                                       }
-
-                                       function select(app) {
-                                           selectedApp = app;
-                                           scope.searchKey = app.name;
-                                           scope.shouldShowAppList = false;
-                                           clearAppsSelectedStatus();
-                                           selectedAppIdx = -1;
-
-                                       }
+                                       function jumpToConfigPage(selectedAppId) {
+                                           if ($window.location.href.indexOf("config.html") > -1) {
+                                               $window.location.hash = "appid=" + selectedAppId;
+                                               $window.location.reload();
+                                           } else {
+                                               $window.location.href = '/config.html?#appid=' + selectedAppId;
+                                           }
+                                       };
 
                                        UserService.load_user().then(function (result) {
                                            scope.userName = result.userId;
