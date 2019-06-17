@@ -7,6 +7,7 @@ FROM openjdk:8-jre-alpine
 MAINTAINER ameizi <sxyx2008@163.com>
 
 ENV VERSION 1.5.0-SNAPSHOT
+ENV SERVER_PORT 8090
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
@@ -20,8 +21,9 @@ ADD apollo-adminservice-${VERSION}-github.zip /apollo-adminservice/apollo-admins
 RUN unzip /apollo-adminservice/apollo-adminservice-${VERSION}-github.zip -d /apollo-adminservice \
     && rm -rf /apollo-adminservice/apollo-adminservice-${VERSION}-github.zip \
     && sed -i '$d' /apollo-adminservice/scripts/startup.sh \
+    && chmod +x /apollo-adminservice/scripts/startup.sh \
     && echo "tail -f /dev/null" >> /apollo-adminservice/scripts/startup.sh
 
-EXPOSE 8090
+EXPOSE $SERVER_PORT
 
 CMD ["/apollo-adminservice/scripts/startup.sh"]
