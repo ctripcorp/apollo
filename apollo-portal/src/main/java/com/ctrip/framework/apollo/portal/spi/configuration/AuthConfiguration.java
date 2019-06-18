@@ -393,12 +393,10 @@ public class AuthConfiguration {
           ldapContextSource, null);
       defaultAuthAutoConfiguration.setIgnorePartialResultException(true);
       defaultAuthAutoConfiguration.setSearchSubtree(true);
-//      LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(
-//          bindAuthenticator, defaultAuthAutoConfiguration);
-      ApolloLdapAuthenticationProvider apolloLdapAuthenticationProvider = new ApolloLdapAuthenticationProvider(
+      // Rewrite the logic of LdapAuthenticationProvider with ApolloLdapAuthenticationProvider,
+      // use userId in LDAP system instead of userId input by user.
+      return new ApolloLdapAuthenticationProvider(
           bindAuthenticator, defaultAuthAutoConfiguration, ldapExtendProperties);
-
-      return apolloLdapAuthenticationProvider;
     }
 
     @Override

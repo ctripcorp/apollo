@@ -16,7 +16,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * the ApolloLdapAuthenticationProvider description.
+ * Inherited from LdapAuthenticationProvider and rewritten the authenticate method,
+ * modified the userId used by the previous user input,
+ * changed to use the userId in the LDAP system.
  *
  * @author wuzishu
  */
