@@ -8,6 +8,10 @@ MAINTAINER ameizi <sxyx2008@163.com>
 
 ENV VERSION 1.5.0-SNAPSHOT
 ENV SERVER_PORT 8080
+# DataSource Info
+ENV DS_URL ""
+ENV DS_USERNAME ""
+ENV DS_PASSWORD ""
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \

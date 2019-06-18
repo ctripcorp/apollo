@@ -8,6 +8,16 @@ MAINTAINER ameizi <sxyx2008@163.com>
 
 ENV VERSION 1.5.0-SNAPSHOT
 ENV SERVER_PORT 8070
+# DataSource Info 
+ENV DS_URL ""
+ENV DS_USERNAME ""
+ENV DS_PASSWORD ""
+# Environmental variable declaration (meta server url, different environments should have different meta server addresses)
+ENV DEV_META ""
+ENV FAT_META ""
+ENV UAT_META ""
+ENV LPT_META ""
+ENV PRO_META ""
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
     && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
