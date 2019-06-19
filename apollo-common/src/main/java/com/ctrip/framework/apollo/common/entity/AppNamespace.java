@@ -30,13 +30,21 @@ public class AppNamespace extends BaseEntity {
   @NotBlank(message = "AppId cannot be blank")
   @Column(name = "AppId", nullable = false)
   private String appId;
-
+  /**
+   * 格式  yml xml json yaml properties 等
+   */
   @Column(name = "Format", nullable = false)
   private String format;
 
+  /**
+   * 是否是公用的
+   */
   @Column(name = "IsPublic", columnDefinition = "Bit default '0'")
   private boolean isPublic = false;
 
+  /**
+   * 备注
+   */
   @Column(name = "Comment")
   private String comment;
 
