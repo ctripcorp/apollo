@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 
+import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
@@ -77,7 +78,16 @@ public class AppController {
     } else {
       return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
     }
+  }
 
+  @GetMapping("/search")
+  public PageDTO<App> searchByAppIdOrAppName(@RequestParam(value = "query", required = false) String query,
+      Pageable pageable) {
+    if (StringUtils.isEmpty(query)) {
+      return appService.findAll(pageable);
+    } else {
+      return appService.searchByAppIdOrAppName(query, pageable);
+    }
   }
 
   @GetMapping("/by-owner")
