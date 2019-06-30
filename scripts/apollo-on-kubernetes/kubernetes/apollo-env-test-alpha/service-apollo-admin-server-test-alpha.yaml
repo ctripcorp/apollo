@@ -54,8 +54,18 @@ spec:
       labels:
         app: pod-apollo-admin-server-test-alpha
     spec:
-      nodeSelector:
-        node: "apollo"
+      affinity:
+        podAntiAffinity:
+          PreferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - pod-apollo-admin-server-test-alpha
+              topologyKey: kubernetes.io/hostname
       
       volumes:
         - name: volume-configmap-apollo-admin-server-test-alpha
