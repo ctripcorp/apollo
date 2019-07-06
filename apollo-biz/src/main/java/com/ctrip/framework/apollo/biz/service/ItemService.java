@@ -106,7 +106,12 @@ public class ItemService {
   }
 
   public List<Item> findItemsWithOrdered(Long namespaceId) {
-    List<Item> items = itemRepository.findByNamespaceIdOrderByLineNumAsc(namespaceId);
+    List<Item> items;
+    if (bizConfig.itemKeyIsGroup()) {
+      items = itemRepository.findByNamespaceIdOrderByKey(namespaceId);
+    } else {
+      items = itemRepository.findByNamespaceIdOrderByLineNumAsc(namespaceId);
+    }
     if (items == null) {
       return Collections.emptyList();
     }

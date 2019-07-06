@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class BizConfig extends RefreshableConfig {
 
   private static final int DEFAULT_ITEM_KEY_LENGTH = 128;
+  private static final boolean DEFAULT_ITEM_KEY_IS_GROUP = false;
   private static final int DEFAULT_ITEM_VALUE_LENGTH = 20000;
   private static final int DEFAULT_APPNAMESPACE_CACHE_REBUILD_INTERVAL = 60; //60s
   private static final int DEFAULT_GRAY_RELEASE_RULE_SCAN_INTERVAL = 60; //60s
@@ -61,6 +62,10 @@ public class BizConfig extends RefreshableConfig {
   public int itemKeyLengthLimit() {
     int limit = getIntProperty("item.key.length.limit", DEFAULT_ITEM_KEY_LENGTH);
     return checkInt(limit, 5, Integer.MAX_VALUE, DEFAULT_ITEM_KEY_LENGTH);
+  }
+  
+  public boolean itemKeyIsGroup() {
+    return getBooleanProperty("item.key.is_group", DEFAULT_ITEM_KEY_IS_GROUP);
   }
 
   public int itemValueLengthLimit() {
