@@ -72,8 +72,18 @@ spec:
       labels:
         app: pod-apollo-config-server-prod
     spec:
-      nodeSelector:
-        node: "apollo"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - pod-apollo-config-server-prod
+              topologyKey: kubernetes.io/hostname
       
       volumes:
         - name: volume-configmap-apollo-config-server-prod
