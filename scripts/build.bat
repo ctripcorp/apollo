@@ -10,6 +10,12 @@ set apollo_portal_db_url="jdbc:mysql://localhost:3306/ApolloPortalDB?characterEn
 set apollo_portal_db_username="root"
 set apollo_portal_db_password=""
 
+
+# apollo services and portal port
+set config_server_port=8080
+set admin_server_port=8090
+set portal_server_port=8070
+
 rem meta server url, different environments should have different meta server addresses
 set dev_meta="http://localhost:8080"
 set fat_meta="http://someIp:8080"
@@ -27,13 +33,13 @@ cd ..
 rem package config-service and admin-service
 echo "==== starting to build config-service and admin-service ===="
 
-call mvn clean package -DskipTests -pl apollo-configservice,apollo-adminservice -am -Dapollo_profile=github -Dspring_datasource_url=%apollo_config_db_url% -Dspring_datasource_username=%apollo_config_db_username% -Dspring_datasource_password=%apollo_config_db_password%
+call mvn clean package -DskipTests -pl apollo-configservice,apollo-adminservice -am -Dconfig_server_port=$config_server_port -Dadmin_server_port=$admin_server_port -Dapollo_profile=github -Dspring_datasource_url=%apollo_config_db_url% -Dspring_datasource_username=%apollo_config_db_username% -Dspring_datasource_password=%apollo_config_db_password%
 
 echo "==== building config-service and admin-service finished ===="
 
 echo "==== starting to build portal ===="
 
-call mvn clean package -DskipTests -pl apollo-portal -am -Dapollo_profile=github,auth -Dspring_datasource_url=%apollo_portal_db_url% -Dspring_datasource_username=%apollo_portal_db_username% -Dspring_datasource_password=%apollo_portal_db_password% %META_SERVERS_OPTS%
+call mvn clean package -DskipTests -pl apollo-portal -am -Dserver_port=$portal_server_port -Dapollo_profile=github,auth -Dspring_datasource_url=%apollo_portal_db_url% -Dspring_datasource_username=%apollo_portal_db_username% -Dspring_datasource_password=%apollo_portal_db_password% %META_SERVERS_OPTS%
 
 echo "==== building portal finished ===="
 

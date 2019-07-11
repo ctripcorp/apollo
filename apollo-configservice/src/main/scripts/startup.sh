@@ -4,7 +4,7 @@ SERVICE_NAME=apollo-configservice
 LOG_DIR=/opt/logs/100003171
 ## Adjust server port if necessary
 #SERVER_PORT=8080
-SERVER_PORT=${SERVER_PORT:=8080}
+SERVER_PORT=${SERVER_PORT:=-1}
 
 ## Create log directory if not existed because JDK 8+ won't do that
 mkdir -p $LOG_DIR
@@ -17,12 +17,18 @@ mkdir -p $LOG_DIR
 
 ########### The following is the same for configservice, adminservice, portal ###########
 export JAVA_OPTS="$JAVA_OPTS -XX:ParallelGCThreads=4 -XX:MaxTenuringThreshold=9 -XX:+DisableExplicitGC -XX:+ScavengeBeforeFullGC -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+ExplicitGCInvokesConcurrent -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -Duser.timezone=Asia/Shanghai -Dclient.encoding.override=UTF-8 -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
+
+# SERVER_PORT
+if [ $SERVER_PORT != -1 ]
+then
+    export JAVA_OPTS="$JAVA_OPTS -Dserver.port=$SERVER_PORT"
+fi
 # DataSource URL USERNAME PASSWORD
 if [ "$DS_URL"x != x ]
 then
     export JAVA_OPTS="$JAVA_OPTS -Dspring.datasource.url=$DS_URL -Dspring.datasource.username=$DS_USERNAME -Dspring.datasource.password=$DS_PASSWORD"
 fi
-export JAVA_OPTS="$JAVA_OPTS -Dserver.port=$SERVER_PORT -Dlogging.file=$LOG_DIR/$SERVICE_NAME.log -XX:HeapDumpPath=$LOG_DIR/HeapDumpOnOutOfMemoryError/"
+export JAVA_OPTS="$JAVA_OPTS -Dlogging.file=$LOG_DIR/$SERVICE_NAME.log -XX:HeapDumpPath=$LOG_DIR/HeapDumpOnOutOfMemoryError/"
 
 PATH_TO_JAR=$SERVICE_NAME".jar"
 SERVER_URL="http://localhost:$SERVER_PORT"
@@ -43,6 +49,18 @@ function checkPidAlive {
 
     printf "\nNo pid file found, startup may failed. Please check logs under $LOG_DIR and /tmp for more information!\n"
     exit 1;
+}
+
+function freshPortAndServerUrl {
+    if [[ $SERVER_PORT == -1 ]]
+    then
+        port=$(lsof -n -i -P | grep LISTEN | grep $pid | awk '{ print $9 }' | awk -F: '{ print $2 }')
+        if [[ $port != "" ]]
+        then
+            SERVER_PORT=$port
+            SERVER_URL="http://localhost:$SERVER_PORT"
+        fi
+    fi
 }
 
 if [ "$(uname)" == "Darwin" ]; then
@@ -137,13 +155,14 @@ declare -i max_counter=48 # 48*5=240s
 declare -i total_time=0
 
 printf "Waiting for server startup"
-until [[ (( counter -ge max_counter )) || "$(curl -X GET --silent --connect-timeout 1 --max-time 2 --head $SERVER_URL | grep "HTTP")" != "" ]];
+until [[ (( counter -ge max_counter )) || ($SERVER_PORT != -1 && "$(curl -X GET --silent --connect-timeout 1 --max-time 2 --head $SERVER_URL | grep "HTTP")" != "") ]];
 do
     printf "."
     counter+=1
     sleep 5
 
     checkPidAlive
+    freshPortAndServerUrl
 done
 
 total_time=counter*5
