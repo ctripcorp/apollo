@@ -345,6 +345,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, toastr
 
         });
 
+
         PermissionService.has_assign_user_permission(appId).then(function (result) {
             $scope.hasAssignUserPermission = result.hasPermission;
         }, function (result) {

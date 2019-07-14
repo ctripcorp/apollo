@@ -1,8 +1,8 @@
 app_module.controller('CreateAppController',
-                      ['$scope', '$window', 'toastr', 'AppService', 'AppUtil', 'OrganizationService',
+                      ['$scope', '$window', 'toastr', 'AppService', 'AppUtil', 'OrganizationService','SystemRoleService','UserService',
                        createAppController]);
 
-function createAppController($scope, $window, toastr, AppService, AppUtil, OrganizationService) {
+function createAppController($scope, $window, toastr, AppService, AppUtil, OrganizationService, SystemRoleService, UserService) {
 
     $scope.app = {};
     $scope.submitBtnDisabled = false;
@@ -13,6 +13,7 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
 
     function init() {
         initOrganization();
+        initSystemRole();
     }
 
     function initOrganization() {
@@ -35,6 +36,24 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
         });
     }
 
+    function initSystemRole() {
+        SystemRoleService.has_open_manage_app_master_role_limit().then(
+            function (value) {
+                $scope.isOpenManageAppMasterRoleLimit = value.isManageAppMasterPermissionEnabled;
+                UserService.load_user().then(
+                    function (value1) {
+                        $scope.currentUser = value1;
+                    },
+                    function (reason) {
+                        toastr.error(AppUtil.errorMsg(reason), "load current user info failed");
+                    })
+            },
+            function (reason) {
+                toastr.error(AppUtil.errorMsg(reason), "init system role of manageAppMaster failed");
+            }
+        );
+    }
+
     function create() {
         $scope.submitBtnDisabled = true;
 
@@ -42,6 +61,7 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
 
         if (!selectedOrg.id) {
             toastr.warning("请选择部门");
+            $scope.submitBtnDisabled = false;
             return;
         }
 
@@ -50,8 +70,12 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
 
         // owner
         var owner = $('.ownerSelector').select2('data')[0];
+        if ($scope.isOpenManageAppMasterRoleLimit) {
+            owner  = {id:  $scope.currentUser.userId};
+        }
         if (!owner) {
             toastr.warning("请选择应用负责人");
+            $scope.submitBtnDisabled = false;
             return;
         }
         $scope.app.ownerName = owner.id;
@@ -59,6 +83,9 @@ function createAppController($scope, $window, toastr, AppService, AppUtil, Organ
         //admins
         $scope.app.admins = [];
         var admins = $(".adminSelector").select2('data');
+        if ($scope.isOpenManageAppMasterRoleLimit) {
+            admins  = [{id: $scope.currentUser.userId}];
+        }
         if (admins) {
             admins.forEach(function (admin) {
                 $scope.app.admins.push(admin.id);

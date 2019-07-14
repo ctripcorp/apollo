@@ -107,6 +107,7 @@ public class AppController {
     return appService.findByAppIds(appIds, page);
   }
 
+  @PreAuthorize(value = "@permissionValidator.hasCreateApplicationPermission()")
   @PostMapping
   public App create(@Valid @RequestBody AppModel appModel) {
 

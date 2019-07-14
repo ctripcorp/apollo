@@ -67,8 +67,8 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     verify(rolePermissionService, times(7)).findRoleByRoleName(anyString());
     verify(rolePermissionService, times(1)).assignRoleToUsers(
         RoleUtils.buildAppMasterRoleName(APP_ID), Sets.newHashSet(CURRENT_USER), CURRENT_USER);
-    verify(rolePermissionService, times(6)).createPermission(any());
-    verify(rolePermissionService, times(7)).createRoleWithPermissions(any(), anySet());
+    verify(rolePermissionService, times(7)).createPermission(any());
+    verify(rolePermissionService, times(8)).createRoleWithPermissions(any(), anySet());
   }
 
   @Test
