@@ -1,15 +1,23 @@
 /**utils*/
 var appUtil = angular.module('app.util', ['toastr']);
-
 /**service module 定义*/
-var appService = angular.module('app.service', ['ngResource']);
+var appService = angular.module('app.service', ['ngResource','ngCookies','pascalprecht.translate'])
+    .config(['$translateProvider',function($translateProvider){
+        $translateProvider.preferredLanguage('en');
+        // $translateProvider.useMissingTranslationHandlerLog();
+        $translateProvider.useCookieStorage();
+        $translateProvider.useStaticFilesLoader({
+            prefix: '/i18n/',
+            suffix: '.json'
+        });
+    }]);
 
 /** directive */
-var directive_module = angular.module('apollo.directive', ['app.service', 'app.util', 'toastr']);
+var directive_module = angular.module('apollo.directive', ['app.service', 'app.util', 'toastr','pascalprecht.translate']);
 
 /** page module 定义*/
 // 首页
-var index_module = angular.module('index', ['toastr', 'app.service', 'apollo.directive', 'app.util', 'angular-loading-bar']);
+var index_module = angular.module('index', ['toastr', 'app.service', 'apollo.directive', 'app.util', 'angular-loading-bar','pascalprecht.translate']);
 //项目主页
 var application_module = angular.module('application', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar', 'valdr', 'ui.ace']);
 //创建项目页面
@@ -35,7 +43,7 @@ var open_manage_module = angular.module('open_manage', ['app.service', 'apollo.d
 //user
 var user_module = angular.module('user', ['apollo.directive', 'toastr', 'app.service', 'app.util', 'angular-loading-bar', 'valdr']);
 //login
-var login_module = angular.module('login', ['toastr', 'app.util']);
+var login_module = angular.module('login', ['app.service','toastr', 'app.util','pascalprecht.translate']);
 //delete app cluster namespace
 var delete_app_cluster_namespace_module = angular.module('delete_app_cluster_namespace', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar']);
 //system info

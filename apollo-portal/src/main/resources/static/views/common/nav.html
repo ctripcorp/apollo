@@ -25,6 +25,15 @@
                         <span class="glyphicon glyphicon-question-sign"></span> 帮助
                     </a>
                 </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon .glyphicon-glyphicon-font"></span>&nbsp;Language<span class="caret"></span></a>
+
+                    <ul class="dropdown-menu">
+                        <li value="en"><a href="javascript:void(0)" ng-click="changeLanguage('en')">English</a></li>
+                        <li value="zh-cn"><a href="javascript:void(0)" ng-click="changeLanguage('zh-cn')">简体中文</a></li>
+                    </ul>
+                </li>
                 <li class="dropdown" ng-if="hasRootPermission">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <span class="glyphicon glyphicon-cog"></span>&nbsp;管理员工具
