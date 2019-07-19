@@ -1,5 +1,6 @@
 package com.ctrip.framework.foundation.internals.provider;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -18,6 +19,7 @@ public class DefaultServerProvider implements ServerProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultServerProvider.class);
   private static final String SERVER_PROPERTIES_LINUX = "/opt/settings/server.properties";
   private static final String SERVER_PROPERTIES_WINDOWS = "C:/opt/settings/server.properties";
+  private static String PROPERTIES_PATH = "";
 
   private String m_env;
   private String m_dc;
@@ -28,6 +30,7 @@ public class DefaultServerProvider implements ServerProvider {
   public void initialize() {
     try {
       String path = Utils.isOSWindows() ? SERVER_PROPERTIES_WINDOWS : SERVER_PROPERTIES_LINUX;
+      PROPERTIES_PATH = path;
 
       File file = new File(path);
       if (file.exists() && file.canRead()) {
@@ -36,8 +39,13 @@ public class DefaultServerProvider implements ServerProvider {
         initialize(fis);
         return;
       }
-
-      initialize(null);
+      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(
+              ConfigConsts.APPLICATION_CLASSPATH);
+      if (in == null) {
+        in = DefaultServerProvider.class.getResourceAsStream(ConfigConsts.APPLICATION_CLASSPATH);
+      }
+      PROPERTIES_PATH = ConfigConsts.APPLICATION_CLASSPATH;
+      initialize(in);
     } catch (Throwable ex) {
       logger.error("Initialize DefaultServerProvider failed.", ex);
     }
@@ -151,7 +159,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = m_serverProperties.getProperty("idc");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
+      logger.info("Data Center is set to [{}] by property 'idc' in {}.", m_dc, PROPERTIES_PATH);
       return;
     }
 

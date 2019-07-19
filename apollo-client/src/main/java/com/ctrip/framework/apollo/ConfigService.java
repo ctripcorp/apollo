@@ -6,6 +6,8 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.internals.ConfigManager;
 import com.ctrip.framework.apollo.spi.ConfigFactory;
 import com.ctrip.framework.apollo.spi.ConfigRegistry;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point for client config use
@@ -17,6 +19,16 @@ public class ConfigService {
 
   private volatile ConfigManager m_configManager;
   private volatile ConfigRegistry m_configRegistry;
+
+  private static List<Config> configs = new ArrayList<>();
+
+  /**
+   * get namespaces
+   * @return
+   */
+  public static List<Config>  getConfigs(){
+    return configs;
+  }
 
   private ConfigManager getManager() {
     if (m_configManager == null) {
@@ -50,6 +62,23 @@ public class ConfigService {
   public static Config getAppConfig() {
     return getConfig(ConfigConsts.NAMESPACE_APPLICATION);
   }
+
+  /**
+   * Get the config instance for the namespace.
+   * add namespace to list in order
+   *
+   * @param namespace the namespace of the config
+   * @return config instance
+   */
+  public static Config getConfig2(String namespace) {
+
+    Config config = s_instance.getManager().getConfig(namespace);
+    if(config != null){
+      configs.add(config);
+    }
+    return config;
+  }
+
 
   /**
    * Get the config instance for the namespace.

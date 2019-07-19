@@ -101,7 +101,7 @@ public class ApolloApplicationContextInitializer implements
 
     CompositePropertySource composite = new CompositePropertySource(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME);
     for (String namespace : namespaceList) {
-      Config config = ConfigService.getConfig(namespace);
+      Config config = ConfigService.getConfig2(namespace);
 
       composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
     }
