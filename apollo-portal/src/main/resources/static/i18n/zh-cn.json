@@ -1,8 +1,158 @@
 {
   "Common.Title": "Apollo配置中心",
+  "Common.Ctrip": "携程",
+  "Common.CtripDepartment": "框架研发部",
+  "Common.Nav.ShowNavBar": "显示导航栏",
+  "Common.Nav.HideNavBar": "隐藏导航栏",
+  "Common.Nav.Help": "帮助",
+  "Common.Nav.AdminTools": "管理员工具",
+  "Common.Nav.UserManage": "用户管理",
+  "Common.Nav.SystemRoleManage": "系统权限管理",
+  "Common.Nav.OpenMange": "开放平台授权管理",
+  "Common.Nav.SystemConfig": "系统参数",
+  "Common.Nav.DeleteApp-Cluster-Namespace": "删除应用、集群、AppNamespace",
+  "Common.Nav.SystemInfo": "系统信息",
+  "Common.Nav.Logout": "退出",
+  "Common.Department": "部门",
+  "Common.Cluster": "集群",
+  "Common.Email": "邮箱",
+  "Common.AppId": "应用Id",
+  "Common.AppName": "应用名称",
+  "Common.AppOwner": "应用负责人",
+  "Common.AppAdmin": "项目管理员",
+  "Common.Submit": "提交",
+  "Common.Created": "创建成功",
+  "Common.ClusterName": "集群名称",
+
+  "Common.ReturnToIndex": "返回到项目首页",
+  "Common.Cancel": "取消",
+  "Common.Ok": "确定",
+  "Common.Search": "查询",
   "Login.Login": "登录",
   "Login.UserNameOrPasswordIncorrect": "用户名或密码错误",
   "Index.MyProject": "我的项目",
   "Index.CreateProject": "创建项目",
-  "App.CreateProject": "创建项目"
+  "Index.LoadingMore": "加载更多",
+  "Index.FavoriteItems": "收藏的项目",
+  "Index.Topping": "置顶",
+  "Index.FavoriteTip": "您还没有收藏过任何项目，在项目主页可以收藏项目哟~",
+  "Index.RecentyViewedItems": "最近浏览的项目",
+  "App.AppIdDesc": "（应用唯一标识）",
+  "App.AppNameDesc": "(建议格式 xx-yy-zz 例:apollo-server)",
+  "App.AppOwnerDesc": "(开启应用管理员添加限制后，应用负责人和项目管理员默认为本账号，不可选择)",
+  "App.AppAdminDesc1": "(应用负责人默认具有项目管理员权限，",
+  "App.AppAdminDesc2": "项目管理员可以创建Namespace和集群、分配用户权限)",
+  "Cluster.Tips.1": "通过添加集群，可以使同一份程序在不同的集群（如不同的数据中心）使用不同的配置",
+  "Cluster.Tips.2": "如果不同集群使用一样的配置，则没有必要创建集群",
+  "Cluster.Tips.3": "Apollo默认会读取机器上/opt/settings/server.properties(linux)或C:\\opt\\settings\\server.properties(windows)文件中的idc属性作为集群名字，  如SHAJQ（金桥数据中心）、SHAOY（欧阳数据中心)",
+  "Cluster.Tips.4": "在这里创建的集群名字需要和机器上server.properties中的idc属性一致",
+  "Cluster.CreaterNameDesc": "(部署集群如:SHAJQ,SHAOY 或自定义集群如:SHAJQ-xx,SHAJQ-yy)",
+  "Cluster.ChooseEnvironment": "选择环境",
+  "Config.Title": "Apollo配置中心",
+  "Config.AppIdNotFound": "不存在，",
+  "Config.ClickByCreate": "点击创建",
+  "Config.EnvList": "环境列表",
+  "Config.EnvListDesc": "通过切换环境、集群来管理不同环境、集群的配置",
+  "Config.ProjectInfo": "项目信息",
+  "Config.ModifyBasicProjectInfo": "修改项目基本信息",
+  "Config.Favorite": "收藏",
+  "Config.CancelFavorite": "取消收藏",
+  "Config.MissEnv": "缺失的环境",
+  "Config.MissNamespace": "缺失的Namespace",
+  "Config.ProjectManage": "管理项目",
+  "Config.CreateAppMissEnv": "补缺环境",
+  "Config.CreateAppMissNamespace": "补缺Namespace",
+  "Config.AddCluster": "添加集群",
+  "Config.AddNamespace": "添加Namespace",
+  "Config.CurrentlyOperatorEnv": "当前操作环境",
+  "Config.DoNotRemindAgain": "不再提示",
+  "Config.Note": "注意",
+  "Config.ClusterIsDefualtTipContent": "所有不属于 '{{name}}' 集群的实例会使用default集群（当前页面）的配置，属于 '{{name}}' 的实例会使用对应集群的配置！",
+  "Config.ClusterIsCustomTipContent": "属于 '{{name}}' 集群的实例只会使用 '{{name}}' 集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置。",
+  "Config.HasNotPublishNamespace": "以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。",
+  "Config.DeleteItem.DialogTitle": "删除配置",
+  "Config.DeleteItem.DialogContent": "您正在删除 Key 为 <b> '{{config.key}}' </b> Value 为 <b> '{{config.value}}' </b> 的配置.<br>确定要删除配置吗?",
+  "Config.PublishNoPermission.DialogTitle": "发布",
+  "Config.PublishNoPermission.DialogContent": "您没有发布权限哦~ 请找项目管理员 '{{masterUsers}}' 分配发布权限",
+  "Config.ModifyNoPermission.DialogTitle": "申请配置权限",
+  "Config.ModifyNoPermission.DialogContent": "请找项目管理员 '{{masterUsers}}' 分配编辑或发布权限",
+  "Config.MasterNoPermission.DialogTitle": "申请配置权限",
+  "Config.MasterNoPermission.DialogContent": "您不是项目管理员， 只有项目管理员才有添加集群、namespace的权限。如需管理员权限，请找项目管理员 '{{masterUsers}}' 分配管理员权限",
+  "Config.NamespaceLocked.DialogTitle": "编辑受限",
+  "Config.NamespaceLocked.DialogContent": "当前namespace正在被 '{{lockOwner}}' 编辑，一次发布只能被一个人修改.",
+  "Config.RollbackAlert.DialogTitle": "回滚",
+  "Config.RollbackAlert.DialogContent": "确定要回滚吗?",
+  "Config.EmergencyPublishAlert.DialogTitle": "紧急发布",
+  "Config.EmergencyPublishAlert.DialogContent": "确定要紧急发布吗?",
+  "Config.DeleteBranch.DialogTitle": "删除灰度",
+  "Config.DeleteBranch.DialogContent": "删除灰度会丢失灰度的配置，确定要删除吗?",
+  "Config.UpdateRuleTips.DialogTitle": "更新灰度规则提示",
+  "Config.UpdateRuleTips.DialogContent": "灰度规则已生效，但发现灰度版本有未发布的配置，这些配置需要手动灰度发布才会生效",
+  "Config.MergeAndReleaseDeny.DialogTitle": "全量发布",
+  "Config.MergeAndReleaseDeny.DialogContent": "namespace主版本有未发布的配置，请先发布主版本配置",
+  "Config.GrayReleaseWithoutRulesTips.DialogTitle": "缺失灰度规则提示",
+  "Config.GrayReleaseWithoutRulesTips.DialogContent": "灰度版本还没有配置任何灰度规则，请配置灰度规则",
+  "Config.DeleteNamespaceDenyForMasterInstance.DialogTitle": "删除Namespace警告信息",
+  "Config.DeleteNamespaceDenyForMasterInstance.DialogContent": "发现有 <b>'{{deleteNamespaceContext.namespace.instancesCount}}'</b> 个实例正在使用Namespace('{{deleteNamespaceContext.namespace.baseInfo.namespaceName}}')，删除Namespace将导致实例获取不到配置。<br>请到 <ins>“实例列表”</ins> 确认实例信息，如确认相关实例都已经不再使用该Namespace配置，可以联系Apollo相关负责人删除实例信息（InstanceConfig）或等待实例24小时自动过期后再来删除。",
+  "Config.DeleteNamespaceDenyForBranchInstance.DialogTitle": "删除Namespace警告信息",
+  "Config.DeleteNamespaceDenyForBranchInstance.DialogContent": "发现有 <b>'{{deleteNamespaceContext.namespace.branch.latestReleaseInstances.total}}'</b> 个实例正在使用Namespace('{{deleteNamespaceContext.namespace.baseInfo.namespaceName}}')灰度版本的配置，删除Namespace将导致实例获取不到配置。<br> 请到 <ins>“灰度版本” => “实例列表”</ins> 确认实例信息，如确认相关实例都已经不再使用该Namespace配置，可以联系Apollo相关负责人删除实例信息（InstanceConfig）或等待实例24小时自动过期后再来删除。",
+  "Config.DeleteNamespaceDenyForPublicNamespace.DialogTitle": "删除Namespace失败提示",
+  "Config.DeleteNamespaceDenyForPublicNamespace.DialogContent": "删除Namespace失败提示",
+  "Config.SyntaxCheckFailed.DialogTitle": "语法检查错误",
+  "Config.SyntaxCheckFailed.DialogContent": "删除Namespace失败提示",
+  "Config.CreateBranchTips.DialogTitle": "创建灰度须知",
+  "Config.CreateBranchTips.DialogContent": "通过创建灰度版本，您可以对某些配置做灰度测试<br>灰度流程为:<br>&nbsp;&nbsp;1.创建灰度版本 <br>&nbsp;&nbsp;2.配置灰度配置项<br>&nbsp;&nbsp;3.配置灰度规则.如果是私有的namespace可以按照客户端的IP进行灰度，如果是公共的namespace则可以同时按AppId和客户端的IP进行灰度<br>&nbsp;&nbsp;4.灰度发布<br>灰度版本最终有两种结果:<b>全量发布和放弃灰度</b><br><b>全量发布</b>:灰度的配置合到主版本并发布，所有的客户端都会使用合并后的配置<br><b>放弃灰度</b>:删除灰度版本，所有的客户端都会使用回主版本的配置<br>注意事项:<br>&nbsp;&nbsp;1.如果灰度版本已经有灰度发布过，那么修改灰度规则后，无需再次灰度发布就立即生效",
+  "Delete.Title": "删除应用、集群、AppNamespace",
+  "Delete.DeleteApp": "删除应用",
+  "Delete.DeleteAppTips": "(由于删除应用影响面较大，所以现在暂时只允许系统管理员删除，请确保没有客户端读取该应用的配置后再做删除动作)",
+  "Delete.AppIdTips": "(删除前请先查询应用信息)",
+  "Delete.AppInfo": "应用信息",
+  "Delete.DeleteCluster": "删除集群",
+  "Delete.DeleteClusterTips": "(由于删除集群影响面较大，所以现在暂时只允许系统管理员删除，请确保没有客户端读取该集群的配置后再做删除动作)",
+  "Delete.EnvName": "环境名称",
+  "Delete.ClusterNameTips": "(删除前请先查询应用集群信息)",
+  "Delete.ClusterInfo": "集群信息",
+  "Delete.DeleteNamespcae": "删除AppNamespace",
+  "Delete.DeleteNamespcaeTips": "（注意，所有环境的Namespace和AppNamespace都会被删除！如果只是要删除某个环境的Namespace，让用户到项目页面中自行删除！）",
+  "Delete.DeleteNamespcaeTips2":"目前用户可以自行删除关联的Namespace和私有的Namespace，不过无法删除AppNamespace元信息，因为删除AppNamespace影响面较大，所以现在暂时只允许系统管理员删除，对于公共Namespace需要确保没有应用关联了该AppNamespace。",
+  "Delete.AppNamespaceName": "AppNamespace名称",
+  "Delete.AppNamespaceNameTips": "(非properties类型的namespace请加上类型后缀，例如apollo.xml)",
+  "Delete.AppNamespaceInfo": "AppNamespace信息",
+  "Delete.IsRootUserTips": "当前页面只对Apollo管理员开放",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "c": "删除应用、集群、AppNamespace"
 }
