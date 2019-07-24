@@ -44,7 +44,7 @@
                             {{'Common.AppId' | translate }}</label>
                         <div class="col-sm-3">
                             <input type="text" class="form-control" name="appId" ng-model="app.appId">
-                            <small>{{'App.AppIdDesc' | translate }}
+                            <small>{{'App.AppIdTips' | translate }}
                             </small>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             {{'Common.AppName' | translate }}</label>
                         <div class="col-sm-5">
                             <input type="text" class="form-control" name="appName" ng-model="app.name">
-                            <small>{{'App.AppNameDesc' | translate }}</small>
+                            <small>{{'App.AppNameTips' | translate }}</small>
                         </div>
                     </div>
                     <div class="form-group">
@@ -64,7 +64,7 @@
                             {{'Common.AppOwner' | translate }}</label>
                         <div class="col-sm-6 J_ownerSelectorPanel">
                             <apollouserselector apollo-id="'ownerSelector'"  disabled="isOpenManageAppMasterRoleLimit"></apollouserselector>
-                            <small style="color: maroon" ng-if="isOpenManageAppMasterRoleLimit">{{'App.AppOwnerDesc' | translate }}</small>
+                            <small style="color: maroon" ng-if="isOpenManageAppMasterRoleLimit">{{'App.AppOwnerTips' | translate }}</small>
                         </div>
                     </div>
 
@@ -76,9 +76,9 @@
 
                             <apollomultipleuserselector apollo-id="'adminSelector'" ng-disabled="isOpenManageAppMasterRoleLimit"></apollomultipleuserselector>
                             <br>
-                            <small>{{'App.AppAdminDesc1' | translate }}</small>
+                            <small>{{'App.AppAdminTips1' | translate }}</small>
                             <br>
-                            <small>{{'App.AppAdminDesc2' | translate }}</small>
+                            <small>{{'App.AppAdminTips2' | translate }}</small>
 
                         </div>
                     </div>
