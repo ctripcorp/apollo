@@ -1,5 +1,6 @@
 <!doctype html>
 <html ng-app="open_manage">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" href="../img/config.png">
@@ -9,206 +10,216 @@
     <link rel="stylesheet" type="text/css" media='all' href="../vendor/angular/loading-bar.min.css">
     <link rel="stylesheet" type="text/css" href="../styles/common-style.css">
     <link rel="stylesheet" type="text/css" href="../vendor/select2/select2.min.css">
-    <title>开放平台</title>
+    <title>{{'Open.Manage.Title' | translate }}</title>
 </head>
 
 <body>
 
-<apollonav></apollonav>
+    <apollonav></apollonav>
 
 
-<div class="container-fluid" ng-controller="OpenManageController">
-    <div class="col-md-10 col-md-offset-1 panel">
+    <div class="container-fluid" ng-controller="OpenManageController">
+        <div class="col-md-10 col-md-offset-1 panel">
 
-        <section class="panel-body" ng-show="isRootUser">
-            <!--project admin-->
-            <section class="row">
-                <h5>创建第三方应用
-                    <small>
-                        (说明: 第三方应用可以通过Apollo开放平台来对配置进行管理)
-                    </small>
-                </h5>
-                <hr>
-                <form class="form-horizontal">
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            第三方应用ID</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" ng-model="consumer.appId">
-                            <small>(创建前请先查询第三方应用是否已经申请过)</small>
+            <section class="panel-body" ng-show="isRootUser">
+                <!--project admin-->
+                <section class="row">
+                    <h5>{{'Open.Manage.CreateThirdApp' | translate }}
+                        <small>
+                            {{'Open.Manage.CreateThirdAppTips' | translate }}
+                        </small>
+                    </h5>
+                    <hr>
+                    <form class="form-horizontal">
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Open.Manage.ThirdAppId' | translate }}
+                            </label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model="consumer.appId">
+                                <small>{{'Open.Manage.ThirdAppIdTips' | translate }}</small>
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-info" ng-click="getTokenByAppId()">查询</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 style="color: red" ng-show="consumerToken"
+                                    ng-bind="'Token: ' + consumerToken.token"></h4>
+                            </div>
                         </div>
-                        <div class="col-sm-1">
-                            <button class="btn btn-info" ng-click="getTokenByAppId()">查询</button>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Common.Department' | translate }}
+                            </label>
+                            <div class="col-sm-3">
+                                <select id="organization">
+                                    <option></option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <h4 style="color: red"
-                                ng-show="consumerToken"
-                                ng-bind="'Token: ' + consumerToken.token"></h4>
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Open.Manage.ThirdAppName' | translate }}
+                            </label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model="consumer.name">
+                                <small>{{'Open.Manage.ThirdAppNameTips' | translate }}</small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            部门</label>
-                        <div class="col-sm-3">
-                            <select id="organization">
-                                <option></option>
-                            </select>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Open.Manage.ProjectOwner' | translate }}
+                            </label>
+                            <div class="col-sm-6 J_ownerSelectorPanel">
+                                <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            第三方应用名称</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" ng-model="consumer.name">
-                            <small>(建议格式 xx-yy-zz 例:apollo-server)</small>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            项目负责人</label>
-                        <div class="col-sm-6 J_ownerSelectorPanel">
-                            <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-9">
-                            <button type="submit" class="btn btn-primary"
-                                    ng-disabled="submitBtnDisabled"
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9">
+                                <button type="submit" class="btn btn-primary" ng-disabled="submitBtnDisabled"
                                     ng-click="createConsumer()">
-                                创建
-                            </button>
+                                    {{'Open.Manage.Create' | translate }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </section>
+                    </form>
+                </section>
 
-            <section class="row">
-                <h5>赋权
-                    <small>
-                        (Namespace级别权限包括: 修改、发布Namespace。应用级别权限包括: 创建Namespace、修改或发布应用下任何Namespace)
-                    </small>
-                </h5>
-                <hr>
-                <form class="form-horizontal" ng-submit="assignRoleToConsumer()">
+                <section class="row">
+                    <h5>{{'Open.Manage.GrantPermission' | translate }}
+                        <small>
+                            {{'Open.Manage.GrantPermissionTips' | translate }}
+                        </small>
+                    </h5>
+                    <hr>
+                    <form class="form-horizontal" ng-submit="assignRoleToConsumer()">
 
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            token</label>
-                        <div class="col-sm-5">
-                            <input type="text" class="form-control" ng-model="consumerRole.token" required>
-                        </div>
-                    </div>
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            <apollorequiredfield></apollorequiredfield>
-                            被管理的AppId</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" ng-model="consumerRole.appId" required>
-                        </div>
-                    </div>
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            被管理的Namespace</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" ng-model="consumerRole.namespaceName">
-                            <small>(非properties类型的namespace请加上类型后缀，例如apollo.xml)</small>
-                        </div>
-                    </div>
-                    <div class="form-group" valdr-form-group>
-                        <label class="col-sm-2 control-label">
-                            授权类型
-                        </label>
-                        <div class="col-sm-3">
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions"  ng-value="'NamespaceRole'" ng-model="consumerRole.type">
-                                Namespace
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Open.Manage.Token' | translate }}
                             </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="inlineRadioOptions"  ng-value="'AppRole'" ng-model="consumerRole.type">
-                                App
-                            </label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" ng-model="consumerRole.token" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group" valdr-form-group ng-show="consumerRole.type=='NamespaceRole'">
-                        <label class="col-sm-2 control-label">
-                            环境
-                        </label>
-                        <div class="col-sm-10">
-                            <div>
-                                <label class="checkbox-inline" ng-repeat="env in envs">
-                                    <input type="checkbox" ng-checked="env.checked" ng-click="switchSelect(env)" />
-                                    {{env.env}}
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
+                                {{'Open.Manage.ManagedAppId' | translate }}
+                            </label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model="consumerRole.appId" required>
+                            </div>
+                        </div>
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                    {{'Open.Manage.ManagedNamespace' | translate }}</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model="consumerRole.namespaceName">
+                                <small>{{'Open.Manage.ManagedNamespaceTips' | translate }}</small>
+                            </div>
+                        </div>
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                    {{'Open.Manage.GrantType' | translate }}
+                            </label>
+                            <div class="col-sm-3">
+                                <label class="radio-inline">
+                                    <input type="radio" name="inlineRadioOptions" ng-value="'NamespaceRole'"
+                                        ng-model="consumerRole.type">
+                                        {{'Open.Manage.GrantType.Namespace' | translate }}
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="inlineRadioOptions" ng-value="'AppRole'"
+                                        ng-model="consumerRole.type">
+                                        {{'Open.Manage.GrantType.App' | translate }}
                                 </label>
                             </div>
-                            <small>(不选择则所有环境都有权限，如果提示Namespace's role does not exist，请先打开该Namespace的授权页面触发一下权限的初始化动作)</small>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-9">
-                            <button type="submit" class="btn btn-primary"
-                                    ng-disabled="submitBtnDisabled">
-                                提交
-                            </button>
+                        <div class="form-group" valdr-form-group ng-show="consumerRole.type=='NamespaceRole'">
+                            <label class="col-sm-2 control-label">
+                                    {{'Open.Manage.GrantEnv' | translate }}
+                            </label>
+                            <div class="col-sm-10">
+                                <div>
+                                    <label class="checkbox-inline" ng-repeat="env in envs">
+                                        <input type="checkbox" ng-checked="env.checked" ng-click="switchSelect(env)" />
+                                        {{env.env}}
+                                    </label>
+                                </div>
+                                <small>{{'Open.Manage.GrantEnvTips' | translate }}</small>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9">
+                                <button type="submit" class="btn btn-primary" ng-disabled="submitBtnDisabled">
+                                        {{'Common.Submit' | translate }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </section>
 
             </section>
 
-        </section>
+            <section class="panel-body text-center" ng-if="!isRootUser">
+                <h4>{{'Common.IsRootUser' | translate }}</h4>
+            </section>
 
-        <section class="panel-body text-center" ng-if="!isRootUser">
-            <h4>当前页面只对Apollo管理员开放</h4>
-        </section>
-
+        </div>
     </div>
-</div>
 
-<div ng-include="'../views/common/footer.html'"></div>
+    <div ng-include="'../views/common/footer.html'"></div>
 
-<!-- jquery.js -->
-<script src="../vendor/jquery.min.js" type="text/javascript"></script>
+    <!-- jquery.js -->
+    <script src="../vendor/jquery.min.js" type="text/javascript"></script>
 
-<!--angular-->
-<script src="../vendor/angular/angular.min.js"></script>
-<script src="../vendor/angular/angular-route.min.js"></script>
-<script src="../vendor/angular/angular-resource.min.js"></script>
-<script src="../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
-<script src="../vendor/angular/loading-bar.min.js"></script>
+    <!--angular-->
+    <script src="../vendor/angular/angular.min.js"></script>
+    <script src="../vendor/angular/angular-route.min.js"></script>
+    <script src="../vendor/angular/angular-resource.min.js"></script>
+    <script src="../vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
+    <script src="../vendor/angular/loading-bar.min.js"></script>
+    <script src="../vendor/angular/angular-cookies.min.js"></script>
 
-<!--valdr-->
-<script src="../vendor/valdr/valdr.min.js" type="text/javascript"></script>
-<script src="../vendor/valdr/valdr-message.min.js" type="text/javascript"></script>
+    <script src="../vendor/angular/angular-translate.2.18.1/angular-translate.min.js"></script>
+    <script src="../vendor/angular/angular-translate.2.18.1/angular-translate-loader-static-files.min.js"></script>
+    <script src="../vendor/angular/angular-translate.2.18.1/angular-translate-storage-cookie.min.js"></script>
+    <!--valdr-->
+    <script src="../vendor/valdr/valdr.min.js" type="text/javascript"></script>
+    <script src="../vendor/valdr/valdr-message.min.js" type="text/javascript"></script>
 
-<!-- bootstrap.js -->
-<script src="../vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <!-- bootstrap.js -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 
-<script src="../vendor/lodash.min.js"></script>
+    <script src="../vendor/lodash.min.js"></script>
 
-<script src="../vendor/select2/select2.min.js" type="text/javascript"></script>
-<!--biz-->
-<!--must import-->
-<script type="application/javascript" src="../scripts/app.js"></script>
-<script type="application/javascript" src="../scripts/services/AppService.js"></script>
-<script type="application/javascript" src="../scripts/services/EnvService.js"></script>
-<script type="application/javascript" src="../scripts/services/UserService.js"></script>
-<script type="application/javascript" src="../scripts/services/CommonService.js"></script>
-<script type="application/javascript" src="../scripts/services/PermissionService.js"></script>
-<script type="application/javascript" src="../scripts/services/OrganizationService.js"></script>
-<script type="application/javascript" src="../scripts/services/ConsumerService.js"></script>
+    <script src="../vendor/select2/select2.min.js" type="text/javascript"></script>
+    <!--biz-->
+    <!--must import-->
+    <script type="application/javascript" src="../scripts/app.js"></script>
+    <script type="application/javascript" src="../scripts/services/AppService.js"></script>
+    <script type="application/javascript" src="../scripts/services/EnvService.js"></script>
+    <script type="application/javascript" src="../scripts/services/UserService.js"></script>
+    <script type="application/javascript" src="../scripts/services/CommonService.js"></script>
+    <script type="application/javascript" src="../scripts/services/PermissionService.js"></script>
+    <script type="application/javascript" src="../scripts/services/OrganizationService.js"></script>
+    <script type="application/javascript" src="../scripts/services/ConsumerService.js"></script>
 
-<script type="application/javascript" src="../scripts/AppUtils.js"></script>
+    <script type="application/javascript" src="../scripts/AppUtils.js"></script>
 
-<script type="application/javascript" src="../scripts/PageCommon.js"></script>
-<script type="application/javascript" src="../scripts/directive/directive.js"></script>
-<script type="application/javascript" src="../scripts/valdr.js"></script>
+    <script type="application/javascript" src="../scripts/PageCommon.js"></script>
+    <script type="application/javascript" src="../scripts/directive/directive.js"></script>
+    <script type="application/javascript" src="../scripts/valdr.js"></script>
 
-<script type="application/javascript" src="../scripts/controller/open/OpenManageController.js"></script>
+    <script type="application/javascript" src="../scripts/controller/open/OpenManageController.js"></script>
 </body>
+
 </html>
