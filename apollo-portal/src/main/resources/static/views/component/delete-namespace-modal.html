@@ -5,22 +5,22 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">
-                    删除Namespace
+                        {{'Component.DeleteNamespace.Title' | translate }}
                 </h4>
             </div>
             <div class="modal-body form-horizontal" ng-show="toDeleteNamespace.isPublic">
-                删除Namespace将导致实例获取不到此Namespace的配置，确定要删除吗?
+                    {{'Component.DeleteNamespace.PublicContent' | translate }}
             </div>
             <div class="modal-body form-horizontal" ng-show="!toDeleteNamespace.isPublic">
-                删除私有Namespace将导致实例获取不到此Namespace的配置，且页面会提示缺失Namespace（除非使用管理员工具删除AppNamespace），确定要删除吗?
+                    {{'Component.DeleteNamespace.PrivateContent' | translate }}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">
-                    取消
+                        {{'Common.Cancel' | translate }}
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal"
                 ng-click="doDeleteNamespace()">
-                    确认
+                {{'Common.Ok' | translate }}
                 </button>
             </div>
         </div>

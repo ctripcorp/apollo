@@ -31,6 +31,32 @@
   "Common.Ok": "确定",
   "Common.Search": "查询",
   "Common.IsRootUser": "当前页面只对Apollo管理员开放",
+  
+  
+  
+  "Component.DeleteNamespace.Title":"删除Namespace",
+  "Component.DeleteNamespace.PublicContent":"删除Namespace将导致实例获取不到此Namespace的配置，确定要删除吗?",
+  "Component.DeleteNamespace.PrivateContent":"删除私有Namespace将导致实例获取不到此Namespace的配置，且页面会提示缺失Namespace（除非使用管理员工具删除AppNamespace），确定要删除吗?",
+
+  "Component.GrayscalePublishRule.Title":"编辑灰度规则",
+  "Component.GrayscalePublishRule.AppId":"灰度的AppId",
+  "Component.GrayscalePublishRule.AcceptRule":"灰度应用规则",
+  "Component.GrayscalePublishRule.AcceptPartInstance":"应用到部分实例",
+  "Component.GrayscalePublishRule.AcceptAllInstance":"应用到所有的实例",
+  "Component.GrayscalePublishRule.IP":"灰度的IP",
+  "Component.GrayscalePublishRule.AppIdFilterTips":"(实例列表会根据输入的AppId自动过滤)",
+  "Component.GrayscalePublishRule.IpTips":"没找到你想要的IP？可以",
+  "Component.GrayscalePublishRule.EnterIp":"手动输入IP",
+  "Component.GrayscalePublishRule.EnterIpTips":"输入IP列表，英文逗号隔开，输入完后点击添加按钮",
+  "Component.GrayscalePublishRule.Add":"添加",
+
+
+
+
+
+
+
+
   "Login.Login": "登录",
   "Login.UserNameOrPasswordIncorrect": "用户名或密码错误",
   "Index.MyProject": "我的项目",
