@@ -25,7 +25,7 @@
             <h5>我的项目</h5>
         </aside>
         <aside class="media-body">
-            <div class="app-panel col-md-2 text-center" ng-click="goToCreateAppPage()">
+            <div class="app-panel col-md-2 text-center" ng-click="goToCreateAppPage()" ng-if="hasCreateApplicationPermission">
                 <div href="#" class="thumbnail create-btn hover cursor-pointer">
                     <img src="img/plus-white.png"/>
                     <h5>创建项目</h5>

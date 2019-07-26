@@ -196,6 +196,9 @@ appService.service('PermissionService', ['$resource', '$q', function ($resource,
         init_app_namespace_permission: function (appId, namespace) {
             return initAppNamespacePermission(appId, namespace);
         },
+        has_manage_app_master_permission: function (appId) {
+            return hasAppPermission(appId, 'ManageAppMaster');
+        },
         has_create_namespace_permission: function (appId) {
             return hasAppPermission(appId, 'CreateNamespace');
         },

@@ -318,6 +318,21 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![随手科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sui.png) 
 ![万谷盛世](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aixiangdao.png) 
 ![云账房](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/yunzhangfang.png) 
+![浙江远图互联](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/yuantutech.png) 
+![青客公寓](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/qk365.png) 
+![东方财富](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/eastmoney.png) 
+![极客修](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jikexiu.png) 
+![美市科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/meix.png) 
+![中通快递](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zto.png) 
+![易流科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/e6yun.png) 
+![实习僧](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xiaoyuanzhao.png) 
+![达令家](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/dalingjia.png) 
+![寺库](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/secoo.png) 
+![连连支付](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/lianlianpay.png) 
+![众安保险](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zhongan.png) 
+![360金融](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/360jinrong.png) 
+![中航服商旅](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/caschina.png) 
+![贝壳](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ke.png) 
 
 # Awards
 

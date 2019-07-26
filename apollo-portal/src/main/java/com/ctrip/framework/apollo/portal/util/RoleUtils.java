@@ -86,5 +86,11 @@ public class RoleUtils {
     return STRING_JOINER.join(appId, ConfigConsts.NAMESPACE_APPLICATION);
   }
 
+  public static String buildCreateApplicationRoleName(String permissionType, String permissionTargetId) {
+    return STRING_JOINER.join(permissionType, permissionTargetId);
+  }
 
+  public static String buildManageAppMasterRoleName(String permissionType, String permissionTargetId) {
+    return STRING_JOINER.join(permissionType, permissionTargetId);
+  }
 }
