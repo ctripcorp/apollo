@@ -5,13 +5,12 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
 
-                <h4 class="modal-title">查看</h4>
+                <h4 class="modal-title">{{'Component.ShowText.Title' | translate }}</h4>
             </div>
-            <pre class="modal-body no-radius" style="margin-bottom: 0"
-                 ng-show="!jsonObject" ng-bind="text">
+            <pre class="modal-body no-radius" style="margin-bottom: 0" ng-show="!jsonObject" ng-bind="text">
             </pre>
-            <pre class="modal-body no-radius" style="margin-bottom: 0"
-                 ng-show="jsonObject" ng-bind="jsonObject | json:4">
+            <pre class="modal-body no-radius" style="margin-bottom: 0" ng-show="jsonObject"
+                ng-bind="jsonObject | json:4">
             </pre>
         </div>
     </div>
