@@ -463,7 +463,7 @@
   "SystemInfo.Title": "系统信息",
   "SystemInfo.SystemVersion": "系统版本",
   "SystemInfo.Tips1": "环境列表来自于ApolloPortalDB.ServerConfig中的<strong>apollo.portal.envs</strong>配置，可以到<a href=\"{{serverConfigUrl}}\">系统参数</a>页面配置，更多信息可以参考<a href=\"{{wikiUrl}}\">分布式部署指南</a>中的<strong>apollo.portal.envs - 可支持的环境列表</strong>章节。",
-  "SystemInfo.Tips2": "Meta server地址展示了该环境配置的meta server信息，更多信息可以参考<a href=\"wikiUrl\">分布式部署指南</a>中的<strong>配置apollo-portal的meta service信息</strong>章节。",
+  "SystemInfo.Tips2": "Meta server地址展示了该环境配置的meta server信息，更多信息可以参考<a href=\"{{wikiUrl}}\">分布式部署指南</a>中的<strong>配置apollo-portal的meta service信息</strong>章节。",
   "SystemInfo.Active": "Active",
   "SystemInfo.ActiveTips": "（当前环境状态异常，请结合下方系统信息和AdminService的Check Health结果排查）",
   "SystemInfo.MetaServerAddress": "Meta server地址",
