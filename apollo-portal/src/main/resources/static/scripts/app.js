@@ -1,16 +1,20 @@
 /**utils*/
-var appUtil = angular.module('app.util', ['toastr']);
-/**service module 定义*/
-var appService = angular.module('app.service', ['ngResource', 'ngCookies', 'pascalprecht.translate'])
+var appUtil = angular.module('app.util', ['toastr', 'ngCookies', 'pascalprecht.translate'])
     .config(['$translateProvider', function ($translateProvider) {
-        $translateProvider.preferredLanguage('en');
+
         // $translateProvider.useMissingTranslationHandlerLog();
         $translateProvider.useCookieStorage();
         $translateProvider.useStaticFilesLoader({
             prefix: '/i18n/',
             suffix: '.json'
         });
+        $translateProvider.preferredLanguage('en');
+        $translateProvider.fallbackLanguage('zh-cn');
+
     }]);
+/**service module 定义*/
+var appService = angular.module('app.service', ['ngResource', 'app.util'])
+
 
 /** directive */
 var directive_module = angular.module('apollo.directive', ['app.service', 'app.util', 'toastr', 'pascalprecht.translate']);
@@ -21,7 +25,7 @@ var index_module = angular.module('index', ['toastr', 'app.service', 'apollo.dir
 //项目主页
 var application_module = angular.module('application', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar', 'valdr', 'ui.ace', 'ngSanitize']);
 //创建项目页面
-var app_module = angular.module('create_app', ['apollo.directive', 'toastr', 'app.service', 'app.util', 'angular-loading-bar', 'valdr']);
+var app_module = angular.module('create_app', ['apollo.directive', 'toastr', 'app.service', 'app.util', 'angular-loading-bar', 'valdr','pascalprecht.translate']);
 //配置同步页面
 var sync_item_module = angular.module('sync_item', ['app.service', 'apollo.directive', 'app.util', 'toastr', 'angular-loading-bar']);
 // 比较页面

@@ -1,6 +1,6 @@
 /** navbar */
 directive_module.directive('apollonav',
-    function ($compile, $window, toastr, AppUtil, AppService, EnvService,$translate,
+    function ($compile, $window, $translate, toastr, AppUtil, AppService, EnvService,
         UserService, CommonService, PermissionService) {
         return {
             restrict: 'E',
@@ -14,7 +14,7 @@ directive_module.directive('apollonav',
                 });
 
                 $('#app-search-list').select2({
-                    placeholder: '搜索项目(AppId、项目名)',
+                    placeholder: $translate.instant('ApolloConfirmDialog.SearchPlaceHolder'),
                     ajax: {
                         url: "/apps/search",
                         dataType: 'json',
@@ -82,7 +82,7 @@ directive_module.directive('apollonav',
                     scope.hasRootPermission = result.hasPermission;
                 })
 
-                scope.changeLanguage=function(lang){
+                scope.changeLanguage = function (lang) {
                     $translate.use(lang)
                 }
             }
@@ -185,7 +185,7 @@ directive_module.directive('apollorequiredfield', function ($compile, $window) {
 });
 
 /**  确认框 */
-directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce) {
+directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce,$translate) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/confirm-dialog.html',
@@ -208,7 +208,7 @@ directive_module.directive('apolloconfirmdialog', function ($compile, $window, $
             });
 
             if (!scope.confirmBtnText) {
-                scope.confirmBtnText = '确认';
+                scope.confirmBtnText = $translate.instant('ApolloConfirmDialog.DefaultConfirmBtnName');
             }
 
             scope.confirm = function () {

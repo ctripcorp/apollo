@@ -1,7 +1,7 @@
 directive_module.directive('deletenamespacemodal', deleteNamespaceModalDirective);
 
-function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManager,
-                                       PermissionService, UserService, NamespaceService) {
+function deleteNamespaceModalDirective($window, $q, $translate, toastr, AppUtil, EventManager,
+    PermissionService, UserService, NamespaceService) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/delete-namespace-modal.html',
@@ -11,6 +11,8 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
             env: '='
         },
         link: function (scope) {
+
+
 
             scope.doDeleteNamespace = doDeleteNamespace;
 
@@ -67,8 +69,9 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
                             scope.isAppMasterUser = isAppMasterUser;
 
                             if (!isAppMasterUser) {
-                                toastr.error("您没有项目管理员权限，只有管理员才能删除Namespace，请找项目管理员 [" + scope.masterUsers.join("，")
-                                             + "] 删除Namespace", "删除失败");
+                                toastr.error($translate.instant('Config.DeleteNamespaceNoPermissionFailedTitle', {
+                                    usres: scope.masterUsers.join(", ")
+                                }), $translate.instant('Config.DeleteNamespaceNoPermissionFailedTitle'));
                                 d.reject();
                             } else {
                                 d.resolve();
@@ -110,8 +113,8 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
 
                 var publicAppId = namespace.baseInfo.appId;
                 NamespaceService.getPublicAppNamespaceAllNamespaces(scope.env,
-                                                                    namespace.baseInfo.namespaceName,
-                                                                    0, 20)
+                    namespace.baseInfo.namespaceName,
+                    0, 20)
                     .then(function (associatedNamespaces) {
                         var otherAppAssociatedNamespaces = [];
                         associatedNamespaces.forEach(function (associatedNamespace) {
@@ -144,17 +147,17 @@ function deleteNamespaceModalDirective($window, $q, toastr, AppUtil, EventManage
             function doDeleteNamespace() {
                 var toDeleteNamespace = scope.toDeleteNamespace;
                 NamespaceService.deleteNamespace(toDeleteNamespace.baseInfo.appId, scope.env,
-                                                 toDeleteNamespace.baseInfo.clusterName,
-                                                 toDeleteNamespace.baseInfo.namespaceName)
+                    toDeleteNamespace.baseInfo.clusterName,
+                    toDeleteNamespace.baseInfo.namespaceName)
                     .then(function () {
-                        toastr.success("删除成功");
+                        toastr.success($translate.instant('Common.Deleted'));
 
                         setTimeout(function () {
                             $window.location.reload();
                         }, 1000);
 
                     }, function (result) {
-                        AppUtil.showErrorMsg(result, "删除失败");
+                        AppUtil.showErrorMsg(result, $translate.instant('Common.DeleteFailed'));
                     })
 
             }

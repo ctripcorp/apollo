@@ -1,9 +1,9 @@
 application_module.controller("ConfigNamespaceController",
-    ['$rootScope', '$scope', 'toastr', 'AppUtil', 'EventManager', 'ConfigService',
+    ['$rootScope', '$scope', '$translate', 'toastr', 'AppUtil', 'EventManager', 'ConfigService',
         'PermissionService', 'UserService', 'NamespaceBranchService', 'NamespaceService',
         controller]);
 
-function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigService,
+function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManager, ConfigService,
     PermissionService, UserService, NamespaceBranchService, NamespaceService) {
 
     $scope.rollback = rollback;
@@ -27,9 +27,6 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
         initRole();
         initUser();
         initPublishInfo();
-    }
-    function initDialogTranslateContent() {
-        
     }
     function initRole() {
         PermissionService.get_app_role_users($rootScope.pageContext.appId)
@@ -112,7 +109,7 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
 
                     initPublishInfo();
                 }, function (result) {
-                    toastr.error(AppUtil.errorMsg(result), "加载配置信息出错");
+                    toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.LoadingAllNamespaceError'));
                 });
     }
 
@@ -139,7 +136,7 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
                     initPublishInfo();
 
                 }, function (result) {
-                    toastr.error(AppUtil.errorMsg(result), "加载配置信息出错");
+                    toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.LoadingAllNamespaceError'));
                 });
     }
 
@@ -171,13 +168,13 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             $scope.toOperationNamespace.baseInfo.namespaceName,
             toDeleteItemId).then(
                 function (result) {
-                    toastr.success("删除成功!");
+                    toastr.success($translate.instant('Config.Deleted'));
                     EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE,
                         {
                             namespace: $scope.toOperationNamespace
                         });
                 }, function (result) {
-                    toastr.error(AppUtil.errorMsg(result), "删除失败");
+                    toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.DeleteFailed'));
                 });
     }
 
@@ -281,13 +278,13 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             $rootScope.pageContext.clusterName,
             toCreateBranchNamespace.baseInfo.namespaceName)
             .then(function (result) {
-                toastr.success("创建灰度成功");
+                toastr.success($translate.instant('Config.GrayscaleCreated'));
                 EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE,
                     {
                         namespace: toCreateBranchNamespace
                     });
             }, function (result) {
-                toastr.error(AppUtil.errorMsg(result), "创建灰度失败");
+                toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.GrayscaleCreateFailed'));
             })
 
     }
@@ -307,13 +304,13 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
             $scope.toDeleteBranch.baseInfo.clusterName
         )
             .then(function (result) {
-                toastr.success("删除成功");
+                toastr.success($translate.instant('Config.BranchDeleted'));
                 EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE,
                     {
                         namespace: $scope.toDeleteBranch.parentNamespace
                     });
             }, function (result) {
-                toastr.error(AppUtil.errorMsg(result), "删除分支失败");
+                toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.BranchDeleteFailed'));
             })
 
     }
@@ -358,13 +355,11 @@ function controller($rootScope, $scope, toastr, AppUtil, EventManager, ConfigSer
                 var url = '/config.html?#/appid=' + appId + '&env=' + $scope.pageContext.env + '&cluster='
                     + clusterName;
 
-                namespaceTips.push("<a target='_blank' href=\'" + url + "\'>AppId = " + appId + ", 集群 = " + clusterName
+                namespaceTips.push("<a target='_blank' href=\'" + url + "\'>AppId = " + appId + ", Cluster = " + clusterName
                     + ", Namespace = " + namespace.namespaceName + "</a>");
             });
 
-            $scope.deleteNamespaceContext.detailReason =
-                "以下应用已关联此公共Namespace，必须先删除全部已关联的Namespace才能删除公共Namespace。<br>"
-                + namespaceTips.join("<br>");
+            $scope.deleteNamespaceContext.detailReason = $translate.instant('Config.DeleteNamespaceFailedTips') + "<br>" + namespaceTips.join("<br>");
 
             AppUtil.showModal('#deleteNamespaceDenyForPublicNamespaceDialog');
         }
