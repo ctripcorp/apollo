@@ -56,7 +56,7 @@ public class PortalSettings {
         Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("EnvHealthChecker", true));
 
     healthCheckService
-        .scheduleWithFixedDelay(new HealthCheckTask(applicationContext), 1000, HEALTH_CHECK_INTERVAL,
+        .scheduleWithFixedDelay(new HealthCheckTask(applicationContext), 5000, HEALTH_CHECK_INTERVAL,
                                 TimeUnit.MILLISECONDS);
 
   }
