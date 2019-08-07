@@ -47,6 +47,7 @@
                             <small>（应用唯一标识）</small>
                         </div>
                     </div>
+
                     <div class="form-group" valdr-form-group>
                         <label class="col-sm-3 control-label">
                             <apollorequiredfield></apollorequiredfield>
@@ -61,7 +62,8 @@
                             <apollorequiredfield></apollorequiredfield>
                             应用负责人</label>
                         <div class="col-sm-6 J_ownerSelectorPanel">
-                            <apollouserselector apollo-id="'ownerSelector'"></apollouserselector>
+                            <apollouserselector apollo-id="'ownerSelector'"  disabled="isOpenManageAppMasterRoleLimit"></apollouserselector>
+                            <small style="color: maroon" ng-if="isOpenManageAppMasterRoleLimit">(开启应用管理员添加限制后，应用负责人和项目管理员默认为本账号，不可选择)</small>
                         </div>
                     </div>
 
@@ -71,7 +73,7 @@
                         </label>
                         <div class="col-sm-9 J_adminSelectorPanel">
 
-                            <apollomultipleuserselector apollo-id="'adminSelector'"></apollomultipleuserselector>
+                            <apollomultipleuserselector apollo-id="'adminSelector'" ng-disabled="isOpenManageAppMasterRoleLimit"></apollomultipleuserselector>
                             <br>
                             <small>(应用负责人默认具有项目管理员权限，</small>
                             <br>
@@ -121,6 +123,8 @@
 <script type="application/javascript" src="scripts/services/CommonService.js"></script>
 <script type="application/javascript" src="scripts/services/PermissionService.js"></script>
 <script type="application/javascript" src="scripts/services/OrganizationService.js"></script>
+<script type="application/javascript" src="scripts/services/SystemRoleService.js"></script>
+<script type="application/javascript" src="scripts/services/UserService.js"></script>
 
 <script type="application/javascript" src="scripts/AppUtils.js"></script>
 <script type="application/javascript" src="scripts/directive/directive.js"></script>

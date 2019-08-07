@@ -223,6 +223,10 @@ public class ConfigUtil {
       // 3. Get from server.properties
       cacheRoot = Foundation.server().getProperty("apollo.cacheDir", null);
     }
+    if (Strings.isNullOrEmpty(cacheRoot)) {
+      // 4. Get from app.properties
+      cacheRoot = Foundation.app().getProperty("apollo.cacheDir", null);
+    }
 
     return cacheRoot;
   }

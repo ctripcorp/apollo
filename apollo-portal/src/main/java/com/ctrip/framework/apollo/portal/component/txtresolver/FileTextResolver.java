@@ -17,7 +17,7 @@ public class FileTextResolver implements ConfigTextResolver {
   @Override
   public ItemChangeSets resolve(long namespaceId, String configText, List<ItemDTO> baseItems) {
     ItemChangeSets changeSets = new ItemChangeSets();
-    if (StringUtils.isEmpty(configText)) {
+    if (CollectionUtils.isEmpty(baseItems) && StringUtils.isEmpty(configText)) {
       return changeSets;
     }
     if (CollectionUtils.isEmpty(baseItems)) {

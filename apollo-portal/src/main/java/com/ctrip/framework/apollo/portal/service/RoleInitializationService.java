@@ -12,4 +12,8 @@ public interface RoleInitializationService {
 
   public void initNamespaceSpecificEnvRoles(String appId, String namespaceName, String env, String operator);
 
+  public void initCreateAppRole();
+
+  public void initManageAppMasterRole(String appId, String operator);
+
 }

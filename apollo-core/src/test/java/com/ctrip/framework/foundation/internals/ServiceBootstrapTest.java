@@ -1,5 +1,6 @@
 package com.ctrip.framework.foundation.internals;
 
+import com.ctrip.framework.apollo.core.spi.Ordered;
 import org.junit.Test;
 
 import java.util.ServiceConfigurationError;
@@ -36,6 +37,17 @@ public class ServiceBootstrapTest {
     ServiceBootstrap.loadFirst(Interface5.class);
   }
 
+  @Test
+  public void loadPrimarySuccessfully() {
+    Interface6 service = ServiceBootstrap.loadPrimary(Interface6.class);
+    assertTrue(service instanceof Interface6Impl1);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void loadPrimaryWithServiceFileButNoServiceImpl() {
+    ServiceBootstrap.loadPrimary(Interface7.class);
+  }
+
   private interface Interface1 {
   }
 
@@ -52,5 +64,25 @@ public class ServiceBootstrapTest {
   }
 
   private interface Interface5 {
+  }
+
+  private interface Interface6 extends Ordered {
+  }
+
+  public static class Interface6Impl1 implements Interface6 {
+    @Override
+    public int getOrder() {
+      return 1;
+    }
+  }
+
+  public static class Interface6Impl2 implements Interface6 {
+    @Override
+    public int getOrder() {
+      return 2;
+    }
+  }
+
+  private interface Interface7 extends Ordered {
   }
 }

@@ -6,6 +6,7 @@ import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
 import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
+import com.ctrip.framework.apollo.portal.service.SystemRoleManagerService;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -169,6 +170,14 @@ public class PortalConfig extends RefreshableConfig {
 
   public boolean canAppAdminCreatePrivateNamespace() {
     return getBooleanProperty("admin.createPrivateNamespace.switch", true);
+  }
+
+  public boolean isCreateApplicationPermissionEnabled() {
+    return getBooleanProperty(SystemRoleManagerService.CREATE_APPLICATION_LIMIT_SWITCH_KEY, false);
+  }
+
+  public boolean isManageAppMasterPermissionEnabled() {
+    return getBooleanProperty(SystemRoleManagerService.MANAGE_APP_MASTER_LIMIT_SWITCH_KEY, false);
   }
 
   /***
