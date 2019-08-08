@@ -23,6 +23,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,8 @@ import org.springframework.context.annotation.Bean;
  * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
  * @since 2017/12/20.
  */
-public class SpringValueProcessor extends ApolloProcessor implements BeanFactoryPostProcessor, BeanFactoryAware {
+public class SpringValueProcessor extends ApolloProcessor implements BeanFactoryPostProcessor,
+    BeanFactoryAware {
 
   private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
@@ -54,7 +56,8 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
       throws BeansException {
-    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled() && beanFactory instanceof BeanDefinitionRegistry) {
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()
+        && beanFactory instanceof BeanDefinitionRegistry) {
       beanName2SpringValueDefinitions = SpringValueDefinitionProcessor
           .getBeanName2SpringValueDefinitions((BeanDefinitionRegistry) beanFactory);
     }
@@ -83,12 +86,10 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
     if (keys.isEmpty()) {
       return;
     }
-
-    for (String key : keys) {
-      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, field, false);
-      springValueRegistry.register(beanFactory, key, springValue);
-      logger.debug("Monitoring {}", springValue);
-    }
+    SpringValue springValue = new SpringValue(value.value(), bean, beanName, field, false,
+        ((ConfigurableBeanFactory) beanFactory).resolveEmbeddedValue(value.value()));
+    springValueRegistry.register(beanFactory, springValue);
+    logger.debug("Monitoring {}", springValue);
   }
 
   @Override
@@ -114,11 +115,10 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
       return;
     }
 
-    for (String key : keys) {
-      SpringValue springValue = new SpringValue(key, value.value(), bean, beanName, method, false);
-      springValueRegistry.register(beanFactory, key, springValue);
-      logger.info("Monitoring {}", springValue);
-    }
+    SpringValue springValue = new SpringValue(value.value(), bean, beanName, method,
+        false, ((ConfigurableBeanFactory) beanFactory).resolveEmbeddedValue(value.value()));
+    springValueRegistry.register(beanFactory, springValue);
+    logger.info("Monitoring {}", springValue);
   }
 
 
@@ -137,9 +137,10 @@ public class SpringValueProcessor extends ApolloProcessor implements BeanFactory
         if (method == null) {
           continue;
         }
-        SpringValue springValue = new SpringValue(definition.getKey(), definition.getPlaceholder(),
-            bean, beanName, method, false);
-        springValueRegistry.register(beanFactory, definition.getKey(), springValue);
+        SpringValue springValue = new SpringValue(definition.getPlaceholder(),
+            bean, beanName, method, false, ((ConfigurableBeanFactory) beanFactory)
+            .resolveEmbeddedValue(definition.getPlaceholder()));
+        springValueRegistry.register(beanFactory, springValue);
         logger.debug("Monitoring {}", springValue);
       } catch (Throwable ex) {
         logger.error("Failed to enable auto update feature for {}.{}", bean.getClass(),

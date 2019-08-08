@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -58,16 +57,14 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
     boolean accessible = field.isAccessible();
     field.setAccessible(true);
     ReflectionUtils
-        .setField(field, bean, parseJsonValue((String)propertyValue, field.getGenericType()));
+        .setField(field, bean, parseJsonValue((String) propertyValue, field.getGenericType()));
     field.setAccessible(accessible);
 
-    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
-      Set<String> keys = placeholderHelper.extractPlaceholderKeys(placeholder);
-      for (String key : keys) {
-        SpringValue springValue = new SpringValue(key, placeholder, bean, beanName, field, true);
-        springValueRegistry.register(beanFactory, key, springValue);
-        logger.debug("Monitoring {}", springValue);
-      }
+    if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {     //只通过比较前后值来判断是否更新
+      SpringValue springValue = new SpringValue(placeholder, bean, beanName, field,
+          true, beanFactory);
+      springValueRegistry.register(beanFactory, springValue);
+      logger.debug("Monitoring {}", springValue);
     }
   }
 
@@ -94,17 +91,15 @@ public class ApolloJsonValueProcessor extends ApolloProcessor implements BeanFac
 
     boolean accessible = method.isAccessible();
     method.setAccessible(true);
-    ReflectionUtils.invokeMethod(method, bean, parseJsonValue((String)propertyValue, types[0]));
+    ReflectionUtils.invokeMethod(method, bean, parseJsonValue((String) propertyValue, types[0]));
     method.setAccessible(accessible);
 
     if (configUtil.isAutoUpdateInjectedSpringPropertiesEnabled()) {
-      Set<String> keys = placeholderHelper.extractPlaceholderKeys(placeHolder);
-      for (String key : keys) {
-        SpringValue springValue = new SpringValue(key, apolloJsonValue.value(), bean, beanName,
-            method, true);
-        springValueRegistry.register(beanFactory, key, springValue);
-        logger.debug("Monitoring {}", springValue);
-      }
+      SpringValue springValue = new SpringValue(apolloJsonValue.value(),
+          bean, beanName,
+          method, true, beanFactory);
+      springValueRegistry.register(beanFactory, springValue);
+      logger.debug("Monitoring {}", springValue);
     }
   }
 
