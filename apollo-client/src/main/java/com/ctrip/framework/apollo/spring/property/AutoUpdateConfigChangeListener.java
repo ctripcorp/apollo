@@ -1,15 +1,11 @@
 package com.ctrip.framework.apollo.spring.property;
 
 import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.enums.PropertyChangeType;
-import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.google.gson.Gson;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +18,10 @@ import org.springframework.util.CollectionUtils;
 /**
  * Create by zhangzheng on 2018/3/6
  */
-public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
-  private static final Logger logger = LoggerFactory.getLogger(AutoUpdateConfigChangeListener.class);
+public class AutoUpdateConfigChangeListener implements ConfigChangeListener {
+
+  private static final Logger logger = LoggerFactory
+      .getLogger(AutoUpdateConfigChangeListener.class);
 
   private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;
   private final Environment environment;
@@ -33,7 +31,8 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
   private final SpringValueRegistry springValueRegistry;
   private final Gson gson;
 
-  public AutoUpdateConfigChangeListener(Environment environment, ConfigurableListableBeanFactory beanFactory){
+  public AutoUpdateConfigChangeListener(Environment environment,
+      ConfigurableListableBeanFactory beanFactory) {
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
     this.beanFactory = beanFactory;
     this.typeConverter = this.beanFactory.getTypeConverter();
@@ -49,27 +48,30 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
     if (CollectionUtils.isEmpty(keys)) {
       return;
     }
-    for (String key : keys) {
-      // 1. check whether the changed key is relevant
-      Collection<SpringValue> targetValues = springValueRegistry.get(beanFactory, key);
-      if (targetValues == null || targetValues.isEmpty()) {
-        continue;
-      }
-
-      // 2. update the value
-      for (SpringValue val : targetValues) {
-        updateSpringValue(val);
-      }
+    Set<SpringValue> springValueSet = springValueRegistry.get(beanFactory);
+    if (springValueSet == null || springValueSet.isEmpty()) {
+      return;
+    }
+    for (SpringValue springValue : springValueSet) {
+      updateSpringValue(springValue);
     }
   }
 
   private void updateSpringValue(SpringValue springValue) {
     try {
-      Object value = resolvePropertyValue(springValue);
-      springValue.update(value);
-
-      logger.info("Auto update apollo changed value successfully, new value: {}, {}", value,
-          springValue);
+      String resolveEmbeddedValue = beanFactory.resolveEmbeddedValue(springValue.getPlaceholder());
+      if (!springValue.shouldUpdate(resolveEmbeddedValue)) {
+        return;
+      }
+      // value will never be null, as @Value and @ApolloJsonValue will not allow that
+      Object propertyValue = placeholderHelper
+          .resolvePropertyValue(beanFactory, springValue.getBeanName(),
+              springValue.getPlaceholder());
+      Object value = resolvePropertyValue(springValue, propertyValue);
+      if (springValue.updateIfNecessary(value, resolveEmbeddedValue)) {
+        logger.info("Auto update apollo changed value successfully, new value: {}, {}", value,
+            springValue);
+      }
     } catch (Throwable ex) {
       logger.error("Auto update apollo changed value failed, {}", springValue.toString(), ex);
     }
@@ -77,15 +79,16 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
 
   /**
    * Logic transplanted from DefaultListableBeanFactory
-   * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#doResolveDependency(org.springframework.beans.factory.config.DependencyDescriptor, java.lang.String, java.util.Set, org.springframework.beans.TypeConverter)
+   *
+   * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#doResolveDependency(org.springframework.beans.factory.config.DependencyDescriptor,
+   * java.lang.String, java.util.Set, org.springframework.beans.TypeConverter)
    */
-  private Object resolvePropertyValue(SpringValue springValue) {
+  private Object resolvePropertyValue(SpringValue springValue, Object propertyValue) {
     // value will never be null, as @Value and @ApolloJsonValue will not allow that
-    Object value = placeholderHelper
-        .resolvePropertyValue(beanFactory, springValue.getBeanName(), springValue.getPlaceholder());
+    Object value = propertyValue;
 
     if (springValue.isJson()) {
-      value = parseJsonValue((String)value, springValue.getGenericType());
+      value = parseJsonValue((String) value, springValue.getGenericType());
     } else {
       if (springValue.isField()) {
         // org.springframework.beans.TypeConverter#convertIfNecessary(java.lang.Object, java.lang.Class, java.lang.reflect.Field) is available from Spring 3.2.0+
@@ -103,6 +106,7 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
 
     return value;
   }
+
 
   private Object parseJsonValue(String json, Type targetType) {
     try {
