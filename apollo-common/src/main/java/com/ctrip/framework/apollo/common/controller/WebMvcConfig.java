@@ -27,7 +27,6 @@ public class WebMvcConfig implements WebMvcConfigurer, WebServerFactoryCustomize
   @Override
   public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
     configurer.favorPathExtension(false);
-    //configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.APPLICATION_JSON_UTF8);
   }
 
   @Override
