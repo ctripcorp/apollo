@@ -114,6 +114,14 @@ public class ItemService {
     return itemAPI.loadItem(env, appId, clusterName, namespaceName, key);
   }
 
+  public ItemDTO loadItemById(Env env, long itemId) {
+    ItemDTO item = itemAPI.loadItemById(env, itemId);
+    if (item == null) {
+      throw new BadRequestException("item not found for itemId " + itemId);
+    }
+    return item;
+  }
+
   public void syncItems(List<NamespaceIdentifier> comparedNamespaces, List<ItemDTO> sourceItems) {
     List<ItemDiffs> itemDiffs = compare(comparedNamespaces, sourceItems);
     for (ItemDiffs itemDiff : itemDiffs) {
