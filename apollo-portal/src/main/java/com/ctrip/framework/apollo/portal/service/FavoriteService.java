@@ -67,6 +67,14 @@ public class FavoriteService {
       throw new BadRequestException("user id and app id can't be empty at the same time");
     }
 
+    if (!isUserIdEmpty) {
+      UserInfo loginUser = userInfoHolder.getUser();
+      //user can only search his own favorite app
+      if (!Objects.equals(loginUser.getUserId(), userId)) {
+        userId = loginUser.getUserId();
+      }
+    }
+
     //search by userId
     if (isAppIdEmpty && !isUserIdEmpty) {
       return favoriteRepository.findByUserIdOrderByPositionAscDataChangeCreatedTimeAsc(userId, page);
