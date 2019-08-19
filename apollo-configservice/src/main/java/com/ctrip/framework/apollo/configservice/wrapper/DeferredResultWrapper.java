@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.configservice.wrapper;
 
-import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -17,7 +16,6 @@ import java.util.Map;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DeferredResultWrapper {
-  private final BizConfig bizConfig;
   private static final ResponseEntity<List<ApolloConfigNotification>>
       NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
@@ -25,9 +23,8 @@ public class DeferredResultWrapper {
   private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> result;
 
 
-  public DeferredResultWrapper(BizConfig bizConfig) {
-    this.bizConfig = bizConfig;
-    result = new DeferredResult<>(bizConfig.longPollingTimeout(), NOT_MODIFIED_RESPONSE_LIST);
+  public DeferredResultWrapper(long timeout) {
+    result = new DeferredResult<>(timeout, NOT_MODIFIED_RESPONSE_LIST);
   }
 
   public void recordNamespaceNameNormalizedResult(String originalNamespaceName, String normalizedNamespaceName) {
