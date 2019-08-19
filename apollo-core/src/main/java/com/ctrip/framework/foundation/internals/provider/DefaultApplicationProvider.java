@@ -23,7 +23,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   @Override
   public void initialize() {
     try {
-      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(APP_PROPERTIES_CLASSPATH);
+      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
       if (in == null) {
         in = DefaultApplicationProvider.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
       }

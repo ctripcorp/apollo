@@ -338,6 +338,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![Yeahmobi易点天下](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/yeahmobi.png) 
 ![北京登云美业网络科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/idengyun.png) 
 ![金和网络](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jinher.png) 
+![中移（杭州）信息技术有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/komect.png) 
+![北森](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/beisen.png) 
 
 # Awards
 
