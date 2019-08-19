@@ -29,6 +29,8 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 - [106.12.25.204:8070](http://106.12.25.204:8070/)
 - 账号/密码:apollo/admin
 
+> 如访问github速度缓慢，可以访问[gitee镜像](https://gitee.com/nobodyiam/apollo)，不定期同步
+
 # Screenshots
 ![配置界面](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/apollo-home-screenshot.png)
 
@@ -328,6 +330,16 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![实习僧](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xiaoyuanzhao.png) 
 ![达令家](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/dalingjia.png) 
 ![寺库](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/secoo.png) 
+![连连支付](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/lianlianpay.png) 
+![众安保险](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zhongan.png) 
+![360金融](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/360jinrong.png) 
+![中航服商旅](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/caschina.png) 
+![贝壳](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ke.png) 
+![Yeahmobi易点天下](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/yeahmobi.png) 
+![北京登云美业网络科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/idengyun.png) 
+![金和网络](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jinher.png) 
+![中移（杭州）信息技术有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/komect.png) 
+![北森](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/beisen.png) 
 
 # Awards
 

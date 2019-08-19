@@ -271,7 +271,7 @@ public class AuthConfiguration {
       http.csrf().disable();
       http.headers().frameOptions().sameOrigin();
       http.authorizeRequests()
-          .antMatchers("/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
+          .antMatchers("/prometheus/**","/metrics/**","/openapi/**", "/vendor/**", "/styles/**", "/scripts/**", "/views/**", "/img/**").permitAll()
           .antMatchers("/**").hasAnyRole(USER_ROLE);
       http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
       SimpleUrlLogoutSuccessHandler urlLogoutHandler = new SimpleUrlLogoutSuccessHandler();
