@@ -108,8 +108,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
     }
 
-    DeferredResultWrapper deferredResultWrapper = new DeferredResultWrapper();
-    deferredResultWrapper.setTimeout(bizConfig.longPollingTimeout());
+    DeferredResultWrapper deferredResultWrapper = new DeferredResultWrapper(bizConfig);
     Set<String> namespaces = Sets.newHashSet();
     Map<String, Long> clientSideNotifications = Maps.newHashMap();
     Map<String, ApolloConfigNotification> filteredNotifications = filterNotifications(appId, notifications);

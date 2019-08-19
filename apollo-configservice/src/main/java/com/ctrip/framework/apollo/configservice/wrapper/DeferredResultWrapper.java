@@ -1,8 +1,11 @@
 package com.ctrip.framework.apollo.configservice.wrapper;
 
-import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
+import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -14,7 +17,7 @@ import java.util.Map;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DeferredResultWrapper {
-  private long timeout = 60 * 1000;//60 seconds
+  private final BizConfig bizConfig;
   private static final ResponseEntity<List<ApolloConfigNotification>>
       NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
@@ -22,8 +25,9 @@ public class DeferredResultWrapper {
   private DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> result;
 
 
-  public DeferredResultWrapper() {
-    result = new DeferredResult<>(timeout, NOT_MODIFIED_RESPONSE_LIST);
+  public DeferredResultWrapper(BizConfig bizConfig) {
+    this.bizConfig = bizConfig;
+    result = new DeferredResult<>(bizConfig.longPollingTimeout(), NOT_MODIFIED_RESPONSE_LIST);
   }
 
   public void recordNamespaceNameNormalizedResult(String originalNamespaceName, String normalizedNamespaceName) {
@@ -45,10 +49,6 @@ public class DeferredResultWrapper {
 
   public void setResult(ApolloConfigNotification notification) {
     setResult(Lists.newArrayList(notification));
-  }
-
-  public void setTimeout(long timeout) {
-    this.timeout = timeout;
   }
 
   /**
