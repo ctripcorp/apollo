@@ -155,10 +155,10 @@
                                 <span ng-bind="config.item.key.length > 250 ? '...' :''"></span>
                                 <span class="label label-danger" ng-if="config.isDeleted"
                                       data-tooltip="tooltip" data-placement="bottom" title="删除的配置">删</span>
-                                <span class="label label-info" ng-if="!config.isDeleted && config.masterReleaseValue"
+                                <span class="label label-info" ng-if="!config.isDeleted && config.masterItemExists"
                                       data-tooltip="tooltip" data-placement="bottom" title="修改主版本的配置">改</span>
                                 <span class="label label-success"
-                                      ng-if="!config.isDeleted && !config.masterReleaseValue"
+                                      ng-if="!config.isDeleted && !config.masterItemExists"
                                       data-tooltip="tooltip" data-placement="bottom" title="灰度版本特有的配置">新</span>
                             </td>
                             <td width="20%" class="cursor-pointer" title="点击查看"

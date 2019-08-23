@@ -36,7 +36,7 @@
 
             <section class="context" ng-show="hasAssignUserPermission">
                 <!--project admin-->
-                <section class="form-horizontal">
+                <section class="form-horizontal" ng-show="hasManageAppMasterPermission">
                     <h5>管理员
                         <small>
                             (项目管理员具有以下权限: 1. 创建Namespace 2. 创建集群 3. 管理项目、Namespace权限)

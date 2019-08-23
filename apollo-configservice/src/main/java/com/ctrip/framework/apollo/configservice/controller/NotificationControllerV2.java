@@ -108,7 +108,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       throw new BadRequestException("Invalid format of notifications: " + notificationsAsString);
     }
 
-    DeferredResultWrapper deferredResultWrapper = new DeferredResultWrapper();
+    DeferredResultWrapper deferredResultWrapper = new DeferredResultWrapper(bizConfig.longPollingTimeout());
     Set<String> namespaces = Sets.newHashSet();
     Map<String, Long> clientSideNotifications = Maps.newHashMap();
     Map<String, ApolloConfigNotification> filteredNotifications = filterNotifications(appId, notifications);
@@ -132,6 +132,34 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
     Set<String> watchedKeys = Sets.newHashSet(watchedKeysMap.values());
 
+    /**
+     * 1、set deferredResult before the check, for avoid more waiting
+     * If the check before setting deferredResult,it may receive a notification the next time
+     * when method handleMessage is executed between check and set deferredResult.
+     */
+    deferredResultWrapper
+          .onTimeout(() -> logWatchedKeys(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
+
+    deferredResultWrapper.onCompletion(() -> {
+      //unregister all keys
+      for (String key : watchedKeys) {
+        deferredResults.remove(key, deferredResultWrapper);
+      }
+      logWatchedKeys(watchedKeys, "Apollo.LongPoll.CompletedKeys");
+    });
+
+    //register all keys
+    for (String key : watchedKeys) {
+      this.deferredResults.put(key, deferredResultWrapper);
+    }
+
+    logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
+    logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
+        watchedKeys, appId, cluster, namespaces, dataCenter);
+
+    /**
+     * 2、check new release
+     */
     List<ReleaseMessage> latestReleaseMessages =
         releaseMessageService.findLatestReleaseMessagesGroupByMessages(watchedKeys);
 
@@ -149,26 +177,6 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
 
     if (!CollectionUtils.isEmpty(newNotifications)) {
       deferredResultWrapper.setResult(newNotifications);
-    } else {
-      deferredResultWrapper
-          .onTimeout(() -> logWatchedKeys(watchedKeys, "Apollo.LongPoll.TimeOutKeys"));
-
-      deferredResultWrapper.onCompletion(() -> {
-        //unregister all keys
-        for (String key : watchedKeys) {
-          deferredResults.remove(key, deferredResultWrapper);
-        }
-        logWatchedKeys(watchedKeys, "Apollo.LongPoll.CompletedKeys");
-      });
-
-      //register all keys
-      for (String key : watchedKeys) {
-        this.deferredResults.put(key, deferredResultWrapper);
-      }
-
-      logWatchedKeys(watchedKeys, "Apollo.LongPoll.RegisteredKeys");
-      logger.debug("Listening {} from appId: {}, cluster: {}, namespace: {}, datacenter: {}",
-          watchedKeys, appId, cluster, namespaces, dataCenter);
     }
 
     return deferredResultWrapper.getResult();
@@ -308,4 +316,3 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
     }
   }
 }
-

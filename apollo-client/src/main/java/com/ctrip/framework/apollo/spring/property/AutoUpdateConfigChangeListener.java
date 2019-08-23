@@ -56,33 +56,11 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
         continue;
       }
 
-      // 2. check whether the value is really changed or not (since spring property sources have hierarchies)
-      if (!shouldTriggerAutoUpdate(changeEvent, key)) {
-        continue;
-      }
-
-      // 3. update the value
+      // 2. update the value
       for (SpringValue val : targetValues) {
         updateSpringValue(val);
       }
     }
-  }
-
-  /**
-   * Check whether we should trigger the auto update or not.
-   * <br />
-   * For added or modified keys, we should trigger auto update if the current value in Spring equals to the new value.
-   * <br />
-   * For deleted keys, we will trigger auto update anyway.
-   */
-  private boolean shouldTriggerAutoUpdate(ConfigChangeEvent changeEvent, String changedKey) {
-    ConfigChange configChange = changeEvent.getChange(changedKey);
-
-    if (configChange.getChangeType() == PropertyChangeType.DELETED) {
-      return true;
-    }
-
-    return Objects.equals(environment.getProperty(changedKey), configChange.getNewValue());
   }
 
   private void updateSpringValue(SpringValue springValue) {

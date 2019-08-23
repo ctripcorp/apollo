@@ -94,7 +94,8 @@ kubectl apply -f apollo-env-prod/service-apollo-admin-server-prod.yaml --record
 kubectl apply -f service-apollo-portal-server.yaml --record
 ```
 
-你需要注意的是, 应当尽量让同一个 server 的不同 pod 在不同 node 上, 这个通过 kubernetes nodeSelector 实现
+~~你需要注意的是, 应当尽量让同一个 server 的不同 pod 在不同 node 上, 这个通过 kubernetes nodeSelector 实现~~
+去掉nodeSelector 改为POD反亲和性[podAntiAffinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
 
 ### 2.3 验证所有 pod 处于 Running 并且 READY 状态
 

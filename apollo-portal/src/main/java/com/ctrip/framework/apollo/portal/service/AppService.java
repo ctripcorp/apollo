@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.service;
 
 import com.ctrip.framework.apollo.common.dto.AppDTO;
+import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
@@ -14,6 +15,7 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Lists;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +65,18 @@ public class AppService {
       return Collections.emptyList();
     }
     return Lists.newArrayList((apps));
+  }
+
+  public PageDTO<App> findAll(Pageable pageable) {
+    Page<App> apps = appRepository.findAll(pageable);
+
+    return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
+  }
+
+  public PageDTO<App> searchByAppIdOrAppName(String query, Pageable pageable) {
+    Page<App> apps = appRepository.findByAppIdContainingOrNameContaining(query, query, pageable);
+
+    return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
   }
 
   public List<App> findByAppIds(Set<String> appIds) {

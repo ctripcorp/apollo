@@ -15,6 +15,17 @@ function IndexController($scope, $window, toastr, AppUtil, AppService, UserServi
     $scope.toTop = toTop;
     $scope.deleteFavorite = deleteFavorite;
 
+    function  initCreateApplicationPermission() {
+        AppService.has_create_application_role($scope.userId).then(
+            function (value) {
+                $scope.hasCreateApplicationPermission = value.hasCreateApplicationPermission;
+            },
+            function (reason) {
+                toastr.warning(AppUtil.errorMsg(reason), "获取创建应用权限信息失败");
+            }
+        )
+    }
+
     UserService.load_user().then(function (result) {
         $scope.userId = result.userId;
 
@@ -25,6 +36,8 @@ function IndexController($scope, $window, toastr, AppUtil, AppService, UserServi
         $scope.favorites = [];
         $scope.hasMoreFavorites = true;
         $scope.visitedApps = [];
+
+        initCreateApplicationPermission();
 
         getUserCreatedApps();
 

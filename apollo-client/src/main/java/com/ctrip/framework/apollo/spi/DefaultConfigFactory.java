@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.spi;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
 import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
+import com.ctrip.framework.apollo.internals.TxtConfigFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,8 @@ public class DefaultConfigFactory implements ConfigFactory {
         return new YamlConfigFile(namespace, configRepository);
       case YML:
         return new YmlConfigFile(namespace, configRepository);
+      case TXT:
+        return new TxtConfigFile(namespace, configRepository);
     }
 
     return null;

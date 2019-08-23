@@ -5,8 +5,10 @@ import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
+import com.ctrip.framework.apollo.portal.service.SystemRoleManagerService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("permissionValidator")
@@ -16,16 +18,20 @@ public class PermissionValidator {
   private final RolePermissionService rolePermissionService;
   private final PortalConfig portalConfig;
   private final AppNamespaceService appNamespaceService;
+  private final SystemRoleManagerService systemRoleManagerService;
 
+  @Autowired
   public PermissionValidator(
-      final UserInfoHolder userInfoHolder,
-      final RolePermissionService rolePermissionService,
-      final PortalConfig portalConfig,
-      final AppNamespaceService appNamespaceService) {
+          final UserInfoHolder userInfoHolder,
+          final RolePermissionService rolePermissionService,
+          final PortalConfig portalConfig,
+          final AppNamespaceService appNamespaceService,
+          final SystemRoleManagerService systemRoleManagerService) {
     this.userInfoHolder = userInfoHolder;
     this.rolePermissionService = rolePermissionService;
     this.portalConfig = portalConfig;
     this.appNamespaceService = appNamespaceService;
+    this.systemRoleManagerService = systemRoleManagerService;
   }
 
   public boolean hasModifyNamespacePermission(String appId, String namespaceName) {
@@ -118,5 +124,19 @@ public class PermissionValidator {
 
     // 3. check app admin and operate permissions
     return !isAppAdmin(appId) && !hasOperateNamespacePermission(appId, namespaceName, env);
+  }
+
+  public boolean hasCreateApplicationPermission() {
+    return hasCreateApplicationPermission(userInfoHolder.getUser().getUserId());
+  }
+
+  public boolean hasCreateApplicationPermission(String userId) {
+    return systemRoleManagerService.hasCreateApplicationPermission(userId);
+  }
+
+  public boolean hasManageAppMasterPermission(String appId) {
+    // the manage app master permission might not be initialized, so we need to check isSuperAdmin first
+    return isSuperAdmin() ||
+            systemRoleManagerService.hasManageAppMasterPermission(userInfoHolder.getUser().getUserId(), appId);
   }
 }

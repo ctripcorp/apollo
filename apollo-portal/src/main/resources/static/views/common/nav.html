@@ -31,6 +31,7 @@
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/user-manage.html" target="_blank">用户管理</a></li>
+                        <li><a href="/system-role-manage.html" target="_blank">系统权限管理</a></li>
                         <li><a href="/open/manage.html" target="_blank">开放平台授权管理</a></li>
                         <li><a href="/server_config.html" target="_blank">系统参数</a></li>
                         <li><a href="/delete_app_cluster_namespace.html" target="_blank">删除应用、集群、AppNamespace</a></li>
@@ -49,19 +50,10 @@
             </ul>
 
             <div class="navbar-form navbar-right form-inline" role="search">
-                <div class="form-group">
-                    <input type="text" class="form-control search-input" placeholder="搜索项目(AppId、项目名)"
-                           style="width: 350px"
-                           ng-model="searchKey" ng-change="changeSearchKey()" ng-focus="changeSearchKey()">
-
-                    <div class="row app-list" ng-show="shouldShowAppList">
-                        <div ng-repeat="app in copiedApps" class="app-item" ng-class="{'app-selected':app.selected}"
-                             ng-click="selectApp(app)">{{app.appId}} / {{app.name}}
-                        </div>
-                    </div>
+                <div class="form-group app-search-list">
+                    <select id="app-search-list" style="width: 350px"></select>
                 </div>
             </div>
-
         </div>
     </div>
 </nav>
