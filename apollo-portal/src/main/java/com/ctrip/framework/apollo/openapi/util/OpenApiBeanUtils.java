@@ -1,5 +1,16 @@
 package com.ctrip.framework.apollo.openapi.util;
 
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.util.CollectionUtils;
+
+import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
@@ -10,6 +21,7 @@ import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
+import com.ctrip.framework.apollo.openapi.dto.OpenClusterDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenGrayReleaseRuleDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenGrayReleaseRuleItemDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
@@ -21,15 +33,6 @@ import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import org.springframework.util.CollectionUtils;
-
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class OpenApiBeanUtils {
 
@@ -161,5 +164,15 @@ public class OpenApiBeanUtils {
     Preconditions.checkArgument(app != null);
 
     return BeanUtils.transform(OpenAppDTO.class, app);
+  }
+
+  public static OpenClusterDTO transformFromClusterDTO(ClusterDTO Cluster) {
+    Preconditions.checkArgument(Cluster != null);
+    return BeanUtils.transform(OpenClusterDTO.class, Cluster);
+  }
+
+  public static ClusterDTO transformToClusterDTO(OpenClusterDTO openClusterDTO) {
+    Preconditions.checkArgument(openClusterDTO != null);
+    return BeanUtils.transform(ClusterDTO.class, openClusterDTO);
   }
 }

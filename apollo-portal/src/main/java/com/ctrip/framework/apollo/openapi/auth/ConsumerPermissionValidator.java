@@ -55,4 +55,8 @@ public class ConsumerPermissionValidator {
                                                    appId);
   }
 
+	public boolean hasCreateClusterPermission(HttpServletRequest request, String appId) {
+		return permissionService.consumerHasPermission(consumerAuthUtil.retrieveConsumerId(request),
+				PermissionType.CREATE_CLUSTER, appId);
+	}
 }
