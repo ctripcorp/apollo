@@ -45,4 +45,7 @@ public class ClusterService {
     return clusterAPI.loadCluster(appId, env, clusterName);
   }
 
+  public ClusterDTO loadCluster(Env env, long clusterId){
+    return clusterAPI.loadCluster(env, clusterId);
+  }
 }

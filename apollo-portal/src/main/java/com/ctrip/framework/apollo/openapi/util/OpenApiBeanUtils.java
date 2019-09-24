@@ -12,6 +12,7 @@ import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
+import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.App;
@@ -172,5 +173,15 @@ public class OpenApiBeanUtils {
   public static ClusterDTO transformToClusterDTO(OpenClusterDTO openClusterDTO) {
     Preconditions.checkArgument(openClusterDTO != null);
     return BeanUtils.transform(ClusterDTO.class, openClusterDTO);
+  }
+  
+  public static NamespaceDTO transformToNamespaceDTO(OpenNamespaceDTO openNamespaceDTO) {
+    Preconditions.checkArgument(openNamespaceDTO != null);
+    return BeanUtils.transform(NamespaceDTO.class, openNamespaceDTO);
+  }
+  
+  public static OpenNamespaceDTO transformToOpenNamespaceDTO(NamespaceDTO namespaceDTO) {
+    Preconditions.checkArgument(namespaceDTO != null);
+    return BeanUtils.transform(OpenNamespaceDTO.class, namespaceDTO);
   }
 }

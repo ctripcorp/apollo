@@ -65,7 +65,7 @@ public class ClusterController {
 
   @GetMapping("/apps/{appId}/clusters")
   public List<ClusterDTO> find(@PathVariable("appId") String appId) {
-    List<Cluster> clusters = clusterService.findParentClusters(appId);
+    List<Cluster> clusters = clusterService.findClusters(appId);
     return BeanUtils.batchTransform(ClusterDTO.class, clusters);
   }
 
@@ -83,5 +83,16 @@ public class ClusterController {
   public boolean isAppIdUnique(@PathVariable("appId") String appId,
                                @PathVariable("clusterName") String clusterName) {
     return clusterService.isClusterNameUnique(appId, clusterName);
+  }
+  
+
+  @GetMapping("/clusters/{clusterId:.+}")
+  public ClusterDTO getById(
+                        @PathVariable("clusterId") long clusterId) {
+    Cluster cluster = clusterService.findOne(clusterId);
+    if (cluster == null) {
+      throw new NotFoundException("cluster not found for id " + clusterId);
+    }
+    return BeanUtils.transform(ClusterDTO.class, cluster);
   }
 }

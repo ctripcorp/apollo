@@ -230,7 +230,7 @@ public class NamespaceController {
 
     MultiResponseEntity<String> response = MultiResponseEntity.ok();
 
-    Set<String> missingNamespaces = findMissingNamespaceNames(appId, env, clusterName);
+    Set<String> missingNamespaces = namespaceService.findMissingNamespaceNames(appId, env, clusterName);
 
     for (String missingNamespace : missingNamespaces) {
       response.addResponseEntity(RichResponseEntity.ok(missingNamespace));
@@ -242,40 +242,8 @@ public class NamespaceController {
   @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/missing-namespaces")
   public ResponseEntity<Void> createMissingNamespaces(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName) {
 
-    Set<String> missingNamespaces = findMissingNamespaceNames(appId, env, clusterName);
-
-    for (String missingNamespace : missingNamespaces) {
-      namespaceAPI.createMissingAppNamespace(Env.fromString(env), findAppNamespace(appId, missingNamespace));
-    }
+    namespaceService.createMissingNamespaces(appId, env, clusterName);
 
     return ResponseEntity.ok().build();
-  }
-
-  private Set<String> findMissingNamespaceNames(String appId, String env, String clusterName) {
-    List<AppNamespaceDTO> configDbAppNamespaces = namespaceAPI.getAppNamespaces(appId, Env.fromString(env));
-    List<NamespaceDTO> configDbNamespaces = namespaceService.findNamespaces(appId, Env.fromString(env), clusterName);
-    List<AppNamespace> portalDbAppNamespaces = appNamespaceService.findByAppId(appId);
-
-    Set<String> configDbAppNamespaceNames = configDbAppNamespaces.stream().map(AppNamespaceDTO::getName)
-            .collect(Collectors.toSet());
-    Set<String> configDbNamespaceNames = configDbNamespaces.stream().map(NamespaceDTO::getNamespaceName)
-        .collect(Collectors.toSet());
-
-    Set<String> portalDbAllAppNamespaceNames = Sets.newHashSet();
-    Set<String> portalDbPrivateAppNamespaceNames = Sets.newHashSet();
-
-    for (AppNamespace appNamespace : portalDbAppNamespaces) {
-      portalDbAllAppNamespaceNames.add(appNamespace.getName());
-      if (!appNamespace.isPublic()) {
-        portalDbPrivateAppNamespaceNames.add(appNamespace.getName());
-      }
-    }
-
-    // AppNamespaces should be the same
-    Set<String> missingAppNamespaceNames = Sets.difference(portalDbAllAppNamespaceNames, configDbAppNamespaceNames);
-    // Private namespaces should all exist
-    Set<String> missingNamespaceNames = Sets.difference(portalDbPrivateAppNamespaceNames, configDbNamespaceNames);
-
-    return Sets.union(missingAppNamespaceNames, missingNamespaceNames);
   }
 }

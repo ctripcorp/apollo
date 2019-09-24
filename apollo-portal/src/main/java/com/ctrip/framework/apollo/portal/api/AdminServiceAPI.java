@@ -110,6 +110,12 @@ public class AdminServiceAPI {
           .post(env, "apps/{appId}/appnamespaces?silentCreation=true", appNamespace, AppNamespaceDTO.class,
               appNamespace.getAppId());
     }
+    
+    public AppNamespaceDTO onlyCreateMissingAppNamespace(Env env, AppNamespaceDTO appNamespace) {
+      return restTemplate
+          .post(env, "apps/{appId}/appnamespaces?onlyCreateAppNamespace=true", appNamespace, AppNamespaceDTO.class,
+              appNamespace.getAppId());
+    }
 
     public List<AppNamespaceDTO> getAppNamespaces(String appId, Env env) {
       AppNamespaceDTO[] appNamespaceDTOs = restTemplate.get(env, "apps/{appId}/appnamespaces", AppNamespaceDTO[].class, appId);
@@ -220,6 +226,11 @@ public class AdminServiceAPI {
 
     public void delete(Env env, String appId, String clusterName, String operator) {
       restTemplate.delete(env, "apps/{appId}/clusters/{clusterName}?operator={operator}", appId, clusterName, operator);
+    }
+
+    public ClusterDTO loadCluster(Env env, long clusterId) {
+      return restTemplate.get(env, "/clusters/{clusterId}", ClusterDTO.class,
+          clusterId);
     }
   }
 

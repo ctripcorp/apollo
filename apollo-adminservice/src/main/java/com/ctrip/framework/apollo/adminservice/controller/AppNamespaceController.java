@@ -36,7 +36,8 @@ public class AppNamespaceController {
 
   @PostMapping("/apps/{appId}/appnamespaces")
   public AppNamespaceDTO create(@RequestBody AppNamespaceDTO appNamespace,
-                                @RequestParam(defaultValue = "false") boolean silentCreation) {
+                                @RequestParam(defaultValue = "false") boolean silentCreation,
+                                @RequestParam(defaultValue = "false") boolean onlyCreateAppNamespace) {
 
     AppNamespace entity = BeanUtils.transform(AppNamespace.class, appNamespace);
     AppNamespace managedEntity = appNamespaceService.findOne(entity.getAppId(), entity.getName());
@@ -46,7 +47,11 @@ public class AppNamespaceController {
         entity.setFormat(ConfigFileFormat.Properties.getValue());
       }
 
-      entity = appNamespaceService.createAppNamespace(entity);
+      if(onlyCreateAppNamespace) {
+        entity = appNamespaceService.onlyCreateAppNamespace(entity);
+      }else {
+        entity = appNamespaceService.createAppNamespace(entity);
+      }
     } else if (silentCreation) {
       appNamespaceService.createNamespaceForAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(),
           appNamespace.getDataChangeCreatedBy());

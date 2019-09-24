@@ -105,6 +105,16 @@ public class AppNamespaceService {
 
   @Transactional
   public AppNamespace createAppNamespace(AppNamespace appNamespace) {
+    return createAppNamespace(appNamespace, false);
+  }
+
+  @Transactional
+  public AppNamespace onlyCreateAppNamespace(AppNamespace appNamespace) {
+    return createAppNamespace(appNamespace, true);
+  }
+
+  @Transactional
+  private AppNamespace createAppNamespace(AppNamespace appNamespace,boolean isOnlyCreateAppNamespace) {
     String createBy = appNamespace.getDataChangeCreatedBy();
     if (!isAppNamespaceNameUnique(appNamespace.getAppId(), appNamespace.getName())) {
       throw new ServiceException("appnamespace not unique");
@@ -115,8 +125,10 @@ public class AppNamespaceService {
 
     appNamespace = appNamespaceRepository.save(appNamespace);
 
-    createNamespaceForAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(), createBy);
-
+    if(!isOnlyCreateAppNamespace) {
+      createNamespaceForAppNamespaceInAllCluster(appNamespace.getAppId(), appNamespace.getName(), createBy);
+    }
+    
     auditService.audit(AppNamespace.class.getSimpleName(), appNamespace.getId(), Audit.OP.INSERT, createBy);
     return appNamespace;
   }
