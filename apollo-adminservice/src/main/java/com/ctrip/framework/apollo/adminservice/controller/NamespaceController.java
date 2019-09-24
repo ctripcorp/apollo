@@ -82,7 +82,7 @@ public class NamespaceController {
   public NamespaceDTO findPublicNamespaceForAssociatedNamespace(@PathVariable String appId,
                                                                 @PathVariable String clusterName,
                                                                 @PathVariable String namespaceName) {
-    Namespace namespace = namespaceService.findPublicNamespaceForAssociatedNamespace(clusterName, namespaceName);
+    Namespace namespace = namespaceService.findPublicNamespaceForAssociatedNamespace(appId, clusterName, namespaceName);
 
     if (namespace == null) {
       throw new NotFoundException(String.format("public namespace not found. namespace:%s", namespaceName));

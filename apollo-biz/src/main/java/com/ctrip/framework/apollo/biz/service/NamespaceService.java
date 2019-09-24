@@ -88,7 +88,7 @@ public class NamespaceService {
                                                                          namespaceName);
   }
 
-  public Namespace findPublicNamespaceForAssociatedNamespace(String clusterName, String namespaceName) {
+  public Namespace findPublicNamespaceForAssociatedNamespace(String nodeAppId, String clusterName, String namespaceName) {
     AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespaceName);
     if (appNamespace == null) {
       throw new BadRequestException("namespace not exist");
@@ -101,6 +101,14 @@ public class NamespaceService {
     //default cluster's namespace
     if (Objects.equals(clusterName, ConfigConsts.CLUSTER_NAME_DEFAULT)) {
       return namespace;
+    }
+
+    //custom cluster's namespace not exist.
+    //find parent cluster's namespace
+    if (namespace == null) {
+      Cluster curCluster = clusterService.findOne(nodeAppId, clusterName);
+      Cluster parentCluster = clusterService.findOne(curCluster.getParentClusterId());
+      namespace = findOne(appId, parentCluster.getName(), namespaceName);
     }
 
     //custom cluster's namespace not exist.
