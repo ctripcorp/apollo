@@ -137,7 +137,8 @@ public class NamespaceController {
       AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
       if (appNamespace == null) {
         if (namespace.isPublic()) {
-          throw new BadRequestException("custom cluster has parent cluster, same name public namespaces need to exist in parent cluster.");
+          throw new BadRequestException(
+              "custom cluster has parent cluster, same name public namespaces need to exist in parent cluster.");
         } else {
           createAppNamespace(appId, env, clusterName, namespace, namespaceName, operator);
         }
@@ -145,14 +146,16 @@ public class NamespaceController {
         throw new BadRequestException("same name public namespaces is exist.");
       } else {
         if (!namespace.isPublic()) {
-          throw new BadRequestException("same name namespaces is public, and exist in parent cluster.");
+          throw new BadRequestException(
+              "same name namespaces is public, and exist in parent cluster.");
         }
       }
     }
 
     NamespaceDTO toCreate = OpenApiBeanUtils.transformToNamespaceDTO(namespace);
     NamespaceDTO createdNamespace = namespaceService.createNamespace(Env.valueOf(env), toCreate);
-    NamespaceBO namespaceBO = namespaceService.transformNamespace2BO(Env.valueOf(env), createdNamespace);
+    NamespaceBO namespaceBO =
+        namespaceService.transformNamespace2BO(Env.valueOf(env), createdNamespace);
     return OpenApiBeanUtils.transformFromNamespaceBO(namespaceBO);
   }
 
@@ -183,7 +186,7 @@ public class NamespaceController {
       @PathVariable String env, @PathVariable String clusterName) {
 
     return OpenApiBeanUtils.batchTransformFromNamespaceBOs(
-        namespaceService.findFullItemsNamespaceBOs(appId, Env.fromString(env), clusterName));
+        namespaceService.findNamespaceBOs(appId, Env.fromString(env), clusterName, true));
   }
 
   @GetMapping(
@@ -192,6 +195,19 @@ public class NamespaceController {
       @PathVariable String clusterName, @PathVariable String namespaceName) {
     NamespaceBO namespaceBO =
         namespaceService.loadNamespaceBO(appId, Env.fromString(env), clusterName, namespaceName);
+    if (namespaceBO == null) {
+      return null;
+    }
+    return OpenApiBeanUtils.transformFromNamespaceBO(namespaceBO);
+  }
+
+  @GetMapping(
+      value = "/openapi/v1/envs/{env}/apps/{appId}/clusters/{clusterName}/full-items-namespaces/{namespaceName:.+}")
+  public OpenNamespaceDTO loadFullItemsNamespace(@PathVariable String appId,
+      @PathVariable String env, @PathVariable String clusterName,
+      @PathVariable String namespaceName) {
+    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.fromString(env),
+        clusterName, namespaceName, true);
     if (namespaceBO == null) {
       return null;
     }

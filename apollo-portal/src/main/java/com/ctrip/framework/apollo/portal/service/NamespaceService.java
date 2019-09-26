@@ -136,34 +136,11 @@ public class NamespaceService {
    * load cluster all namespace info with items
    */
   public List<NamespaceBO> findNamespaceBOs(String appId, Env env, String clusterName) {
-
-    List<NamespaceDTO> namespaces = namespaceAPI.findNamespaceByCluster(appId, env, clusterName);
-    if (namespaces == null || namespaces.size() == 0) {
-      throw new BadRequestException("namespaces not exist");
-    }
-
-    List<NamespaceBO> namespaceBOs = new LinkedList<>();
-    for (NamespaceDTO namespace : namespaces) {
-
-      NamespaceBO namespaceBO;
-      try {
-        namespaceBO = transformNamespace2BO(env, namespace);
-        namespaceBOs.add(namespaceBO);
-      } catch (Exception e) {
-        logger.error("parse namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}",
-            appId, env, clusterName, namespace.getNamespaceName(), e);
-        throw e;
-      }
-    }
-
-    return namespaceBOs;
+    return findNamespaceBOs(appId, env, clusterName, false);
   }
 
-  /**
-   * load cluster all namespace info with full items(self items and associated public namespace
-   * items)
-   */
-  public List<NamespaceBO> findFullItemsNamespaceBOs(String appId, Env env, String clusterName) {
+  public List<NamespaceBO> findNamespaceBOs(String appId, Env env, String clusterName,
+      boolean withFullItems) {
 
     List<NamespaceDTO> namespaces = namespaceAPI.findNamespaceByCluster(appId, env, clusterName);
     if (namespaces == null || namespaces.size() == 0) {
@@ -175,7 +152,11 @@ public class NamespaceService {
 
       NamespaceBO namespaceBO;
       try {
-        namespaceBO = transformNamespace2BOwithFullItems(env, namespace);
+        if (withFullItems) {
+          namespaceBO = transformNamespace2BOwithFullItems(env, namespace);
+        } else {
+          namespaceBO = transformNamespace2BO(env, namespace);
+        }
         namespaceBOs.add(namespaceBO);
       } catch (Exception e) {
         logger.error("parse namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}",
@@ -259,11 +240,21 @@ public class NamespaceService {
 
   public NamespaceBO loadNamespaceBO(String appId, Env env, String clusterName,
       String namespaceName) {
+    return loadNamespaceBO(appId, env, clusterName, namespaceName, false);
+  }
+
+  public NamespaceBO loadNamespaceBO(String appId, Env env, String clusterName,
+      String namespaceName, boolean withFullItems) {
     NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
     if (namespace == null) {
       throw new BadRequestException("namespaces not exist");
     }
-    return transformNamespace2BO(env, namespace);
+
+    if (withFullItems) {
+      return transformNamespace2BOwithFullItems(env, namespace);
+    } else {
+      return transformNamespace2BO(env, namespace);
+    }
   }
 
   public boolean namespaceHasInstances(String appId, Env env, String clusterName,
