@@ -341,6 +341,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![中移（杭州）信息技术有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/komect.png) 
 ![北森](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/beisen.png) 
 ![合肥维天运通](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/log56.png) 
+![北京蜜步科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/meboth.png) 
+![术康](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/postop.png) 
+![富力集团](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/rfchina.png) 
 
 # Awards
 
