@@ -342,14 +342,14 @@ public class NamespaceService {
 
     fillAppNamespaceProperties(namespaceBO);
 
-    long parentClusterId;
-    String parentClusterName = null;
+    long associateClusterId;
+    String associateClusterName = null;
     ClusterDTO curCluster = clusterService.loadCluster(appId, env, clusterName);
-    if (curCluster.getParentClusterId() != 0) {
-      parentClusterId = curCluster.getParentClusterId();
-      ClusterDTO parentCluster = clusterService.loadCluster(env, parentClusterId);
-      if (parentCluster != null)
-        parentClusterName = parentCluster.getName();
+    if (curCluster.getAssociateClusterId() != 0) {
+      associateClusterId = curCluster.getAssociateClusterId();
+      ClusterDTO associateCluster = clusterService.loadCluster(env, associateClusterId);
+      if (associateCluster != null)
+        associateClusterName = associateCluster.getName();
     }
 
     List<ItemBO> itemBOs = new LinkedList<>();
@@ -358,10 +358,10 @@ public class NamespaceService {
     // latest Release
     ReleaseDTO latestRelease;
     Map<String, String> releaseItems = new HashMap<>();
-    if (parentClusterName != null) {
-      // load latest release items in parent cluster namespace
+    if (associateClusterName != null) {
+      // load latest release items in associate cluster namespace
       latestRelease = releaseService.loadLatestRelease(namespaceBO.getParentAppId(), env,
-          parentClusterName, namespaceName);
+          associateClusterName, namespaceName);
       if (latestRelease != null) {
         releaseItems.putAll(gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG));
       }
@@ -374,9 +374,9 @@ public class NamespaceService {
 
     // not Release config items
     List<ItemDTO> items = Arrays.asList();
-    if (parentClusterName != null) {
-      // not Release config items in parent cluster namespace
-      items = itemService.findItems(namespaceBO.getParentAppId(), env, parentClusterName,
+    if (associateClusterName != null) {
+      // not Release config items in associate cluster namespace
+      items = itemService.findItems(namespaceBO.getParentAppId(), env, associateClusterName,
           namespaceName);
     }
     if (CollectionUtils.isEmpty(items)) {
@@ -387,7 +387,7 @@ public class NamespaceService {
       List<ItemDTO> customItems = itemService.findItems(appId, env, clusterName, namespaceName);
       for (int i = 0; i < customItems.size(); i++) {
         for (ItemDTO parentItemDTO : items) {
-          // parent cluster namespacenot not Release config items
+          // associate cluster namespacenot not Release config items
           // replace with custom cluster namespace not Release config items
           if (customItems.get(i).getKey().equals(parentItemDTO.getKey())) {
             items.set(i, customItems.get(i));

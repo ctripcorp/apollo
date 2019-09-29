@@ -127,27 +127,27 @@ public class NamespaceController {
     }
 
     ClusterDTO cluster = clusterService.loadCluster(appId, Env.fromString(env), clusterName);
-    long parentClusterId = cluster.getParentClusterId();
+    long associateClusterId = cluster.getAssociateClusterId();
 
-    if (parentClusterId == 0) {
+    if (associateClusterId == 0) {
       createAppNamespace(appId, env, clusterName, namespace, namespaceName, operator);
     } else {
-      ClusterDTO parentCluster = clusterService.loadCluster(Env.fromString(env), parentClusterId);
-      String parentAppId = parentCluster.getAppId();
+      ClusterDTO associateCluster = clusterService.loadCluster(Env.fromString(env), associateClusterId);
+      String associateAppId = associateCluster.getAppId();
       AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
       if (appNamespace == null) {
         if (namespace.isPublic()) {
           throw new BadRequestException(
-              "custom cluster has parent cluster, same name public namespaces need to exist in parent cluster.");
+              "custom cluster has associate cluster, same name public namespaces need to exist in associate cluster.");
         } else {
           createAppNamespace(appId, env, clusterName, namespace, namespaceName, operator);
         }
-      } else if (!parentAppId.equals(appNamespace.getAppId())) {
+      } else if (!associateAppId.equals(appNamespace.getAppId())) {
         throw new BadRequestException("same name public namespaces is exist.");
       } else {
         if (!namespace.isPublic()) {
           throw new BadRequestException(
-              "same name namespaces is public, and exist in parent cluster.");
+              "same name namespaces is public, and exist in associate cluster.");
         }
       }
     }

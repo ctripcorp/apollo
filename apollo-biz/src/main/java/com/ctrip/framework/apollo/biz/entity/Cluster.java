@@ -27,6 +27,9 @@ public class Cluster extends BaseEntity implements Comparable<Cluster> {
   @Column(name = "ParentClusterId", nullable = false)
   private long parentClusterId;
 
+  @Column(name = "AssociateClusterId", nullable = false)
+  private long associateClusterId;
+  
   public String getAppId() {
     return appId;
   }
@@ -49,6 +52,14 @@ public class Cluster extends BaseEntity implements Comparable<Cluster> {
 
   public void setParentClusterId(long parentClusterId) {
     this.parentClusterId = parentClusterId;
+  }
+
+  public long getAssociateClusterId() {
+    return associateClusterId;
+  }
+
+  public void setAssociateClusterId(long associateClusterId) {
+    this.associateClusterId = associateClusterId;
   }
 
   public String toString() {

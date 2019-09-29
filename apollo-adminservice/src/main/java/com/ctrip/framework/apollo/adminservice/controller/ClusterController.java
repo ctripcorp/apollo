@@ -65,7 +65,7 @@ public class ClusterController {
 
   @GetMapping("/apps/{appId}/clusters")
   public List<ClusterDTO> find(@PathVariable("appId") String appId) {
-    List<Cluster> clusters = clusterService.findClusters(appId);
+    List<Cluster> clusters = clusterService.findParentClusters(appId);
     return BeanUtils.batchTransform(ClusterDTO.class, clusters);
   }
 

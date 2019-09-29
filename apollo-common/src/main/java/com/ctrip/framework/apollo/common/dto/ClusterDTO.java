@@ -18,7 +18,7 @@ public class ClusterDTO extends BaseDTO{
   @NotBlank(message = "appId cannot be blank")
   private String appId;
 
-  private long parentClusterId;
+  private long associateClusterId;
 
   public long getId() {
     return id;
@@ -44,11 +44,11 @@ public class ClusterDTO extends BaseDTO{
     this.appId = appId;
   }
 
-  public long getParentClusterId() {
-    return parentClusterId;
+  public long getAssociateClusterId() {
+    return associateClusterId;
   }
 
-  public void setParentClusterId(long parentClusterId) {
-    this.parentClusterId = parentClusterId;
+  public void setAssociateClusterId(long associateClusterId) {
+    this.associateClusterId = associateClusterId;
   }
 }

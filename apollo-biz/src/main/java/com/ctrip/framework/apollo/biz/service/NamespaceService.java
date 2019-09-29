@@ -98,12 +98,12 @@ public class NamespaceService {
     }
 
     // custom cluster's namespace not exist.
-    // find parent cluster's namespace
+    // find associate cluster's namespace
     if (namespace == null) {
       Cluster curCluster = clusterService.findOne(nodeAppId, clusterName);
-      if (curCluster.getParentClusterId() != 0) {
-        Cluster parentCluster = clusterService.findOne(curCluster.getParentClusterId());
-        namespace = findOne(appId, parentCluster.getName(), namespaceName);
+      if (curCluster.getAssociateClusterId() != 0) {
+        Cluster associateCluster = clusterService.findOne(curCluster.getAssociateClusterId());
+        namespace = findOne(appId, associateCluster.getName(), namespaceName);
       }
     }
 

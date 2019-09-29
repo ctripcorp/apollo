@@ -7,7 +7,7 @@ public class OpenClusterDTO extends BaseDTO {
 
   private String appId;
 
-  private long parentClusterId;
+  private long associateClusterId;
 
   public long getId() {
     return id;
@@ -33,11 +33,11 @@ public class OpenClusterDTO extends BaseDTO {
     this.appId = appId;
   }
   
-  public long getParentClusterId() {
-    return parentClusterId;
+  public long getAssociateClusterId() {
+    return associateClusterId;
   }
 
-  public void setParentClusterId(long parentClusterId) {
-    this.parentClusterId = parentClusterId;
+  public void setAssociateClusterId(long associateClusterId) {
+    this.associateClusterId = associateClusterId;
   }
 }
