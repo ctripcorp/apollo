@@ -145,7 +145,7 @@ public class ConfigServiceTest {
     }
 
     @Override
-    public boolean removeChangeListener(ConfigChangeListener listener) {
+    public boolean removeChangeListener(ConfigFileChangeListener listener) {
       return false;
     }
 
