@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.internals;
 
-import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.util.List;
 import java.util.Properties;
@@ -104,7 +103,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
   }
 
   @Override
-  public boolean removeChangeListener(ConfigChangeListener listener) {
+  public boolean removeChangeListener(ConfigFileChangeListener listener) {
     return m_listeners.remove(listener);
   }
 
