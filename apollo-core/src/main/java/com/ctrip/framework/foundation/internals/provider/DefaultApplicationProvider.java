@@ -1,17 +1,16 @@
 package com.ctrip.framework.foundation.internals.provider;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.foundation.internals.Utils;
 import com.ctrip.framework.foundation.internals.io.BOMInputStream;
 import com.ctrip.framework.foundation.spi.provider.ApplicationProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 public class DefaultApplicationProvider implements ApplicationProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationProvider.class);
@@ -23,9 +22,9 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   @Override
   public void initialize() {
     try {
-      InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
+      InputStream in = DefaultApplicationProvider.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
       if (in == null) {
-        in = DefaultApplicationProvider.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
+        in = Thread.currentThread().getContextClassLoader().getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
       }
 
       initialize(in);
