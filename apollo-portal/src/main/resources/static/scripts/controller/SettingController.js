@@ -63,14 +63,20 @@ function SettingController($scope, $location, toastr,
             .then(function (result) {
                 $scope.hasAssignUserPermission = result.hasPermission;
 
-                PermissionService.has_manage_app_master_permission($scope.pageContext.appId).then(function (res) {
-                    $scope.hasManageAppMasterPermission = res.hasPermission && $scope.hasAssignUserPermission;
+                PermissionService.has_open_manage_app_master_role_limit().then(function (value) {
+                     if (!value.isManageAppMasterPermissionEnabled) {
+                        $scope.hasManageAppMasterPermission = $scope.hasAssignUserPermission;
+                        return;
+                     }
 
-                    PermissionService.has_root_permission().then(function (value) {
-                        $scope.hasManageAppMasterPermission = value.hasPermission || $scope.hasManageAppMasterPermission;
+                    PermissionService.has_manage_app_master_permission($scope.pageContext.appId).then(function (res) {
+                        $scope.hasManageAppMasterPermission = res.hasPermission && $scope.hasAssignUserPermission;
+
+                        PermissionService.has_root_permission().then(function (value) {
+                            $scope.hasManageAppMasterPermission = value.hasPermission || $scope.hasManageAppMasterPermission;
+                        });
                     });
                 });
-
             });
     }
 

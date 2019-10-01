@@ -130,7 +130,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   private void createManageAppMasterRole(String appId, String operator) {
     Permission permission = createPermission(appId, PermissionType.MANAGE_APP_MASTER, operator);
     rolePermissionService.createPermission(permission);
-    Role role = createRole(RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId), operator);
+    Role role = createRole(RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER), operator);
     Set<Long> permissionIds = new HashSet<>();
     permissionIds.add(permission.getId());
     rolePermissionService.createRoleWithPermissions(role, permissionIds);
@@ -139,7 +139,7 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
   // fix historical data
   @Transactional
   public void initManageAppMasterRole(String appId, String operator) {
-    String manageAppMasterRoleName = RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId);
+    String manageAppMasterRoleName = RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER);
     if (rolePermissionService.findRoleByRoleName(manageAppMasterRoleName) != null) {
       return;
     }

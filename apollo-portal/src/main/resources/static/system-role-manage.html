@@ -25,7 +25,7 @@
             <section class="row">
                 <h5>为用户添加创建应用权限
                     <small>
-                        (暂时只允许系统管理员操作)
+                        (系统参数中设置 role.create-application.enabled=true 会限制只有超级管理员和拥有创建应用权限的帐号可以创建项目)
                     </small>
                 </h5>
                 <hr>
@@ -62,7 +62,7 @@
             <section class="row">
                 <h5>修改应用管理员分配权限
                     <small>
-                        (应用管理员分配权限仅限制非superAdmin以外的用户能否为应用添加其他管理员，不影响其他权限)
+                        (系统参数中设置 role.manage-app-master.enabled=true 会限制只有超级管理员和拥有管理员分配权限的帐号可以修改项目管理员)
                     </small>
                 </h5>
                 <hr>

@@ -322,7 +322,7 @@ public class PermissionController {
     roleInitializationService.initManageAppMasterRole(appId, userInfoHolder.getUser().getUserId());
     Set<String> userIds = new HashSet<>();
     userIds.add(userId);
-    rolePermissionService.assignRoleToUsers(RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId),
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER),
             userIds, userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }
@@ -334,7 +334,7 @@ public class PermissionController {
     roleInitializationService.initManageAppMasterRole(appId, userInfoHolder.getUser().getUserId());
     Set<String> userIds = new HashSet<>();
     userIds.add(userId);
-    rolePermissionService.removeRoleFromUsers(RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId),
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER),
             userIds, userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }

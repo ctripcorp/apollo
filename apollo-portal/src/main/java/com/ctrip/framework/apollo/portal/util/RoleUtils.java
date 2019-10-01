@@ -89,8 +89,4 @@ public class RoleUtils {
   public static String buildCreateApplicationRoleName(String permissionType, String permissionTargetId) {
     return STRING_JOINER.join(permissionType, permissionTargetId);
   }
-
-  public static String buildManageAppMasterRoleName(String permissionType, String permissionTargetId) {
-    return STRING_JOINER.join(permissionType, permissionTargetId);
-  }
 }
