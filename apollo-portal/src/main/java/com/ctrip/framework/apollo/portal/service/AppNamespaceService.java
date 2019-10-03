@@ -178,7 +178,7 @@ public class AppNamespaceService {
   private void checkPublicAppNamespaceGlobalUniqueness(AppNamespace appNamespace) {
     AppNamespace publicAppNamespace = findPublicAppNamespace(appNamespace.getName());
     if (publicAppNamespace != null) {
-      throw new BadRequestException("Public AppNamespace " + appNamespace.getName() + " already exists in appId: " + publicAppNamespace.getAppId() + "!");
+      throw new BadRequestException("AppNamespace " + appNamespace.getName() + " already exists as public namespace in appId: " + publicAppNamespace.getAppId() + "!");
     }
   }
 
