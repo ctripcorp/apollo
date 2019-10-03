@@ -13,6 +13,11 @@ directive_module.directive('apollonav',
                                            scope.pageSetting = setting;
                                        });
 
+                                       // Looks like a trick to make xml/yml/json namespaces display right, but why?
+                                       $(document).on('click', function () {
+                                           scope.$apply(function () {});
+                                       });
+
                                        $('#app-search-list').select2({
                                            placeholder: '搜索项目(AppId、项目名)',
                                            ajax: {
