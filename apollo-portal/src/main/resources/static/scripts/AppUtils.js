@@ -2,7 +2,7 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', '$translate', function (t
 
     function parseErrorMsg(response) {
         if (response.status == -1) {
-            return $translate.instant('Common.LoginExprieTips');
+            return $translate.instant('Common.LoginExpiredTips');
         }
         var msg = "Code:" + response.status;
         if (response.data.message != null) {
@@ -13,7 +13,7 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', '$translate', function (t
 
     function parsePureErrorMsg(response) {
         if (response.status == -1) {
-            return $translate.instant('Common.LoginExprieTips');
+            return $translate.instant('Common.LoginExpiredTips');
         }
         if (response.data.message != null) {
             return response.data.message;

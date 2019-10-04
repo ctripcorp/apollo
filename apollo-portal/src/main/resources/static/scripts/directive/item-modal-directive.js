@@ -124,7 +124,7 @@ function itemModalDirective($translate, toastr, $sce, AppUtil, EventManager, Con
 
                                 AppUtil.hideModal('#itemModal');
 
-                                toastr.success($translate.instant('ItemModal.ModifedTips'));
+                                toastr.success($translate.instant('ItemModal.ModifiedTips'));
                             }, function (result) {
                                 toastr.error(AppUtil.errorMsg(result), $translate.instant('ItemModal.ModifyFailed'));
                             });

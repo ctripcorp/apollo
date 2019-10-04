@@ -7,17 +7,17 @@ server_config_module.controller('ServerConfigController',
 
             $scope.create = function () {
                 ServerConfigService.create($scope.serverConfig).then(function (result) {
-                    toastr.success($translate.instant('SericeConfig.Saved'));
+                    toastr.success($translate.instant('ServiceConfig.Saved'));
                     $scope.saveBtnDisabled = true;
                     $scope.serverConfig = result;
                 }, function (result) {
-                    toastr.error(AppUtil.errorMsg(result), $translate.instant('SericeConfig.SaveFailed'));
+                    toastr.error(AppUtil.errorMsg(result), $translate.instant('ServiceConfig.SaveFailed'));
                 });
             };
 
             $scope.getServerConfigInfo = function () {
                 if (!$scope.serverConfig.key) {
-                    toastr.warning($translate.instant('SericeConfig.PleaseEnterKey'));
+                    toastr.warning($translate.instant('ServiceConfig.PleaseEnterKey'));
                     return;
                 }
 
@@ -25,11 +25,11 @@ server_config_module.controller('ServerConfigController',
                     $scope.saveBtnDisabled = false;
 
                     if (!result.key) {
-                        toastr.info($translate.instant('SericeConfig.KeyNotExistsAndCreateTip', { key: $scope.serverConfig.key }));
+                        toastr.info($translate.instant('ServiceConfig.KeyNotExistsAndCreateTip', { key: $scope.serverConfig.key }));
                         return;
                     }
 
-                    toastr.info($translate.instant('SericeConfig.KeyExistsAndSaveTip', { key: $scope.serverConfig.key }));
+                    toastr.info($translate.instant('ServiceConfig.KeyExistsAndSaveTip', { key: $scope.serverConfig.key }));
                     $scope.serverConfig = result;
                 }, function (result) {
                     AppUtil.showErrorMsg(result);

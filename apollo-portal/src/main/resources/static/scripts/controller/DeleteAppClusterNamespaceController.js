@@ -62,7 +62,7 @@ function DeleteAppClusterNamespaceController($scope, $translate, toastr, AppUtil
             toastr.warning($translate.instant('Delete.PleaseEnterAppId'));
             return;
         }
-        if (confirm($translate.instant('Delete.PleaseEnterAppId', { appId: $scope.app.appId }))) {
+        if (confirm($translate.instant('Delete.ConfirmDeleteAppId', { appId: $scope.app.appId }))) {
             AppService.delete_app($scope.app.appId).then(function (result) {
                 toastr.success($translate.instant('Delete.Deleted'));
                 $scope.deleteAppBtnDisabled = true;
@@ -99,9 +99,9 @@ function DeleteAppClusterNamespaceController($scope, $translate, toastr, AppUtil
             return;
         }
         var confirmTip = $translate.instant('Delete.ConfirmDeleteCluster', {
-            appId: result.appId,
+            appId: $scope.cluster.appId,
             env: $scope.cluster.env,
-            clusterName: result.name
+            clusterName: $scope.cluster.name
         });
 
         if (confirm(confirmTip)) {

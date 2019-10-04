@@ -159,7 +159,7 @@
                                         title="{{'Component.Namespace.Branch.Body.DeletedItem' | translate }}">{{'Component.Namespace.Branch.Body.Delete' | translate }}</span>
                                     <span class="label label-info" ng-if="!config.isDeleted && config.masterItemExists"
                                         data-tooltip="tooltip" data-placement="bottom"
-                                        title="{{'Component.Namespace.Branch.Body.ChangedFormMaster' | translate }}">{{'Component.Namespace.Branch.Body.Modify' | translate }}</span>
+                                        title="{{'Component.Namespace.Branch.Body.ChangedFromMaster' | translate }}">{{'Component.Namespace.Branch.Body.Modify' | translate }}</span>
                                     <span class="label label-success"
                                         ng-if="!config.isDeleted && !config.masterItemExists" data-tooltip="tooltip"
                                         data-placement="bottom"
@@ -268,7 +268,7 @@
                                     <span class="label label-info"
                                         ng-if="config.isModified && config.oldValue && !config.isDeleted"
                                         data-tooltip="tooltip" data-placement="bottom"
-                                        title="{{'Component.Namespace.Branch.Body.ModifedItem' | translate }}">{{'Component.Namespace.Branch.Body.Modify' | translate }}</span>
+                                        title="{{'Component.Namespace.Branch.Body.ModifiedItem' | translate }}">{{'Component.Namespace.Branch.Body.Modify' | translate }}</span>
                                     <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
                                         data-placement="bottom"
                                         title="{{'Component.Namespace.Branch.Body.DeletedItem' | translate }}">{{'Component.Namespace.Branch.Body.Delete' | translate }}</span>
@@ -307,7 +307,7 @@
                 <div class="alert alert-warning no-radius"
                     ng-show="!namespace.hasModifyPermission && !namespace.hasReleasePermission">
                     <strong>Tips:</strong>
-                    {{'Component.Namespace.Branch.GrayScaleRule.NoPermissonTips' | translate }}
+                    {{'Component.Namespace.Branch.GrayScaleRule.NoPermissionTips' | translate }}
                 </div>
 
                 <table class="table table-bordered table-hover">
@@ -397,7 +397,7 @@
                         <div class="row text-center"
                             ng-show="namespace.branch.latestReleaseInstances.content.length < namespace.branch.latestReleaseInstances.total">
                             <button class="btn btn-default"
-                                ng-click="loadInstanceInfo(namespace.branch)">{{'Component.Namespace.Branch.Instance.LoadingMore' | translate }}</button>
+                                ng-click="loadInstanceInfo(namespace.branch)">{{'Component.Namespace.Branch.Instance.LoadMore' | translate }}</button>
 
                         </div>
                     </div>
@@ -450,7 +450,7 @@
 
                                 <!--兼容老数据,不显示item类型为空行和注释的item-->
                                 <tr ng-repeat="item in commits.changeSets.createItems" ng-show="item.key">
-                                    <td width="2%">
+                                    <td width="6%">
                                         {{'Component.Namespace.Branch.History.NewAdded' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.key}}">
@@ -458,9 +458,9 @@
                                         <span ng-bind="item.key | limitTo: 250"></span>
                                         <span ng-bind="item.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%">
+                                    <td width="28%">
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.value}}"
                                         ng-click="showText(item.value)">
                                         <span ng-bind="item.value | limitTo: 250"></span>
                                         <span ng-bind="item.value.length > 250 ? '...': ''"></span>
@@ -471,19 +471,19 @@
                                     </td>
                                 </tr>
                                 <tr ng-repeat="item in commits.changeSets.updateItems">
-                                    <td width="2%">
-                                        {{'Component.Namespace.Branch.History.Modifed' | translate }}
+                                    <td width="6%">
+                                        {{'Component.Namespace.Branch.History.Modified' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.newItem.key}}">
                                         <span ng-bind="item.newItem.key | limitTo: 250"></span>
                                         <span ng-bind="item.newItem.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.oldItem.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.oldItem.value}}"
                                         ng-click="showText(item.oldItem.value)">
                                         <span ng-bind="item.oldItem.value | limitTo: 250"></span>
                                         <span ng-bind="item.oldItem.value.length > 250 ? '...': ''"></span>
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.newItem.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.newItem.value}}"
                                         ng-click="showText(item.newItem.value)">
                                         <span ng-bind="item.newItem.value | limitTo: 250"></span>
                                         <span ng-bind="item.newItem.value.length > 250 ? '...': ''"></span>
@@ -495,18 +495,18 @@
                                 </tr>
                                 <tr ng-repeat="item in commits.changeSets.deleteItems"
                                     ng-show="item.key || item.comment">
-                                    <td width="2%">
+                                    <td width="6%">
                                         {{'Component.Namespace.Branch.History.Deleted' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.key}}">
                                         <span ng-bind="item.key | limitTo: 250"></span>
                                         <span ng-bind="item.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%" title="{{item.value}}">
+                                    <td width="28%" title="{{item.value}}">
                                         <span ng-bind="item.value | limitTo: 250"></span>
                                         <span ng-bind="item.value.length > 250 ? '...': ''"></span>
                                     </td>
-                                    <td width="30%">
+                                    <td width="28%">
                                     </td>
                                     <td width="18%" title="{{item.comment}}">
                                         <span ng-bind="item.comment | limitTo: 250"></span>
@@ -537,7 +537,7 @@
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-default" ng-show="!namespace.branch.hasLoadAllCommit"
-                        ng-click="loadCommitHistory(namespace.branch)">{{'Component.Namespace.Branch.History.LoadingMore' | translate }}
+                        ng-click="loadCommitHistory(namespace.branch)">{{'Component.Namespace.Branch.History.LoadMore' | translate }}
                         <span class="glyphicon glyphicon-menu-down"></span></button>
                 </div>
                 <div class="empty-container text-center"

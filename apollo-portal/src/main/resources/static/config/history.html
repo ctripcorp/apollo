@@ -25,10 +25,10 @@
                     <div class="operation-caption release-operation-normal text-center" style="left:0;">
                         <small>{{'Config.History.MasterVersionPublish' | translate }}</small>
                     </div>
-                    <div class="operation-caption release-operation-rollback text-center" style="left: 80px;">
+                    <div class="operation-caption release-operation-rollback text-center" style="left: 110px;">
                         <small>{{'Config.History.MasterVersionRollback' | translate }}</small>
                     </div>
-                    <div class="operation-caption release-operation-gray text-center" style="left: 160px;">
+                    <div class="operation-caption release-operation-gray text-center" style="left: 220px;">
                         <small>{{'Config.History.GrayscaleOperator' | translate }}</small>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
 
                     <div class="load-more media panel-heading text-center hover" ng-show="!hasLoadAll"
                         ng-click="findReleaseHistory()">
-                        {{'Config.History.LoadingMore' | translate }}
+                        {{'Config.History.LoadMore' | translate }}
                     </div>
 
                 </div>
@@ -114,12 +114,12 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-sm"
                                         ng-class="{'active':history.viewType == 'diff'}" data-tooltip="tooltip"
-                                        data-placement="bottom" title="查看此次发布与上次版本的变更"
+                                        data-placement="bottom" title="{{'Config.History.ChangedItemTips' | translate }}"
                                         ng-click="switchConfigViewType(history, 'diff')">{{'Config.History.ChangedItem' | translate }}
                                     </button>
                                     <button type="button" class="btn btn-default btn-sm"
                                         ng-class="{'active':history.viewType == 'all'}" data-tooltip="tooltip"
-                                        data-placement="bottom" title="查看此次发布的所有配置信息"
+                                        data-placement="bottom" title="{{'Config.History.AllItemTips' | translate }}"
                                         ng-click="switchConfigViewType(history, 'all')">{{'Config.History.AllItem' | translate }}
                                     </button>
                                 </div>
@@ -249,7 +249,7 @@
 
             <div class="panel-body" ng-show="isConfigHidden || !releaseHistories || releaseHistories.length == 0">
                 <h4 class="text-center empty-container" ng-show="isConfigHidden">
-                    {{'Config.History.NoPermissonTips' | translate }}</h4>
+                    {{'Config.History.NoPermissionTips' | translate }}</h4>
                 <h4 class="text-center empty-container" ng-show="!isConfigHidden">
                     {{'Config.History.NoPublishHistory' | translate }}</h4>
             </div>

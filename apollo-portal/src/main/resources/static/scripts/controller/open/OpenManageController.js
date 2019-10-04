@@ -35,7 +35,7 @@ function OpenManageController($scope, $translate, toastr, AppUtil, OrganizationS
                 organizations.push(org);
             });
             $orgWidget.select2({
-                placeholder: $translate.instant('Common.PelaseChooseDepartment'),
+                placeholder: $translate.instant('Common.PleaseChooseDepartment'),
                 width: '100%',
                 data: organizations
             });
@@ -103,7 +103,7 @@ function OpenManageController($scope, $translate, toastr, AppUtil, OrganizationS
         var selectedOrg = $orgWidget.select2('data')[0];
 
         if (!selectedOrg.id) {
-            toastr.warning($translate.instant('Common.PelaseChooseDepartment'));
+            toastr.warning($translate.instant('Common.PleaseChooseDepartment'));
             return;
         }
 
@@ -113,7 +113,7 @@ function OpenManageController($scope, $translate, toastr, AppUtil, OrganizationS
         // owner
         var owner = $('.ownerSelector').select2('data')[0];
         if (!owner) {
-            toastr.warning($translate.instant('Common.PelaseChooseOwner'));
+            toastr.warning($translate.instant('Common.PleaseChooseOwner'));
             return;
         }
         $scope.consumer.ownerName = owner.id;

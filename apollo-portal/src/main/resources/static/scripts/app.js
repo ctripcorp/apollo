@@ -2,15 +2,19 @@
 var appUtil = angular.module('app.util', ['toastr', 'ngCookies', 'pascalprecht.translate'])
     .config(['$translateProvider', function ($translateProvider) {
 
-        // $translateProvider.useMissingTranslationHandlerLog();
+        $translateProvider.useSanitizeValueStrategy(null); // disable sanitization by default
         $translateProvider.useCookieStorage();
         $translateProvider.useStaticFilesLoader({
             prefix: '/i18n/',
             suffix: '.json'
         });
-        $translateProvider.preferredLanguage('en');
-        $translateProvider.fallbackLanguage('zh-cn');
-
+        $translateProvider.registerAvailableLanguageKeys(['en', 'zh-CN'], {
+                              'zh-*': 'zh-CN',
+                              'zh': 'zh-CN',
+                              'en-*': 'en',
+                              "*": "en"
+                            })
+        $translateProvider.uniformLanguageTag('bcp47').determinePreferredLanguage();
     }]);
 /**service module 定义*/
 var appService = angular.module('app.service', ['ngResource', 'app.util'])

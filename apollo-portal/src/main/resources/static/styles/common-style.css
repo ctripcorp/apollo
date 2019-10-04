@@ -297,7 +297,7 @@ table th {
 
 .project-info th {
     text-align: right;
-    padding: 4px 6px;
+    padding: 4px 2px;
     width: 5em;
 }
 
@@ -654,7 +654,7 @@ table th {
 .release-history .operation-caption {
     position: absolute;
     top: 45px;
-    width: 75px;
+    width: 100px;
     height: 18px;
     color: #fff;
     font-size: 12px;

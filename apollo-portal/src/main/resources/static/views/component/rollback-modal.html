@@ -6,7 +6,7 @@
                         aria-hidden="true">&times;</span></button>
                 <div class="modal-title text-center">
                     <span style="font-size: 18px;" ng-bind="toRollbackNamespace.firstRelease.name"></span>
-                    <span style="font-size: 18px;"> &nbsp;{{'Component.Rollback.Goto' | translate }}&nbsp;</span>
+                    <span style="font-size: 18px;"> &nbsp;{{'Component.Rollback.To' | translate }}&nbsp;</span>
                     <span style="font-size: 18px;" ng-bind="toRollbackNamespace.secondRelease.name"></span>
                 </div>
             </div>
@@ -14,7 +14,7 @@
                 <div class="alert alert-warning" role="alert">
                     {{'Component.Rollback.Tips' | translate }}
                     <a target="_blank"
-                        href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{toRollbackNamespace.baseInfo.clusterName}}&namespaceName={{toRollbackNamespace.baseInfo.namespaceName}}">点击查看</a>
+                        href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{toRollbackNamespace.baseInfo.clusterName}}&namespaceName={{toRollbackNamespace.baseInfo.namespaceName}}">{{'Component.Rollback.ClickToView' | translate }}</a>
                 </div>
 
                 <div class="form-group" style="margin-top: 15px;">
@@ -46,7 +46,7 @@
                                         <span
                                             ng-show="change.type == 'ADDED'">{{'Component.Rollback.Added' | translate }}</span>
                                         <span
-                                            ng-show="change.type == 'MODIFIED'">{{'Component.Rollback.Modifed' | translate }}</span>
+                                            ng-show="change.type == 'MODIFIED'">{{'Component.Rollback.Modified' | translate }}</span>
                                         <span
                                             ng-show="change.type == 'DELETED'">{{'Component.Rollback.Deleted' | translate }}</span>
                                     </td>

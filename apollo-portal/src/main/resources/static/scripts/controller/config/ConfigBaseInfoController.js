@@ -45,7 +45,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
             loadAppInfo();
             handleFavorite();
         }, function (result) {
-            toastr.error(AppUtil.errorMsg(result),  $translate.instant('Config.GetrUserInfoFailed'));
+            toastr.error(AppUtil.errorMsg(result),  $translate.instant('Config.GetUserInfoFailed'));
         });
 
         handlePermission();
@@ -326,7 +326,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
                     $scope.favoriteId = 0;
                     toastr.success($translate.instant('Config.CancelledFavorite'));
                 }, function (result) {
-                    toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.CanceFavoriteFailed'));
+                    toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.CancelFavoriteFailed'));
                 })
         };
     }

@@ -659,7 +659,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
                     branch.rules
                 )
                     .then(function (result) {
-                        toastr.success($translate.instant('ApolloNsPanel.GrayscaleModifed'));
+                        toastr.success($translate.instant('ApolloNsPanel.GrayscaleModified'));
 
                         //show tips if branch has not release configs
                         if (branch.itemModifiedCnt) {
@@ -729,7 +729,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
                     namespace.baseInfo.namespaceName,
                     model).then(
                         function (result) {
-                            toastr.success($translate.instant('ApolloNsPanel.ModifedTips'));
+                            toastr.success($translate.instant('ApolloNsPanel.ModifiedTips'));
                             //refresh all namespace items
                             EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE,
                                 {

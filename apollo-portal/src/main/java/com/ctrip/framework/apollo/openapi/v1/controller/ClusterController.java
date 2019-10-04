@@ -59,7 +59,7 @@ public class ClusterController {
 
     if (!InputValidator.isValidClusterNamespace(clusterName)) {
       throw new BadRequestException(
-          String.format("Cluster Name 格式错误: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
+          String.format("Invalid ClusterName format: %s", InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE));
     }
 
     if (userService.findByUserId(operator) == null) {

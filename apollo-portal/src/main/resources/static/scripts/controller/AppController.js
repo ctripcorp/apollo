@@ -27,7 +27,7 @@ function createAppController($scope, $window, $translate, toastr, AppService, Ap
                 organizations.push(org);
             });
             $('#organization').select2({
-                placeholder: $translate.instant('Common.PelaseChooseDepartment'),
+                placeholder: $translate.instant('Common.PleaseChooseDepartment'),
                 width: '100%',
                 data: organizations
             });
@@ -60,7 +60,7 @@ function createAppController($scope, $window, $translate, toastr, AppService, Ap
         var selectedOrg = $('#organization').select2('data')[0];
 
         if (!selectedOrg.id) {
-            toastr.warning($translate.instant('Common.PelaseChooseDepartment'));
+            toastr.warning($translate.instant('Common.PleaseChooseDepartment'));
             $scope.submitBtnDisabled = false;
             return;
         }
@@ -74,7 +74,7 @@ function createAppController($scope, $window, $translate, toastr, AppService, Ap
             owner = { id: $scope.currentUser.userId };
         }
         if (!owner) {
-            toastr.warning($translate.instant('Common.PelaseChooseOwner'));
+            toastr.warning($translate.instant('Common.PleaseChooseOwner'));
             $scope.submitBtnDisabled = false;
             return;
         }

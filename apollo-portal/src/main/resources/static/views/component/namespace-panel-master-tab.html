@@ -40,11 +40,11 @@
             <div class="col-md-6 col-sm-6 text-right header-buttons">
 
                 <button type="button" class="btn btn-success btn-sm" data-tooltip="tooltip" data-placement="bottom"
-                    title="{{'Component.Namespace.Master.Items.PubishTips' | translate }}"
+                    title="{{'Component.Namespace.Master.Items.PublishTips' | translate }}"
                     ng-show="(namespace.hasReleasePermission || namespace.hasModifyPermission)"
                     ng-disabled="namespace.isTextEditing" ng-click="publish(namespace)">
                     <img src="img/release.png">
-                    {{'Component.Namespace.Master.Items.Pubish' | translate }}
+                    {{'Component.Namespace.Master.Items.Publish' | translate }}
                 </button>
                 <button type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                     title="{{'Component.Namespace.Master.Items.RollbackTips' | translate }}"
@@ -53,10 +53,10 @@
                     {{'Component.Namespace.Master.Items.Rollback' | translate }}
                 </button>
                 <a type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
-                    title="{{'Component.Namespace.Master.Items.PubishHistoryTips' | translate }}"
+                    title="{{'Component.Namespace.Master.Items.PublishHistoryTips' | translate }}"
                     href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}">
                     <img src="img/release-history.png">
-                    {{'Component.Namespace.Master.Items.PubishHistory' | translate }}
+                    {{'Component.Namespace.Master.Items.PublishHistory' | translate }}
                 </a>
                 <a type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                     title="{{'Component.Namespace.Master.Items.GrantTips' | translate }}"
@@ -282,7 +282,7 @@
                                     <span class="label label-info"
                                         ng-if="config.isModified && config.oldValue && !config.isDeleted"
                                         data-tooltip="tooltip" data-placement="bottom"
-                                        title="{{'Component.Namespace.Master.Items.Body.ModifedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modifed' | translate }}</span>
+                                        title="{{'Component.Namespace.Master.Items.Body.ModifiedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modified' | translate }}</span>
                                     <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
                                         data-placement="bottom"
                                         title="{{'Component.Namespace.Master.Items.Body.DeletedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Deleted' | translate }}</span>
@@ -400,7 +400,7 @@
                                     <span class="label label-info"
                                         ng-if="config.isModified && config.oldValue && !config.isDeleted"
                                         data-tooltip="tooltip" data-placement="bottom"
-                                        title="{{'Component.Namespace.Master.Items.Body.ModifedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modifed' | translate }}</span>
+                                        title="{{'Component.Namespace.Master.Items.Body.ModifiedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modified' | translate }}</span>
                                     <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
                                         data-placement="bottom"
                                         title="{{'Component.Namespace.Master.Items.Body.DeletedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Deleted' | translate }}</span>
@@ -557,7 +557,7 @@
 
                                         <td width="10%" class="text-center" ng-if="!config.isDeleted">
                                             <img src="img/gray.png" data-tooltip="tooltip" data-placement="bottom"
-                                                title="{{'Component.Namespace.Master.Items.Body.Public.PubishedAndCover' | translate }}"
+                                                title="{{'Component.Namespace.Master.Items.Body.Public.PublishedAndCover' | translate }}"
                                                 ng-click="editItem(namespace, config.item)"
                                                 ng-show="namespace.hasModifyPermission && !config.covered">
                                         </td>
@@ -622,7 +622,7 @@
                                         <span class="label label-info"
                                             ng-if="config.isModified && config.oldValue && !config.isDeleted"
                                             data-tooltip="tooltip" data-placement="bottom"
-                                            title="{{'Component.Namespace.Master.Items.Body.ModifedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modifed' | translate }}</span>
+                                            title="{{'Component.Namespace.Master.Items.Body.ModifiedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Modified' | translate }}</span>
                                         <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
                                             data-placement="bottom"
                                             title="{{'Component.Namespace.Master.Items.Body.DeletedTips' | translate }}">{{'Component.Namespace.Master.Items.Body.Deleted' | translate }}</span>
@@ -649,7 +649,7 @@
 
                                     <td width="5%" class="text-center" ng-if="!config.isDeleted">
                                         <img src="img/gray.png" data-tooltip="tooltip" data-placement="bottom"
-                                            title="{{'Component.Namespace.Master.Items.Body.Public.PubishedAndCover' | translate }}"
+                                            title="{{'Component.Namespace.Master.Items.Body.Public.PublishedAndCover' | translate }}"
                                             ng-click="editItem(namespace, config.item)"
                                             ng-show="namespace.hasModifyPermission && !config.covered">
                                     </td>
@@ -712,19 +712,19 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemType | translate }}
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemType' | translate }}
                                     </th>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemKey | translate }}
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemKey' | translate }}
                                     </th>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemOldValue | translate }}
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemOldValue' | translate }}
                                     </th>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemNewValue | translate }}
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemNewValue' | translate }}
                                     </th>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemComment | translate }}
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.ItemComment' | translate }}
                                     </th>
                                 </tr>
                             </thead>
@@ -732,17 +732,17 @@
 
                                 <!--兼容老数据,不显示item类型为空行和注释的item-->
                                 <tr ng-repeat="item in commits.changeSets.createItems" ng-show="item.key">
-                                    <td width="2%">
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.NewAdded | translate }}
+                                    <td width="6%">
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.NewAdded' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.key}}">
 
                                         <span ng-bind="item.key | limitTo: 250"></span>
                                         <span ng-bind="item.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%">
+                                    <td width="28%">
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.value}}"
                                         ng-click="showText(item.value)">
                                         <span ng-bind="item.value | limitTo: 250"></span>
                                         <span ng-bind="item.value.length > 250 ? '...': ''"></span>
@@ -753,19 +753,19 @@
                                     </td>
                                 </tr>
                                 <tr ng-repeat="item in commits.changeSets.updateItems">
-                                    <td width="2%">
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.Updated | translate }}
+                                    <td width="6%">
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.Updated' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.newItem.key}}">
                                         <span ng-bind="item.newItem.key | limitTo: 250"></span>
                                         <span ng-bind="item.newItem.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.oldItem.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.oldItem.value}}"
                                         ng-click="showText(item.oldItem.value)">
                                         <span ng-bind="item.oldItem.value | limitTo: 250"></span>
                                         <span ng-bind="item.oldItem.value.length > 250 ? '...': ''"></span>
                                     </td>
-                                    <td width="30%" class="cursor-pointer" title="{{item.newItem.value}}"
+                                    <td width="28%" class="cursor-pointer" title="{{item.newItem.value}}"
                                         ng-click="showText(item.newItem.value)">
                                         <span ng-bind="item.newItem.value | limitTo: 250"></span>
                                         <span ng-bind="item.newItem.value.length > 250 ? '...': ''"></span>
@@ -777,18 +777,18 @@
                                 </tr>
                                 <tr ng-repeat="item in commits.changeSets.deleteItems"
                                     ng-show="item.key || item.comment">
-                                    <td width="2%">
-                                        {{'Component.Namespace.Master.Items.Body.HistoryView.Deleted | translate }}
+                                    <td width="6%">
+                                        {{'Component.Namespace.Master.Items.Body.HistoryView.Deleted' | translate }}
                                     </td>
                                     <td width="20%" title="{{item.key}}">
                                         <span ng-bind="item.key | limitTo: 250"></span>
                                         <span ng-bind="item.key.length > 250 ? '...' :''"></span>
                                     </td>
-                                    <td width="30%" title="{{item.value}}">
+                                    <td width="28%" title="{{item.value}}">
                                         <span ng-bind="item.value | limitTo: 250"></span>
                                         <span ng-bind="item.value.length > 250 ? '...': ''"></span>
                                     </td>
-                                    <td width="30%">
+                                    <td width="28%">
                                     </td>
                                     <td width="18%" title="{{item.comment}}">
                                         <span ng-bind="item.comment | limitTo: 250"></span>
@@ -819,7 +819,7 @@
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-default" ng-show="!namespace.hasLoadAllCommit"
-                        ng-click="loadCommitHistory(namespace)">{{'Component.Namespace.Master.Items.Body.HistoryView.LoadingMore' | translate }}
+                        ng-click="loadCommitHistory(namespace)">{{'Component.Namespace.Master.Items.Body.HistoryView.LoadMore' | translate }}
                         <span class="glyphicon glyphicon-menu-down"></span></button>
                 </div>
                 <div class="empty-container text-center" ng-show="!namespace.commits || !namespace.commits.length">
@@ -903,7 +903,7 @@
                         <div class="row text-center"
                             ng-show="namespace.latestReleaseInstances.content.length < namespace.latestReleaseInstances.total">
                             <button class="btn btn-default"
-                                ng-click="loadInstanceInfo(namespace)">{{'Component.Namespace.Master.Items.Body.Instance.LoadingMore' | translate }}</button>
+                                ng-click="loadInstanceInfo(namespace)">{{'Component.Namespace.Master.Items.Body.Instance.LoadMore' | translate }}</button>
 
                         </div>
                     </div>
@@ -983,7 +983,7 @@
                         </table>
                         <div class="row text-center" ng-show="namespace.allInstances.length < namespace.instancesCount">
                             <button class="btn btn-default"
-                                ng-click="loadInstanceInfo(namespace)">{{'Component.Namespace.Master.Items.Body.Instance.LoadingMore' | translate }}</button>
+                                ng-click="loadInstanceInfo(namespace)">{{'Component.Namespace.Master.Items.Body.Instance.LoadMore' | translate }}</button>
                         </div>
                     </div>
                     <div class="text-center" ng-if="namespace.instancesCount == 0">

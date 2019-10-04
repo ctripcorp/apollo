@@ -49,7 +49,7 @@ function SettingController($scope, $location, $translate, toastr,
                 organizations.push(org);
             });
             $orgWidget.select2({
-                placeholder: $translate.instant('Common.PelaseChooseDepartment'),
+                placeholder: $translate.instant('Common.PleaseChooseDepartment'),
                 width: '100%',
                 data: organizations
             });
@@ -177,7 +177,7 @@ function SettingController($scope, $location, $translate, toastr,
         var selectedOrg = $orgWidget.select2('data')[0];
 
         if (!selectedOrg.id) {
-            toastr.warning($translate.instant('Common.PelaseChooseDepartment'));
+            toastr.warning($translate.instant('Common.PleaseChooseDepartment'));
             return;
         }
 
@@ -187,13 +187,13 @@ function SettingController($scope, $location, $translate, toastr,
         // owner
         var owner = $('.ownerSelector').select2('data')[0];
         if (!owner) {
-            toastr.warning($translate.instant('Common.PelaseChooseOwner'));
+            toastr.warning($translate.instant('Common.PleaseChooseOwner'));
             return;
         }
         app.ownerName = owner.id;
 
         AppService.update(app).then(function (app) {
-            toastr.success($translate.instant('Common.Modifed'));
+            toastr.success($translate.instant('App.Setting.Modified'));
             initApplication();
             $scope.display.app.edit = false;
             $scope.submitBtnDisabled = false;
