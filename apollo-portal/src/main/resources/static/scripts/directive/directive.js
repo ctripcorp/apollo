@@ -18,9 +18,10 @@ directive_module.directive('apollonav',
                    scope.$apply(function () {});
                });
 
-                $('#app-search-list').select2({
-                    placeholder: $translate.instant('ApolloConfirmDialog.SearchPlaceHolder'),
-                    ajax: {
+               $translate('ApolloConfirmDialog.SearchPlaceHolder').then(function(placeholderLabel)  {
+                   $('#app-search-list').select2({
+                      placeholder: placeholderLabel,
+                      ajax: {
                         url: "/apps/search",
                         dataType: 'json',
                         delay: 400,
@@ -28,44 +29,45 @@ directive_module.directive('apollonav',
                             return {
                                 query: params.term || '',
                                 page: params.page ? params.page - 1 : 0,
-                                size: 20
-                            };
-                        },
-                        processResults: function (data) {
-                            if (data && data.content) {
-                                var hasMore = data.content.length
-                                    === data.size;
-                                var result = [];
-                                data.content.forEach(function (app) {
-                                    result.push({
-                                        id: app.appId,
-                                        text: app.appId + ' / ' + app.name
-                                    })
-                                });
-                                return {
-                                    results: result,
-                                    pagination: {
-                                        more: hasMore
-                                    }
+                                    size: 20
                                 };
-                            } else {
-                                return {
-                                    results: [],
-                                    pagination: {
-                                        more: false
-                                    }
-                                };
+                            },
+                            processResults: function (data) {
+                                if (data && data.content) {
+                                    var hasMore = data.content.length
+                                        === data.size;
+                                    var result = [];
+                                    data.content.forEach(function (app) {
+                                        result.push({
+                                            id: app.appId,
+                                            text: app.appId + ' / ' + app.name
+                                        })
+                                    });
+                                    return {
+                                        results: result,
+                                        pagination: {
+                                            more: hasMore
+                                        }
+                                    };
+                                } else {
+                                    return {
+                                        results: [],
+                                        pagination: {
+                                            more: false
+                                        }
+                                    };
+                                }
+
                             }
-
                         }
-                    }
-                });
+                    });
 
-                $('#app-search-list').on('select2:select', function () {
-                    var selected = $('#app-search-list').select2('data');
-                    if (selected && selected.length) {
-                        jumpToConfigPage(selected[0].id)
-                    }
+                    $('#app-search-list').on('select2:select', function () {
+                        var selected = $('#app-search-list').select2('data');
+                        if (selected && selected.length) {
+                            jumpToConfigPage(selected[0].id)
+                        }
+                    });
                 });
 
                 function jumpToConfigPage(selectedAppId) {

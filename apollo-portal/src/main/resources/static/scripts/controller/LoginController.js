@@ -8,12 +8,12 @@ function LoginController($scope, $window, $location, $translate, toastr, AppUtil
         if (params.error) {
             $translate('Login.UserNameOrPasswordIncorrect').then(function(result)  {
                 $scope.info = result;
-            })
+            });
         }
         if (params.logout) {
             $translate('Login.LogoutSuccessfully').then(function(result)  {
                 $scope.info = result;
-            })
+            });
         }
     }
 
