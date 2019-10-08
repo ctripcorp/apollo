@@ -11,7 +11,7 @@ public class ClusterDTO extends BaseDTO{
   @NotBlank(message = "cluster name cannot be blank")
   @Pattern(
       regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
-      message = "Cluster格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+      message = "Invalid Cluster format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
   )
   private String name;
 

@@ -6,69 +6,69 @@
                         aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title">
-                    编辑灰度规则
+                    {{'Component.GrayscalePublishRule.Title' | translate }}
                 </h4>
             </div>
             <div class="modal-body form-horizontal">
                 <div class="form-group"
-                     ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
+                    ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
                     <label class="control-label col-md-3 text-right">
                         <apollorequiredfield></apollorequiredfield>
-                        灰度的AppId</label>
+                        {{'Component.GrayscalePublishRule.AppId' | translate }}
+                    </label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control"
-                               ng-model="branch.editingRuleItem.clientAppId"
-                               ng-model-options='{ debounce: 300 }'
-                               ng-change='initSelectIps()'
-                        >
+                        <input type="text" class="form-control" ng-model="branch.editingRuleItem.clientAppId"
+                            ng-model-options='{ debounce: 300 }' ng-change='initSelectIps()'>
                     </div>
                 </div>
                 <div class="form-group"
-                     ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
-                    <label class="control-label col-md-3 text-right">灰度应用规则</label>
+                    ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
+                    <label
+                        class="control-label col-md-3 text-right">{{'Component.GrayscalePublishRule.AcceptRule' | translate }}</label>
                     <div class="col-md-9">
                         <label class="form-control-static radio-inline">
                             <input type="radio" name="ApplyToAllInstances" value="false"
-                                   ng-checked="!branch.editingRuleItem.ApplyToAllInstances"
-                                   ng-click="branch.editingRuleItem.ApplyToAllInstances = false">
-                            应用到部分实例
+                                ng-checked="!branch.editingRuleItem.ApplyToAllInstances"
+                                ng-click="branch.editingRuleItem.ApplyToAllInstances = false">
+                            {{'Component.GrayscalePublishRule.AcceptPartInstance' | translate }}
                         </label>
                         <label class="form-control-static radio-inline">
                             <input type="radio" name="ApplyToAllInstances" value="true"
-                                   ng-checked="branch.editingRuleItem.ApplyToAllInstances"
-                                   ng-click="branch.editingRuleItem.ApplyToAllInstances = true">
-                            应用到所有的实例
+                                ng-checked="branch.editingRuleItem.ApplyToAllInstances"
+                                ng-click="branch.editingRuleItem.ApplyToAllInstances = true">
+                            {{'Component.GrayscalePublishRule.AcceptAllInstance' | translate }}
                         </label>
                     </div>
                 </div>
                 <div class="form-group" ng-show="!branch.editingRuleItem.ApplyToAllInstances">
                     <label class="control-label col-md-3 text-right">
                         <apollorequiredfield></apollorequiredfield>
-                        灰度的IP</label>
+                        {{'Component.GrayscalePublishRule.IP' | translate }}
+                    </label>
                     <div class="col-md-9">
                         <div class="form-inline">
                             <div class="form-group">
                                 <select class="rules-ip-selector" multiple="multiple">
-                                    <option ng-repeat="instance in selectIps"
-                                            ng-bind="instance.ip">
+                                    <option ng-repeat="instance in selectIps" ng-bind="instance.ip">
                                     </option>
                                 </select>
-                                <div ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
-                                    <small>(实例列表会根据输入的AppId自动过滤)</small>
+                                <div
+                                    ng-show="branch.parentNamespace.isPublic && !branch.parentNamespace.isLinkedNamespace">
+                                    <small>{{'Component.GrayscalePublishRule.AppIdFilterTips' | translate }}</small>
                                 </div>
                                 <div style="margin-top: 5px">
-                                    <small>没找到你想要的IP？可以<a ng-click="manual =! manual">手动输入IP</a></small>
+                                    <small>{{'Component.GrayscalePublishRule.IpTips' | translate }}<a
+                                            ng-click="manual =! manual">{{'Component.GrayscalePublishRule.EnterIp' | translate }}</a></small>
                                 </div>
                             </div>
                         </div>
                         <div class="form-inline" ng-show="manual">
                             <div class="form-group">
-                                    <textarea class="form-control" ng-model="toAddIPs" rows="3"
-                                              placeholder="输入IP列表，英文逗号隔开，输入完后点击添加按钮"></textarea>
+                                <textarea class="form-control" ng-model="toAddIPs" rows="3"
+                                    placeholder="{{'Component.GrayscalePublishRule.EnterIpTips' | translate }}"></textarea>
                             </div>
-                            <button class="btn-default btn add-rule"
-                                    ng-click="batchAddIPs(branch, toAddIPs)">
-                                添加
+                            <button class="btn-default btn add-rule" ng-click="batchAddIPs(branch, toAddIPs)">
+                                {{'Component.GrayscalePublishRule.Add' | translate }}
                             </button>
                         </div>
                     </div>
@@ -77,12 +77,10 @@
 
                 <div class="form-group" ng-show="!branch.editingRuleItem.ApplyToAllInstances">
                     <div class="col-md-offset-1 col-md-10 item-container">
-                        <section class="btn-group item-info"
-                                 ng-repeat="ip in branch.editingRuleItem.draftIpList">
+                        <section class="btn-group item-info" ng-repeat="ip in branch.editingRuleItem.draftIpList">
                             <button type="button" class="btn btn-default" ng-bind="ip"></button>
-                            <button type="button" class="btn btn-default dropdown-toggle"
-                                    data-toggle="dropdown"
-                                    ng-click="removeRule(branch.editingRuleItem, ip)">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                ng-click="removeRule(branch.editingRuleItem, ip)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </section>
@@ -91,9 +89,10 @@
 
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" ng-click="cancelEditItem(branch)">取消</button>
+                <button class="btn btn-default"
+                    ng-click="cancelEditItem(branch)">{{'Common.Cancel' | translate }}</button>
                 <button class="btn btn-primary" ng-disabled="completeEditBtnDisable"
-                        ng-click="completeEditItem(branch)">完成
+                    ng-click="completeEditItem(branch)">{{'Common.Ok' | translate }}
                 </button>
             </div>
         </div>

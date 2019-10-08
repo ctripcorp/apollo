@@ -45,6 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer, WebServerFactoryCustomize
     addCacheControl(registry, "scripts", 86400);
     addCacheControl(registry, "styles", 86400);
     addCacheControl(registry, "views", 86400);
+    addCacheControl(registry, "i18n", 86400);
   }
 
   private void addCacheControl(ResourceHandlerRegistry registry, String folder, int cachePeriod) {

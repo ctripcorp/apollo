@@ -1,95 +1,101 @@
 /** navbar */
 directive_module.directive('apollonav',
-                           function ($compile, $window, toastr, AppUtil, AppService, EnvService,
-                           UserService, CommonService, PermissionService) {
-                               return {
-                                   restrict: 'E',
-                                   templateUrl: '../../views/common/nav.html',
-                                   transclude: true,
-                                   replace: true,
-                                   link: function (scope, element, attrs) {
+    function ($compile, $window, $translate, toastr, AppUtil, AppService, EnvService,
+        UserService, CommonService, PermissionService) {
+        return {
+            restrict: 'E',
+            templateUrl: '../../views/common/nav.html',
+            transclude: true,
+            replace: true,
+            link: function (scope, element, attrs) {
 
-                                       CommonService.getPageSetting().then(function (setting) {
-                                           scope.pageSetting = setting;
-                                       });
+                CommonService.getPageSetting().then(function (setting) {
+                    scope.pageSetting = setting;
+                });
 
-                                       // Looks like a trick to make xml/yml/json namespaces display right, but why?
-                                       $(document).on('click', function () {
-                                           scope.$apply(function () {});
-                                       });
+               // Looks like a trick to make xml/yml/json namespaces display right, but why?
+               $(document).on('click', function () {
+                   scope.$apply(function () {});
+               });
 
-                                       $('#app-search-list').select2({
-                                           placeholder: '搜索项目(AppId、项目名)',
-                                           ajax: {
-                                               url: "/apps/search",
-                                               dataType: 'json',
-                                               delay: 400,
-                                               data: function (params) {
-                                                   return {
-                                                       query: params.term || '',
-                                                       page: params.page ? params.page - 1 : 0,
-                                                       size: 20
-                                                   };
-                                               },
-                                               processResults: function (data) {
-                                                   if (data && data.content) {
-                                                       var hasMore = data.content.length
-                                                           === data.size;
-                                                       var result = [];
-                                                       data.content.forEach(function (app) {
-                                                           result.push({
-                                                               id: app.appId,
-                                                               text: app.appId + ' / ' + app.name
-                                                           })
-                                                       });
-                                                       return {
-                                                           results: result,
-                                                           pagination: {
-                                                               more: hasMore
-                                                           }
-                                                       };
-                                                   } else {
-                                                       return {
-                                                           results: [],
-                                                           pagination: {
-                                                               more: false
-                                                           }
-                                                       };
-                                                   }
+               $translate('ApolloConfirmDialog.SearchPlaceHolder').then(function(placeholderLabel)  {
+                   $('#app-search-list').select2({
+                      placeholder: placeholderLabel,
+                      ajax: {
+                        url: "/apps/search",
+                        dataType: 'json',
+                        delay: 400,
+                        data: function (params) {
+                            return {
+                                query: params.term || '',
+                                page: params.page ? params.page - 1 : 0,
+                                    size: 20
+                                };
+                            },
+                            processResults: function (data) {
+                                if (data && data.content) {
+                                    var hasMore = data.content.length
+                                        === data.size;
+                                    var result = [];
+                                    data.content.forEach(function (app) {
+                                        result.push({
+                                            id: app.appId,
+                                            text: app.appId + ' / ' + app.name
+                                        })
+                                    });
+                                    return {
+                                        results: result,
+                                        pagination: {
+                                            more: hasMore
+                                        }
+                                    };
+                                } else {
+                                    return {
+                                        results: [],
+                                        pagination: {
+                                            more: false
+                                        }
+                                    };
+                                }
 
-                                               }
-                                           }
-                                       });
+                            }
+                        }
+                    });
 
-                                       $('#app-search-list').on('select2:select', function () {
-                                           var selected = $('#app-search-list').select2('data');
-                                           if (selected && selected.length) {
-                                               jumpToConfigPage(selected[0].id)
-                                           }
-                                       });
+                    $('#app-search-list').on('select2:select', function () {
+                        var selected = $('#app-search-list').select2('data');
+                        if (selected && selected.length) {
+                            jumpToConfigPage(selected[0].id)
+                        }
+                    });
+                });
 
-                                       function jumpToConfigPage(selectedAppId) {
-                                           if ($window.location.href.indexOf("config.html") > -1) {
-                                               $window.location.hash = "appid=" + selectedAppId;
-                                               $window.location.reload();
-                                           } else {
-                                               $window.location.href = '/config.html?#appid=' + selectedAppId;
-                                           }
-                                       };
+                function jumpToConfigPage(selectedAppId) {
+                    if ($window.location.href.indexOf("config.html") > -1) {
+                        $window.location.hash = "appid=" + selectedAppId;
+                        $window.location.reload();
+                    } else {
+                        $window.location.href = '/config.html?#appid=' + selectedAppId;
+                    }
+                };
 
-                                       UserService.load_user().then(function (result) {
-                                           scope.userName = result.userId;
-                                       }, function (result) {
+                UserService.load_user().then(function (result) {
+                    scope.userName = result.userId;
+                }, function (result) {
 
-                                       });
+                });
 
-                                       PermissionService.has_root_permission().then(function(result) {
-                                           scope.hasRootPermission = result.hasPermission;
-                                       })
-                                   }
-                               }
+                PermissionService.has_root_permission().then(function (result) {
+                    scope.hasRootPermission = result.hasPermission;
+                })
 
-                           });
+                scope.changeLanguage = function (lang) {
+                    $translate.use(lang)
+                }
+            }
+        }
+
+    });
 
 /** env cluster selector*/
 directive_module.directive('apolloclusterselector', function ($compile, $window, AppService, AppUtil, toastr) {
@@ -124,8 +130,8 @@ directive_module.directive('apolloclusterselector', function ($compile, $window,
                             cluster.env = env;
                             //default checked
                             cluster.checked = scope.defaultAllChecked ||
-                                              (cluster.env == scope.defaultCheckedEnv && cluster.name
-                                                                                         == scope.defaultCheckedCluster);
+                                (cluster.env == scope.defaultCheckedEnv && cluster.name
+                                    == scope.defaultCheckedCluster);
                             //not checked
                             if (cluster.env == scope.notCheckedEnv && cluster.name == scope.notCheckedCluster) {
                                 cluster.checked = false;
@@ -186,7 +192,7 @@ directive_module.directive('apollorequiredfield', function ($compile, $window) {
 });
 
 /**  确认框 */
-directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce) {
+directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce,$translate) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/confirm-dialog.html',
@@ -209,15 +215,15 @@ directive_module.directive('apolloconfirmdialog', function ($compile, $window, $
             });
 
             if (!scope.confirmBtnText) {
-                scope.confirmBtnText = '确认';
+                scope.confirmBtnText = $translate.instant('ApolloConfirmDialog.DefaultConfirmBtnName');
             }
-            
+
             scope.confirm = function () {
                 if (scope.doConfirm) {
                     scope.doConfirm();
                 }
             };
-            
+
 
 
         }
@@ -271,9 +277,9 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
                         var users = [];
                         data.forEach(function (user) {
                             users.push({
-                                           id: user.userId,
-                                           text: user.userId + " | " + user.name
-                                       })
+                                id: user.userId,
+                                text: user.userId + " | " + user.name
+                            })
                         });
                         return {
                             results: users
@@ -288,7 +294,7 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
             function initSelect2() {
                 $('.' + scope.id).select2(select2Options);
             }
-            
+
 
         }
     }
@@ -322,9 +328,9 @@ directive_module.directive('apollomultipleuserselector', function ($compile, $wi
                         var users = [];
                         data.forEach(function (user) {
                             users.push({
-                                           id: user.userId,
-                                           text: user.userId + " | " + user.name
-                                       })
+                                id: user.userId,
+                                text: user.userId + " | " + user.name
+                            })
                         });
                         return {
                             results: users

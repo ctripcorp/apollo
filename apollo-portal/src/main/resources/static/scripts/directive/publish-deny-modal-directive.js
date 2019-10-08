@@ -24,10 +24,10 @@ function publishDenyDirective(AppUtil, EventManager) {
                 AppUtil.hideModal(MODAL_ID);
 
                 EventManager.emit(EventManager.EventType.EMERGENCY_PUBLISH,
-                                  {
-                                      mergeAndPublish: scope.mergeAndPublish,
-                                      namespace: scope.toReleaseNamespace
-                                  });
+                    {
+                        mergeAndPublish: scope.mergeAndPublish,
+                        namespace: scope.toReleaseNamespace
+                    });
 
             }
         }

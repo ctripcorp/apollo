@@ -12,11 +12,11 @@ public class RelativeDateFormat {
   private static final long ONE_HOUR = 3600000L;
   private static final long ONE_DAY = 86400000L;
 
-  private static final String ONE_SECOND_AGO = "秒前";
-  private static final String ONE_MINUTE_AGO = "分钟前";
-  private static final String ONE_HOUR_AGO = "小时前";
-  private static final String ONE_DAY_AGO = "天前";
-  private static final String ONE_MONTH_AGO = "月前";
+  private static final String ONE_SECOND_AGO = " seconds ago";
+  private static final String ONE_MINUTE_AGO = " minutes ago";
+  private static final String ONE_HOUR_AGO = " hours ago";
+  private static final String ONE_DAY_AGO = " days ago";
+  private static final String ONE_MONTH_AGO = " months ago";
 
   public static String format(Date date) {
     if (date.after(new Date())) {
@@ -39,11 +39,11 @@ public class RelativeDateFormat {
 
     Date lastDayBeginTime = getDateOffset(-1);
     if (date.after(lastDayBeginTime)) {
-      return "昨天";
+      return "yesterday";
     }
     Date lastTwoDaysBeginTime = getDateOffset(-2);
     if (date.after(lastTwoDaysBeginTime)) {
-      return "前天";
+      return "the day before yesterday";
     }
     if (delta < 30L * ONE_DAY) {
       long days = toDays(delta);

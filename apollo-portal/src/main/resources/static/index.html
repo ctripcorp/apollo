@@ -1,5 +1,6 @@
 <!doctype html>
 <html ng-app="index">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" href="./img/config.png">
@@ -11,127 +12,130 @@
     <link rel="stylesheet" type="text/css" media='all' href="vendor/font-awesome.min.css">
 
     <link rel="stylesheet" type="text/css" href="styles/common-style.css">
-    <title>Apollo配置中心</title>
+    <title>{{'Common.Title' | translate }}</title>
 </head>
 
 <body>
 
-<apollonav></apollonav>
+    <apollonav></apollonav>
 
-<div id="app-list" class="hidden" ng-controller="IndexController">
+    <div id="app-list" class="hidden" ng-controller="IndexController">
 
-    <section class="media create-app-list">
-        <aside class="media-left text-center">
-            <h5>我的项目</h5>
-        </aside>
-        <aside class="media-body">
-            <div class="app-panel col-md-2 text-center" ng-click="goToCreateAppPage()" ng-if="hasCreateApplicationPermission">
-                <div href="#" class="thumbnail create-btn hover cursor-pointer">
-                    <img src="img/plus-white.png"/>
-                    <h5>创建项目</h5>
+        <section class="media create-app-list">
+            <aside class="media-left text-center">
+                <h5>{{'Index.MyProject' | translate }}</h5>
+            </aside>
+            <aside class="media-body">
+                <div class="app-panel col-md-2 text-center" ng-click="goToCreateAppPage()"
+                    ng-if="hasCreateApplicationPermission">
+                    <div href="#" class="thumbnail create-btn hover cursor-pointer">
+                        <img src="img/plus-white.png" />
+                        <h5>{{'Index.CreateProject' | translate }}</h5>
+                    </div>
                 </div>
-            </div>
-            <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps"
-                 ng-click="goToAppHomePage(app.appId)">
-                <div href="#" class="thumbnail hover cursor-pointer">
-                    <h4 ng-bind="app.appId"></h4>
-                    <h5 ng-bind="app.name"></h5>
+                <div class="app-panel col-md-2 text-center" ng-repeat="app in createdApps"
+                    ng-click="goToAppHomePage(app.appId)">
+                    <div href="#" class="thumbnail hover cursor-pointer">
+                        <h4 ng-bind="app.appId"></h4>
+                        <h5 ng-bind="app.name"></h5>
+                    </div>
                 </div>
-            </div>
-            <div class="app-panel col-md-2 text-center" ng-show="hasMoreCreatedApps"
-                 ng-click="getUserCreatedApps()">
-                <div href="#" class="thumbnail hover cursor-pointer">
-                    <img class="more-img" src="img/more.png"/>
-                    <h5>加载更多</h5>
+                <div class="app-panel col-md-2 text-center" ng-show="hasMoreCreatedApps"
+                    ng-click="getUserCreatedApps()">
+                    <div href="#" class="thumbnail hover cursor-pointer">
+                        <img class="more-img" src="img/more.png" />
+                        <h5>{{'Index.LoadMore' | translate }}</h5>
+                    </div>
                 </div>
-            </div>
-        </aside>
-    </section>
+            </aside>
+        </section>
 
-    <section class="media favorites-app-list">
-        <aside class="media-left text-center">
-            <h5>收藏的项目</h5>
-        </aside>
-        <aside class="media-body">
-            <div class="app-panel col-md-2 text-center"
-                 ng-repeat="app in favorites"
-                 ng-click="goToAppHomePage(app.appId)"
-                 ng-mouseover="toggleOperationBtn(app)"
-                 ng-mouseout="toggleOperationBtn(app)">
-                <div class="thumbnail hover">
-                    <h4 ng-bind="app.appId"></h4>
-                    <h5 ng-bind="app.name"></h5>
+        <section class="media favorites-app-list">
+            <aside class="media-left text-center">
+                <h5>{{'Index.FavoriteItems' | translate }}</h5>
+            </aside>
+            <aside class="media-body">
+                <div class="app-panel col-md-2 text-center" ng-repeat="app in favorites"
+                    ng-click="goToAppHomePage(app.appId)" ng-mouseover="toggleOperationBtn(app)"
+                    ng-mouseout="toggleOperationBtn(app)">
+                    <div class="thumbnail hover">
+                        <h4 ng-bind="app.appId"></h4>
+                        <h5 ng-bind="app.name"></h5>
 
-                    <p class="operate-panel" ng-show="app.showOperationBtn">
-                        <button class="btn btn-default btn-xs" title="置顶"
+                        <p class="operate-panel" ng-show="app.showOperationBtn">
+                            <button class="btn btn-default btn-xs" title="{{'Index.Topping' | translate }}"
                                 ng-click="toTop(app.favoriteId);$event.stopPropagation();">
-                            <img src="img/top.png" class="i-15">
-                        </button>
-                        <button class="btn btn-default btn-xs" title="取消收藏"
+                                <img src="img/top.png" class="i-15">
+                            </button>
+                            <button class="btn btn-default btn-xs" title="{{'Index.FavoriteCancel' | translate }}"
                                 ng-click="deleteFavorite(app.favoriteId);$event.stopPropagation();">
-                            <img src="img/like.png" class="i-15">
-                        </button>
-                    </p>
+                                <img src="img/like.png" class="i-15">
+                            </button>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-2 text-center" ng-show="hasMoreFavorites"
-                 ng-click="getUserFavorites()">
-                <div href="#" class="thumbnail hover cursor-pointer">
-                    <img class="more-img" src="img/more.png"/>
-                    <h5>加载更多</h5>
+                <div class="col-md-2 text-center" ng-show="hasMoreFavorites" ng-click="getUserFavorites()">
+                    <div href="#" class="thumbnail hover cursor-pointer">
+                        <img class="more-img" src="img/more.png" />
+                        <h5>{{'Index.LoadMore' | translate }}</h5>
+                    </div>
                 </div>
-            </div>
-            <div class="no-favorites text-center" ng-show="!favorites || favorites.length == 0">
-                <h4>您还没有收藏过任何项目，在项目主页可以收藏项目哟~</h4>
-            </div>
-
-        </aside>
-    </section>
-
-    <section class="media visit-app-list" ng-show="visitedApps && visitedApps.length">
-        <aside class="media-left text-center">
-            <h5>最近浏览的项目</h5>
-        </aside>
-        <aside class="media-body">
-            <div class="app-panel col-md-2 text-center"
-                 ng-repeat="app in visitedApps"
-                 ng-click="goToAppHomePage(app.appId)">
-                <div class="thumbnail hover">
-                    <h4 ng-bind="app.appId"></h4>
-                    <h5 ng-bind="app.name"></h5>
+                <div class="no-favorites text-center" ng-show="!favorites || favorites.length == 0">
+                    <h4>{{'Index.FavoriteTip' | translate }}</h4>
                 </div>
-            </div>
-        </aside>
-    </section>
-</div>
+
+            </aside>
+        </section>
+
+        <section class="media visit-app-list" ng-show="visitedApps && visitedApps.length">
+            <aside class="media-left text-center">
+                <h5>{{'Index.RecentlyViewedItems' | translate }}</h5>
+            </aside>
+            <aside class="media-body">
+                <div class="app-panel col-md-2 text-center" ng-repeat="app in visitedApps"
+                    ng-click="goToAppHomePage(app.appId)">
+                    <div class="thumbnail hover">
+                        <h4 ng-bind="app.appId"></h4>
+                        <h5 ng-bind="app.name"></h5>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </div>
 
 
-<div ng-include="'views/common/footer.html'"></div>
+    <div ng-include="'views/common/footer.html'"></div>
 
-<!--angular-->
-<script src="vendor/angular/angular.min.js"></script>
-<script src="vendor/angular/angular-resource.min.js"></script>
-<script src="vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
-<script src="vendor/angular/loading-bar.min.js"></script>
+    <!--angular-->
+    <script src="vendor/angular/angular.min.js"></script>
+    <script src="vendor/angular/angular-resource.min.js"></script>
+    <script src="vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
+    <script src="vendor/angular/loading-bar.min.js"></script>
+    <script src="vendor/angular/angular-cookies.min.js"></script>
 
-<!-- jquery.js -->
-<script src="vendor/jquery.min.js" type="text/javascript"></script>
-<script src="vendor/select2/select2.min.js" type="text/javascript"></script>
+    <script src="vendor/angular/angular-translate.2.18.1/angular-translate.min.js"></script>
+    <script src="vendor/angular/angular-translate.2.18.1/angular-translate-loader-static-files.min.js"></script>
+    <script src="vendor/angular/angular-translate.2.18.1/angular-translate-storage-cookie.min.js"></script>
 
-<!-- bootstrap.js -->
-<script src="vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <!-- jquery.js -->
+    <script src="vendor/jquery.min.js" type="text/javascript"></script>
+    <script src="vendor/select2/select2.min.js" type="text/javascript"></script>
 
-<script type="application/javascript" src="scripts/app.js"></script>
-<script type="application/javascript" src="scripts/services/AppService.js"></script>
-<script type="application/javascript" src="scripts/services/EnvService.js"></script>
-<script type="application/javascript" src="scripts/services/UserService.js"></script>
-<script type="application/javascript" src="scripts/services/CommonService.js"></script>
-<script type="application/javascript" src="scripts/services/FavoriteService.js"></script>
-<script type="application/javascript" src="scripts/services/PermissionService.js"></script>
-<script type="application/javascript" src="scripts/AppUtils.js"></script>
-<script type="application/javascript" src="scripts/directive/directive.js"></script>
+    <!-- bootstrap.js -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 
-<script type="application/javascript" src="scripts/controller/IndexController.js"></script>
+    <script type="application/javascript" src="scripts/app.js"></script>
+    <script type="application/javascript" src="scripts/services/AppService.js"></script>
+    <script type="application/javascript" src="scripts/services/EnvService.js"></script>
+    <script type="application/javascript" src="scripts/services/UserService.js"></script>
+    <script type="application/javascript" src="scripts/services/CommonService.js"></script>
+    <script type="application/javascript" src="scripts/services/FavoriteService.js"></script>
+    <script type="application/javascript" src="scripts/services/PermissionService.js"></script>
+    <script type="application/javascript" src="scripts/AppUtils.js"></script>
+    <script type="application/javascript" src="scripts/directive/directive.js"></script>
+
+    <script type="application/javascript" src="scripts/controller/IndexController.js"></script>
 
 </body>
+
 </html>

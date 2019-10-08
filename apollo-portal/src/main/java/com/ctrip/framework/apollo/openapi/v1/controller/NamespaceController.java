@@ -68,7 +68,7 @@ public class NamespaceController {
                                                appNamespaceDTO.getFormat(), appNamespaceDTO.getDataChangeCreatedBy());
 
     if (!InputValidator.isValidAppNamespace(appNamespaceDTO.getName())) {
-      throw new BadRequestException(String.format("Namespace格式错误: %s",
+      throw new BadRequestException(String.format("Invalid Namespace format: %s",
                                                   InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE + " & "
                                                   + InputValidator.INVALID_NAMESPACE_NAMESPACE_MESSAGE));
     }
