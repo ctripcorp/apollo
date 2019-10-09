@@ -148,9 +148,6 @@ public class ClusterService {
       return Collections.emptyList();
     }
 
-    // to make sure parent cluster is ahead of branch cluster
-    Collections.sort(clusters);
-
     return clusters;
   }
 }
