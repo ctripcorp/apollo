@@ -1,5 +1,3 @@
-# delta schema to upgrade apollo config db from v0.8.0 to v0.9.0
-
 Use ApolloConfigDB;
 
 ALTER TABLE `Cluster`
