@@ -65,7 +65,7 @@ public class PlaceholderHelper {
   public Set<String> extractPlaceholderKeys(String propertyString) {
     Set<String> placeholderKeys = Sets.newHashSet();
 
-    if (!isNormalizedPlaceholder(propertyString) && !isExpressionWithPlaceholder(propertyString)) {
+    if (propertyString == null || (!isNormalizedPlaceholder(propertyString) && !isExpressionWithPlaceholder(propertyString))) {
       return placeholderKeys;
     }
 
