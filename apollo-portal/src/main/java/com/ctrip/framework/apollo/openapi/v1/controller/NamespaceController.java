@@ -1,12 +1,14 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +29,13 @@ import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenNamespaceLockDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceCreationModel;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceCreationEvent;
 import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.ctrip.framework.apollo.portal.service.NamespaceLockService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
+import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 
 @RestController("openapiNamespaceController")
@@ -47,7 +51,8 @@ public class NamespaceController {
   public NamespaceController(final NamespaceLockService namespaceLockService,
       final NamespaceService namespaceService, final AppNamespaceService appNamespaceService,
       final ApplicationEventPublisher publisher, final UserService userService,
-      final ClusterService clusterService) {
+      final ClusterService clusterService,
+      final RoleInitializationService roleInitializationService) {
     this.namespaceLockService = namespaceLockService;
     this.namespaceService = namespaceService;
     this.appNamespaceService = appNamespaceService;
@@ -132,7 +137,8 @@ public class NamespaceController {
     if (associateClusterId == 0) {
       createAppNamespace(appId, env, clusterName, namespace, namespaceName, operator);
     } else {
-      ClusterDTO associateCluster = clusterService.loadCluster(Env.fromString(env), associateClusterId);
+      ClusterDTO associateCluster =
+          clusterService.loadCluster(Env.fromString(env), associateClusterId);
       String associateAppId = associateCluster.getAppId();
       AppNamespace appNamespace = appNamespaceService.findPublicAppNamespace(namespaceName);
       if (appNamespace == null) {
@@ -153,10 +159,34 @@ public class NamespaceController {
     }
 
     NamespaceDTO toCreate = OpenApiBeanUtils.transformToNamespaceDTO(namespace);
-    NamespaceDTO createdNamespace = namespaceService.createNamespace(Env.valueOf(env), toCreate);
+    List<NamespaceCreationModel> models = bulidNamespaceCreationModelList(env, toCreate);
+    List<NamespaceDTO> createdNamespaceList = null;
+    try {
+      createdNamespaceList =
+          namespaceService.createNamespaceAndAssignNamespaceRoleToOperator(appId, models, operator);
+    } catch (Exception e) {
+      throw new BadRequestException(
+          String.format("create namespace fail. (env=%s namespace=%s)", env, namespaceName));
+    }
+    if (CollectionUtils.isEmpty(createdNamespaceList)) {
+      throw new BadRequestException(
+          String.format("create namespace list is empty. (env=%s namespace=%s)", env, namespaceName));
+    }
+
     NamespaceBO namespaceBO =
-        namespaceService.transformNamespace2BO(Env.valueOf(env), createdNamespace);
+        namespaceService.transformNamespace2BO(Env.valueOf(env), createdNamespaceList.get(0));
     return OpenApiBeanUtils.transformFromNamespaceBO(namespaceBO);
+  }
+
+
+  private List<NamespaceCreationModel> bulidNamespaceCreationModelList(String env,
+      NamespaceDTO toCreate) {
+    List<NamespaceCreationModel> models = new ArrayList<NamespaceCreationModel>();
+    NamespaceCreationModel model = new NamespaceCreationModel();
+    model.setEnv(env);
+    model.setNamespace(toCreate);
+    models.add(model);
+    return models;
   }
 
   private void createAppNamespace(String appId, String env, String clusterName,

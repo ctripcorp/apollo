@@ -1,5 +1,21 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.validation.Valid;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
@@ -7,7 +23,6 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
@@ -20,43 +35,16 @@ import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import com.ctrip.framework.apollo.tracer.Tracer;
-import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
 public class NamespaceController {
-
-  private static final Logger logger = LoggerFactory.getLogger(NamespaceController.class);
 
   private final ApplicationEventPublisher publisher;
   private final UserInfoHolder userInfoHolder;
   private final NamespaceService namespaceService;
   private final AppNamespaceService appNamespaceService;
-  private final RoleInitializationService roleInitializationService;
   private final PortalConfig portalConfig;
   private final PermissionValidator permissionValidator;
-  private final AdminServiceAPI.NamespaceAPI namespaceAPI;
 
   public NamespaceController(
       final ApplicationEventPublisher publisher,
@@ -71,10 +59,8 @@ public class NamespaceController {
     this.userInfoHolder = userInfoHolder;
     this.namespaceService = namespaceService;
     this.appNamespaceService = appNamespaceService;
-    this.roleInitializationService = roleInitializationService;
     this.portalConfig = portalConfig;
     this.permissionValidator = permissionValidator;
-    this.namespaceAPI = namespaceAPI;
   }
 
 
@@ -127,28 +113,9 @@ public class NamespaceController {
 
     checkModel(!CollectionUtils.isEmpty(models));
 
-    String namespaceName = models.get(0).getNamespace().getNamespaceName();
     String operator = userInfoHolder.getUser().getUserId();
-
-    roleInitializationService.initNamespaceRoles(appId, namespaceName, operator);
-    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, operator);
-
-    for (NamespaceCreationModel model : models) {
-      NamespaceDTO namespace = model.getNamespace();
-      RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), namespace.getAppId(),
-                                                 namespace.getClusterName(), namespace.getNamespaceName());
-
-      try {
-        namespaceService.createNamespace(Env.valueOf(model.getEnv()), namespace);
-      } catch (Exception e) {
-        logger.error("create namespace fail.", e);
-        Tracer.logError(
-                String.format("create namespace fail. (env=%s namespace=%s)", model.getEnv(),
-                        namespace.getNamespaceName()), e);
-      }
-    }
-
-    namespaceService.assignNamespaceRoleToOperator(appId, namespaceName,userInfoHolder.getUser().getUserId());
+    
+    namespaceService.createNamespaceAndAssignNamespaceRoleToOperator(appId, models, operator);
 
     return ResponseEntity.ok().build();
   }

@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.portal.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
@@ -33,6 +35,7 @@ import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
+import com.ctrip.framework.apollo.portal.entity.model.NamespaceCreationModel;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
@@ -57,13 +60,15 @@ public class NamespaceService {
   private final InstanceService instanceService;
   private final NamespaceBranchService branchService;
   private final RolePermissionService rolePermissionService;
+  private final RoleInitializationService roleInitializationService;
 
   public NamespaceService(final PortalConfig portalConfig, final PortalSettings portalSettings,
       final UserInfoHolder userInfoHolder, final AdminServiceAPI.NamespaceAPI namespaceAPI,
       final ClusterService clusterService, final ItemService itemService,
       final ReleaseService releaseService, final AppNamespaceService appNamespaceService,
       final InstanceService instanceService, final @Lazy NamespaceBranchService branchService,
-      final RolePermissionService rolePermissionService) {
+      final RolePermissionService rolePermissionService,
+      final RoleInitializationService roleInitializationService) {
     this.portalConfig = portalConfig;
     this.portalSettings = portalSettings;
     this.userInfoHolder = userInfoHolder;
@@ -75,8 +80,8 @@ public class NamespaceService {
     this.instanceService = instanceService;
     this.branchService = branchService;
     this.rolePermissionService = rolePermissionService;
+    this.roleInitializationService = roleInitializationService;
   }
-
 
   public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {
     if (StringUtils.isEmpty(namespace.getDataChangeCreatedBy())) {
@@ -90,6 +95,34 @@ public class NamespaceService {
     return createdNamespace;
   }
 
+  public List<NamespaceDTO> createNamespaceAndAssignNamespaceRoleToOperator(String appId,
+      List<NamespaceCreationModel> models, String operator) {
+    List<NamespaceDTO> createdNamespaceList = new ArrayList<NamespaceDTO>();
+
+    String namespaceName = models.get(0).getNamespace().getNamespaceName();
+
+    roleInitializationService.initNamespaceRoles(appId, namespaceName, operator);
+    roleInitializationService.initNamespaceEnvRoles(appId, namespaceName, operator);
+
+    for (NamespaceCreationModel model : models) {
+      NamespaceDTO namespace = model.getNamespace();
+      RequestPrecondition.checkArgumentsNotEmpty(model.getEnv(), namespace.getAppId(),
+          namespace.getClusterName(), namespace.getNamespaceName());
+      
+      try {
+        NamespaceDTO createdNamespace = this.createNamespace(Env.valueOf(model.getEnv()), namespace);
+        createdNamespaceList.add(createdNamespace);
+      } catch (Exception e) {
+        logger.error("create namespace fail.", e);
+        Tracer.logError(String.format("create namespace fail. (env=%s namespace=%s)",
+            model.getEnv(), namespace.getNamespaceName()), e);
+      }
+    }
+
+    this.assignNamespaceRoleToOperator(appId, namespaceName, operator);
+
+    return createdNamespaceList;
+  }
 
   @Transactional
   public void deleteNamespace(String appId, Env env, String clusterName, String namespaceName) {
