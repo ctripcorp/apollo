@@ -13,6 +13,7 @@ import com.ctrip.framework.apollo.configservice.wrapper.DeferredResultWrapper;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -24,6 +25,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -257,13 +259,20 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
       logger.error("message format invalid - {}", content);
       return;
     }
+    //save deferredResults key
+    AtomicReference<String> watchKey = new AtomicReference<>();
+    deferredResults.keys().forEach(key -> {
+      if(key.equalsIgnoreCase(content)){
+        watchKey.set(key);
+      }
+    });
 
-    if (!deferredResults.containsKey(content)) {
+    if (StringUtils.isBlank(watchKey.get())) {
       return;
     }
 
     //create a new list to avoid ConcurrentModificationException
-    List<DeferredResultWrapper> results = Lists.newArrayList(deferredResults.get(content));
+    List<DeferredResultWrapper> results = Lists.newArrayList(deferredResults.get(watchKey.get()));
 
     ApolloConfigNotification configNotification = new ApolloConfigNotification(changedNamespace, message.getId());
     configNotification.addMessage(content, message.getId());
