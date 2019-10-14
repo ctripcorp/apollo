@@ -345,6 +345,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![术康](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/postop.png) 
 ![富力集团](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/rfchina.png) 
 ![天府行](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/tfxing.png) 
+![八商山](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/8travelpay.png) 
 
 # Awards
 
