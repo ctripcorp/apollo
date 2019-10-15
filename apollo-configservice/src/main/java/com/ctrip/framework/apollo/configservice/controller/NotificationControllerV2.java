@@ -245,7 +245,7 @@ public class NotificationControllerV2 implements ReleaseMessageListener {
   public void handleMessage(ReleaseMessage message, String channel) {
     logger.info("message received - channel: {}, message: {}", channel, message);
 
-    String content = message.getMessage();
+    String content = message.getMessage().toLowerCase();
     Tracer.logEvent("Apollo.LongPoll.Messages", content);
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(content)) {
       return;
