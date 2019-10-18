@@ -87,7 +87,7 @@ public class WatchKeysUtil {
   }
 
   private String assembleKey(String appId, String cluster, String namespace) {
-    return STRING_JOINER.join(appId, cluster, namespace).toLowerCase();
+    return STRING_JOINER.join(appId, cluster, namespace);
   }
 
   private Set<String> assembleWatchKeys(String appId, String clusterName, String namespace,
