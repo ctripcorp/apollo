@@ -117,17 +117,19 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 # Support
 <table>
   <thead>
-    <th>Apollo技术支持④群<br />群号：516773934 </th>
+    <th>Apollo技术支持⑤群<br />群号：914839843（未满）</th>
+    <th>Apollo技术支持④群<br />群号：516773934（已满）</th>
     <th>Apollo技术支持③群<br />群号：742035428（已满）</th>
     <th>Apollo技术支持②群<br />群号：904287263（已满）</th>
     <th>Apollo技术支持①群<br />群号：375526581（已满）</th>
   </thead>
   <tbody>
     <tr>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/tech-support-qq-4.png" alt="tech-support-qq-4"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/tech-support-qq-3.png" alt="tech-support-qq-3"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/tech-support-qq-2.png" alt="tech-support-qq-2"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/tech-support-qq-1.png" alt="tech-support-qq-1"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-5.png" alt="tech-support-qq-5"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-4.png" alt="tech-support-qq-4"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-3.png" alt="tech-support-qq-3"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-2.png" alt="tech-support-qq-2"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-1.png" alt="tech-support-qq-1"></td>
     </tr>
   </tbody>
 </table>
@@ -346,6 +348,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![富力集团](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/rfchina.png) 
 ![天府行](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/tfxing.png) 
 ![八商山](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/8travelpay.png) 
+![中原地产](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/centaline.png) 
+![智科云达](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zkyda.png) 
 
 # Awards
 
