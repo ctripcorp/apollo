@@ -67,6 +67,8 @@ public class EmbeddedApollo extends ExternalResource {
         } else if (request.getPath().startsWith("/configs")) {
           List<String> pathSegments = request.getRequestUrl().pathSegments();
           // appId and cluster might be used in the future
+          String appId = pathSegments.get(1);
+          String cluster = pathSegments.get(2);
           String namespace = pathSegments.get(3);
           return new MockResponse().setResponseCode(200).setBody(loadConfigFor(namespace));
         }
