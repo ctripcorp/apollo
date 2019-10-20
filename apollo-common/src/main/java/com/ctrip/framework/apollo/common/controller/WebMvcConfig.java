@@ -41,9 +41,9 @@ public class WebMvcConfig implements WebMvcConfigurer, WebServerFactoryCustomize
     // 10 days
     addCacheControl(registry, "img", 864000);
     addCacheControl(registry, "vendor", 864000);
+    addCacheControl(registry, "scripts", 864000);
+    addCacheControl(registry, "styles", 864000);
     // 1 day
-    addCacheControl(registry, "scripts", 86400);
-    addCacheControl(registry, "styles", 86400);
     addCacheControl(registry, "views", 86400);
     addCacheControl(registry, "i18n", 86400);
   }

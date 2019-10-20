@@ -149,8 +149,7 @@
                         ng-show="clusterDiff.diffs.createItems.length + clusterDiff.diffs.updateItems.length == 0 || clusterDiff.extInfo">
                         <span
                             ng-show="clusterDiff.diffs.createItems.length + clusterDiff.diffs.updateItems.length == 0 && !clusterDiff.extInfo">{{'Config.Sync.NoNeedSyncItem' | translate }}</span>
-                        <span ng-show="clusterDiff.extInfo" ng-bind="clusterDiff.extInfo"></span>
-                        ,{{'Config.Sync.IgnoreSync' | translate }}
+                        <span ng-show="clusterDiff.extInfo" ng-bind="clusterDiff.extInfo"></span>, {{'Config.Sync.IgnoreSync' | translate }}
                     </div>
 
                     <div class="row" style="margin-top: 10px;"

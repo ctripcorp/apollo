@@ -6,7 +6,7 @@
 FROM openjdk:8-jre-alpine
 MAINTAINER ameizi <sxyx2008@163.com>
 
-ENV VERSION 1.5.0-SNAPSHOT
+ENV VERSION 1.5.0
 ENV SERVER_PORT 8080
 # DataSource Info
 ENV DS_URL ""

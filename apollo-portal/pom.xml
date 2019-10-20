@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.ctrip.framework.apollo</groupId>
 		<artifactId>apollo</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.5.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -12,6 +12,7 @@
 	<name>Apollo Portal</name>
 	<properties>
 		<github.path>${project.artifactId}</github.path>
+		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,6 +99,36 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<basedir>${build.directory}</basedir>
+					<includes>
+						<include>classes/static/*.html</include>
+						<include>classes/static/**/*.html</include>
+					</includes>
+					<replacements>
+						<replacement>
+							<token>\.css\"</token>
+							<value>.css?v=${maven.build.timestamp}\"</value>
+						</replacement>
+						<replacement>
+							<token>\.js\"</token>
+							<value>.js?v=${maven.build.timestamp}\"</value>
+						</replacement>
+					</replacements>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
