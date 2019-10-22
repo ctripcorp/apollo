@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class DeferredResultWrapper {
+public class DeferredResultWrapper implements Comparable<DeferredResultWrapper> {
   private static final ResponseEntity<List<ApolloConfigNotification>>
       NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
@@ -63,5 +64,10 @@ public class DeferredResultWrapper {
 
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> getResult() {
     return result;
+  }
+
+  @Override
+  public int compareTo(@NonNull DeferredResultWrapper deferredResultWrapper) {
+    return this == deferredResultWrapper ? 0 : 1;
   }
 }
