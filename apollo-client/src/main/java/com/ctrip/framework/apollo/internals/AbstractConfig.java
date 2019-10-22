@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.ConfigOrderedChangeListener;
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
@@ -23,12 +24,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -84,6 +80,17 @@ public abstract class AbstractConfig implements Config {
   public void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
     if (!m_listeners.contains(listener)) {
       m_listeners.add(listener);
+      Collections.sort(m_listeners, new Comparator<ConfigChangeListener>() {
+        @Override
+        public int compare(ConfigChangeListener o1, ConfigChangeListener o2) {
+          if (o1 instanceof ConfigOrderedChangeListener && o2 instanceof ConfigOrderedChangeListener){
+            ConfigOrderedChangeListener configOrderedChangeListener1 = (ConfigOrderedChangeListener) o1;
+            ConfigOrderedChangeListener configOrderedChangeListener2 = (ConfigOrderedChangeListener) o2;
+            return Integer.compare(configOrderedChangeListener1.order(),configOrderedChangeListener2.order());
+          }
+          return 0;
+        }
+      });
       if (interestedKeys != null && !interestedKeys.isEmpty()) {
         m_interestedKeys.put(listener, Sets.newHashSet(interestedKeys));
       }

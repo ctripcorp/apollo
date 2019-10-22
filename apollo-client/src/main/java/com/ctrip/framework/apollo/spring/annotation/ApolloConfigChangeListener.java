@@ -52,4 +52,10 @@ public @interface ApolloConfigChangeListener {
    * If neither of {@code interestedKeys} and {@code interestedKeyPrefixes} is specified then the {@code listener} will be notified when whatever key is changed.
    */
   String[] interestedKeyPrefixes() default {};
+
+  /**
+   * the listener invoked order,lowest is Integer.MAX_VALUE,highest is Integer.MIN_VALUE
+   * @return
+   */
+  int order() default 0;
 }
