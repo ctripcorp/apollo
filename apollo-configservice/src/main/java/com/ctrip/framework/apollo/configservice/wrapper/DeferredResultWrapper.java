@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class DeferredResultWrapper {
+public class DeferredResultWrapper implements Comparable<DeferredResultWrapper> {
   private static final ResponseEntity<List<ApolloConfigNotification>>
       NOT_MODIFIED_RESPONSE_LIST = new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 
@@ -63,5 +63,11 @@ public class DeferredResultWrapper {
 
   public DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> getResult() {
     return result;
+  }
+
+  @Override
+  public int compareTo(DeferredResultWrapper deferredResultWrapper) {
+    long result = this.hashCode() - deferredResultWrapper.hashCode();
+    return Long.compare(result, 0L);
   }
 }
