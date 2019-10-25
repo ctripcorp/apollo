@@ -21,9 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
@@ -56,7 +54,7 @@ import java.util.function.Function;
 public class NotificationControllerV2 implements ReleaseMessageListener {
   private static final Logger logger = LoggerFactory.getLogger(NotificationControllerV2.class);
   private final Multimap<String, DeferredResultWrapper> deferredResults =
-      Multimaps.synchronizedSetMultimap(TreeMultimap.create(String.CASE_INSENSITIVE_ORDER, Ordering.natural()));
+      Multimaps.synchronizedSetMultimap(HashMultimap.create());
   private static final Splitter STRING_SPLITTER =
       Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
   private static final Type notificationsTypeReference =
