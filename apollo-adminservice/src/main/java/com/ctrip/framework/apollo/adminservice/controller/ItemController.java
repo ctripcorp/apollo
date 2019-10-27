@@ -145,7 +145,7 @@ public class ItemController {
     List<Commit> commits = commitService.find(appId, clusterName, namespaceName, null);
     if (Objects.nonNull(commits)) {
       List<Item> deletedItems = commits.stream()
-          .map(item -> new ConfigChangeContentBuilder().convertJsonString(item.getChangeSets()).getDeleteItems())
+          .map(item -> ConfigChangeContentBuilder.convertJsonString(item.getChangeSets()).getDeleteItems())
           .flatMap(Collection::stream)
           .collect(Collectors.toList());
       return BeanUtils.batchTransform(ItemDTO.class, deletedItems);

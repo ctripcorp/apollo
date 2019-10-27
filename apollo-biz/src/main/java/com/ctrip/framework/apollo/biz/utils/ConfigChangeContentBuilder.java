@@ -82,8 +82,8 @@ public class ConfigChangeContentBuilder {
     return target;
   }
 
-  public ConfigChangeContentBuilder convertJsonString(String content) {
-    return gson.fromJson(content, this.getClass());
+  public static ConfigChangeContentBuilder convertJsonString(String content) {
+    return gson.fromJson(content, ConfigChangeContentBuilder.class);
   }
 
   public List<Item> getCreateItems() {

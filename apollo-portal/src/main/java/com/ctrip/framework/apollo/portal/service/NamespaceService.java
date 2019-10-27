@@ -244,7 +244,7 @@ public class NamespaceService {
     }
 
     //deleted items
-    itemService.findDeletedItems(appId, env, clusterName, namespaceName).forEach(item->{
+    itemService.findDeletedItems(appId, env, clusterName, namespaceName).forEach(item -> {
       deletedItemDTOs.put(item.getKey(),item);
     });
 
@@ -295,10 +295,7 @@ public class NamespaceService {
         ItemBO deletedItem = new ItemBO();
 
         deletedItem.setDeleted(true);
-        ItemDTO deletedItemDto = new ItemDTO();
-        if (deletedItemDTOs.containsKey(key)) {
-          deletedItemDto = deletedItemDTOs.get(key);
-        }
+        ItemDTO deletedItemDto = deletedItemDTOs.computeIfAbsent(key, k -> new ItemDTO());
         deletedItemDto.setKey(key);
         String oldValue = entry.getValue();
         deletedItem.setItem(deletedItemDto);

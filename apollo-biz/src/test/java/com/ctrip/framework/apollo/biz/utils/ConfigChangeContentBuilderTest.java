@@ -37,7 +37,7 @@ public class ConfigChangeContentBuilderTest {
 
   @Test
   public void testConvertJsonString() {
-    ConfigChangeContentBuilder contentBuilder = configChangeContentBuilder
+    ConfigChangeContentBuilder contentBuilder = ConfigChangeContentBuilder
         .convertJsonString(configString);
 
     assertNotNull(contentBuilder.getCreateItems());
