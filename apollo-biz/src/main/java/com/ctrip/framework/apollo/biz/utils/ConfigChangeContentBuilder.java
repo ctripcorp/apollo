@@ -1,11 +1,9 @@
 package com.ctrip.framework.apollo.biz.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,4 +82,19 @@ public class ConfigChangeContentBuilder {
     return target;
   }
 
+  public static ConfigChangeContentBuilder convertJsonString(String content) {
+    return gson.fromJson(content, ConfigChangeContentBuilder.class);
+  }
+
+  public List<Item> getCreateItems() {
+    return createItems;
+  }
+
+  public List<ItemPair> getUpdateItems() {
+    return updateItems;
+  }
+
+  public List<Item> getDeleteItems() {
+    return deleteItems;
+  }
 }
