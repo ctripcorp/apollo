@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.biz;
 
+import com.ctrip.framework.apollo.biz.entity.Item;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.biz.entity.Release;
 import com.ctrip.framework.apollo.biz.entity.ServerConfig;
@@ -49,6 +50,16 @@ public class MockBeanFactory {
     instance.setConfigurations(configurations);
 
     return instance;
+  }
+
+  public static Item mockItem(long id, long namespaceId, String itemKey, String itemValue, int lineNum) {
+    Item item = new Item();
+    item.setId(id);
+    item.setKey(itemKey);
+    item.setValue(itemValue);
+    item.setLineNum(lineNum);
+    item.setNamespaceId(namespaceId);
+    return item;
   }
 
 }

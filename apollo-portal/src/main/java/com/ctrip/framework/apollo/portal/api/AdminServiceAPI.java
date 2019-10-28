@@ -159,6 +159,13 @@ public class AdminServiceAPI {
       return Arrays.asList(itemDTOs);
     }
 
+    public List<ItemDTO> findDeletedItems(String appId, Env env, String clusterName, String namespaceName) {
+      ItemDTO[] itemDTOs =
+          restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/deleted",
+              ItemDTO[].class, appId, clusterName, namespaceName);
+      return Arrays.asList(itemDTOs);
+    }
+
     public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
       return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}",
           ItemDTO.class, appId, clusterName, namespaceName, key);
