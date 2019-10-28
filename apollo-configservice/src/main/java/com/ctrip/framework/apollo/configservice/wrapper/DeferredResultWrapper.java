@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class DeferredResultWrapper implements Comparable<DeferredResultWrapper> 
   }
 
   @Override
-  public int compareTo(DeferredResultWrapper deferredResultWrapper) {
+  public int compareTo(@NonNull DeferredResultWrapper deferredResultWrapper) {
     long result = this.hashCode() - deferredResultWrapper.hashCode();
     return Long.compare(result, 0L);
   }
