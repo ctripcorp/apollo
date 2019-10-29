@@ -68,7 +68,6 @@ public class DeferredResultWrapper implements Comparable<DeferredResultWrapper> 
 
   @Override
   public int compareTo(@NonNull DeferredResultWrapper deferredResultWrapper) {
-    int result = this.hashCode() - deferredResultWrapper.hashCode();
-    return Integer.compare(result, 0);
+    return Integer.compare(this.hashCode() - deferredResultWrapper.hashCode(), 0);
   }
 }
