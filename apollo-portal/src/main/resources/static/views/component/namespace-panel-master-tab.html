@@ -223,7 +223,11 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>{{'Component.Namespace.Master.Items.Body.PublishState' | translate }}</th>
+                                <th class="hover" title="{{'Component.Namespace.Master.Items.Body.Sort' | translate }}"
+                                   ng-click="col='item.dataChangeLastModifiedTime';desc=!desc;">
+                                  {{'Component.Namespace.Master.Items.Body.PublishState' | translate }}
+                                  <span class="glyphicon glyphicon-sort"></span>
+                                </th>
                                 <th class="hover" title="{{'Component.Namespace.Master.Items.Body.Sort' | translate }}"
                                     ng-click="col='item.key';desc=!desc;">
                                     {{'Component.Namespace.Master.Items.Body.ItemKey' | translate }}&nbsp;
