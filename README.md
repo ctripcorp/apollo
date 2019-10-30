@@ -351,6 +351,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![中原地产](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/centaline.png) 
 ![智科云达](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zkyda.png) 
 ![中原730](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/house730.png) 
+![百果园](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/pagoda.png) 
+![波罗蜜](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bolome.png) 
+![Xignite](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xignite.png) 
 
 # Awards
 
