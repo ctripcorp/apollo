@@ -102,7 +102,11 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>{{'Component.Namespace.Branch.Body.PublishState' | translate }}</th>
+                                <th class="hover" title="{{'Component.Namespace.Branch.Body.ItemSort' | translate }}"
+                                    ng-click="col='item.dataChangeLastModifiedTime';desc=!desc;">
+                                    {{'Component.Namespace.Branch.Body.PublishState' | translate }}
+                                   <span class="glyphicon glyphicon-sort"></span>
+                                </th>
                                 <th class="hover" title="{{'Component.Namespace.Branch.Body.ItemSort' | translate }}"
                                     ng-click="col='item.key';desc=!desc;">
                                     {{'Component.Namespace.Branch.Body.ItemKey' | translate }}&nbsp;
