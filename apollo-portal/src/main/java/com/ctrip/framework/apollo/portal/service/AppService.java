@@ -1,12 +1,14 @@
 package com.ctrip.framework.apollo.portal.service;
 
 import com.ctrip.framework.apollo.common.dto.AppDTO;
+import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
@@ -16,9 +18,11 @@ import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Lists;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +40,8 @@ public class AppService {
   private final RolePermissionService rolePermissionService;
   private final FavoriteService favoriteService;
   private final UserService userService;
+  private final NamespaceService namespaceService;
+  private final PortalSettings portalSettings;
 
   public AppService(
       final UserInfoHolder userInfoHolder,
@@ -46,7 +52,9 @@ public class AppService {
       final RoleInitializationService roleInitializationService,
       final RolePermissionService rolePermissionService,
       final FavoriteService favoriteService,
-      final UserService userService) {
+      final UserService userService,
+      final NamespaceService namespaceService,
+      final PortalSettings portalSettings) {
     this.userInfoHolder = userInfoHolder;
     this.appAPI = appAPI;
     this.appRepository = appRepository;
@@ -56,6 +64,8 @@ public class AppService {
     this.rolePermissionService = rolePermissionService;
     this.favoriteService = favoriteService;
     this.userService = userService;
+    this.namespaceService = namespaceService;
+    this.portalSettings = portalSettings;
   }
 
 
@@ -75,8 +85,36 @@ public class AppService {
 
   public PageDTO<App> searchByAppIdOrAppName(String query, Pageable pageable) {
     Page<App> apps = appRepository.findByAppIdContainingOrNameContaining(query, query, pageable);
-
+    if (!apps.hasContent()) {
+        List<App> appsFromItem = findAppByItem(query);
+        apps = new PageImpl<>(appsFromItem);
+    }
     return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
+  }
+
+  private List<App> findAppByItem(String itemKey) {
+      List<App> result = Lists.newLinkedList();
+
+      List<Env> activeEnvs = portalSettings.getActiveEnvs();
+      for (Env env : activeEnvs) {
+          List<NamespaceDTO> namespaceDTOS = namespaceService.findNamespacesByItem(env, itemKey);
+          if (CollectionUtils.isEmpty(namespaceDTOS)) {
+              continue;
+          }
+          for (NamespaceDTO namespaceDTO : namespaceDTOS) {
+              String cluster = namespaceDTO.getClusterName();
+              String namespaceName = namespaceDTO.getNamespaceName();
+
+              App app = new App();
+              app.setAppId(namespaceDTO.getAppId());
+              app.setName(env.name() + " / " + cluster + " / " + namespaceName);
+              app.setOrgId(env.name() + "+" + cluster + "+" + namespaceName);
+              app.setOrgName("SearchByItem");
+              result.add(app);
+          }
+      }
+
+      return result;
   }
 
   public List<App> findByAppIds(Set<String> appIds) {

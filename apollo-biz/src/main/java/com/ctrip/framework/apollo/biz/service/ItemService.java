@@ -126,6 +126,10 @@ public class ItemService {
     return itemRepository.findByNamespaceIdAndDataChangeLastModifiedTimeGreaterThan(namespaceId, date);
   }
 
+  public List<Item> findItemsByKey(String key) {
+    return itemRepository.findByKeyLike(key);
+  }
+
   @Transactional
   public Item save(Item entity) {
     checkItemKeyLength(entity.getKey());

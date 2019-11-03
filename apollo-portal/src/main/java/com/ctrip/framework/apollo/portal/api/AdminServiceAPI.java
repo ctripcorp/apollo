@@ -79,6 +79,12 @@ public class AdminServiceAPI {
       return Arrays.asList(namespaceDTOs);
     }
 
+    public List<NamespaceDTO> findByItem(Env env, String itemKey) {
+      NamespaceDTO[] namespaceDTOs = restTemplate.get(env, "/namespaces/find-by-item?itemKey={itemKey}",
+              NamespaceDTO[].class, itemKey);
+      return Arrays.asList(namespaceDTOs);
+    }
+
     public NamespaceDTO loadNamespace(String appId, Env env, String clusterName,
         String namespaceName) {
       return

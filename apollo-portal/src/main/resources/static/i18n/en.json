@@ -684,7 +684,7 @@
   "Valdr.Release.ReleaseName.Required": "Release Name cannot be empty",
   "Valdr.Release.Comment.Size": "Comment length should not exceed 64 characters",
   "ApolloConfirmDialog.DefaultConfirmBtnName": "OK",
-  "ApolloConfirmDialog.SearchPlaceHolder": "Search items (App Id, App Name)",
+  "ApolloConfirmDialog.SearchPlaceHolder": "Search items (App Id, App Name、Namespace Item Key)",
   "RulesModal.ChooseInstances": "Select from the list of instances",
   "RulesModal.InvalidIp": "Illegal IP Address: '{{ip}}'",
   "RulesModal.GrayscaleAppIdCanNotBeNull": "Grayscale AppId cannot be empty",

@@ -68,6 +68,12 @@ public class NamespaceController {
     return BeanUtils.transform(NamespaceDTO.class, namespace);
   }
 
+  @GetMapping("/namespaces/find-by-item")
+  public List<NamespaceDTO> findByItem(@RequestParam String itemKey) {
+    List<Namespace> namespaces = namespaceService.findByItem(itemKey);
+    return BeanUtils.batchTransform(NamespaceDTO.class, namespaces);
+  }
+
   @GetMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName:.+}")
   public NamespaceDTO get(@PathVariable("appId") String appId,
                           @PathVariable("clusterName") String clusterName,
