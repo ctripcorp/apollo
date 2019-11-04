@@ -354,6 +354,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![百果园](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/pagoda.png) 
 ![波罗蜜](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bolome.png) 
 ![Xignite](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xignite.png) 
+![杭州有云科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aduer.png) 
+![成都书声科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jojoreading.png) 
 
 # Awards
 
