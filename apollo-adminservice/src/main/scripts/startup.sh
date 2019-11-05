@@ -3,7 +3,6 @@ SERVICE_NAME=apollo-adminservice
 ## Adjust log dir if necessary
 LOG_DIR=/opt/logs/100003172
 ## Adjust server port if necessary
-#SERVER_PORT=8090
 SERVER_PORT=${SERVER_PORT:=8090}
 
 ## Create log directory if not existed because JDK 8+ won't do that

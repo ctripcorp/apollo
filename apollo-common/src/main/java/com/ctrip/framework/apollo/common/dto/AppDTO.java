@@ -11,7 +11,7 @@ public class AppDTO extends BaseDTO{
 
   @Pattern(
       regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
-      message = "AppId格式错误: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
+      message = "Invalid AppId format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
   )
   private String appId;
 

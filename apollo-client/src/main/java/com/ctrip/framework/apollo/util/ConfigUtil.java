@@ -252,7 +252,7 @@ public class ConfigUtil {
     String customizedConfigCacheSize = System.getProperty("apollo.configCacheSize");
     if (!Strings.isNullOrEmpty(customizedConfigCacheSize)) {
       try {
-        maxConfigCacheSize = Long.valueOf(customizedConfigCacheSize);
+        maxConfigCacheSize = Long.parseLong(customizedConfigCacheSize);
       } catch (Throwable ex) {
         logger.error("Config for apollo.configCacheSize is invalid: {}", customizedConfigCacheSize);
       }
@@ -275,7 +275,7 @@ public class ConfigUtil {
     String customizedLongPollingInitialDelay = System.getProperty("apollo.longPollingInitialDelayInMills");
     if (!Strings.isNullOrEmpty(customizedLongPollingInitialDelay)) {
       try {
-        longPollingInitialDelayInMills = Long.valueOf(customizedLongPollingInitialDelay);
+        longPollingInitialDelayInMills = Long.parseLong(customizedLongPollingInitialDelay);
       } catch (Throwable ex) {
         logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}", customizedLongPollingInitialDelay);
       }

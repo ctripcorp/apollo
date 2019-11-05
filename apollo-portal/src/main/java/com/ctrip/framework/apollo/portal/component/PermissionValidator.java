@@ -137,6 +137,8 @@ public class PermissionValidator {
   public boolean hasManageAppMasterPermission(String appId) {
     // the manage app master permission might not be initialized, so we need to check isSuperAdmin first
     return isSuperAdmin() ||
-            systemRoleManagerService.hasManageAppMasterPermission(userInfoHolder.getUser().getUserId(), appId);
+        (hasAssignRolePermission(appId) &&
+         systemRoleManagerService.hasManageAppMasterPermission(userInfoHolder.getUser().getUserId(), appId)
+        );
   }
 }

@@ -61,4 +61,20 @@ public class OpenAppNamespaceDTO extends BaseDTO {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public String toString() {
+        return "OpenAppNamespaceDTO{" +
+            "name='" + name + '\'' +
+            ", appId='" + appId + '\'' +
+            ", format='" + format + '\'' +
+            ", isPublic=" + isPublic +
+            ", appendNamespacePrefix=" + appendNamespacePrefix +
+            ", comment='" + comment + '\'' +
+            ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
+            ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
+            ", dataChangeCreatedTime=" + dataChangeCreatedTime +
+            ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
+            '}';
+    }
 }

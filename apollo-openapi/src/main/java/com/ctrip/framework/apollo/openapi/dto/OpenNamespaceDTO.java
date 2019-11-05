@@ -73,4 +73,21 @@ public class OpenNamespaceDTO extends BaseDTO {
   public void setItems(List<OpenItemDTO> items) {
     this.items = items;
   }
+
+  @Override
+  public String toString() {
+    return "OpenNamespaceDTO{" +
+        "appId='" + appId + '\'' +
+        ", clusterName='" + clusterName + '\'' +
+        ", namespaceName='" + namespaceName + '\'' +
+        ", comment='" + comment + '\'' +
+        ", format='" + format + '\'' +
+        ", isPublic=" + isPublic +
+        ", items=" + items +
+        ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
+        ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
+        ", dataChangeCreatedTime=" + dataChangeCreatedTime +
+        ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
+        '}';
+  }
 }

@@ -110,6 +110,10 @@ public class ItemService {
     return itemAPI.findItems(appId, env, clusterName, namespaceName);
   }
 
+  public List<ItemDTO> findDeletedItems(String appId, Env env, String clusterName, String namespaceName) {
+    return itemAPI.findDeletedItems(appId, env, clusterName, namespaceName);
+  }
+
   public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
     return itemAPI.loadItem(env, appId, clusterName, namespaceName, key);
   }
@@ -173,6 +177,7 @@ public class ItemService {
             "namespace not exist. appId:%s, env:%s, clusterName:%s, namespaceName:%s", appId, env, clusterName,
             namespaceName));
       }
+      throw e;
     }
     return namespaceDTO.getId();
   }

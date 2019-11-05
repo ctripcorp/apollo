@@ -154,7 +154,7 @@ public class PermissionController {
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BadRequestException(user + " already authorized");
     }
 
     return ResponseEntity.ok().build();
@@ -209,7 +209,7 @@ public class PermissionController {
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUser)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BadRequestException(user + " already authorized");
     }
 
     return ResponseEntity.ok().build();
@@ -253,7 +253,7 @@ public class PermissionController {
     Set<String> assignedUsers = rolePermissionService.assignRoleToUsers(RoleUtils.buildAppRoleName(appId, roleType),
         Sets.newHashSet(user), userInfoHolder.getUser().getUserId());
     if (CollectionUtils.isEmpty(assignedUsers)) {
-      throw new BadRequestException(user + "已授权");
+      throw new BadRequestException(user + " already authorized");
     }
 
     return ResponseEntity.ok().build();
@@ -322,7 +322,7 @@ public class PermissionController {
     roleInitializationService.initManageAppMasterRole(appId, userInfoHolder.getUser().getUserId());
     Set<String> userIds = new HashSet<>();
     userIds.add(userId);
-    rolePermissionService.assignRoleToUsers(RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId),
+    rolePermissionService.assignRoleToUsers(RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER),
             userIds, userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }
@@ -334,7 +334,7 @@ public class PermissionController {
     roleInitializationService.initManageAppMasterRole(appId, userInfoHolder.getUser().getUserId());
     Set<String> userIds = new HashSet<>();
     userIds.add(userId);
-    rolePermissionService.removeRoleFromUsers(RoleUtils.buildManageAppMasterRoleName(PermissionType.MANAGE_APP_MASTER, appId),
+    rolePermissionService.removeRoleFromUsers(RoleUtils.buildAppRoleName(appId, PermissionType.MANAGE_APP_MASTER),
             userIds, userInfoHolder.getUser().getUserId());
     return ResponseEntity.ok().build();
   }

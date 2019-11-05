@@ -340,6 +340,38 @@ public class NotificationControllerV2Test {
     assertTrue(deferredResult.hasResult() && anotherDeferredResult.hasResult());
   }
 
+  @Test
+  public void testPollNotificationWithCaseInsensitiveAppId() throws Exception {
+    String someWatchKey = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
+        .join(someAppId, someCluster, defaultNamespace);
+    String anotherWatchKey = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
+        .join("someAPPID", someCluster, defaultNamespace);
+
+    Multimap<String, String> watchKeysMap =
+        assembleMultiMap(defaultNamespace, Lists.newArrayList(someWatchKey));
+
+    String notificationAsString =
+        transformApolloConfigNotificationsToString(defaultNamespace, someNotificationId);
+
+    when(watchKeysUtil
+        .assembleAllWatchKeys(someAppId, someCluster, Sets.newHashSet(defaultNamespace),
+            someDataCenter)).thenReturn(watchKeysMap);
+
+    DeferredResult<ResponseEntity<List<ApolloConfigNotification>>>
+        deferredResult = controller
+        .pollNotification(someAppId, someCluster, notificationAsString, someDataCenter,
+            someClientIp);
+
+    long someId = 1;
+    ReleaseMessage someReleaseMessage = new ReleaseMessage(anotherWatchKey);
+    someReleaseMessage.setId(someId);
+
+    controller.handleMessage(someReleaseMessage, Topics.APOLLO_RELEASE_TOPIC);
+
+    //now both of them should have result
+    assertTrue(deferredResult.hasResult());
+  }
+
   private String transformApolloConfigNotificationsToString(
       String namespace, long notificationId) {
     List<ApolloConfigNotification> notifications =

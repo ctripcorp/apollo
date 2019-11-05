@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,5 +95,33 @@ public class ReleaseOpenApiServiceTest extends AbstractOpenApiServiceTest {
     when(statusLine.getStatusCode()).thenReturn(400);
 
     releaseOpenApiService.getLatestActiveRelease(someAppId, someEnv, someCluster, someNamespace);
+  }
+
+  @Test
+  public void testRollbackRelease() throws Exception {
+    long someReleaseId = 1L;
+    String someOperator = "someOperator";
+
+    final ArgumentCaptor<HttpPut> request = ArgumentCaptor.forClass(HttpPut.class);
+
+    releaseOpenApiService.rollbackRelease(someEnv, someReleaseId, someOperator);
+
+    verify(httpClient, times(1)).execute(request.capture());
+
+    HttpPut put = request.getValue();
+
+    assertEquals(
+        String.format("%s/envs/%s/releases/%s/rollback?operator=%s", someBaseUrl, someEnv, someReleaseId, someOperator),
+        put.getURI().toString());
+  }
+
+  @Test(expected = RuntimeException.class)
+  public void testRollbackReleaseWithError() throws Exception {
+    long someReleaseId = 1L;
+    String someOperator = "someOperator";
+
+    when(statusLine.getStatusCode()).thenReturn(400);
+
+    releaseOpenApiService.rollbackRelease(someEnv, someReleaseId, someOperator);
   }
 }

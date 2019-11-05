@@ -2,7 +2,7 @@
 <html lang="en" ng-app="login">
 <head>
     <meta charset="UTF-8">
-    <title>Apollo配置中心</title>
+    <title>{{ 'Common.Title' | translate }}</title>
     <link rel="icon" href="./img/config.png">
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/font-awesome.min.css">
@@ -257,7 +257,7 @@
                                 </div>
                                 <div class="col-xs-12 form-group pull-right">
                                     <input type="submit" name="login-submit" id="login-submit" tabindex="4"
-                                           class="form-control btn btn-login" value="登录">
+                                           class="form-control btn btn-login" value="{{'Login.Login' | translate }}">
                                 </div>
                             </form>
                         </div>
@@ -277,6 +277,11 @@
 <script src="vendor/angular/angular-resource.min.js"></script>
 <script src="vendor/angular/angular-toastr-1.4.1.tpls.min.js"></script>
 <script src="vendor/angular/loading-bar.min.js"></script>
+<script src="vendor/angular/angular-cookies.min.js"></script>
+
+<script src="vendor/angular/angular-translate.2.18.1/angular-translate.min.js"></script>
+<script src="vendor/angular/angular-translate.2.18.1/angular-translate-loader-static-files.min.js"></script>
+<script src="vendor/angular/angular-translate.2.18.1/angular-translate-storage-cookie.min.js"></script>
 
 <script type="application/javascript" src="scripts/app.js"></script>
 <script type="application/javascript" src="scripts/AppUtils.js"></script>

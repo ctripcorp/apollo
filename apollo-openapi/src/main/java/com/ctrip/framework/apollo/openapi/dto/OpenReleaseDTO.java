@@ -4,6 +4,8 @@ import java.util.Map;
 
 public class OpenReleaseDTO extends BaseDTO {
 
+  private long id;
+
   private String appId;
 
   private String clusterName;
@@ -15,6 +17,14 @@ public class OpenReleaseDTO extends BaseDTO {
   private Map<String, String> configurations;
 
   private String comment;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   public String getName() {
     return name;
@@ -62,5 +72,22 @@ public class OpenReleaseDTO extends BaseDTO {
 
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  @Override
+  public String toString() {
+    return "OpenReleaseDTO{" +
+        "id=" + id +
+        ", appId='" + appId + '\'' +
+        ", clusterName='" + clusterName + '\'' +
+        ", namespaceName='" + namespaceName + '\'' +
+        ", name='" + name + '\'' +
+        ", configurations=" + configurations +
+        ", comment='" + comment + '\'' +
+        ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
+        ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
+        ", dataChangeCreatedTime=" + dataChangeCreatedTime +
+        ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
+        '}';
   }
 }

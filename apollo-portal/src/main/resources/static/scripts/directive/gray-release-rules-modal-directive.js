@@ -1,6 +1,6 @@
 directive_module.directive('rulesmodal', rulesModalDirective);
 
-function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
+function rulesModalDirective($translate, toastr, AppUtil, EventManager, InstanceService) {
     return {
         restrict: 'E',
         templateUrl: '../../views/component/gray-release-rules-modal.html',
@@ -23,24 +23,24 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
             scope.initSelectIps = initSelectIps;
 
             EventManager.subscribe(EventManager.EventType.EDIT_GRAY_RELEASE_RULES,
-                                   function (context) {
-                                       var branch = context.branch;
-                                       scope.branch = branch;
+                function (context) {
+                    var branch = context.branch;
+                    scope.branch = branch;
 
-                                       if (branch.editingRuleItem.clientIpList && branch.editingRuleItem.clientIpList[0] == '*'){
-                                           branch.editingRuleItem.ApplyToAllInstances = true;
-                                       }else {
-                                           branch.editingRuleItem.ApplyToAllInstances = false;
-                                       }
+                    if (branch.editingRuleItem.clientIpList && branch.editingRuleItem.clientIpList[0] == '*') {
+                        branch.editingRuleItem.ApplyToAllInstances = true;
+                    } else {
+                        branch.editingRuleItem.ApplyToAllInstances = false;
+                    }
 
 
-                                       $('.rules-ip-selector').select2({
-                                                                           placeholder: "从实例列表中选择",
-                                                                           allowClear: true
-                                                                       });
+                    $('.rules-ip-selector').select2({
+                        placeholder: $translate.instant('RulesModal.ChooseInstances'),
+                        allowClear: true
+                    });
 
-                                       AppUtil.showModal('#rulesModal');
-                                   });
+                    AppUtil.showModal('#rulesModal');
+                });
 
             $('.rules-ip-selector').on('select2:select', function () {
                 addRules(scope.branch);
@@ -73,7 +73,7 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
                 if (newIps && newIps.length > 0) {
                     newIps.forEach(function (IP) {
                         if (!AppUtil.checkIPV4(IP)) {
-                            toastr.error("不合法的IP地址:" + IP);
+                            toastr.error($translate.instant('RulesModal.ChooseInstances', { ip: IP }));
                         } else if (oldIPs.indexOf(IP) < 0) {
                             oldIPs.push(IP);
                         }
@@ -102,7 +102,7 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
                 scope.completeEditBtnDisable = true;
 
                 if (!branch.editingRuleItem.clientAppId) {
-                    toastr.error("灰度的AppId不能为空");
+                    toastr.error($translate.instant('RulesModal.GrayscaleAppIdCanNotBeNull'));
                     scope.completeEditBtnDisable = false;
                     return;
                 }
@@ -111,7 +111,7 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
                     var errorRuleItem = false;
                     branch.rules.ruleItems.forEach(function (ruleItem) {
                         if (ruleItem.clientAppId == branch.editingRuleItem.clientAppId) {
-                            toastr.error("已经存在AppId=" + branch.editingRuleItem.clientAppId + "的规则");
+                            toastr.error($translate.instant('RulesModal.AppIdExistsRule', { appId: branch.editingRuleItem.clientAppId }));
                             errorRuleItem = true;
                         }
                     });
@@ -123,7 +123,7 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
 
                 if (!branch.editingRuleItem.ApplyToAllInstances) {
                     if (branch.editingRuleItem.draftIpList.length == 0) {
-                        toastr.error("IP列表不能为空");
+                        toastr.error($translate.instant('RulesModal.IpListCanNotBeNull'));
                         scope.completeEditBtnDisable = false;
                         return;
                     } else {
@@ -156,9 +156,9 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
                 AppUtil.hideModal('#rulesModal');
 
                 EventManager.emit(EventManager.EventType.UPDATE_GRAY_RELEASE_RULES,
-                                  {
-                                      branch: branch
-                                  }, branch.baseInfo.namespaceName);
+                    {
+                        branch: branch
+                    }, branch.baseInfo.namespaceName);
                 scope.completeEditBtnDisable = false;
             }
 
@@ -185,12 +185,12 @@ function rulesModalDirective(toastr, AppUtil, EventManager, InstanceService) {
                     return;
                 }
                 InstanceService.findInstancesByNamespace(scope.appId,
-                                                         scope.env,
-                                                         scope.cluster,
-                                                         scope.branch.baseInfo.namespaceName,
-                                                         scope.branch.editingRuleItem.clientAppId,
-                                                         0,
-                                                         2000)
+                    scope.env,
+                    scope.cluster,
+                    scope.branch.baseInfo.namespaceName,
+                    scope.branch.editingRuleItem.clientAppId,
+                    0,
+                    2000)
                     .then(function (result) {
                         scope.selectIps = result.content;
                     });

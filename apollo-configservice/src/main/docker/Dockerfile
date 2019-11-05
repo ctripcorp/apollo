@@ -1,12 +1,12 @@
 # Dockerfile for apollo-configservice
 # 1. Copy apollo-configservice-${VERSION}-github.zip to current directory
 # 2. Build with: docker build -t apollo-configservice .
-# 3. Run with: docker run -p 8080:8080 -d -v /tmp/logs:/opt/logs --name apollo-configservice apollo-configservice
+# 3. Run with: docker run -p 8080:8080 -e DS_URL="jdbc:mysql://fill-in-the-correct-server:3306/ApolloConfigDB?characterEncoding=utf8" -e DS_USERNAME=FillInCorrectUser -e DS_PASSWORD=FillInCorrectPassword -d -v /tmp/logs:/opt/logs --name apollo-configservice apollo-configservice
 
 FROM openjdk:8-jre-alpine
 MAINTAINER ameizi <sxyx2008@163.com>
 
-ENV VERSION 1.5.0-SNAPSHOT
+ENV VERSION 1.6.0-SNAPSHOT
 ENV SERVER_PORT 8080
 # DataSource Info
 ENV DS_URL ""

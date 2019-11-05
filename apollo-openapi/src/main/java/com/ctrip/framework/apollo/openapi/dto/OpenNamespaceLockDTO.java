@@ -29,4 +29,13 @@ public class OpenNamespaceLockDTO {
   public void setLockedBy(String lockedBy) {
     this.lockedBy = lockedBy;
   }
+
+  @Override
+  public String toString() {
+    return "OpenNamespaceLockDTO{" +
+        "namespaceName='" + namespaceName + '\'' +
+        ", isLocked=" + isLocked +
+        ", lockedBy='" + lockedBy + '\'' +
+        '}';
+  }
 }

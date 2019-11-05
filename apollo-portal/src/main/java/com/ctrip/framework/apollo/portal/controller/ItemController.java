@@ -164,7 +164,7 @@ public class ItemController {
       if (permissionValidator
           .shouldHideConfigToCurrentUser(namespace.getAppId(), namespace.getEnv().name(), namespace.getNamespaceName())) {
         diff.setDiffs(new ItemChangeSets());
-        diff.setExtInfo("您不是该项目的管理员，也没有该Namespace在 " + namespace.getEnv() +  " 环境的编辑或发布权限");
+        diff.setExtInfo("You are not this project's administrator, nor you have edit or release permission for the namespace in environment: " + namespace.getEnv());
       }
     }
 
@@ -195,7 +195,7 @@ public class ItemController {
       return ResponseEntity.status(HttpStatus.OK).build();
     }
     else
-      throw new AccessDeniedException(String.format("您没有修改环境%s的权限", envNoPermission));
+      throw new AccessDeniedException(String.format("You don't have the permission to modify environment: %s", envNoPermission));
   }
 
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")

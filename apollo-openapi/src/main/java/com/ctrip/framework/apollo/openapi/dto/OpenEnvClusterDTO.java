@@ -22,4 +22,12 @@ public class OpenEnvClusterDTO {
   public void setClusters(Set<String> clusters) {
     this.clusters = clusters;
   }
+
+  @Override
+  public String toString() {
+    return "OpenEnvClusterDTO{" +
+        "env='" + env + '\'' +
+        ", clusters=" + clusters +
+        '}';
+  }
 }

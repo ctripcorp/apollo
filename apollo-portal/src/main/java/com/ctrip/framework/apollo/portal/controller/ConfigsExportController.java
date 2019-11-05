@@ -57,7 +57,7 @@ public class ConfigsExportController {
         .loadNamespaceBaseInfo(appId, Env.fromString(env), clusterName, namespaceName);
 
     if (Objects.isNull(namespaceDTO)) {
-      throw new BadRequestException(String.format("Namespace: {} not exist.", namespaceName));
+      throw new BadRequestException(String.format("Namespace: %s not exist.", namespaceName));
     }
 
     NamespaceTextModel model = new NamespaceTextModel();

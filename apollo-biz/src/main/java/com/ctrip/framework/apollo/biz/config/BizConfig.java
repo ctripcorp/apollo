@@ -27,6 +27,7 @@ public class BizConfig extends RefreshableConfig {
   private static final int DEFAULT_RELEASE_MESSAGE_SCAN_INTERVAL_IN_MS = 1000; //1000ms
   private static final int DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH = 100;
   private static final int DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH_INTERVAL_IN_MILLI = 100;//100ms
+  private static final int DEFAULT_LONG_POLLING_TIMEOUT = 60; //60s
 
   private Gson gson = new Gson();
   private static final Type namespaceValueLengthOverrideTypeReference =
@@ -56,6 +57,12 @@ public class BizConfig extends RefreshableConfig {
   public int grayReleaseRuleScanInterval() {
     int interval = getIntProperty("apollo.gray-release-rule-scan.interval", DEFAULT_GRAY_RELEASE_RULE_SCAN_INTERVAL);
     return checkInt(interval, 1, Integer.MAX_VALUE, DEFAULT_GRAY_RELEASE_RULE_SCAN_INTERVAL);
+  }
+
+  public long longPollingTimeoutInMilli() {
+    int timeout = getIntProperty("long.polling.timeout", DEFAULT_LONG_POLLING_TIMEOUT);
+    // java client's long polling timeout is 90 seconds, so server side long polling timeout must be less than 90
+    return 1000 * checkInt(timeout, 1, 90, DEFAULT_LONG_POLLING_TIMEOUT);
   }
 
   public int itemKeyLengthLimit() {
@@ -146,4 +153,5 @@ public class BizConfig extends RefreshableConfig {
     }
     return defaultValue;
   }
+
 }
