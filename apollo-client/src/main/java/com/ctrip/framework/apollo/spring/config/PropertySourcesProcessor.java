@@ -82,17 +82,20 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     // clean up
     NAMESPACE_NAMES.clear();
 
-    // add after the bootstrap property source or to the first
-    if (environment.getPropertySources()
-        .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+    // ensure ApolloBootstrapPropertySources is still the first
+    ensureBootstrapPropertyPrecedence(environment);
 
-      // ensure ApolloBootstrapPropertySources is still the first
-      ensureBootstrapPropertyPrecedence(environment);
+    if (composite.getPropertySources() != null && composite.getPropertySources().size() > 0) {
 
-      environment.getPropertySources()
-          .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
-    } else {
-      environment.getPropertySources().addFirst(composite);
+      // add after the bootstrap property source or to the first
+      if (environment.getPropertySources()
+              .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+
+        environment.getPropertySources()
+                .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
+      } else {
+        environment.getPropertySources().addFirst(composite);
+      }
     }
   }
 
