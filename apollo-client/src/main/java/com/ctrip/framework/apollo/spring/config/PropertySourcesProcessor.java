@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
@@ -85,18 +86,18 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     // ensure ApolloBootstrapPropertySources is still the first
     ensureBootstrapPropertyPrecedence(environment);
 
-    if (composite.getPropertySources() != null && composite.getPropertySources().size() > 0) {
-
-      // add after the bootstrap property source or to the first
-      if (environment.getPropertySources()
-              .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
-
-        environment.getPropertySources()
-                .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
-      } else {
-        environment.getPropertySources().addFirst(composite);
-      }
+    if (CollectionUtils.isEmpty(composite.getPropertySources())) {
+        return;
     }
+    // add after the bootstrap property source or to the first
+    if (environment.getPropertySources()
+              .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+        environment.getPropertySources()
+                  .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
+    } else {
+        environment.getPropertySources().addFirst(composite);
+    }
+
   }
 
   private void ensureBootstrapPropertyPrecedence(ConfigurableEnvironment environment) {
