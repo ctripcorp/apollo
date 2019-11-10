@@ -113,7 +113,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<basedir>${build.directory}</basedir>
+					<basedir>${project.build.directory}</basedir>
 					<includes>
 						<include>classes/static/*.html</include>
 						<include>classes/static/**/*.html</include>
