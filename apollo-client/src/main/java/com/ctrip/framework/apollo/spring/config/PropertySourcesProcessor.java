@@ -35,15 +35,19 @@ import org.springframework.util.CollectionUtils;
  * Apollo Property Sources processor for Spring Annotation Based Application. <br /> <br />
  *
  * The reason why PropertySourcesProcessor implements {@link BeanFactoryPostProcessor} instead of
- * {@link org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor} is that lower versions of
- * Spring (e.g. 3.1.1) doesn't support registering BeanDefinitionRegistryPostProcessor in ImportBeanDefinitionRegistrar
- * - {@link com.ctrip.framework.apollo.spring.annotation.ApolloConfigRegistrar}
+ * {@link org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor} is that
+ * lower versions of Spring (e.g. 3.1.1) doesn't support registering
+ * BeanDefinitionRegistryPostProcessor in ImportBeanDefinitionRegistrar - {@link
+ * com.ctrip.framework.apollo.spring.annotation.ApolloConfigRegistrar}
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware, PriorityOrdered {
+public class PropertySourcesProcessor implements BeanFactoryPostProcessor, EnvironmentAware,
+    PriorityOrdered {
+
   private static final Multimap<Integer, String> NAMESPACE_NAMES = LinkedHashMultimap.create();
-  private static final Set<BeanFactory> AUTO_UPDATE_INITIALIZED_BEAN_FACTORIES = Sets.newConcurrentHashSet();
+  private static final Set<BeanFactory> AUTO_UPDATE_INITIALIZED_BEAN_FACTORIES = Sets
+      .newConcurrentHashSet();
 
   private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
       .getInstance(ConfigPropertySourceFactory.class);
@@ -55,17 +59,20 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
   }
 
   @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+      throws BeansException {
     initializePropertySources();
     initializeAutoUpdatePropertiesFeature(beanFactory);
   }
 
   private void initializePropertySources() {
-    if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME)) {
+    if (environment.getPropertySources()
+        .contains(PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME)) {
       //already initialized
       return;
     }
-    CompositePropertySource composite = new CompositePropertySource(PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME);
+    CompositePropertySource composite = new CompositePropertySource(
+        PropertySourcesConstants.APOLLO_PROPERTY_SOURCE_NAME);
 
     //sort by order asc
     ImmutableSortedSet<Integer> orders = ImmutableSortedSet.copyOf(NAMESPACE_NAMES.keySet());
@@ -76,7 +83,8 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
       for (String namespace : NAMESPACE_NAMES.get(order)) {
         Config config = ConfigService.getConfig(namespace);
 
-        composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
+        composite.addPropertySource(
+            configPropertySourceFactory.getConfigPropertySource(namespace, config));
       }
     }
 
@@ -87,15 +95,15 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     ensureBootstrapPropertyPrecedence(environment);
 
     if (CollectionUtils.isEmpty(composite.getPropertySources())) {
-        return;
+      return;
     }
     // add after the bootstrap property source or to the first
     if (environment.getPropertySources()
-              .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
-        environment.getPropertySources()
-                  .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
+        .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+      environment.getPropertySources()
+          .addAfter(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME, composite);
     } else {
-        environment.getPropertySources().addFirst(composite);
+      environment.getPropertySources().addFirst(composite);
     }
 
   }
@@ -107,7 +115,8 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
         .get(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME);
 
     // not exists or already in the first place
-    if (bootstrapPropertySource == null || propertySources.precedenceOf(bootstrapPropertySource) == 0) {
+    if (bootstrapPropertySource == null
+        || propertySources.precedenceOf(bootstrapPropertySource) == 0) {
       return;
     }
 
@@ -124,7 +133,8 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     AutoUpdateConfigChangeListener autoUpdateConfigChangeListener = new AutoUpdateConfigChangeListener(
         environment, beanFactory);
 
-    List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
+    List<ConfigPropertySource> configPropertySources = configPropertySourceFactory
+        .getAllConfigPropertySources();
     for (ConfigPropertySource configPropertySource : configPropertySources) {
       configPropertySource.addChangeListener(autoUpdateConfigChangeListener);
     }
