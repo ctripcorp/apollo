@@ -1,4 +1,4 @@
-appUtil.service('AppUtil', ['toastr', '$window', '$q', '$translate', function (toastr, $window, $q, $translate) {
+appUtil.service('AppUtil', ['toastr', '$window', '$q', '$translate', 'prefixLocation', function (toastr, $window, $q, $translate, prefixLocation) {
 
     function parseErrorMsg(response) {
         if (response.status == -1) {
@@ -43,6 +43,9 @@ appUtil.service('AppUtil', ['toastr', '$window', '$q', '$translate', function (t
     }
 
     return {
+        prefixPath: function(){
+            return prefixLocation;
+        },
         errorMsg: parseErrorMsg,
         pureErrorMsg: parsePureErrorMsg,
         ajax: ajax,

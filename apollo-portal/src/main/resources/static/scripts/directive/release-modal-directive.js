@@ -3,7 +3,7 @@ directive_module.directive('releasemodal', releaseModalDirective);
 function releaseModalDirective($translate, toastr, AppUtil, EventManager, ReleaseService, NamespaceBranchService) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/release-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/release-modal.html',
         transclude: true,
         replace: true,
         scope: {

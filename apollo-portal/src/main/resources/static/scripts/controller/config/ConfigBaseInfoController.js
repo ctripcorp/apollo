@@ -14,7 +14,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
     var appId = urlParams.appid;
 
     if (!appId) {
-        $window.location.href = '/index.html';
+        $window.location.href = AppUtil.prefixPath() + '/index.html';
         return;
     }
 
@@ -258,7 +258,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
                             cluster: $rootScope.pageContext.clusterName
                         }));
 
-                    $window.location.href = "/config.html#/appid="
+                    $window.location.href = AppUtil.prefixPath() + "/config.html#/appid="
                         + $rootScope.pageContext.appId
                         + "&env=" + $rootScope.pageContext.env
                         + "&cluster=" + $rootScope.pageContext.clusterName;

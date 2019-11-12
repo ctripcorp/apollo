@@ -4,7 +4,7 @@ appService.service('CommonService', ['$resource', '$q', 'AppUtil',
         page_setting: {
             method: 'GET',
             isArray: false,
-            url: '/page-settings'
+            url: AppUtil.prefixPath() + '/page-settings'
         }
     });
 

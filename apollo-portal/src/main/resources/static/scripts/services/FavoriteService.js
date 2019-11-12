@@ -1,21 +1,21 @@
-appService.service('FavoriteService', ['$resource', '$q', function ($resource, $q) {
+appService.service('FavoriteService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var resource = $resource('', {}, {
         find_favorites: {
             method: 'GET',
-            url: '/favorites',
+            url: AppUtil.prefixPath() + '/favorites',
             isArray: true
         },
         add_favorite: {
             method: 'POST',
-            url: '/favorites'
+            url: AppUtil.prefixPath() + '/favorites'
         },
         delete_favorite: {
             method: 'DELETE',
-            url: '/favorites/:favoriteId'
+            url: AppUtil.prefixPath() + '/favorites/:favoriteId'
         },
         to_top: {
             method: 'PUT',
-            url: '/favorites/:favoriteId'
+            url: AppUtil.prefixPath() + '/favorites/:favoriteId'
         }
     });
     return {

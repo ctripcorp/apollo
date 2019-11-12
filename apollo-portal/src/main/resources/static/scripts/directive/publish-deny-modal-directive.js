@@ -3,7 +3,7 @@ directive_module.directive('publishdenymodal', publishDenyDirective);
 function publishDenyDirective(AppUtil, EventManager) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/publish-deny-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/publish-deny-modal.html',
         transclude: true,
         replace: true,
         scope: {

@@ -1,8 +1,8 @@
 directive_module.directive('apollodiff',
-    function ($compile, $window) {
+    function ($compile, $window, AppUtil) {
         return {
             restrict: 'E',
-            templateUrl: '../../views/component/diff.html',
+            templateUrl: AppUtil.prefixPath() + '/views/component/diff.html',
             transclude: true,
             replace: true,
             scope: {

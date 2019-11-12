@@ -1,12 +1,12 @@
-appService.service('SystemInfoService', ['$resource', '$q', function ($resource, $q) {
+appService.service('SystemInfoService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var system_info_resource = $resource('', {}, {
         load_system_info: {
             method: 'GET',
-            url: '/system-info'
+            url: AppUtil.prefixPath() + '/system-info'
         },
         check_health: {
             method: 'GET',
-            url: '/system-info/health'
+            url: AppUtil.prefixPath() + '/system-info/health'
         }
     });
     return {

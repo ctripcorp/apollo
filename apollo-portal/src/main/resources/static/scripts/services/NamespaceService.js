@@ -1,40 +1,40 @@
-appService.service("NamespaceService", ['$resource', '$q', function ($resource, $q) {
+appService.service("NamespaceService", ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var namespace_source = $resource("", {}, {
         find_public_namespaces: {
             method: 'GET',
             isArray: true,
-            url: '/appnamespaces/public'
+            url: AppUtil.prefixPath() + '/appnamespaces/public'
         },
         createNamespace: {
             method: 'POST',
-            url: '/apps/:appId/namespaces',
+            url: AppUtil.prefixPath() + '/apps/:appId/namespaces',
             isArray: false
         },
         createAppNamespace: {
             method: 'POST',
-            url: '/apps/:appId/appnamespaces?appendNamespacePrefix=:appendNamespacePrefix',
+            url: AppUtil.prefixPath() + '/apps/:appId/appnamespaces?appendNamespacePrefix=:appendNamespacePrefix',
             isArray: false
         },
         getNamespacePublishInfo: {
             method: 'GET',
-            url: '/apps/:appId/namespaces/publish_info'
+            url: AppUtil.prefixPath() + '/apps/:appId/namespaces/publish_info'
         },
         deleteNamespace: {
             method: 'DELETE',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName'
         },
         getPublicAppNamespaceAllNamespaces: {
             method: 'GET',
-            url: '/envs/:env/appnamespaces/:publicNamespaceName/namespaces',
+            url: AppUtil.prefixPath() + '/envs/:env/appnamespaces/:publicNamespaceName/namespaces',
             isArray: true
         },
         loadAppNamespace: {
             method: 'GET',
-            url: '/apps/:appId/appnamespaces/:namespaceName'
+            url: AppUtil.prefixPath() + '/apps/:appId/appnamespaces/:namespaceName'
         },
         deleteAppNamespace: {
             method: 'DELETE',
-            url: '/apps/:appId/appnamespaces/:namespaceName'
+            url: AppUtil.prefixPath() + '/apps/:appId/appnamespaces/:namespaceName'
         }
     });
 

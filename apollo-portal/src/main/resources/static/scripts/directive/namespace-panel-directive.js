@@ -4,7 +4,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
     UserService, CommitService, ReleaseService, InstanceService, NamespaceBranchService, ConfigService) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/namespace-panel.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/namespace-panel.html',
         transclude: true,
         replace: true,
         scope: {
@@ -697,7 +697,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
                     return false;
                 }
                 $window.location.href =
-                    "config/sync.html?#/appid=" + scope.appId + "&env="
+                AppUtil.prefixPath() + "/config/sync.html?#/appid=" + scope.appId + "&env="
                     + scope.env + "&clusterName="
                     + scope.cluster
                     + "&namespaceName=" + namespace.baseInfo.namespaceName;
@@ -705,7 +705,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
 
             function goToDiffPage(namespace) {
                 $window.location.href =
-                    "config/diff.html?#/appid=" + scope.appId + "&env="
+                AppUtil.prefixPath() + "/config/diff.html?#/appid=" + scope.appId + "&env="
                     + scope.env + "&clusterName="
                     + scope.cluster
                     + "&namespaceName=" + namespace.baseInfo.namespaceName;
@@ -770,7 +770,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
             }
 
             function goToParentAppConfigPage(namespace) {
-                $window.location.href = "/config.html?#/appid=" + namespace.parentAppId;
+                $window.location.href = AppUtil.prefixPath() + "/config.html?#/appid=" + namespace.parentAppId;
                 $window.location.reload();
             }
 

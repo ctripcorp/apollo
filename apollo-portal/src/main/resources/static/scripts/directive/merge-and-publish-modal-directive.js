@@ -3,7 +3,7 @@ directive_module.directive('mergeandpublishmodal', mergeAndPublishDirective);
 function mergeAndPublishDirective(AppUtil, EventManager) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/merge-and-publish-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/merge-and-publish-modal.html',
         transclude: true,
         replace: true,
         scope: {

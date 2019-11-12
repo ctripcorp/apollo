@@ -24,7 +24,7 @@
                 <br>
                 <p>
                     <span ng-bind="pageContext.appId"></span> {{'Config.AppIdNotFound' | translate }}<a
-                        href="/app.html">{{'Config.ClickByCreate' | translate }}</a>
+                        href="app.html">{{'Config.ClickByCreate' | translate }}</a>
                 </p>
             </div>
 
@@ -51,7 +51,7 @@
                             {{'Config.ProjectInfo' | translate }}
                             <span class="pull-right">
 
-                                <a href="/app/setting.html?#/appid={{pageContext.appId}}"
+                                <a href="app/setting.html?#/appid={{pageContext.appId}}"
                                     style="margin-right: 5px;text-decoration:none;">
                                     <img src="img/edit.png" class="i-20 cursor-pointer" data-tooltip="tooltip"
                                         data-placement="bottom"
@@ -118,7 +118,7 @@
                     <section>
                         <apolloentrance apollo-title="'Config.ProjectManage' | translate"
                             apollo-img-src="'project-manage'"
-                            apollo-href="'/app/setting.html?#/appid=' + pageContext.appId"></apolloentrance>
+                            apollo-href="'app/setting.html?#/appid=' + pageContext.appId"></apolloentrance>
 
                         <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
                             <div class="row icon-text icon-plus-orange">

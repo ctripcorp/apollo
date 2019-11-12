@@ -4,7 +4,7 @@ function deleteNamespaceModalDirective($window, $q, $translate, toastr, AppUtil,
     PermissionService, UserService, NamespaceService) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/delete-namespace-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/delete-namespace-modal.html',
         transclude: true,
         replace: true,
         scope: {

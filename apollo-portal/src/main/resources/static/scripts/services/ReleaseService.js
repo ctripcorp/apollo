@@ -1,26 +1,26 @@
-appService.service('ReleaseService', ['$resource', '$q', function ($resource, $q) {
+appService.service('ReleaseService', ['$resource', '$q','AppUtil', function ($resource, $q,AppUtil) {
     var resource = $resource('', {}, {
         find_all_releases: {
             method: 'GET',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/all',
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/all',
             isArray: true
         },
         find_active_releases: {
             method: 'GET',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/active',
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/active',
             isArray: true
         },
         compare: {
             method: 'GET',
-            url: '/envs/:env/releases/compare'
+            url: AppUtil.prefixPath() + '/envs/:env/releases/compare'
         },
         release: {
             method: 'POST',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases'
         },
         gray_release: {
             method: 'POST',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/releases'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/releases'
         },
         rollback: {
             method: 'PUT',

@@ -1,9 +1,9 @@
-appService.service("OrganizationService", ['$resource', '$q', function ($resource, $q) {
+appService.service("OrganizationService", ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var organization_source = $resource("", {}, {
         find_organizations: {
             method: 'GET',
             isArray: true,
-            url: '/organizations'
+            url: AppUtil.prefixPath() + '/organizations'
         }
     });
 

@@ -1,21 +1,21 @@
-appService.service('SystemRoleService', ['$resource', '$q', function ($resource, $q) {
+appService.service('SystemRoleService', ['$resource', '$q', 'AppUtil', function ($resource, $q,AppUtil) {
     var system_role_service = $resource('', {}, {
         add_create_application_role: {
             method: 'POST',
-            url: '/system/role/createApplication'
+            url: AppUtil.prefixPath() + '/system/role/createApplication'
         },
         delete_create_application_role: {
             method: 'DELETE',
-            url: '/system/role/createApplication/:userId'
+            url: AppUtil.prefixPath() + '/system/role/createApplication/:userId'
         },
         get_create_application_role_users: {
             method: 'GET',
-            url: '/system/role/createApplication',
+            url: AppUtil.prefixPath() + '/system/role/createApplication',
             isArray: true
         },
         has_open_manage_app_master_role_limit: {
             method: 'GET',
-            url: '/system/role/manageAppMaster'
+            url: AppUtil.prefixPath() + '/system/role/manageAppMaster'
         }
     });
     return {

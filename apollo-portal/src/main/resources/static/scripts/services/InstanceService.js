@@ -1,23 +1,23 @@
-appService.service('InstanceService', ['$resource', '$q', function ($resource, $q) {
+appService.service('InstanceService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var resource = $resource('', {}, {
         find_instances_by_release: {
             method: 'GET',
-            url: '/envs/:env/instances/by-release'
+            url: AppUtil.prefixPath() + '/envs/:env/instances/by-release'
         },
         find_instances_by_namespace: {
             method: 'GET',
             isArray: false,
-            url: '/envs/:env/instances/by-namespace'
+            url: AppUtil.prefixPath() + '/envs/:env/instances/by-namespace'
         },
         find_by_releases_not_in: {
             method: 'GET',
             isArray: true,
-            url: '/envs/:env/instances/by-namespace-and-releases-not-in'
+            url: AppUtil.prefixPath() + '/envs/:env/instances/by-namespace-and-releases-not-in'
         },
         get_instance_count_by_namespace: {
             method: 'GET',
             isArray: false,
-            url: "envs/:env/instances/by-namespace/count"
+            url: AppUtil.prefixPath() + "/envs/:env/instances/by-namespace/count"
         }
     });
 

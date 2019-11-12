@@ -1,8 +1,8 @@
-appService.service('ReleaseHistoryService', ['$resource', '$q', function ($resource, $q) {
+appService.service('ReleaseHistoryService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var resource = $resource('', {}, {
         find_release_history_by_namespace: {
             method: 'GET',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/histories',
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/releases/histories',
             isArray: true
         }
     });

@@ -82,7 +82,7 @@ diff_item_module.controller("DiffItemController",
             }
 
             function backToAppHomePage() {
-                $window.location.href = '/config.html?#appid=' + $scope.pageContext.appId;
+                $window.location.href = AppUtil.prefixPath() + '/config.html?#appid=' + $scope.pageContext.appId;
             }
 
             function switchSelect(o) {

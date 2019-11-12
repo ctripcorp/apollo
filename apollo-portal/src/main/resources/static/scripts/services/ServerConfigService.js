@@ -1,12 +1,12 @@
-appService.service('ServerConfigService', ['$resource', '$q', function ($resource, $q) {
+appService.service('ServerConfigService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var server_config_resource = $resource('', {}, {
         create_server_config: {
             method: 'POST',
-            url: '/server/config'
+            url: AppUtil.prefixPath() + '/server/config'
         },
         get_server_config_info: {
             method: 'GET',
-            url: '/server/config/:key'
+            url: AppUtil.prefixPath() + '/server/config/:key'
         }
     });
     return {

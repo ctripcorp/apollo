@@ -3,7 +3,7 @@ directive_module.directive('rulesmodal', rulesModalDirective);
 function rulesModalDirective($translate, toastr, AppUtil, EventManager, InstanceService) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/gray-release-rules-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/gray-release-rules-modal.html',
         transclude: true,
         replace: true,
         scope: {

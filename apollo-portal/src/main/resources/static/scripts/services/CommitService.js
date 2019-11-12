@@ -1,9 +1,9 @@
-appService.service('CommitService', ['$resource', '$q', function ($resource, $q) {
+appService.service('CommitService', ['$resource', '$q','AppUtil', function ($resource, $q, AppUtil) {
     var commit_resource = $resource('', {}, {
         find_commits: {
             method: 'GET',
             isArray: true,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/commits?page=:page'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/commits?page=:page'
         }
     });
     return {

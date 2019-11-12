@@ -14,7 +14,7 @@
                 <div class="alert alert-warning" role="alert">
                     {{'Component.Rollback.Tips' | translate }}
                     <a target="_blank"
-                        href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{toRollbackNamespace.baseInfo.clusterName}}&namespaceName={{toRollbackNamespace.baseInfo.namespaceName}}">{{'Component.Rollback.ClickToView' | translate }}</a>
+                        href="{{ '/config/history.html' | prefixPath }}?#/appid={{appId}}&env={{env}}&clusterName={{toRollbackNamespace.baseInfo.clusterName}}&namespaceName={{toRollbackNamespace.baseInfo.namespaceName}}">{{'Component.Rollback.ClickToView' | translate }}</a>
                 </div>
 
                 <div class="form-group" style="margin-top: 15px;">

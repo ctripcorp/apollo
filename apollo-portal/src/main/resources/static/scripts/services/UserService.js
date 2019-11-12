@@ -1,16 +1,16 @@
-appService.service('UserService', ['$resource', '$q', function ($resource, $q) {
+appService.service('UserService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var user_resource = $resource('', {}, {
         load_user: {
             method: 'GET',
-            url: '/user'
+            url: AppUtil.prefixPath() + '/user'
         },
         find_users: {
             method: 'GET',
-            url: '/users'
+            url: AppUtil.prefixPath() + '/users'
         },
         create_or_update_user: {
             method: 'POST',
-            url: '/users'
+            url: AppUtil.prefixPath() + '/users'
         }
     });
     return {

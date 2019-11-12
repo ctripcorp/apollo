@@ -1,9 +1,9 @@
-appService.service('EnvService', ['$resource', '$q', function ($resource, $q) {
-    var env_resource = $resource('/envs', {}, {
+appService.service('EnvService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
+    var env_resource = $resource(AppUtil.prefixPath() + '/envs', {}, {
         find_all_envs:{
             method: 'GET',
             isArray: true,
-            url:'/envs'
+            url: AppUtil.prefixPath() + '/envs'
         }
     });
     return {

@@ -3,7 +3,7 @@ directive_module.directive('rollbackmodal', rollbackModalDirective);
 function rollbackModalDirective($translate, AppUtil, EventManager, ReleaseService, toastr) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/rollback-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/rollback-modal.html',
         transclude: true,
         replace: true,
         scope: {

@@ -3,8 +3,8 @@
     <p class="text-center">
         <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>{{'Common.Ctrip' | translate }} {{'Common.CtripDepartment' | translate }}
         <a href="https://github.com/ctripcorp/apollo" target="_blank">
-            <img src="../../img/github.png" style="width: 50px; height: 20px;">
+            <img src="{{ '/img/github.png' | prefixPath }}" style="width: 50px; height: 20px;">
         </a>
     </p>
 </div>
-<iframe src="/sso_heartbeat" class="hide"></iframe>
+<iframe ng-src="{{ '/sso_heartbeat' | prefixPath }}" class="hide"></iframe>

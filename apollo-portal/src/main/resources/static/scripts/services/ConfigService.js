@@ -1,54 +1,54 @@
-appService.service("ConfigService", ['$resource', '$q', function ($resource, $q) {
+appService.service("ConfigService", ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var config_source = $resource("", {}, {
         load_namespace: {
             method: 'GET',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName'
         },
         load_public_namespace_for_associated_namespace: {
             method: 'GET',
             isArray: false,
-            url: '/envs/:env/apps/:appId/clusters/:clusterName/namespaces/:namespaceName/associated-public-namespace'
+            url: AppUtil.prefixPath() + '/envs/:env/apps/:appId/clusters/:clusterName/namespaces/:namespaceName/associated-public-namespace'
         },
         load_all_namespaces: {
             method: 'GET',
             isArray: true,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces'
         },
         find_items: {
             method: 'GET',
             isArray: true,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items'
         },
         modify_items: {
             method: 'PUT',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items'
         },
         diff: {
             method: 'POST',
-            url: '/namespaces/:namespaceName/diff',
+            url: AppUtil.prefixPath() + '/namespaces/:namespaceName/diff',
             isArray: true
         },
         sync_item: {
             method: 'PUT',
-            url: '/apps/:appId/namespaces/:namespaceName/items',
+            url: AppUtil.prefixPath() + '/apps/:appId/namespaces/:namespaceName/items',
             isArray: false
         },
         create_item: {
             method: 'POST',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/item'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/item'
         },
         update_item: {
             method: 'PUT',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/item'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/item'
         },
         delete_item: {
             method: 'DELETE',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items/:itemId'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/items/:itemId'
         },
         syntax_check_text: {
             method: 'POST',
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/syntax-check'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/syntax-check'
         }
     });
 

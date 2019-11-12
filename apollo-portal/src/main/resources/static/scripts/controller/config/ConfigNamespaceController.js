@@ -352,7 +352,7 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
             otherAppAssociatedNamespaces.forEach(function (namespace) {
                 var appId = namespace.appId;
                 var clusterName = namespace.clusterName;
-                var url = '/config.html?#/appid=' + appId + '&env=' + $scope.pageContext.env + '&cluster='
+                var url = AppUtil.prefixPath() + '/config.html?#/appid=' + appId + '&env=' + $scope.pageContext.env + '&cluster='
                     + clusterName;
 
                 namespaceTips.push("<a target='_blank' href=\'" + url + "\'>AppId = " + appId + ", Cluster = " + clusterName

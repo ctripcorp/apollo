@@ -132,11 +132,11 @@ function IndexController($scope, $window, $translate, toastr, AppUtil, AppServic
     }
 
     function goToCreateAppPage() {
-        $window.location.href = "/app.html";
+        $window.location.href = AppUtil.prefixPath() + "/app.html";
     }
 
     function goToAppHomePage(appId) {
-        $window.location.href = "/config.html?#/appid=" + appId;
+        $window.location.href = AppUtil.prefixPath() + "/config.html?#/appid=" + appId;
     }
 
     function toggleOperationBtn(app) {

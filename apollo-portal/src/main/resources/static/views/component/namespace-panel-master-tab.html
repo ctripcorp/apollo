@@ -54,13 +54,13 @@
                 </button>
                 <a type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                     title="{{'Component.Namespace.Master.Items.PublishHistoryTips' | translate }}"
-                    href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}">
+                    href="{{ '/config/history.html' | prefixPath }}?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}">
                     <img src="img/release-history.png">
                     {{'Component.Namespace.Master.Items.PublishHistory' | translate }}
                 </a>
                 <a type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                     title="{{'Component.Namespace.Master.Items.GrantTips' | translate }}"
-                    href="/namespace/role.html?#/appid={{appId}}&namespaceName={{namespace.baseInfo.namespaceName}}"
+                    href="{{ '/namespace/role.html' | prefixPath }}?#/appid={{appId}}&namespaceName={{namespace.baseInfo.namespaceName}}"
                     ng-show="hasAssignUserPermission">
                     <img src="img/assign.png">
                     {{'Component.Namespace.Master.Items.Grant' | translate }}
@@ -456,7 +456,7 @@
                             <div class="row">
                                 <div class="padding-top-5 col-md-4 col-sm-4">
                                     {{'Component.Namespace.Master.Items.Body.Public.Title' | translate }}
-                                    <a href="/config.html?#/appid={{namespace.publicNamespace.baseInfo.appId}}&env={{env}}&cluster={{namespace.publicNamespace.baseInfo.clusterName}}"
+                                    <a href="{{ '/config.html' | prefixPath }}?#/appid={{namespace.publicNamespace.baseInfo.appId}}&env={{env}}&cluster={{namespace.publicNamespace.baseInfo.clusterName}}"
                                         target="_blank">
                                         <small>
                                             ({{'Common.AppId' | translate }}:{{namespace.publicNamespace.baseInfo.appId}},
@@ -672,7 +672,7 @@
                         </div>
                         <div class="panel-body text-center">
                             {{'Component.Namespace.Master.Items.Body.Public.NoPublicNamespaceTips1' | translate }}
-                            <a href="/config.html?#/appid={{namespace.parentAppId}}"
+                            <a href="{{ '/config.html' | prefixPath }}?#/appid={{namespace.parentAppId}}"
                                 target="_blank">{{namespace.parentAppId}}</a>
                             {{'Component.Namespace.Master.Items.Body.Public.NoPublicNamespaceTips2' | translate:this }}
                         </div>
@@ -861,7 +861,7 @@
                             <button class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                                 title="{{'Component.Namespace.Master.Items.Body.Instance.RefreshList' | translate }}"
                                 ng-click="refreshInstancesInfo(namespace)">
-                                <img src="../../img/refresh.png" />
+                                <img ng-src="{{ '/img/refresh.png' | prefixPath }}" />
                             </button>
                         </div>
 
@@ -875,7 +875,7 @@
                         <div class="panel-heading">
                             <a target="_blank" data-tooltip="tooltip" data-placement="bottom"
                                 title="{{'Component.Namespace.Master.Items.Body.Instance.ToSeeItem' | translate }}"
-                                href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}&releaseId={{namespace.latestRelease.id}}">
+                                ng-href="{{ '/config/history.html' | prefixPath }}?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}&releaseId={{namespace.latestRelease.id}}">
                                 {{namespace.latestRelease.name}}
                             </a>
                         </div>
@@ -925,7 +925,7 @@
                         <div class="panel-heading">
                             <a target="_blank" data-tooltip="tooltip" data-placement="bottom"
                                 title="{{'Component.Namespace.Master.Items.Body.Instance.ToSeeItem' | translate }}"
-                                href="/config/history.html?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}&releaseId={{release.id}}">
+                                href="{{ '/config/history.html' | prefixPath }}?#/appid={{appId}}&env={{env}}&clusterName={{cluster}}&namespaceName={{namespace.baseInfo.namespaceName}}&releaseId={{release.id}}">
                                 {{release.name}}
                             </a>
 

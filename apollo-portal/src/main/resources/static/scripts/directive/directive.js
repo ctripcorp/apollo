@@ -4,7 +4,7 @@ directive_module.directive('apollonav',
         UserService, CommonService, PermissionService) {
         return {
             restrict: 'E',
-            templateUrl: '../../views/common/nav.html',
+            templateUrl: AppUtil.prefixPath() + '/views/common/nav.html',
             transclude: true,
             replace: true,
             link: function (scope, element, attrs) {
@@ -22,7 +22,7 @@ directive_module.directive('apollonav',
                    $('#app-search-list').select2({
                       placeholder: placeholderLabel,
                       ajax: {
-                        url: "/apps/search",
+                        url: AppUtil.prefixPath() + "/apps/search",
                         dataType: 'json',
                         delay: 400,
                         data: function (params) {
@@ -75,7 +75,7 @@ directive_module.directive('apollonav',
                         $window.location.hash = "appid=" + selectedAppId;
                         $window.location.reload();
                     } else {
-                        $window.location.href = '/config.html?#appid=' + selectedAppId;
+                        $window.location.href = AppUtil.prefixPath() + '/config.html?#appid=' + selectedAppId;
                     }
                 };
 
@@ -101,7 +101,7 @@ directive_module.directive('apollonav',
 directive_module.directive('apolloclusterselector', function ($compile, $window, AppService, AppUtil, toastr) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/env-selector.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/env-selector.html',
         transclude: true,
         replace: true,
         scope: {
@@ -192,10 +192,10 @@ directive_module.directive('apollorequiredfield', function ($compile, $window) {
 });
 
 /**  确认框 */
-directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce,$translate) {
+directive_module.directive('apolloconfirmdialog', function ($compile, $window, $sce,$translate,AppUtil) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/confirm-dialog.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/confirm-dialog.html',
         transclude: true,
         replace: true,
         scope: {
@@ -231,10 +231,10 @@ directive_module.directive('apolloconfirmdialog', function ($compile, $window, $
 });
 
 /** entrance */
-directive_module.directive('apolloentrance', function ($compile, $window) {
+directive_module.directive('apolloentrance', function ($compile, $window,AppUtil) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/entrance.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/entrance.html',
         transclude: true,
         replace: true,
         scope: {
@@ -248,10 +248,10 @@ directive_module.directive('apolloentrance', function ($compile, $window) {
 });
 
 /** entrance */
-directive_module.directive('apollouserselector', function ($compile, $window) {
+directive_module.directive('apollouserselector', function ($compile, $window,AppUtil) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/user-selector.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/user-selector.html',
         transclude: true,
         replace: true,
         scope: {
@@ -264,7 +264,7 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
 
             var select2Options = {
                 ajax: {
-                    url: '/users',
+                    url: AppUtil.prefixPath() + '/users',
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {
@@ -300,10 +300,10 @@ directive_module.directive('apollouserselector', function ($compile, $window) {
     }
 });
 
-directive_module.directive('apollomultipleuserselector', function ($compile, $window) {
+directive_module.directive('apollomultipleuserselector', function ($compile, $window,AppUtil) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/multiple-user-selector.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/multiple-user-selector.html',
         transclude: true,
         replace: true,
         scope: {
@@ -315,7 +315,7 @@ directive_module.directive('apollomultipleuserselector', function ($compile, $wi
 
             var searchUsersAjax = {
                 ajax: {
-                    url: '/users',
+                    url: AppUtil.prefixPath() + '/users',
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {

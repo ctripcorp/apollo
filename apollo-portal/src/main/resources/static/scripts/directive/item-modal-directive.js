@@ -3,7 +3,7 @@ directive_module.directive('itemmodal', itemModalDirective);
 function itemModalDirective($translate, toastr, $sce, AppUtil, EventManager, ConfigService) {
     return {
         restrict: 'E',
-        templateUrl: '../../views/component/item-modal.html',
+        templateUrl: AppUtil.prefixPath() + '/views/component/item-modal.html',
         transclude: true,
         replace: true,
         scope: {

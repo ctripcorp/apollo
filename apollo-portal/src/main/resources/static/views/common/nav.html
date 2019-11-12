@@ -1,20 +1,20 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <img class="navbar-brand side-bar-switch cursor-pointer" src="../../img/show_sidebar.png"
+            <img class="navbar-brand side-bar-switch cursor-pointer" src="{{ '/img/show_sidebar.png' | prefixPath }}"
                  onMouseOver="this.style.background='#f1f2f7'"
                  onMouseOut="this.style.background='#fff'"
                  data-tooltip="tooltip" data-placement="bottom" title="{{'Common.Nav.ShowNavBar' | translate }}"
                  ng-show="viewMode == 2 && !showSideBar"
                  ng-click="showSideBar = !showSideBar">
-            <img class="navbar-brand side-bar-switch cursor-pointer" src="../../img/hide_sidebar.png"
+            <img class="navbar-brand side-bar-switch cursor-pointer" src="{{ '/img/hide_sidebar.png' | prefixPath }}"
                  onMouseOver="this.style.background='#f1f2f7'"
                  onMouseOut="this.style.background='#fff'"
                  data-tooltip="tooltip" data-placement="bottom" title="{{'Common.Nav.HideNavBar' | translate }}"
                  ng-show="viewMode == 2 && showSideBar"
                  ng-click="showSideBar = !showSideBar">
-            <a class="navbar-brand logo" href="/">
-                <img src="../../img/logo-simple.png" style="height:45px; margin-top: -13px">
+            <a class="navbar-brand logo" href="{{ '/' | prefixPath }}">
+                <img src="{{ '/img/logo-simple.png' | prefixPath }}" style="height:45px; margin-top: -13px">
             </a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -39,12 +39,12 @@
                         <span class="glyphicon glyphicon-cog"></span>&nbsp;{{'Common.Nav.AdminTools' | translate }}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/user-manage.html" target="_blank">{{'Common.Nav.UserManage' | translate }}</a></li>
-                        <li><a href="/system-role-manage.html" target="_blank">{{'Common.Nav.SystemRoleManage' | translate }}</a></li>
-                        <li><a href="/open/manage.html" target="_blank">{{'Common.Nav.OpenMange' | translate }}</a></li>
-                        <li><a href="/server_config.html" target="_blank">{{'Common.Nav.SystemConfig' | translate }}</a></li>
-                        <li><a href="/delete_app_cluster_namespace.html" target="_blank">{{'Common.Nav.DeleteApp-Cluster-Namespace' | translate }}</a></li>
-                        <li><a href="/system_info.html" target="_blank">{{'Common.Nav.SystemInfo' | translate }}</a></li>
+                        <li><a ng-href="{{ '/user-manage.html' | prefixPath }}" target="_blank">{{'Common.Nav.UserManage' | translate }}</a></li>
+                        <li><a href="{{ '/system-role-manage.html' | prefixPath }}" target="_blank">{{'Common.Nav.SystemRoleManage' | translate }}</a></li>
+                        <li><a href="{{ '/open/manage.html' | prefixPath }}" target="_blank">{{'Common.Nav.OpenMange' | translate }}</a></li>
+                        <li><a href="{{ '/server_config.html' | prefixPath }}" target="_blank">{{'Common.Nav.SystemConfig' | translate }}</a></li>
+                        <li><a href="{{ '/delete_app_cluster_namespace.html' | prefixPath }}" target="_blank">{{'Common.Nav.DeleteApp-Cluster-Namespace' | translate }}</a></li>
+                        <li><a href="{{ '/system_info.html' | prefixPath }}" target="_blank">{{'Common.Nav.SystemInfo' | translate }}</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -52,7 +52,7 @@
                         <span class="glyphicon glyphicon-user"></span>&nbsp;{{userName}}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/user/logout">{{'Common.Nav.Logout' | translate }}</a></li>
+                        <li><a href="{{ '/user/logout' | prefixPath }}">{{'Common.Nav.Logout' | translate }}</a></li>
                     </ul>
                 </li>
 

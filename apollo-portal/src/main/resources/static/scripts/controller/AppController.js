@@ -96,7 +96,7 @@ function createAppController($scope, $window, $translate, toastr, AppService, Ap
             toastr.success($translate.instant('Common.Created'));
             setInterval(function () {
                 $scope.submitBtnDisabled = false;
-                $window.location.href = '/config.html?#appid=' + result.appId;
+                $window.location.href = AppUtil.prefixPath() + '/config.html?#appid=' + result.appId;
             }, 1000);
         }, function (result) {
             $scope.submitBtnDisabled = false;

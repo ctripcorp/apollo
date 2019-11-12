@@ -1,34 +1,34 @@
-appService.service('NamespaceBranchService', ['$resource', '$q', function ($resource, $q) {
+appService.service('NamespaceBranchService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var resource = $resource('', {}, {
         find_namespace_branch: {
             method: 'GET',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches'
         },
         create_branch: {
             method: 'POST',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches'
         },
         delete_branch: {
             method: 'DELETE',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName'
         },
         merge_and_release_branch: {
             method: 'POST',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/merge'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/merge'
         },
         find_branch_gray_rules: {
             method: 'GET',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/rules'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/rules'
         },
         update_branch_gray_rules: {
             method: 'PUT',
             isArray: false,
-            url: '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/rules'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/branches/:branchName/rules'
         }
 
     });
