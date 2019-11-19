@@ -1,6 +1,8 @@
+var prefixPath = window.localStorage.getItem("prefixPath") || "";
+
 /**utils*/
 var appUtil = angular.module('app.util', ['toastr', 'ngCookies', 'pascalprecht.translate'])
-    .constant("prefixLocation", "")      // 前缀路径
+    .constant("prefixLocation", prefixPath)      // 前缀路径
     .filter('prefixPath',['prefixLocation', function(prefixLocation) {   // 前缀路径过滤器
         return function(text) {
             return prefixLocation + text;

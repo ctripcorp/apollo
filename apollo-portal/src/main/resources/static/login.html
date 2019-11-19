@@ -290,6 +290,15 @@
 
 
 <script type="application/javascript">
+    function getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+    }
+
     $(function () {
         $('#login-form-link').click(function (e) {
             $("#login-form").delay(100).fadeIn(100);
@@ -304,6 +313,10 @@
             $('#login-form-link').removeClass('active');
             $(this).addClass('active');
             e.preventDefault();
+        });
+
+        $.get("prefixPath", function(result){
+            window.localStorage.setItem("prefixPath",result);
         });
 
     });
