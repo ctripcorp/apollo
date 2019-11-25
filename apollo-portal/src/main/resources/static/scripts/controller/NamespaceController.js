@@ -62,9 +62,16 @@ namespace_module.controller("LinkNamespaceController",
                 if (!$scope.appBaseInfo) {
                     return '';
                 }
-                return $scope.appBaseInfo.namespacePrefix +
-                    ($scope.appNamespace.name ? $scope.appNamespace.name : '');
+                var appNamespaceName = $scope.appNamespace.name ? $scope.appNamespace.name : '';
+                if (shouldAppendNamespacePrefix()) {
+                    return $scope.appBaseInfo.namespacePrefix + appNamespaceName;
+                }
+                return appNamespaceName;
             };
+
+            function shouldAppendNamespacePrefix() {
+                 return $scope.appNamespace.isPublic ? $scope.appendNamespacePrefix : false;
+            }
 
             var selectedClusters = [];
             $scope.collectSelectedClusters = function (data) {
@@ -128,7 +135,7 @@ namespace_module.controller("LinkNamespaceController",
 
                     $scope.submitBtnDisabled = true;
                     //only append namespace prefix for public app namespace
-                    var appendNamespacePrefix = $scope.appNamespace.isPublic ? $scope.appendNamespacePrefix : false;
+                    var appendNamespacePrefix = shouldAppendNamespacePrefix();
                     NamespaceService.createAppNamespace($scope.appId, $scope.appNamespace, appendNamespacePrefix).then(
                         function (result) {
                             $scope.step = 2;
