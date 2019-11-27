@@ -359,6 +359,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![成都书声科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jojoreading.png) 
 ![斯维登集团](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sweetome.png) 
 ![广东快乐种子科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/vipthink.png) 
+![上海盈翼文化传播有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/tongxuecool.png) 
+![上海尚诚消费金融股份有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sccfc.png) 
 
 # Awards
 
