@@ -88,6 +88,17 @@ public class NamespaceService {
                                                                          namespaceName);
   }
 
+  public List<Namespace> findByItem(String itemKey) {
+    List<Item> items = itemService.findItemsByKey(itemKey);
+    if (CollectionUtils.isEmpty(items)) {
+      return Collections.emptyList();
+    }
+
+    Set<Long> namespaceIds = BeanUtils.toPropertySet("namespaceId", items);
+    return namespaceRepository.findByIdIn(namespaceIds);
+
+  }
+
   public Namespace findPublicNamespaceForAssociatedNamespace(String clusterName, String namespaceName) {
     AppNamespace appNamespace = appNamespaceService.findPublicNamespaceByName(namespaceName);
     if (appNamespace == null) {

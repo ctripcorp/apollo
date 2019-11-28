@@ -6,9 +6,9 @@ application_module.controller("ConfigBaseInfoController",
         'AppUtil', ConfigBaseInfoController]);
 
 function ConfigBaseInfoController($rootScope, $scope, $window, $location, $translate, toastr, EventManager, UserService, AppService,
-    FavoriteService,
-    PermissionService,
-    AppUtil) {
+                                  FavoriteService,
+                                  PermissionService,
+                                  AppUtil) {
 
     var urlParams = AppUtil.parseParams($location.$$url);
     var appId = urlParams.appid;
@@ -29,7 +29,8 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
         $rootScope.pageContext = {
             appId: appId,
             env: urlParams.env ? urlParams.env : (scene ? scene.env : ''),
-            clusterName: urlParams.cluster ? urlParams.cluster : (scene ? scene.cluster : 'default')
+            clusterName: urlParams.cluster ? urlParams.cluster : (scene ? scene.cluster : 'default'),
+            namespaceName: urlParams.namespace
         };
 
         //storage page context to session storage
@@ -45,7 +46,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
             loadAppInfo();
             handleFavorite();
         }, function (result) {
-            toastr.error(AppUtil.errorMsg(result),  $translate.instant('Config.GetUserInfoFailed'));
+            toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.GetUserInfoFailed'));
         });
 
         handlePermission();
@@ -97,7 +98,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
             }, function (result) {
                 toastr.error(AppUtil.errorMsg(result), $translate.instant('Common.CreateFailed'));
             }
-            );
+        );
     };
 
     function findMissEnvs() {
@@ -123,11 +124,11 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
         if ($rootScope.pageContext.env && $scope.missEnvs.indexOf($rootScope.pageContext.env) === -1) {
             AppService.find_missing_namespaces($rootScope.pageContext.appId, $rootScope.pageContext.env,
                 $rootScope.pageContext.clusterName).then(function (result) {
-                    $scope.missingNamespaces = AppUtil.collectData(result);
-                    if ($scope.missingNamespaces.length > 0) {
-                        toastr.warning($translate.instant('Config.ProjectMissNamespaceInfos'));
-                    }
-                });
+                $scope.missingNamespaces = AppUtil.collectData(result);
+                if ($scope.missingNamespaces.length > 0) {
+                    toastr.warning($translate.instant('Config.ProjectMissNamespaceInfos'));
+                }
+            });
         }
     };
 
@@ -184,7 +185,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
                 $rootScope.pageContext.env = nodes[0].env;
             }
 
-            EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE);
+            EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE, {firstLoad: true});
 
             nodes.forEach(function (env) {
                 if (!env.clusters || env.clusters.length == 0) {

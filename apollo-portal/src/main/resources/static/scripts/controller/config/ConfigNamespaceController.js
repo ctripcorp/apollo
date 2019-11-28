@@ -89,12 +89,12 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
             if (context.namespace) {
                 refreshSingleNamespace(context.namespace);
             } else {
-                refreshAllNamespaces();
+                refreshAllNamespaces(context);
             }
 
         });
 
-    function refreshAllNamespaces() {
+    function refreshAllNamespaces(context) {
         if ($rootScope.pageContext.env == '') {
             return;
         }
@@ -108,6 +108,14 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
                     $('.config-item-container').removeClass('hide');
 
                     initPublishInfo();
+                    //If there is a namespace parameter in the URL, expand the corresponding namespace directly
+                    if (context && context.firstLoad && $rootScope.pageContext.namespaceName) {
+                        refreshSingleNamespace({
+                            baseInfo: {
+                                namespaceName: $rootScope.pageContext.namespaceName
+                            }
+                        });
+                    }
                 }, function (result) {
                     toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.LoadingAllNamespaceError'));
                 });

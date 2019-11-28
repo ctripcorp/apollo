@@ -161,6 +161,10 @@ public class NamespaceService {
     return namespaceAPI.findNamespaceByCluster(appId, env, clusterName);
   }
 
+  public List<NamespaceDTO> findNamespacesByItem(Env env, String itemKey) {
+    return namespaceAPI.findByItem(env, itemKey);
+  }
+
   public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(Env env, String publicNamespaceName,
       int page,
       int size) {

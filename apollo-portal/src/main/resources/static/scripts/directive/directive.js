@@ -40,7 +40,9 @@ directive_module.directive('apollonav',
                                     data.content.forEach(function (app) {
                                         result.push({
                                             id: app.appId,
-                                            text: app.appId + ' / ' + app.name
+                                            text: app.appId + ' / ' + app.name,
+                                            orgId: app.orgId,
+                                            orgName: app.orgName
                                         })
                                     });
                                     return {
@@ -65,17 +67,34 @@ directive_module.directive('apollonav',
                     $('#app-search-list').on('select2:select', function () {
                         var selected = $('#app-search-list').select2('data');
                         if (selected && selected.length) {
-                            jumpToConfigPage(selected[0].id)
+                            jumpToConfigPage(selected[0].id, selected[0].name, selected[0].orgName, selected[0].orgId)
                         }
                     });
                 });
 
-                function jumpToConfigPage(selectedAppId) {
+                function jumpToConfigPage(selectedAppId, name, type, namespaceInfo) {
                     if ($window.location.href.indexOf("config.html") > -1) {
-                        $window.location.hash = "appid=" + selectedAppId;
+                        if (type && type === 'SearchByItem') {
+                            var namespaceInfos = namespaceInfo.split('+');
+                            var env = namespaceInfos[0];
+                            var cluster = namespaceInfos[1];
+                            var namespaceName = namespaceInfos[2];
+                            $window.location.hash = "appid=" + selectedAppId + "&env=" + env + "&cluster=" + cluster + "&namespace=" + namespaceName;
+                        } else {
+                            $window.location.hash = "appid=" + selectedAppId;
+                        }
+
                         $window.location.reload();
                     } else {
-                        $window.location.href = '/config.html?#appid=' + selectedAppId;
+                        if (type && type === 'SearchByItem') {
+                            var namespaceInfos = namespaceInfo.split('+');
+                            var env = namespaceInfos[0];
+                            var cluster = namespaceInfos[1];
+                            var namespaceName = namespaceInfos[2];
+                            $window.location.href = '/config.html?#appid=' + selectedAppId + "&env=" + env + "&cluster=" + cluster + "&namespace=" + namespaceName;
+                        } else {
+                            $window.location.href = '/config.html?#appid=' + selectedAppId;
+                        }
                     }
                 };
 
