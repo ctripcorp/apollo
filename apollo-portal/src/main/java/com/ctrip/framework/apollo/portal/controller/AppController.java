@@ -46,7 +46,7 @@ import java.util.Set;
 
 
 @RestController
-@RequestMapping("/apps/by-appId-or-name")
+@RequestMapping("/apps")
 public class AppController {
 
   private final UserInfoHolder userInfoHolder;
@@ -80,7 +80,7 @@ public class AppController {
     }
   }
 
-  @GetMapping("/search/by")
+  @GetMapping("/search/by-appId-or-name")
   public PageDTO<App> searchByAppIdOrAppName(@RequestParam(value = "query", required = false) String query,
       Pageable pageable) {
     if (StringUtils.isEmpty(query)) {
