@@ -46,7 +46,7 @@ import java.util.Set;
 
 
 @RestController
-@RequestMapping("/apps")
+@RequestMapping("/apps/by-appId-or-name")
 public class AppController {
 
   private final UserInfoHolder userInfoHolder;
