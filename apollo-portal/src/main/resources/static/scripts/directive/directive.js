@@ -22,7 +22,7 @@ directive_module.directive('apollonav',
                    $('#app-search-list').select2({
                       placeholder: placeholderLabel,
                       ajax: {
-                        url: "/apps/search/by",
+                        url: "/apps/search/by-appId-or-name",
                         dataType: 'json',
                         delay: 400,
                         data: function (params) {
