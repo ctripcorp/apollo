@@ -80,7 +80,7 @@ public class AppController {
     }
   }
 
-  @GetMapping("/search/by-appId-or-name")
+  @GetMapping("/search/by-appid-or-name")
   public PageDTO<App> searchByAppIdOrAppName(@RequestParam(value = "query", required = false) String query,
       Pageable pageable) {
     if (StringUtils.isEmpty(query)) {

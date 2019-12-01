@@ -26,7 +26,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 本地快速部署请参见[Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
 
 演示环境（Demo）:
-- [106.54.227.205:8070](http://106.54.227.205:8070/)
+- [106.54.227.205](http://106.54.227.205/)
 - 账号/密码:apollo/admin
 
 > 如访问github速度缓慢，可以访问[gitee镜像](https://gitee.com/nobodyiam/apollo)，不定期同步
@@ -360,7 +360,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![斯维登集团](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sweetome.png) 
 ![广东快乐种子科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/vipthink.png) 
 ![上海盈翼文化传播有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/tongxuecool.png) 
-![上海尚诚消费金融股份有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sccfc.png) 
+![上海尚诚消费金融股份有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/sccfc.png)
+![自如网](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ziroom.png)
+![京东](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jd.png)
 
 # Awards
 
