@@ -212,6 +212,9 @@ appService.service('PermissionService', ['$resource', '$q', 'AppUtil', function 
         has_assign_user_permission: function (appId) {
             return hasAppPermission(appId, 'AssignRole');
         },
+      has_manage_access_key_permission: function (appId) {
+        return hasAppPermission(appId, 'ManageAccessKey');
+      },
         has_modify_namespace_permission: function (appId, namespaceName) {
             return hasNamespacePermission(appId, namespaceName, 'ModifyNamespace');
         },
