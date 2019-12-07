@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.core.internals;
 
 import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
+import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 import com.google.common.base.Strings;
 
@@ -32,6 +33,33 @@ public class LegacyMetaServerProvider implements MetaServerProvider {
     domains.put(Env.UAT, getMetaServerAddress(prop, "uat_meta", "uat.meta"));
     domains.put(Env.LPT, getMetaServerAddress(prop, "lpt_meta", "lpt.meta"));
     domains.put(Env.PRO, getMetaServerAddress(prop, "pro_meta", "pro.meta"));
+
+
+    // find key-value from System Property which key ends with "_meta"
+    Map<String, String> metaServerAddressesFromSystemProperty = PropertiesUtil.filterWithKeyEndswith(System.getProperties(), "_meta");
+    // remove key's suffix "_meta"
+    metaServerAddressesFromSystemProperty = PropertiesUtil.removeKeySuffix(metaServerAddressesFromSystemProperty, "_meta".length());
+
+    // find key-value from OS environment variable which key ends with "_meta"
+    Map<String, String> metaServerAddressesFromOSEnvironment = PropertiesUtil.filterWithKeyEndswith(System.getenv(), "_meta");
+    // remove key's suffix "_meta"
+    metaServerAddressesFromOSEnvironment = PropertiesUtil.removeKeySuffix(metaServerAddressesFromOSEnvironment, "_meta".length());
+
+    // find key-value from properties file which key ends with ".meta"
+    Map<String, String> metaServerAddressesFromPropertiesFile = PropertiesUtil.filterWithKeyEndswith(prop, ".meta");
+    // remove key's suffix ".meta"
+    metaServerAddressesFromPropertiesFile = PropertiesUtil.removeKeySuffix(metaServerAddressesFromPropertiesFile, ".meta".length());
+
+    // begin to add key-value, key is environment, value is meta server address matched
+    Map<String, String> metaServerAddresses = new HashMap<>();
+    // low priority add first
+    metaServerAddresses.putAll(metaServerAddressesFromPropertiesFile);
+    metaServerAddresses.putAll(metaServerAddressesFromOSEnvironment);
+    metaServerAddresses.putAll(metaServerAddressesFromSystemProperty);
+
+    // add to domain
+    domains.putAll(metaServerAddresses);
+
   }
 
   private String getMetaServerAddress(Properties prop, String sourceName, String propName) {
