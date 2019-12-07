@@ -2,11 +2,8 @@ package com.ctrip.framework.foundation.internals;
 
 import com.ctrip.framework.apollo.core.spi.Ordered;
 import com.google.common.collect.Lists;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+
+import java.util.*;
 
 public class ServiceBootstrap {
   public static <S> S loadFirst(Class<S> clazz) {

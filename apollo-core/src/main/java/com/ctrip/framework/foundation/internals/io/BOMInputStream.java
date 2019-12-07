@@ -13,13 +13,13 @@
 package com.ctrip.framework.foundation.internals.io;
 
 
-import static com.ctrip.framework.foundation.internals.io.IOUtils.EOF;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.ctrip.framework.foundation.internals.io.IOUtils.EOF;
 
 /**
  * This class is used to wrap a stream that includes an encoded {@link ByteOrderMark} as its first bytes.

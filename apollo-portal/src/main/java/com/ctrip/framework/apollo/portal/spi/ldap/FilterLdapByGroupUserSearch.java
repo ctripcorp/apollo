@@ -2,11 +2,6 @@
 
 package com.ctrip.framework.apollo.portal.spi.ldap;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
-
-import javax.naming.Name;
-import javax.naming.directory.SearchControls;
-import javax.naming.ldap.LdapName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -16,6 +11,12 @@ import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+
+import javax.naming.Name;
+import javax.naming.directory.SearchControls;
+import javax.naming.ldap.LdapName;
+
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 /**
  * the FilterLdapByGroupUserSearch description.

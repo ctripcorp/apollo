@@ -5,11 +5,11 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.openapi.auth.ConsumerPermissionValidator;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppNamespaceDTO;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
+
 import static org.hamcrest.Matchers.containsString;
 
 /**

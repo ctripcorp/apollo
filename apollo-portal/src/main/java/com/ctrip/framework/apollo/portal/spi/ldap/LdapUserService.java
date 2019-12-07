@@ -1,22 +1,10 @@
 package com.ctrip.framework.apollo.portal.spi.ldap;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
-
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.configuration.LdapExtendProperties;
 import com.ctrip.framework.apollo.portal.spi.configuration.LdapProperties;
 import com.google.common.base.Strings;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeSet;
-import javax.naming.Name;
-import javax.naming.directory.Attribute;
-import javax.naming.ldap.LdapName;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +16,14 @@ import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.SearchScope;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.util.CollectionUtils;
+
+import javax.naming.directory.Attribute;
+import javax.naming.ldap.LdapName;
+import java.util.*;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 /**
  * Ldap user spi service

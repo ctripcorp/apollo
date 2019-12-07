@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.openapi.v1.controller;
 
-import javax.annotation.PostConstruct;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +9,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created by kezhenxu at 2019/1/8 18:19.

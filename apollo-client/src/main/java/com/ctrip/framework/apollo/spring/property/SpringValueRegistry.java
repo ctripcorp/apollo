@@ -4,6 +4,9 @@ import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import org.springframework.beans.factory.BeanFactory;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,9 +14,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.google.common.collect.Multimaps;
-import org.springframework.beans.factory.BeanFactory;
 
 public class SpringValueRegistry {
   private static final long CLEAN_INTERVAL_IN_SECONDS = 5;

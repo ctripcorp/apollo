@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.repository;
 
 import com.ctrip.framework.apollo.portal.entity.po.UserPO;
-
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;

@@ -1,16 +1,13 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.common.entity.App;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.MQService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +17,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 
 public class CtripMQService implements MQService {
@@ -59,7 +55,7 @@ public class CtripMQService implements MQService {
   }
 
   @Override
-  public void sendPublishMsg(Env env, ReleaseHistoryBO releaseHistory) {
+  public void sendPublishMsg(String env, ReleaseHistoryBO releaseHistory) {
     if (releaseHistory == null) {
       return;
     }
@@ -69,7 +65,7 @@ public class CtripMQService implements MQService {
     sendMsg(portalConfig.hermesServerAddress(), CONFIG_PUBLISH_NOTIFY_TO_NOC_TOPIC, msg);
   }
 
-  private PublishMsg buildPublishMsg(Env env, ReleaseHistoryBO releaseHistory) {
+  private PublishMsg buildPublishMsg(String env, ReleaseHistoryBO releaseHistory) {
 
     PublishMsg msg = new PublishMsg();
 

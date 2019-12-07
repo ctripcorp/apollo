@@ -1,22 +1,14 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
-
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
 @RestController
 public class ClusterController {

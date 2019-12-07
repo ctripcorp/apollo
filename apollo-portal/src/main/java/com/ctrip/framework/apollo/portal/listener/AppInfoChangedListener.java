@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.listener;
 
 import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
@@ -30,8 +29,8 @@ public class AppInfoChangedListener {
     AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
     String appId = appDTO.getAppId();
 
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       try {
         appAPI.updateApp(env, appDTO);
       } catch (Throwable e) {

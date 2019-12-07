@@ -1,14 +1,15 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Create by zhangzheng on 2018/2/6

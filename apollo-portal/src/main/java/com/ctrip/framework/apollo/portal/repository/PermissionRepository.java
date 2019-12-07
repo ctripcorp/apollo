@@ -1,14 +1,12 @@
 package com.ctrip.framework.apollo.portal.repository;
 
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Collection;
 import java.util.List;
-import org.springframework.data.repository.query.Param;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

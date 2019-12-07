@@ -1,16 +1,10 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
-import com.ctrip.framework.apollo.spi.ConfigFactory;
-import com.ctrip.framework.apollo.spi.ConfigFactoryManager;
-import com.ctrip.framework.apollo.spi.ConfigRegistry;
-import com.ctrip.framework.apollo.spi.DefaultConfigFactory;
-import com.ctrip.framework.apollo.spi.DefaultConfigFactoryManager;
-import com.ctrip.framework.apollo.spi.DefaultConfigRegistry;
+import com.ctrip.framework.apollo.spi.*;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.ctrip.framework.apollo.util.http.HttpUtil;
-
 import com.ctrip.framework.apollo.util.yaml.YamlParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

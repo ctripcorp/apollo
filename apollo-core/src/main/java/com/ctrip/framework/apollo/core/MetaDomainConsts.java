@@ -1,19 +1,6 @@
 package com.ctrip.framework.apollo.core;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.core.utils.NetUtil;
@@ -23,6 +10,14 @@ import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The meta domain will try to load the meta server address from MetaServerProviders, the default ones are:
@@ -42,7 +37,7 @@ public class MetaDomainConsts {
   public static final String DEFAULT_META_URL = "http://apollo.meta";
 
   // env -> meta server address cache
-  private static final Map<Env, String> metaServerAddressCache = Maps.newConcurrentMap();
+  private static final Map<String, String> metaServerAddressCache = Maps.newConcurrentMap();
   private static volatile List<MetaServerProvider> metaServerProviders = null;
 
   private static final long REFRESH_INTERVAL_IN_SECOND = 60;// 1 min
@@ -56,8 +51,8 @@ public class MetaDomainConsts {
   /**
    * Return one meta server address. If multiple meta server addresses are configured, will select one.
    */
-  public static String getDomain(Env env) {
-    String metaServerAddress = getMetaServerAddress(env);
+  public static String getDomain(String env) {
+    String metaServerAddress = getMetaServerAddress(Env.valueOf(env));
     // if there is more than one address, need to select one
     if (metaServerAddress.contains(",")) {
       return selectMetaServerAddress(metaServerAddress);
@@ -68,7 +63,7 @@ public class MetaDomainConsts {
   /**
    * Return meta server address. If multiple meta server addresses are configured, will return the comma separated string.
    */
-  public static String getMetaServerAddress(Env env) {
+  public static String getMetaServerAddress(String env) {
     if (!metaServerAddressCache.containsKey(env)) {
       initMetaServerAddress(env);
     }
@@ -76,7 +71,7 @@ public class MetaDomainConsts {
     return metaServerAddressCache.get(env);
   }
 
-  private static void initMetaServerAddress(Env env) {
+  private static void initMetaServerAddress(String env) {
     if (metaServerProviders == null) {
       synchronized (LOCK) {
         if (metaServerProviders == null) {

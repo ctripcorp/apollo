@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.portal.component.config;
 
 import com.ctrip.framework.apollo.common.config.RefreshableConfig;
 import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
 import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
 import com.ctrip.framework.apollo.portal.service.SystemRoleManagerService;
@@ -41,9 +41,9 @@ public class PortalConfig extends RefreshableConfig {
   /***
    * Level: important
    **/
-  public List<Env> portalSupportedEnvs() {
+  public List<String> portalSupportedEnvs() {
     String[] configurations = getArrayProperty("apollo.portal.envs", new String[]{"FAT", "UAT", "PRO"});
-    List<Env> envs = Lists.newLinkedList();
+    List<String> envs = Lists.newLinkedList();
 
     for (String env : configurations) {
       envs.add(Env.fromString(env));
@@ -60,10 +60,10 @@ public class PortalConfig extends RefreshableConfig {
     return splitter.splitToList(superAdminConfig);
   }
 
-  public Set<Env> emailSupportedEnvs() {
+  public Set<String> emailSupportedEnvs() {
     String[] configurations = getArrayProperty("email.supported.envs", null);
 
-    Set<Env> result = Sets.newHashSet();
+    Set<String> result = Sets.newHashSet();
     if (configurations == null || configurations.length == 0) {
       return result;
     }
@@ -108,8 +108,8 @@ public class PortalConfig extends RefreshableConfig {
     return getValue("apollo.portal.address");
   }
 
-  public boolean isEmergencyPublishAllowed(Env env) {
-    String targetEnv = env.name();
+  public boolean isEmergencyPublishAllowed(String env) {
+    String targetEnv = Env.valueOf(env);
 
     String[] emergencyPublishSupportedEnvs = getArrayProperty("emergencyPublish.supported.envs", new String[0]);
 
@@ -125,10 +125,10 @@ public class PortalConfig extends RefreshableConfig {
   /***
    * Level: low
    **/
-  public Set<Env> publishTipsSupportedEnvs() {
+  public Set<String> publishTipsSupportedEnvs() {
     String[] configurations = getArrayProperty("namespace.publish.tips.supported.envs", null);
 
-    Set<Env> result = Sets.newHashSet();
+    Set<String> result = Sets.newHashSet();
     if (configurations == null || configurations.length == 0) {
       return result;
     }

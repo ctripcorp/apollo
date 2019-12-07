@@ -1,12 +1,13 @@
 package com.ctrip.framework.apollo.core.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.apollo.BaseIntegrationTest;
-import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.junit.Test;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by gl49 on 2018/6/8.

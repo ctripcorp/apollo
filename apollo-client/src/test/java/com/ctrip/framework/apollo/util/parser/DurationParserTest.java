@@ -1,8 +1,8 @@
 package com.ctrip.framework.apollo.util.parser;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class DurationParserTest {
   private Parsers.DurationParser durationParser = Parsers.forDuration();

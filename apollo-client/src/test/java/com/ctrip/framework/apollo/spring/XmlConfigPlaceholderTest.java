@@ -1,17 +1,16 @@
 package com.ctrip.framework.apollo.spring;
 
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import org.junit.Test;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionStoreException;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.junit.Test;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionStoreException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.core.ConfigConsts;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.core.spi;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-
 /**
  * @since 1.0.0
  */
@@ -12,5 +10,5 @@ public interface MetaServerProvider extends Ordered {
    * <br/>
    * In production environment, we suggest using one single domain like http://config.xxx.com(backed by software load balancers like nginx) instead of multiple ip addresses
    */
-  String getMetaServerAddress(Env targetEnv);
+  String getMetaServerAddress(String targetEnv);
 }

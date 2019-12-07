@@ -1,11 +1,11 @@
 package com.ctrip.framework.foundation.internals.provider;
 
-import java.io.InputStream;
-
 import com.ctrip.framework.foundation.spi.provider.ApplicationProvider;
 import com.ctrip.framework.foundation.spi.provider.NetworkProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
 import com.ctrip.framework.foundation.spi.provider.ServerProvider;
+
+import java.io.InputStream;
 
 public class NullProvider implements ApplicationProvider, NetworkProvider, ServerProvider {
   @Override

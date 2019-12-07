@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
@@ -46,7 +45,7 @@ public class DefaultMetaServerProvider implements MetaServerProvider {
   }
 
   @Override
-  public String getMetaServerAddress(Env targetEnv) {
+  public String getMetaServerAddress(String targetEnv) {
     //for default meta server provider, we don't care the actual environment
     return metaServerAddress;
   }

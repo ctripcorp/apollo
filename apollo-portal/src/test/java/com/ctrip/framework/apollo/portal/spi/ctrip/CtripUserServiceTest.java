@@ -1,12 +1,10 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

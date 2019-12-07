@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.listener;
 
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.component.emailbuilder.GrayPublishEmailBuilder;
@@ -87,7 +86,7 @@ public class ConfigPublishListener {
     }
 
     private ReleaseHistoryBO getReleaseHistory() {
-      Env env = publishInfo.getEnv();
+      String env = publishInfo.getEnv();
 
       int operation = publishInfo.isMergeEvent() ? ReleaseOperation.GRAY_RELEASE_MERGE_TO_MASTER :
                       publishInfo.isRollbackEvent() ? ReleaseOperation.ROLLBACK :
@@ -108,7 +107,7 @@ public class ConfigPublishListener {
     }
 
     private void sendPublishEmail(ReleaseHistoryBO releaseHistory) {
-      Env env = publishInfo.getEnv();
+      String env = publishInfo.getEnv();
 
       if (!portalConfig.emailSupportedEnvs().contains(env)) {
         return;
@@ -132,7 +131,7 @@ public class ConfigPublishListener {
       mqService.sendPublishMsg(publishInfo.getEnv(), releaseHistory);
     }
 
-    private Email buildEmail(Env env, ReleaseHistoryBO releaseHistory, int operation) {
+    private Email buildEmail(String env, ReleaseHistoryBO releaseHistory, int operation) {
       switch (operation) {
         case ReleaseOperation.GRAY_RELEASE: {
           return grayPublishEmailBuilder.build(env, releaseHistory);

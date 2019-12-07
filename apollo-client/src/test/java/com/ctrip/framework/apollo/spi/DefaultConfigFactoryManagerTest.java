@@ -1,17 +1,16 @@
 package com.ctrip.framework.apollo.spi;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

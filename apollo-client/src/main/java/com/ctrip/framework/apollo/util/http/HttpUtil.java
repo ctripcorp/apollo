@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -6,20 +6,13 @@ import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
 import com.ctrip.framework.apollo.common.entity.EntityPair;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 import com.ctrip.framework.apollo.portal.util.RelativeDateFormat;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ReleaseHistoryService {
@@ -36,7 +29,7 @@ public class ReleaseHistoryService {
   }
 
 
-  public ReleaseHistoryBO findLatestByReleaseIdAndOperation(Env env, long releaseId, int operation){
+  public ReleaseHistoryBO findLatestByReleaseIdAndOperation(String env, long releaseId, int operation){
     PageDTO<ReleaseHistoryDTO> pageDTO = releaseHistoryAPI.findByReleaseIdAndOperation(env, releaseId, operation, 0, 1);
     if (pageDTO != null && pageDTO.hasContent()){
       ReleaseHistoryDTO releaseHistory = pageDTO.getContent().get(0);
@@ -47,7 +40,7 @@ public class ReleaseHistoryService {
     return null;
   }
 
-  public ReleaseHistoryBO findLatestByPreviousReleaseIdAndOperation(Env env, long previousReleaseId, int operation){
+  public ReleaseHistoryBO findLatestByPreviousReleaseIdAndOperation(String env, long previousReleaseId, int operation){
     PageDTO<ReleaseHistoryDTO> pageDTO = releaseHistoryAPI.findByPreviousReleaseIdAndOperation(env, previousReleaseId, operation, 0, 1);
     if (pageDTO != null && pageDTO.hasContent()){
       ReleaseHistoryDTO releaseHistory = pageDTO.getContent().get(0);
@@ -58,7 +51,7 @@ public class ReleaseHistoryService {
     return null;
   }
 
-  public List<ReleaseHistoryBO> findNamespaceReleaseHistory(String appId, Env env, String clusterName,
+  public List<ReleaseHistoryBO> findNamespaceReleaseHistory(String appId, String env, String clusterName,
                                                             String namespaceName, int page, int size) {
     PageDTO<ReleaseHistoryDTO> result = releaseHistoryAPI.findReleaseHistoriesByNamespace(appId, env, clusterName,
                                                                                           namespaceName, page, size);

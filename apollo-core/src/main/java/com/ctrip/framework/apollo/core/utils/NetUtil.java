@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.core.utils;
 
 import com.google.common.io.CharStreams;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

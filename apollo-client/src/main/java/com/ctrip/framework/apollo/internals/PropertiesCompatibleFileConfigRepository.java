@@ -1,12 +1,12 @@
 package com.ctrip.framework.apollo.internals;
 
-import java.util.Properties;
-
 import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
 import com.google.common.base.Preconditions;
+
+import java.util.Properties;
 
 public class PropertiesCompatibleFileConfigRepository extends AbstractConfigRepository implements
     ConfigFileChangeListener {

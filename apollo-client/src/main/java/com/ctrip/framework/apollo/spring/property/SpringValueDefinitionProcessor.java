@@ -1,12 +1,12 @@
 package com.ctrip.framework.apollo.spring.property;
 
+import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
+import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -16,10 +16,9 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
-import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * To process xml config placeholders, e.g.

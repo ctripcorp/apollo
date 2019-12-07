@@ -1,35 +1,22 @@
 package com.ctrip.framework.apollo.spi;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
-import java.util.Properties;
-
+import com.ctrip.framework.apollo.Config;
+import com.ctrip.framework.apollo.ConfigFile;
+import com.ctrip.framework.apollo.build.MockInjector;
+import com.ctrip.framework.apollo.core.constants.Env;
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.internals.*;
+import com.ctrip.framework.apollo.util.ConfigUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.build.MockInjector;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.internals.DefaultConfig;
-import com.ctrip.framework.apollo.internals.JsonConfigFile;
-import com.ctrip.framework.apollo.internals.LocalFileConfigRepository;
-import com.ctrip.framework.apollo.internals.PropertiesConfigFile;
-import com.ctrip.framework.apollo.internals.XmlConfigFile;
-import com.ctrip.framework.apollo.internals.YamlConfigFile;
-import com.ctrip.framework.apollo.internals.YmlConfigFile;
-import com.ctrip.framework.apollo.util.ConfigUtil;
+import java.util.Properties;
+
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -37,7 +24,7 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 public class DefaultConfigFactoryTest {
   private DefaultConfigFactory defaultConfigFactory;
   private static String someAppId;
-  private static Env someEnv;
+  private static String someEnv;
 
   @Before
   public void setUp() throws Exception {
@@ -196,7 +183,7 @@ public class DefaultConfigFactoryTest {
     }
 
     @Override
-    public Env getApolloEnv() {
+    public String getApolloEnv() {
       return someEnv;
     }
   }

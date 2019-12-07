@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
@@ -88,9 +87,9 @@ public class DefaultRoleInitializationService implements RoleInitializationServi
 
   @Transactional
   public void initNamespaceEnvRoles(String appId, String namespaceName, String operator) {
-    List<Env> portalEnvs = portalConfig.portalSupportedEnvs();
+    List<String> portalEnvs = portalConfig.portalSupportedEnvs();
 
-    for (Env env : portalEnvs) {
+    for (String env : portalEnvs) {
       initNamespaceSpecificEnvRoles(appId, namespaceName, env.toString(), operator);
     }
   }

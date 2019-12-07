@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+
 import java.util.Properties;
 
 /**

@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+
 import java.util.Iterator;
 
 public class RoleUtils {

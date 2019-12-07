@@ -1,15 +1,10 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
+import java.lang.annotation.*;
 
 /**
  * Use this annotation to register Apollo property sources when using Java Config.

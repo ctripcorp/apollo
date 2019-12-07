@@ -9,12 +9,13 @@ import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
 import com.google.common.collect.Lists;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper {
 

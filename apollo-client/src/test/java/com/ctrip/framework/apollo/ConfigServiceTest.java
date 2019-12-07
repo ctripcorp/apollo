@@ -1,20 +1,19 @@
 package com.ctrip.framework.apollo;
 
-import static org.junit.Assert.assertEquals;
-
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.internals.AbstractConfig;
 import com.ctrip.framework.apollo.internals.DefaultInjector;
 import com.ctrip.framework.apollo.spi.ConfigFactory;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

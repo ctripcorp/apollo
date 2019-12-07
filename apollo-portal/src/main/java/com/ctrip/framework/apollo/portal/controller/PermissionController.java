@@ -2,8 +2,7 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
@@ -24,15 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -116,7 +111,7 @@ public class PermissionController {
   public NamespaceEnvRolesAssignedUsers getNamespaceEnvRoles(@PathVariable String appId, @PathVariable String env, @PathVariable String namespaceName) {
 
     // validate env parameter
-    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN.equals(Env.valueOf(env))) {
       throw new BadRequestException("env is illegal");
     }
 
@@ -148,7 +143,7 @@ public class PermissionController {
     }
 
     // validate env parameter
-    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN.equals(Env.valueOf(env))) {
       throw new BadRequestException("env is illegal");
     }
     Set<String> assignedUser = rolePermissionService.assignRoleToUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),
@@ -170,7 +165,7 @@ public class PermissionController {
       throw new BadRequestException("role type is illegal");
     }
     // validate env parameter
-    if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+    if (Env.UNKNOWN.equals(Env.valueOf(env))) {
       throw new BadRequestException("env is illegal");
     }
     rolePermissionService.removeRoleFromUsers(RoleUtils.buildNamespaceRoleName(appId, namespaceName, roleType, env),

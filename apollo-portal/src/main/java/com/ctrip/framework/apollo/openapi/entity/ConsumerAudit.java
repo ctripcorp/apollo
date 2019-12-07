@@ -2,15 +2,8 @@ package com.ctrip.framework.apollo.openapi.entity;
 
 import com.google.common.base.MoreObjects;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

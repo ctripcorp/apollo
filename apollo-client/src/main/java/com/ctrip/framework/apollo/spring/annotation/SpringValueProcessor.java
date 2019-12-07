@@ -1,20 +1,11 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
-import com.ctrip.framework.apollo.spring.property.PlaceholderHelper;
-import com.ctrip.framework.apollo.spring.property.SpringValue;
-import com.ctrip.framework.apollo.spring.property.SpringValueDefinition;
-import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
-import com.ctrip.framework.apollo.spring.property.SpringValueRegistry;
+import com.ctrip.framework.apollo.spring.property.*;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +17,12 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Bean;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Spring value processor of field or method which has @Value and xml config placeholders.

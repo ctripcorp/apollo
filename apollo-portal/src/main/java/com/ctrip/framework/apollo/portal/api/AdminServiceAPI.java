@@ -1,26 +1,8 @@
 package com.ctrip.framework.apollo.portal.api;
 
 
-import com.ctrip.framework.apollo.common.dto.AppDTO;
-import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
-import com.ctrip.framework.apollo.common.dto.ClusterDTO;
-import com.ctrip.framework.apollo.common.dto.CommitDTO;
-import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleDTO;
-import com.ctrip.framework.apollo.common.dto.InstanceDTO;
-import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
-import com.ctrip.framework.apollo.common.dto.ItemDTO;
-import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
-import com.ctrip.framework.apollo.common.dto.NamespaceLockDTO;
-import com.ctrip.framework.apollo.common.dto.PageDTO;
-import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
-import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.common.dto.*;
 import com.google.common.base.Joiner;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -32,6 +14,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.*;
+
 
 @Service
 public class AdminServiceAPI {
@@ -39,7 +23,7 @@ public class AdminServiceAPI {
   @Service
   public static class HealthAPI extends API {
 
-    public Health health(Env env) {
+    public Health health(String env) {
       return restTemplate.get(env, "/health", Health.class);
     }
   }
@@ -47,19 +31,19 @@ public class AdminServiceAPI {
   @Service
   public static class AppAPI extends API {
 
-    public AppDTO loadApp(Env env, String appId) {
+    public AppDTO loadApp(String env, String appId) {
       return restTemplate.get(env, "apps/{appId}", AppDTO.class, appId);
     }
 
-    public AppDTO createApp(Env env, AppDTO app) {
+    public AppDTO createApp(String env, AppDTO app) {
       return restTemplate.post(env, "apps", app, AppDTO.class);
     }
 
-    public void updateApp(Env env, AppDTO app) {
+    public void updateApp(String env, AppDTO app) {
       restTemplate.put(env, "apps/{appId}", app, app.getAppId());
     }
 
-    public void deleteApp(Env env, String appId, String operator) {
+    public void deleteApp(String env, String appId, String operator) {
       restTemplate.delete(env, "/apps/{appId}?operator={operator}", appId, operator);
     }
   }
@@ -72,21 +56,21 @@ public class AdminServiceAPI {
         typeReference = new ParameterizedTypeReference<Map<String, Boolean>>() {
     };
 
-    public List<NamespaceDTO> findNamespaceByCluster(String appId, Env env, String clusterName) {
+    public List<NamespaceDTO> findNamespaceByCluster(String appId, String env, String clusterName) {
       NamespaceDTO[] namespaceDTOs = restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces",
           NamespaceDTO[].class, appId,
           clusterName);
       return Arrays.asList(namespaceDTOs);
     }
 
-    public NamespaceDTO loadNamespace(String appId, Env env, String clusterName,
+    public NamespaceDTO loadNamespace(String appId, String env, String clusterName,
         String namespaceName) {
       return
           restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}",
               NamespaceDTO.class, appId, clusterName, namespaceName);
     }
 
-    public NamespaceDTO findPublicNamespaceForAssociatedNamespace(Env env, String appId, String clusterName,
+    public NamespaceDTO findPublicNamespaceForAssociatedNamespace(String env, String appId, String clusterName,
         String namespaceName) {
       return
           restTemplate
@@ -94,40 +78,40 @@ public class AdminServiceAPI {
                   NamespaceDTO.class, appId, clusterName, namespaceName);
     }
 
-    public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {
+    public NamespaceDTO createNamespace(String env, NamespaceDTO namespace) {
       return restTemplate
           .post(env, "apps/{appId}/clusters/{clusterName}/namespaces", namespace, NamespaceDTO.class,
               namespace.getAppId(), namespace.getClusterName());
     }
 
-    public AppNamespaceDTO createAppNamespace(Env env, AppNamespaceDTO appNamespace) {
+    public AppNamespaceDTO createAppNamespace(String env, AppNamespaceDTO appNamespace) {
       return restTemplate
           .post(env, "apps/{appId}/appnamespaces", appNamespace, AppNamespaceDTO.class, appNamespace.getAppId());
     }
 
-    public AppNamespaceDTO createMissingAppNamespace(Env env, AppNamespaceDTO appNamespace) {
+    public AppNamespaceDTO createMissingAppNamespace(String env, AppNamespaceDTO appNamespace) {
       return restTemplate
           .post(env, "apps/{appId}/appnamespaces?silentCreation=true", appNamespace, AppNamespaceDTO.class,
               appNamespace.getAppId());
     }
 
-    public List<AppNamespaceDTO> getAppNamespaces(String appId, Env env) {
+    public List<AppNamespaceDTO> getAppNamespaces(String appId, String env) {
       AppNamespaceDTO[] appNamespaceDTOs = restTemplate.get(env, "apps/{appId}/appnamespaces", AppNamespaceDTO[].class, appId);
       return Arrays.asList(appNamespaceDTOs);
     }
 
-    public void deleteNamespace(Env env, String appId, String clusterName, String namespaceName, String operator) {
+    public void deleteNamespace(String env, String appId, String clusterName, String namespaceName, String operator) {
       restTemplate
           .delete(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}?operator={operator}", appId,
               clusterName,
               namespaceName, operator);
     }
 
-    public Map<String, Boolean> getNamespacePublishInfo(Env env, String appId) {
+    public Map<String, Boolean> getNamespacePublishInfo(String env, String appId) {
       return restTemplate.get(env, "apps/{appId}/namespaces/publish_info", typeReference, appId).getBody();
     }
 
-    public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(Env env, String publicNamespaceName,
+    public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(String env, String publicNamespaceName,
         int page, int size) {
       NamespaceDTO[] namespaceDTOs =
           restTemplate.get(env, "/appnamespaces/{publicNamespaceName}/namespaces?page={page}&size={size}",
@@ -135,7 +119,7 @@ public class AdminServiceAPI {
       return Arrays.asList(namespaceDTOs);
     }
 
-    public int countPublicAppNamespaceAssociatedNamespaces(Env env, String publicNamesapceName) {
+    public int countPublicAppNamespaceAssociatedNamespaces(String env, String publicNamesapceName) {
       Integer count =
           restTemplate.get(env, "/appnamespaces/{publicNamespaceName}/associated-namespaces/count", Integer.class,
               publicNamesapceName);
@@ -143,7 +127,7 @@ public class AdminServiceAPI {
       return count == null ? 0 : count;
     }
 
-    public void deleteAppNamespace(Env env, String appId, String namespaceName, String operator) {
+    public void deleteAppNamespace(String env, String appId, String namespaceName, String operator) {
       restTemplate.delete(env, "/apps/{appId}/appnamespaces/{namespaceName}?operator={operator}", appId, namespaceName,
           operator);
     }
@@ -152,47 +136,47 @@ public class AdminServiceAPI {
   @Service
   public static class ItemAPI extends API {
 
-    public List<ItemDTO> findItems(String appId, Env env, String clusterName, String namespaceName) {
+    public List<ItemDTO> findItems(String appId, String env, String clusterName, String namespaceName) {
       ItemDTO[] itemDTOs =
           restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items",
               ItemDTO[].class, appId, clusterName, namespaceName);
       return Arrays.asList(itemDTOs);
     }
 
-    public List<ItemDTO> findDeletedItems(String appId, Env env, String clusterName, String namespaceName) {
+    public List<ItemDTO> findDeletedItems(String appId, String env, String clusterName, String namespaceName) {
       ItemDTO[] itemDTOs =
           restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/deleted",
               ItemDTO[].class, appId, clusterName, namespaceName);
       return Arrays.asList(itemDTOs);
     }
 
-    public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
+    public ItemDTO loadItem(String env, String appId, String clusterName, String namespaceName, String key) {
       return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{key}",
           ItemDTO.class, appId, clusterName, namespaceName, key);
     }
 
-    public ItemDTO loadItemById(Env env, long itemId) {
+    public ItemDTO loadItemById(String env, long itemId) {
       return restTemplate.get(env, "items/{itemId}", ItemDTO.class, itemId);
     }
 
-    public void updateItemsByChangeSet(String appId, Env env, String clusterName, String namespace,
+    public void updateItemsByChangeSet(String appId, String env, String clusterName, String namespace,
         ItemChangeSets changeSets) {
       restTemplate.post(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset",
           changeSets, Void.class, appId, clusterName, namespace);
     }
 
-    public void updateItem(String appId, Env env, String clusterName, String namespace, long itemId, ItemDTO item) {
+    public void updateItem(String appId, String env, String clusterName, String namespace, long itemId, ItemDTO item) {
       restTemplate.put(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items/{itemId}",
           item, appId, clusterName, namespace, itemId);
 
     }
 
-    public ItemDTO createItem(String appId, Env env, String clusterName, String namespace, ItemDTO item) {
+    public ItemDTO createItem(String appId, String env, String clusterName, String namespace, ItemDTO item) {
       return restTemplate.post(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/items",
           item, ItemDTO.class, appId, clusterName, namespace);
     }
 
-    public void deleteItem(Env env, long itemId, String operator) {
+    public void deleteItem(String env, long itemId, String operator) {
 
       restTemplate.delete(env, "items/{itemId}?operator={operator}", itemId, operator);
     }
@@ -201,31 +185,31 @@ public class AdminServiceAPI {
   @Service
   public static class ClusterAPI extends API {
 
-    public List<ClusterDTO> findClustersByApp(String appId, Env env) {
+    public List<ClusterDTO> findClustersByApp(String appId, String env) {
       ClusterDTO[] clusterDTOs = restTemplate.get(env, "apps/{appId}/clusters", ClusterDTO[].class,
           appId);
       return Arrays.asList(clusterDTOs);
     }
 
-    public ClusterDTO loadCluster(String appId, Env env, String clusterName) {
+    public ClusterDTO loadCluster(String appId, String env, String clusterName) {
       return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}", ClusterDTO.class,
           appId, clusterName);
     }
 
-    public boolean isClusterUnique(String appId, Env env, String clusterName) {
+    public boolean isClusterUnique(String appId, String env, String clusterName) {
       return restTemplate
           .get(env, "apps/{appId}/cluster/{clusterName}/unique", Boolean.class,
               appId, clusterName);
 
     }
 
-    public ClusterDTO create(Env env, ClusterDTO cluster) {
+    public ClusterDTO create(String env, ClusterDTO cluster) {
       return restTemplate.post(env, "apps/{appId}/clusters", cluster, ClusterDTO.class,
           cluster.getAppId());
     }
 
 
-    public void delete(Env env, String appId, String clusterName, String operator) {
+    public void delete(String env, String appId, String clusterName, String operator) {
       restTemplate.delete(env, "apps/{appId}/clusters/{clusterName}?operator={operator}", appId, clusterName, operator);
     }
   }
@@ -235,11 +219,11 @@ public class AdminServiceAPI {
 
     private static final Joiner JOINER = Joiner.on(",");
 
-    public ReleaseDTO loadRelease(Env env, long releaseId) {
+    public ReleaseDTO loadRelease(String env, long releaseId) {
       return restTemplate.get(env, "releases/{releaseId}", ReleaseDTO.class, releaseId);
     }
 
-    public List<ReleaseDTO> findReleaseByIds(Env env, Set<Long> releaseIds) {
+    public List<ReleaseDTO> findReleaseByIds(String env, Set<Long> releaseIds) {
       if (CollectionUtils.isEmpty(releaseIds)) {
         return Collections.emptyList();
       }
@@ -251,7 +235,7 @@ public class AdminServiceAPI {
 
     }
 
-    public List<ReleaseDTO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
+    public List<ReleaseDTO> findAllReleases(String appId, String env, String clusterName, String namespaceName, int page,
         int size) {
       ReleaseDTO[] releaseDTOs = restTemplate.get(
           env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/all?page={page}&size={size}",
@@ -260,7 +244,7 @@ public class AdminServiceAPI {
       return Arrays.asList(releaseDTOs);
     }
 
-    public List<ReleaseDTO> findActiveReleases(String appId, Env env, String clusterName, String namespaceName,
+    public List<ReleaseDTO> findActiveReleases(String appId, String env, String clusterName, String namespaceName,
         int page,
         int size) {
       ReleaseDTO[] releaseDTOs = restTemplate.get(
@@ -270,7 +254,7 @@ public class AdminServiceAPI {
       return Arrays.asList(releaseDTOs);
     }
 
-    public ReleaseDTO loadLatestRelease(String appId, Env env, String clusterName,
+    public ReleaseDTO loadLatestRelease(String appId, String env, String clusterName,
         String namespace) {
       ReleaseDTO releaseDTO = restTemplate
           .get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/latest",
@@ -278,7 +262,7 @@ public class AdminServiceAPI {
       return releaseDTO;
     }
 
-    public ReleaseDTO createRelease(String appId, Env env, String clusterName, String namespace,
+    public ReleaseDTO createRelease(String appId, String env, String clusterName, String namespace,
         String releaseName, String releaseComment, String operator,
         boolean isEmergencyPublish) {
       HttpHeaders headers = new HttpHeaders();
@@ -296,7 +280,7 @@ public class AdminServiceAPI {
       return response;
     }
 
-    public ReleaseDTO createGrayDeletionRelease(String appId, Env env, String clusterName, String namespace,
+    public ReleaseDTO createGrayDeletionRelease(String appId, String env, String clusterName, String namespace,
                                     String releaseName, String releaseComment, String operator,
                                     boolean isEmergencyPublish, Set<String> grayDelKeys) {
       HttpHeaders headers = new HttpHeaders();
@@ -315,7 +299,7 @@ public class AdminServiceAPI {
       return response;
     }
 
-    public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespace,
+    public ReleaseDTO updateAndPublish(String appId, String env, String clusterName, String namespace,
         String releaseName, String releaseComment, String branchName,
         boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
 
@@ -328,7 +312,7 @@ public class AdminServiceAPI {
 
     }
 
-    public void rollback(Env env, long releaseId, String operator) {
+    public void rollback(String env, long releaseId, String operator) {
       restTemplate.put(env,
           "releases/{releaseId}/rollback?operator={operator}",
           null, releaseId, operator);
@@ -338,7 +322,7 @@ public class AdminServiceAPI {
   @Service
   public static class CommitAPI extends API {
 
-    public List<CommitDTO> find(String appId, Env env, String clusterName, String namespaceName, int page, int size) {
+    public List<CommitDTO> find(String appId, String env, String clusterName, String namespaceName, int page, int size) {
 
       CommitDTO[] commitDTOs = restTemplate.get(env,
           "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/commit?page={page}&size={size}",
@@ -352,7 +336,7 @@ public class AdminServiceAPI {
   @Service
   public static class NamespaceLockAPI extends API {
 
-    public NamespaceLockDTO getNamespaceLockOwner(String appId, Env env, String clusterName, String namespaceName) {
+    public NamespaceLockDTO getNamespaceLockOwner(String appId, String env, String clusterName, String namespaceName) {
       return restTemplate.get(env, "apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/lock",
           NamespaceLockDTO.class,
           appId, clusterName, namespaceName);
@@ -369,7 +353,7 @@ public class AdminServiceAPI {
         new ParameterizedTypeReference<PageDTO<InstanceDTO>>() {
         };
 
-    public PageDTO<InstanceDTO> getByRelease(Env env, long releaseId, int page, int size) {
+    public PageDTO<InstanceDTO> getByRelease(String env, long releaseId, int page, int size) {
       ResponseEntity<PageDTO<InstanceDTO>>
           entity =
           restTemplate
@@ -379,7 +363,7 @@ public class AdminServiceAPI {
 
     }
 
-    public List<InstanceDTO> getByReleasesNotIn(String appId, Env env, String clusterName, String namespaceName,
+    public List<InstanceDTO> getByReleasesNotIn(String appId, String env, String clusterName, String namespaceName,
         Set<Long> releaseIds) {
 
       InstanceDTO[]
@@ -391,7 +375,7 @@ public class AdminServiceAPI {
       return Arrays.asList(instanceDTOs);
     }
 
-    public PageDTO<InstanceDTO> getByNamespace(String appId, Env env, String clusterName, String namespaceName,
+    public PageDTO<InstanceDTO> getByNamespace(String appId, String env, String clusterName, String namespaceName,
         String instanceAppId,
         int page, int size) {
       ResponseEntity<PageDTO<InstanceDTO>>
@@ -404,7 +388,7 @@ public class AdminServiceAPI {
       return entity.getBody();
     }
 
-    public int getInstanceCountByNamespace(String appId, Env env, String clusterName, String namespaceName) {
+    public int getInstanceCountByNamespace(String appId, String env, String clusterName, String namespaceName) {
       Integer
           count =
           restTemplate.get(env,
@@ -420,20 +404,20 @@ public class AdminServiceAPI {
   @Service
   public static class NamespaceBranchAPI extends API {
 
-    public NamespaceDTO createBranch(String appId, Env env, String clusterName,
+    public NamespaceDTO createBranch(String appId, String env, String clusterName,
         String namespaceName, String operator) {
       return restTemplate
           .post(env, "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches?operator={operator}",
               null, NamespaceDTO.class, appId, clusterName, namespaceName, operator);
     }
 
-    public NamespaceDTO findBranch(String appId, Env env, String clusterName,
+    public NamespaceDTO findBranch(String appId, String env, String clusterName,
         String namespaceName) {
       return restTemplate.get(env, "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches",
           NamespaceDTO.class, appId, clusterName, namespaceName);
     }
 
-    public GrayReleaseRuleDTO findBranchGrayRules(String appId, Env env, String clusterName,
+    public GrayReleaseRuleDTO findBranchGrayRules(String appId, String env, String clusterName,
         String namespaceName, String branchName) {
       return restTemplate
           .get(env, "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules",
@@ -441,7 +425,7 @@ public class AdminServiceAPI {
 
     }
 
-    public void updateBranchGrayRules(String appId, Env env, String clusterName,
+    public void updateBranchGrayRules(String appId, String env, String clusterName,
         String namespaceName, String branchName, GrayReleaseRuleDTO rules) {
       restTemplate
           .put(env, "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}/rules",
@@ -449,7 +433,7 @@ public class AdminServiceAPI {
 
     }
 
-    public void deleteBranch(String appId, Env env, String clusterName,
+    public void deleteBranch(String appId, String env, String clusterName,
         String namespaceName, String branchName, String operator) {
       restTemplate.delete(env,
           "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/branches/{branchName}?operator={operator}",
@@ -465,21 +449,21 @@ public class AdminServiceAPI {
         };
 
 
-    public PageDTO<ReleaseHistoryDTO> findReleaseHistoriesByNamespace(String appId, Env env, String clusterName,
+    public PageDTO<ReleaseHistoryDTO> findReleaseHistoriesByNamespace(String appId, String env, String clusterName,
         String namespaceName, int page, int size) {
       return restTemplate.get(env,
           "/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/releases/histories?page={page}&size={size}",
           type, appId, clusterName, namespaceName, page, size).getBody();
     }
 
-    public PageDTO<ReleaseHistoryDTO> findByReleaseIdAndOperation(Env env, long releaseId, int operation, int page,
+    public PageDTO<ReleaseHistoryDTO> findByReleaseIdAndOperation(String env, long releaseId, int operation, int page,
         int size) {
       return restTemplate.get(env,
           "/releases/histories/by_release_id_and_operation?releaseId={releaseId}&operation={operation}&page={page}&size={size}",
           type, releaseId, operation, page, size).getBody();
     }
 
-    public PageDTO<ReleaseHistoryDTO> findByPreviousReleaseIdAndOperation(Env env, long previousReleaseId,
+    public PageDTO<ReleaseHistoryDTO> findByPreviousReleaseIdAndOperation(String env, long previousReleaseId,
         int operation, int page, int size) {
       return restTemplate.get(env,
           "/releases/histories/by_previous_release_id_and_operation?previousReleaseId={releaseId}&operation={operation}&page={page}&size={size}",

@@ -1,11 +1,11 @@
 package com.ctrip.framework.apollo.spring.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PlaceholderHelperTest {
 

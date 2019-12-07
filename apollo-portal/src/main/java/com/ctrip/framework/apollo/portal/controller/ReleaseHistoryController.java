@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 import com.ctrip.framework.apollo.portal.service.ReleaseHistoryService;

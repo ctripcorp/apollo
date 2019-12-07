@@ -8,7 +8,6 @@ import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
@@ -23,16 +22,13 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 public class NamespaceService {
@@ -75,7 +71,7 @@ public class NamespaceService {
   }
 
 
-  public NamespaceDTO createNamespace(Env env, NamespaceDTO namespace) {
+  public NamespaceDTO createNamespace(String env, NamespaceDTO namespace) {
     if (StringUtils.isEmpty(namespace.getDataChangeCreatedBy())) {
       namespace.setDataChangeCreatedBy(userInfoHolder.getUser().getUserId());
     }
@@ -90,7 +86,7 @@ public class NamespaceService {
 
 
   @Transactional
-  public void deleteNamespace(String appId, Env env, String clusterName, String namespaceName) {
+  public void deleteNamespace(String appId, String env, String clusterName, String namespaceName) {
 
     AppNamespace appNamespace = appNamespaceService.findByAppIdAndName(appId, namespaceName);
 
@@ -121,7 +117,7 @@ public class NamespaceService {
     namespaceAPI.deleteNamespace(env, appId, clusterName, namespaceName, operator);
   }
 
-  public NamespaceDTO loadNamespaceBaseInfo(String appId, Env env, String clusterName,
+  public NamespaceDTO loadNamespaceBaseInfo(String appId, String env, String clusterName,
       String namespaceName) {
     NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
     if (namespace == null) {
@@ -133,7 +129,7 @@ public class NamespaceService {
   /**
    * load cluster all namespace info with items
    */
-  public List<NamespaceBO> findNamespaceBOs(String appId, Env env, String clusterName) {
+  public List<NamespaceBO> findNamespaceBOs(String appId, String env, String clusterName) {
 
     List<NamespaceDTO> namespaces = namespaceAPI.findNamespaceByCluster(appId, env, clusterName);
     if (namespaces == null || namespaces.size() == 0) {
@@ -157,17 +153,17 @@ public class NamespaceService {
     return namespaceBOs;
   }
 
-  public List<NamespaceDTO> findNamespaces(String appId, Env env, String clusterName) {
+  public List<NamespaceDTO> findNamespaces(String appId, String env, String clusterName) {
     return namespaceAPI.findNamespaceByCluster(appId, env, clusterName);
   }
 
-  public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(Env env, String publicNamespaceName,
+  public List<NamespaceDTO> getPublicAppNamespaceAllNamespaces(String env, String publicNamespaceName,
       int page,
       int size) {
     return namespaceAPI.getPublicAppNamespaceAllNamespaces(env, publicNamespaceName, page, size);
   }
 
-  public NamespaceBO loadNamespaceBO(String appId, Env env, String clusterName,
+  public NamespaceBO loadNamespaceBO(String appId, String env, String clusterName,
       String namespaceName) {
     NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
     if (namespace == null) {
@@ -176,16 +172,16 @@ public class NamespaceService {
     return transformNamespace2BO(env, namespace);
   }
 
-  public boolean namespaceHasInstances(String appId, Env env, String clusterName,
+  public boolean namespaceHasInstances(String appId, String env, String clusterName,
       String namespaceName) {
     return instanceService.getInstanceCountByNamepsace(appId, env, clusterName, namespaceName) > 0;
   }
 
-  public boolean publicAppNamespaceHasAssociatedNamespace(String publicNamespaceName, Env env) {
+  public boolean publicAppNamespaceHasAssociatedNamespace(String publicNamespaceName, String env) {
     return namespaceAPI.countPublicAppNamespaceAssociatedNamespaces(env, publicNamespaceName) > 0;
   }
 
-  public NamespaceBO findPublicNamespaceForAssociatedNamespace(Env env, String appId,
+  public NamespaceBO findPublicNamespaceForAssociatedNamespace(String env, String appId,
       String clusterName, String namespaceName) {
     NamespaceDTO namespace =
         namespaceAPI
@@ -197,8 +193,8 @@ public class NamespaceService {
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(String appId) {
     Map<String, Map<String, Boolean>> result = Maps.newHashMap();
 
-    Set<Env> envs = portalConfig.publishTipsSupportedEnvs();
-    for (Env env : envs) {
+    Set<String> envs = portalConfig.publishTipsSupportedEnvs();
+    for (String env : envs) {
       if (portalSettings.isEnvActive(env)) {
         result.put(env.toString(), namespaceAPI.getNamespacePublishInfo(env, appId));
       }
@@ -207,7 +203,7 @@ public class NamespaceService {
     return result;
   }
 
-  private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) {
+  private NamespaceBO transformNamespace2BO(String env, NamespaceDTO namespace) {
     NamespaceBO namespaceBO = new NamespaceBO();
     namespaceBO.setBaseInfo(namespace);
 

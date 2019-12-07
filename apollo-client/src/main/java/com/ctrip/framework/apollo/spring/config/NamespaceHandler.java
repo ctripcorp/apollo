@@ -1,14 +1,13 @@
 package com.ctrip.framework.apollo.spring.config;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.core.Ordered;
 import org.w3c.dom.Element;
-
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

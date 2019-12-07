@@ -2,10 +2,9 @@ package com.ctrip.framework.apollo.portal.spi.ctrip;
 
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

@@ -2,9 +2,10 @@ package com.ctrip.framework.apollo.portal.entity.model;
 
 
 import com.ctrip.framework.apollo.common.utils.InputValidator;
-import java.util.Set;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Set;
 
 public class AppModel {
 

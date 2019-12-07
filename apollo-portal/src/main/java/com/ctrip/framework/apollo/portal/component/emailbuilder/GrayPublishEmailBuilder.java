@@ -1,13 +1,10 @@
 package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
-import com.google.common.base.Joiner;
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
-
+import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -30,7 +27,7 @@ public class GrayPublishEmailBuilder extends ConfigPublishEmailBuilder {
   }
 
   @Override
-  public String emailContent(Env env, ReleaseHistoryBO releaseHistory) {
+  public String emailContent(String env, ReleaseHistoryBO releaseHistory) {
     String result = renderEmailCommonContent(env, releaseHistory);
     return renderGrayReleaseRuleContent(result, releaseHistory);
   }

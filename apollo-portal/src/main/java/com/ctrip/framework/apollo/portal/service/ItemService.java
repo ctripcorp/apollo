@@ -7,7 +7,6 @@ import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.txtresolver.ConfigTextResolver;
@@ -57,7 +56,7 @@ public class ItemService {
    */
   public void updateConfigItemByText(NamespaceTextModel model) {
     String appId = model.getAppId();
-    Env env = model.getEnv();
+    String env = model.getEnv();
     String clusterName = model.getClusterName();
     String namespaceName = model.getNamespaceName();
     long namespaceId = model.getNamespaceId();
@@ -80,12 +79,12 @@ public class ItemService {
     Tracer.logEvent(TracerEventType.MODIFY_NAMESPACE, String.format("%s+%s+%s+%s", appId, env, clusterName, namespaceName));
   }
 
-  public void updateItems(String appId, Env env, String clusterName, String namespaceName, ItemChangeSets changeSets){
+  public void updateItems(String appId, String env, String clusterName, String namespaceName, ItemChangeSets changeSets){
     itemAPI.updateItemsByChangeSet(appId, env, clusterName, namespaceName, changeSets);
   }
 
 
-  public ItemDTO createItem(String appId, Env env, String clusterName, String namespaceName, ItemDTO item) {
+  public ItemDTO createItem(String appId, String env, String clusterName, String namespaceName, ItemDTO item) {
     NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
     if (namespace == null) {
       throw new BadRequestException(
@@ -98,27 +97,27 @@ public class ItemService {
     return itemDTO;
   }
 
-  public void updateItem(String appId, Env env, String clusterName, String namespaceName, ItemDTO item) {
+  public void updateItem(String appId, String env, String clusterName, String namespaceName, ItemDTO item) {
     itemAPI.updateItem(appId, env, clusterName, namespaceName, item.getId(), item);
   }
 
-  public void deleteItem(Env env, long itemId, String userId) {
+  public void deleteItem(String env, long itemId, String userId) {
     itemAPI.deleteItem(env, itemId, userId);
   }
 
-  public List<ItemDTO> findItems(String appId, Env env, String clusterName, String namespaceName) {
+  public List<ItemDTO> findItems(String appId, String env, String clusterName, String namespaceName) {
     return itemAPI.findItems(appId, env, clusterName, namespaceName);
   }
 
-  public List<ItemDTO> findDeletedItems(String appId, Env env, String clusterName, String namespaceName) {
+  public List<ItemDTO> findDeletedItems(String appId, String env, String clusterName, String namespaceName) {
     return itemAPI.findDeletedItems(appId, env, clusterName, namespaceName);
   }
 
-  public ItemDTO loadItem(Env env, String appId, String clusterName, String namespaceName, String key) {
+  public ItemDTO loadItem(String env, String appId, String clusterName, String namespaceName, String key) {
     return itemAPI.loadItem(env, appId, clusterName, namespaceName, key);
   }
 
-  public ItemDTO loadItemById(Env env, long itemId) {
+  public ItemDTO loadItemById(String env, long itemId) {
     ItemDTO item = itemAPI.loadItemById(env, itemId);
     if (item == null) {
       throw new BadRequestException("item not found for itemId " + itemId);
@@ -134,7 +133,7 @@ public class ItemService {
       changeSets.setDataChangeLastModifiedBy(userInfoHolder.getUser().getUserId());
 
       String appId = namespaceIdentifier.getAppId();
-      Env env = namespaceIdentifier.getEnv();
+      String env = namespaceIdentifier.getEnv();
       String clusterName = namespaceIdentifier.getClusterName();
       String namespaceName = namespaceIdentifier.getNamespaceName();
 
@@ -167,7 +166,7 @@ public class ItemService {
     String appId = namespaceIdentifier.getAppId();
     String clusterName = namespaceIdentifier.getClusterName();
     String namespaceName = namespaceIdentifier.getNamespaceName();
-    Env env = namespaceIdentifier.getEnv();
+    String env = namespaceIdentifier.getEnv();
     NamespaceDTO namespaceDTO = null;
     try {
       namespaceDTO = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);

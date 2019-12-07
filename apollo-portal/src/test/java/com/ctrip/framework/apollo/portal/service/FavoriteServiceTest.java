@@ -4,7 +4,6 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.portal.AbstractIntegrationTest;
 import com.ctrip.framework.apollo.portal.entity.po.Favorite;
 import com.ctrip.framework.apollo.portal.repository.FavoriteRepository;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

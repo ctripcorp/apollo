@@ -1,8 +1,7 @@
 package com.ctrip.framework.apollo.common.constants;
 
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;

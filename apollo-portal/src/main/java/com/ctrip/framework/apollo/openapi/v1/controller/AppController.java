@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.openapi.v1.controller;
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenEnvClusterDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
@@ -39,11 +39,11 @@ public class AppController {
 
     List<OpenEnvClusterDTO> envClusters = new LinkedList<>();
 
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       OpenEnvClusterDTO envCluster = new OpenEnvClusterDTO();
 
-      envCluster.setEnv(env.name());
+      envCluster.setEnv(Env.valueOf(env));
       List<ClusterDTO> clusterDTOs = clusterService.findClusters(env, appId);
       envCluster.setClusters(BeanUtils.toPropertySet("name", clusterDTOs));
 

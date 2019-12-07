@@ -1,17 +1,18 @@
 package com.ctrip.framework.apollo.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.ctrip.framework.apollo.BaseIntegrationTest;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.google.common.collect.Maps;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.Test;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MetaDomainTest extends BaseIntegrationTest {
 
@@ -58,9 +59,9 @@ public class MetaDomainTest extends BaseIntegrationTest {
 
   public static class MockMetaServerProvider implements MetaServerProvider {
 
-    private static Map<Env, String> mockMetaServerAddress = Maps.newHashMap();
+    private static Map<String, String> mockMetaServerAddress = Maps.newHashMap();
 
-    private static void mock(Env env, String metaServerAddress) {
+    private static void mock(String env, String metaServerAddress) {
       mockMetaServerAddress.put(env, metaServerAddress);
     }
 
@@ -69,7 +70,7 @@ public class MetaDomainTest extends BaseIntegrationTest {
     }
 
     @Override
-    public String getMetaServerAddress(Env targetEnv) {
+    public String getMetaServerAddress(String targetEnv) {
       return mockMetaServerAddress.get(targetEnv);
     }
 

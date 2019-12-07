@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.common.utils;
 import com.google.common.base.MoreObjects;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.reflect.Type;

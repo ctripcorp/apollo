@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.common.conditional;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
 import com.ctrip.framework.apollo.common.condition.ConditionalOnProfile;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Configuration;

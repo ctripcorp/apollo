@@ -1,17 +1,16 @@
 package com.ctrip.framework.foundation.internals.provider;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.foundation.internals.Utils;
 import com.ctrip.framework.foundation.internals.io.BOMInputStream;
 import com.ctrip.framework.foundation.spi.provider.ApplicationProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 public class DefaultApplicationProvider implements ApplicationProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationProvider.class);

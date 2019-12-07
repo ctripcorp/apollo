@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.entity.model;
 
 
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 
 public class NamespaceReleaseModel implements Verifiable {
@@ -28,7 +28,7 @@ public class NamespaceReleaseModel implements Verifiable {
     this.appId = appId;
   }
 
-  public Env getEnv() {
+  public String getEnv() {
     return Env.valueOf(env);
   }
 

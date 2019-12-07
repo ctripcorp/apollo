@@ -1,9 +1,7 @@
 package com.ctrip.framework.apollo.common.datasource;
 
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.foundation.Foundation;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,34 +27,28 @@ public class TitanSettings {
   private String proTitanDbname;
 
   public String getTitanUrl() {
-    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    switch (env) {
-      case FAT:
-      case FWS:
-        return fatTitanUrl;
-      case UAT:
-        return uatTitanUrl;
-      case TOOLS:
-      case PRO:
-        return proTitanUrl;
-      default:
-        return "";
+    String env = Env.valueOf(Foundation.server().getEnvType());
+    if(Env.FAT.equals(env) || Env.FWS.equals(env)) {
+      return fatTitanUrl;
+    } else if(Env.UAT.equals(uatTitanUrl)) {
+      return uatTitanUrl;
+    } else if(Env.TOOLS.equals(env) || Env.PRO.equals(env)) {
+      return proTitanUrl;
+    } else {
+      return "";
     }
   }
 
   public String getTitanDbname() {
-    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    switch (env) {
-      case FAT:
-      case FWS:
-        return fatTitanDbname;
-      case UAT:
-        return uatTitanDbname;
-      case TOOLS:
-      case PRO:
-        return proTitanDbname;
-      default:
-        return "";
+    String env = Env.valueOf(Foundation.server().getEnvType());
+    if(Env.FAT.equals(env) || Env.FWS.equals(env)) {
+      return fatTitanDbname;
+    } else if(Env.UAT.equals(uatTitanUrl)) {
+      return uatTitanDbname;
+    } else if(Env.TOOLS.equals(env) || Env.PRO.equals(env)) {
+      return proTitanDbname;
+    } else {
+      return "";
     }
   }
 

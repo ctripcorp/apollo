@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.openapi.entity;
 
 import com.ctrip.framework.apollo.common.entity.BaseEntity;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

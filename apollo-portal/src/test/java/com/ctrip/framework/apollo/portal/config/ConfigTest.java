@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.config;
 
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;

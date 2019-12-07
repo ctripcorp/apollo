@@ -1,22 +1,23 @@
 package com.ctrip.framework.apollo.spring;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.internals.SimpleConfig;
 import com.ctrip.framework.apollo.spring.XmlConfigPlaceholderTest.TestXmlBean;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.primitives.Ints;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegrationTest {
   private static final String TIMEOUT_PROPERTY = "timeout";

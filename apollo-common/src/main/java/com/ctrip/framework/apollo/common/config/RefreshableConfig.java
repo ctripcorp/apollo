@@ -1,23 +1,20 @@
 package com.ctrip.framework.apollo.common.config;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 
 public abstract class RefreshableConfig {

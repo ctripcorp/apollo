@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.component;
 
 
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
@@ -13,11 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,10 +27,10 @@ public class PortalSettings {
   private final ApplicationContext applicationContext;
   private final PortalConfig portalConfig;
 
-  private List<Env> allEnvs = new ArrayList<>();
+  private List<String> allEnvs = new ArrayList<>();
 
   //mark env up or down
-  private Map<Env, Boolean> envStatusMark = new ConcurrentHashMap<>();
+  private Map<String, Boolean> envStatusMark = new ConcurrentHashMap<>();
 
   public PortalSettings(final ApplicationContext applicationContext, final PortalConfig portalConfig) {
     this.applicationContext = applicationContext;
@@ -47,7 +42,7 @@ public class PortalSettings {
 
     allEnvs = portalConfig.portalSupportedEnvs();
 
-    for (Env env : allEnvs) {
+    for (String env : allEnvs) {
       envStatusMark.put(env, true);
     }
 
@@ -61,13 +56,13 @@ public class PortalSettings {
 
   }
 
-  public List<Env> getAllEnvs() {
+  public List<String> getAllEnvs() {
     return allEnvs;
   }
 
-  public List<Env> getActiveEnvs() {
-    List<Env> activeEnvs = new LinkedList<>();
-    for (Env env : allEnvs) {
+  public List<String> getActiveEnvs() {
+    List<String> activeEnvs = new LinkedList<>();
+    for (String env : allEnvs) {
       if (envStatusMark.get(env)) {
         activeEnvs.add(env);
       }
@@ -75,7 +70,7 @@ public class PortalSettings {
     return activeEnvs;
   }
 
-  public boolean isEnvActive(Env env) {
+  public boolean isEnvActive(String env) {
     Boolean mark = envStatusMark.get(env);
     return mark == null ? false : mark;
   }
@@ -84,20 +79,20 @@ public class PortalSettings {
 
     private static final int ENV_DOWN_THRESHOLD = 2;
 
-    private Map<Env, Integer> healthCheckFailedCounter = new HashMap<>();
+    private Map<String, Integer> healthCheckFailedCounter = new HashMap<>();
 
     private AdminServiceAPI.HealthAPI healthAPI;
 
     public HealthCheckTask(ApplicationContext context) {
       healthAPI = context.getBean(AdminServiceAPI.HealthAPI.class);
-      for (Env env : allEnvs) {
+      for (String env : allEnvs) {
         healthCheckFailedCounter.put(env, 0);
       }
     }
 
     public void run() {
 
-      for (Env env : allEnvs) {
+      for (String env : allEnvs) {
         try {
           if (isUp(env)) {
             //revive
@@ -122,12 +117,12 @@ public class PortalSettings {
 
     }
 
-    private boolean isUp(Env env) {
+    private boolean isUp(String env) {
       Health health = healthAPI.health(env);
       return "UP".equals(health.getStatus().getCode());
     }
 
-    private void handleEnvDown(Env env) {
+    private void handleEnvDown(String env) {
       int failedTimes = healthCheckFailedCounter.get(env);
       healthCheckFailedCounter.put(env, ++failedTimes);
 

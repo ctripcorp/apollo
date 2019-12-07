@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.service;
 import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
@@ -20,14 +19,7 @@ import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ReleaseService {
@@ -43,7 +35,7 @@ public class ReleaseService {
   }
 
   public ReleaseDTO publish(NamespaceReleaseModel model) {
-    Env env = model.getEnv();
+    String env = model.getEnv();
     boolean isEmergencyPublish = model.isEmergencyPublish();
     String appId = model.getAppId();
     String clusterName = model.getClusterName();
@@ -63,7 +55,7 @@ public class ReleaseService {
 
   //gray deletion release
   public ReleaseDTO publish(NamespaceGrayDelReleaseModel model, String releaseBy) {
-    Env env = model.getEnv();
+    String env = model.getEnv();
     boolean isEmergencyPublish = model.isEmergencyPublish();
     String appId = model.getAppId();
     String clusterName = model.getClusterName();
@@ -79,7 +71,7 @@ public class ReleaseService {
     return releaseDTO;
   }
 
-  public ReleaseDTO updateAndPublish(String appId, Env env, String clusterName, String namespaceName,
+  public ReleaseDTO updateAndPublish(String appId, String env, String clusterName, String namespaceName,
                                      String releaseTitle, String releaseComment, String branchName,
                                      boolean isEmergencyPublish, boolean deleteBranch, ItemChangeSets changeSets) {
 
@@ -87,7 +79,7 @@ public class ReleaseService {
                                        isEmergencyPublish, deleteBranch, changeSets);
   }
 
-  public List<ReleaseBO> findAllReleases(String appId, Env env, String clusterName, String namespaceName, int page,
+  public List<ReleaseBO> findAllReleases(String appId, String env, String clusterName, String namespaceName, int page,
                                          int size) {
     List<ReleaseDTO> releaseDTOs = releaseAPI.findAllReleases(appId, env, clusterName, namespaceName, page, size);
 
@@ -115,12 +107,12 @@ public class ReleaseService {
     return releases;
   }
 
-  public List<ReleaseDTO> findActiveReleases(String appId, Env env, String clusterName, String namespaceName, int page,
+  public List<ReleaseDTO> findActiveReleases(String appId, String env, String clusterName, String namespaceName, int page,
                                              int size) {
     return releaseAPI.findActiveReleases(appId, env, clusterName, namespaceName, page, size);
   }
 
-  public ReleaseDTO findReleaseById(Env env, long releaseId) {
+  public ReleaseDTO findReleaseById(String env, long releaseId) {
     Set<Long> releaseIds = new HashSet<>(1);
     releaseIds.add(releaseId);
     List<ReleaseDTO> releases = findReleaseByIds(env, releaseIds);
@@ -132,19 +124,19 @@ public class ReleaseService {
 
   }
 
-  public List<ReleaseDTO> findReleaseByIds(Env env, Set<Long> releaseIds) {
+  public List<ReleaseDTO> findReleaseByIds(String env, Set<Long> releaseIds) {
     return releaseAPI.findReleaseByIds(env, releaseIds);
   }
 
-  public ReleaseDTO loadLatestRelease(String appId, Env env, String clusterName, String namespaceName) {
+  public ReleaseDTO loadLatestRelease(String appId, String env, String clusterName, String namespaceName) {
     return releaseAPI.loadLatestRelease(appId, env, clusterName, namespaceName);
   }
 
-  public void rollback(Env env, long releaseId, String operator) {
+  public void rollback(String env, long releaseId, String operator) {
     releaseAPI.rollback(env, releaseId, operator);
   }
 
-  public ReleaseCompareResult compare(Env env, long baseReleaseId, long toCompareReleaseId) {
+  public ReleaseCompareResult compare(String env, long baseReleaseId, long toCompareReleaseId) {
 
     ReleaseDTO baseRelease = null;
     ReleaseDTO toCompareRelease = null;

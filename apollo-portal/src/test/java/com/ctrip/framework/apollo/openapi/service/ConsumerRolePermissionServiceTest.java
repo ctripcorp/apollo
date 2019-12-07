@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.openapi.service;
 
 import com.ctrip.framework.apollo.portal.AbstractIntegrationTest;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

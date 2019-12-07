@@ -1,13 +1,11 @@
 package com.ctrip.framework.apollo.portal;
 
 
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.portal.controller.AppController;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.service.AppService;
-
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;

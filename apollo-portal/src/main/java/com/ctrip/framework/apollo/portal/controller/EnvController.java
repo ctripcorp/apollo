@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.portal.controller;
 
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,7 @@ public class EnvController {
   }
 
   @GetMapping
-  public List<Env> envs() {
+  public List<String> envs() {
     return portalSettings.getActiveEnvs();
   }
 

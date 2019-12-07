@@ -1,11 +1,12 @@
 package com.ctrip.framework.apollo.internals;
 
-import static org.junit.Assert.assertEquals;
-
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import java.util.List;
 import org.junit.After;
 import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ConfigServiceLocatorTest {
 

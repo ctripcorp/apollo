@@ -1,11 +1,10 @@
 package com.ctrip.framework.apollo.portal;
 
 import com.ctrip.framework.apollo.common.exception.ServiceException;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.AdminServiceAddressLocator;
 import com.ctrip.framework.apollo.portal.component.RetryableRestTemplate;
-
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -24,9 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RetryableRestTemplateTest extends AbstractUnitTest {
 

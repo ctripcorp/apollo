@@ -1,9 +1,8 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserService;
+import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.List;

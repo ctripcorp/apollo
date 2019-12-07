@@ -1,24 +1,23 @@
 package com.ctrip.framework.apollo.internals;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Properties;
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.spi.ConfigFactory;
 import com.ctrip.framework.apollo.spi.ConfigFactoryManager;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Properties;
+import java.util.Set;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

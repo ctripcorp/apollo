@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.common.dto.InstanceDTO;
 import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Number;
 import com.ctrip.framework.apollo.portal.service.InstanceService;
 import com.google.common.base.Splitter;

@@ -4,7 +4,6 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -1,15 +1,14 @@
 package com.ctrip.framework.apollo;
 
+import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ctrip.framework.apollo.core.constants.Env;
+import com.ctrip.framework.apollo.core.dto.ServiceDTO;
+import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
+import com.ctrip.framework.apollo.internals.DefaultInjector;
+import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -20,14 +19,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.ctrip.framework.apollo.build.MockInjector;
-import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
-import com.ctrip.framework.apollo.internals.DefaultInjector;
-import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -160,7 +158,7 @@ public abstract class BaseIntegrationTest{
     }
 
     @Override
-    public Env getApolloEnv() {
+    public String getApolloEnv() {
       return Env.DEV;
     }
 

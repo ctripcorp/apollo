@@ -1,26 +1,15 @@
 package com.ctrip.framework.apollo.spi;
 
-import com.ctrip.framework.apollo.ConfigService;
-import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
-import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
-import com.ctrip.framework.apollo.internals.TxtConfigFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
+import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.internals.ConfigRepository;
-import com.ctrip.framework.apollo.internals.DefaultConfig;
-import com.ctrip.framework.apollo.internals.JsonConfigFile;
-import com.ctrip.framework.apollo.internals.LocalFileConfigRepository;
-import com.ctrip.framework.apollo.internals.PropertiesConfigFile;
-import com.ctrip.framework.apollo.internals.RemoteConfigRepository;
-import com.ctrip.framework.apollo.internals.XmlConfigFile;
-import com.ctrip.framework.apollo.internals.YamlConfigFile;
-import com.ctrip.framework.apollo.internals.YmlConfigFile;
+import com.ctrip.framework.apollo.internals.*;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

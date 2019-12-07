@@ -7,7 +7,7 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
@@ -28,15 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
@@ -145,13 +137,13 @@ public class AppController {
   public MultiResponseEntity<EnvClusterInfo> nav(@PathVariable String appId) {
 
     MultiResponseEntity<EnvClusterInfo> response = MultiResponseEntity.ok();
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       try {
         response.addResponseEntity(RichResponseEntity.ok(appService.createEnvNavNode(env, appId)));
       } catch (Exception e) {
         response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
-            "load env:" + env.name() + " cluster error." + e
+            "load env:" + Env.valueOf(env) + " cluster error." + e
                 .getMessage()));
       }
     }
@@ -183,10 +175,10 @@ public class AppController {
   }
 
   @GetMapping("/{appId}/miss_envs")
-  public MultiResponseEntity<Env> findMissEnvs(@PathVariable String appId) {
+  public MultiResponseEntity<String> findMissEnvs(@PathVariable String appId) {
 
-    MultiResponseEntity<Env> response = MultiResponseEntity.ok();
-    for (Env env : portalSettings.getActiveEnvs()) {
+    MultiResponseEntity<String> response = MultiResponseEntity.ok();
+    for (String env : portalSettings.getActiveEnvs()) {
       try {
         appService.load(env, appId);
       } catch (Exception e) {

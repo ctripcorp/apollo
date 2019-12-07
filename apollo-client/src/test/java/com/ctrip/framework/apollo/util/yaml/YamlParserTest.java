@@ -1,17 +1,16 @@
 package com.ctrip.framework.apollo.util.yaml;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Properties;
-
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import org.junit.Test;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.yaml.snakeyaml.parser.ParserException;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import java.io.File;
+import java.util.Properties;
+
+import static org.junit.Assert.assertTrue;
 
 public class YamlParserTest {
 

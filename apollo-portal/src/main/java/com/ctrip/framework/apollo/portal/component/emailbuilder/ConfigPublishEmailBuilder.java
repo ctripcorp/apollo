@@ -1,14 +1,11 @@
 package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 
-import com.google.common.collect.Lists;
-
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
 import com.ctrip.framework.apollo.common.constants.ReleaseOperationContext;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
@@ -21,17 +18,12 @@ import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.service.RolePermissionService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 
 
@@ -85,7 +77,7 @@ public abstract class ConfigPublishEmailBuilder {
   /**
    * email body content
    */
-  protected abstract String emailContent(Env env, ReleaseHistoryBO releaseHistory);
+  protected abstract String emailContent(String env, ReleaseHistoryBO releaseHistory);
 
   /**
    * email body template framework
@@ -98,7 +90,7 @@ public abstract class ConfigPublishEmailBuilder {
   protected abstract String getDiffModuleTemplate();
 
 
-  public Email build(Env env, ReleaseHistoryBO releaseHistory) {
+  public Email build(String env, ReleaseHistoryBO releaseHistory) {
 
     Email email = new Email();
 
@@ -115,14 +107,14 @@ public abstract class ConfigPublishEmailBuilder {
     return email;
   }
 
-  protected String renderEmailCommonContent(Env env, ReleaseHistoryBO releaseHistory) {
+  protected String renderEmailCommonContent(String env, ReleaseHistoryBO releaseHistory) {
     String template = getTemplateFramework();
     String renderResult = renderReleaseBasicInfo(template, env, releaseHistory);
     renderResult = renderDiffModule(renderResult, env, releaseHistory);
     return renderResult;
   }
 
-  private String renderReleaseBasicInfo(String template, Env env, ReleaseHistoryBO releaseHistory) {
+  private String renderReleaseBasicInfo(String template, String env, ReleaseHistoryBO releaseHistory) {
     String renderResult = template;
 
     Map<String, Object> operationContext = releaseHistory.getOperationContext();
@@ -150,7 +142,7 @@ public abstract class ConfigPublishEmailBuilder {
             .replaceAll(EMAIL_CONTENT_FIELD_RELEASE_TIME, dateFormat.format(releaseHistory.getReleaseTime()));
   }
 
-  private String renderDiffModule(String bodyTemplate, Env env, ReleaseHistoryBO releaseHistory) {
+  private String renderDiffModule(String bodyTemplate, String env, ReleaseHistoryBO releaseHistory) {
     String appId = releaseHistory.getAppId();
     String namespaceName = releaseHistory.getNamespaceName();
 
@@ -195,7 +187,7 @@ public abstract class ConfigPublishEmailBuilder {
     return bodyTemplate.replaceAll(EMAIL_CONTENT_DIFF_MODULE, diffModuleRenderResult);
   }
 
-  private ReleaseCompareResult getReleaseCompareResult(Env env, ReleaseHistoryBO releaseHistory) {
+  private ReleaseCompareResult getReleaseCompareResult(String env, ReleaseHistoryBO releaseHistory) {
     if (releaseHistory.getOperation() == ReleaseOperation.GRAY_RELEASE
             && releaseHistory.getPreviousReleaseId() == 0) {
       ReleaseDTO masterLatestActiveRelease = releaseService.loadLatestRelease(

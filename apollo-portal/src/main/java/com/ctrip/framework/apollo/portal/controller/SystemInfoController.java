@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.Apollo;
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.component.RestTemplateFactory;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvironmentInfo;
@@ -55,9 +54,9 @@ public class SystemInfoController {
       systemInfo.setVersion(version);
     }
 
-    List<Env> allEnvList = portalSettings.getAllEnvs();
+    List<String> allEnvList = portalSettings.getAllEnvs();
 
-    for (Env env : allEnvList) {
+    for (String env : allEnvList) {
       EnvironmentInfo environmentInfo = adaptEnv2EnvironmentInfo(env);
 
       systemInfo.addEnvironment(environmentInfo);
@@ -69,10 +68,10 @@ public class SystemInfoController {
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @GetMapping(value = "/health")
   public Health checkHealth(@RequestParam String instanceId) {
-    List<Env> allEnvs = portalSettings.getAllEnvs();
+    List<String> allEnvs = portalSettings.getAllEnvs();
 
     ServiceDTO service = null;
-    for (final Env env : allEnvs) {
+    for (final String env : allEnvs) {
       EnvironmentInfo envInfo = adaptEnv2EnvironmentInfo(env);
       if (envInfo.getAdminServices() != null) {
         for (final ServiceDTO s : envInfo.getAdminServices()) {
@@ -99,7 +98,7 @@ public class SystemInfoController {
     return restTemplate.getForObject(service.getHomepageUrl() + "/health", Health.class);
   }
 
-  private EnvironmentInfo adaptEnv2EnvironmentInfo(final Env env) {
+  private EnvironmentInfo adaptEnv2EnvironmentInfo(final String env) {
     EnvironmentInfo environmentInfo = new EnvironmentInfo();
     String metaServerAddresses = MetaDomainConsts.getMetaServerAddress(env);
 

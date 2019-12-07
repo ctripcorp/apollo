@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.component;
 
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Lists;
@@ -34,8 +33,8 @@ public class AdminServiceAddressLocator {
 
   private ScheduledExecutorService refreshServiceAddressService;
   private RestTemplate restTemplate;
-  private List<Env> allEnvs;
-  private Map<Env, List<ServiceDTO>> cache = new ConcurrentHashMap<>();
+  private List<String> allEnvs;
+  private Map<String, List<ServiceDTO>> cache = new ConcurrentHashMap<>();
 
   private final PortalSettings portalSettings;
   private final RestTemplateFactory restTemplateFactory;
@@ -61,7 +60,7 @@ public class AdminServiceAddressLocator {
     refreshServiceAddressService.schedule(new RefreshAdminServerAddressTask(), 1, TimeUnit.MILLISECONDS);
   }
 
-  public List<ServiceDTO> getServiceList(Env env) {
+  public List<ServiceDTO> getServiceList(String env) {
     List<ServiceDTO> services = cache.get(env);
     if (CollectionUtils.isEmpty(services)) {
       return Collections.emptyList();
@@ -78,7 +77,7 @@ public class AdminServiceAddressLocator {
     public void run() {
       boolean refreshSuccess = true;
       //refresh fail if get any env address fail
-      for (Env env : allEnvs) {
+      for (String env : allEnvs) {
         boolean currentEnvRefreshResult = refreshServerAddressCache(env);
         refreshSuccess = refreshSuccess && currentEnvRefreshResult;
       }
@@ -93,7 +92,7 @@ public class AdminServiceAddressLocator {
     }
   }
 
-  private boolean refreshServerAddressCache(Env env) {
+  private boolean refreshServerAddressCache(String env) {
 
     for (int i = 0; i < RETRY_TIMES; i++) {
 
@@ -115,7 +114,7 @@ public class AdminServiceAddressLocator {
     return false;
   }
 
-  private ServiceDTO[] getAdminServerAddress(Env env) {
+  private ServiceDTO[] getAdminServerAddress(String env) {
     String domainName = MetaDomainConsts.getDomain(env);
     String url = domainName + ADMIN_SERVICE_URL_PATH;
     return restTemplate.getForObject(url, ServiceDTO[].class);

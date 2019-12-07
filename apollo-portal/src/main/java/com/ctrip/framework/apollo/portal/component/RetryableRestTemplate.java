@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.component;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.MetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
@@ -54,32 +53,32 @@ public class RetryableRestTemplate {
     restTemplate = restTemplateFactory.getObject();
   }
 
-  public <T> T get(Env env, String path, Class<T> responseType, Object... urlVariables)
+  public <T> T get(String env, String path, Class<T> responseType, Object... urlVariables)
       throws RestClientException {
     return execute(HttpMethod.GET, env, path, null, responseType, urlVariables);
   }
 
-  public <T> ResponseEntity<T> get(Env env, String path, ParameterizedTypeReference<T> reference,
+  public <T> ResponseEntity<T> get(String env, String path, ParameterizedTypeReference<T> reference,
                                    Object... uriVariables)
       throws RestClientException {
 
     return exchangeGet(env, path, reference, uriVariables);
   }
 
-  public <T> T post(Env env, String path, Object request, Class<T> responseType, Object... uriVariables)
+  public <T> T post(String env, String path, Object request, Class<T> responseType, Object... uriVariables)
       throws RestClientException {
     return execute(HttpMethod.POST, env, path, request, responseType, uriVariables);
   }
 
-  public void put(Env env, String path, Object request, Object... urlVariables) throws RestClientException {
+  public void put(String env, String path, Object request, Object... urlVariables) throws RestClientException {
     execute(HttpMethod.PUT, env, path, request, null, urlVariables);
   }
 
-  public void delete(Env env, String path, Object... urlVariables) throws RestClientException {
+  public void delete(String env, String path, Object... urlVariables) throws RestClientException {
     execute(HttpMethod.DELETE, env, path, null, null, urlVariables);
   }
 
-  private <T> T execute(HttpMethod method, Env env, String path, Object request, Class<T> responseType,
+  private <T> T execute(HttpMethod method, String env, String path, Object request, Class<T> responseType,
                         Object... uriVariables) {
 
     if (path.startsWith("/")) {
@@ -122,7 +121,7 @@ public class RetryableRestTemplate {
     throw e;
   }
 
-  private <T> ResponseEntity<T> exchangeGet(Env env, String path, ParameterizedTypeReference<T> reference,
+  private <T> ResponseEntity<T> exchangeGet(String env, String path, ParameterizedTypeReference<T> reference,
                                             Object... uriVariables) {
     if (path.startsWith("/")) {
       path = path.substring(1, path.length());
@@ -167,7 +166,7 @@ public class RetryableRestTemplate {
 
   }
 
-  private List<ServiceDTO> getAdminServices(Env env, Transaction ct) {
+  private List<ServiceDTO> getAdminServices(String env, Transaction ct) {
 
     List<ServiceDTO> services = adminServiceAddressLocator.getServiceList(env);
 

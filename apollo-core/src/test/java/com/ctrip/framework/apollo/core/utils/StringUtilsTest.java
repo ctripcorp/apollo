@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.core.utils;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;

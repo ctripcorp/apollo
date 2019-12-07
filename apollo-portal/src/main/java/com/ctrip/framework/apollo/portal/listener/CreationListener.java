@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.listener;
 import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
@@ -35,8 +34,8 @@ public class CreationListener {
   @EventListener
   public void onAppCreationEvent(AppCreationEvent event) {
     AppDTO appDTO = BeanUtils.transform(AppDTO.class, event.getApp());
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       try {
         appAPI.createApp(env, appDTO);
       } catch (Throwable e) {
@@ -49,8 +48,8 @@ public class CreationListener {
   @EventListener
   public void onAppNamespaceCreationEvent(AppNamespaceCreationEvent event) {
     AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       try {
         namespaceAPI.createAppNamespace(env, appNamespace);
       } catch (Throwable e) {

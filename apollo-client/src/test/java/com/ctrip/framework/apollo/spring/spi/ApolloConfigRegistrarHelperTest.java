@@ -1,11 +1,12 @@
 package com.ctrip.framework.apollo.spring.spi;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigRegistrar;
-import java.lang.reflect.Field;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class ApolloConfigRegistrarHelperTest {
 

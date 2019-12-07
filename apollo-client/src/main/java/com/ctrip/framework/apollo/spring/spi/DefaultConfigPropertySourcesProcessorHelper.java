@@ -6,11 +6,12 @@ import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValueProcessor;
 import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
 import com.ctrip.framework.apollo.spring.property.SpringValueDefinitionProcessor;
 import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefaultConfigPropertySourcesProcessorHelper implements ConfigPropertySourcesProcessorHelper {
 

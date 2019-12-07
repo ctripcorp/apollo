@@ -1,14 +1,15 @@
 package com.ctrip.framework.apollo.spring.boot;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.env.ConfigurableEnvironment;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ApolloApplicationContextInitializerTest {
 

@@ -8,7 +8,6 @@ import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +17,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
+
+import java.util.List;
 
 /**
  * Initialize apollo system properties and inject the Apollo config in Spring Boot bootstrap phase

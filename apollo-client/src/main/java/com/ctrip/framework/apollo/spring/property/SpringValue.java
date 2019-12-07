@@ -1,11 +1,12 @@
 package com.ctrip.framework.apollo.spring.property;
 
+import org.springframework.core.MethodParameter;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import org.springframework.core.MethodParameter;
 
 /**
  * Spring @Value method info

@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.repository;
 
 import com.ctrip.framework.apollo.common.entity.App;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

@@ -1,18 +1,16 @@
 package com.ctrip.framework.apollo.util;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.MetaDomainConsts;
+import com.ctrip.framework.apollo.core.constants.Env;
+import com.ctrip.framework.foundation.Foundation;
+import com.google.common.base.Strings;
 import com.google.common.util.concurrent.RateLimiter;
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.MetaDomainConsts;
-import com.ctrip.framework.apollo.core.enums.Env;
-import com.ctrip.framework.apollo.core.enums.EnvUtils;
-import com.ctrip.framework.foundation.Foundation;
-import com.google.common.base.Strings;
+import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -104,8 +102,8 @@ public class ConfigUtil {
    *
    * @return the env, UNKNOWN if env is not set or invalid
    */
-  public Env getApolloEnv() {
-    return EnvUtils.transformEnv(Foundation.server().getEnvType());
+  public String getApolloEnv() {
+    return Env.valueOf(Foundation.server().getEnvType());
   }
 
   public String getLocalIp() {
@@ -233,7 +231,7 @@ public class ConfigUtil {
 
   public boolean isInLocalMode() {
     try {
-      return Env.LOCAL == getApolloEnv();
+      return Env.LOCAL.equals(getApolloEnv());
     } catch (Throwable ex) {
       //ignore
     }

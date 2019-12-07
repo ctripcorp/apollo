@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.common.dto.PageDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
@@ -95,11 +94,11 @@ public class AppService {
     return appRepository.findByAppId(appId);
   }
 
-  public AppDTO load(Env env, String appId) {
+  public AppDTO load(String env, String appId) {
     return appAPI.loadApp(env, appId);
   }
 
-  public void createAppInRemote(Env env, App app) {
+  public void createAppInRemote(String env, App app) {
     String username = userInfoHolder.getUser().getUserId();
     app.setDataChangeCreatedBy(username);
     app.setDataChangeLastModifiedBy(username);
@@ -164,7 +163,7 @@ public class AppService {
     return appRepository.save(managedApp);
   }
 
-  public EnvClusterInfo createEnvNavNode(Env env, String appId) {
+  public EnvClusterInfo createEnvNavNode(String env, String appId) {
     EnvClusterInfo node = new EnvClusterInfo(env);
     node.setClusters(clusterService.findClusters(env, appId));
     return node;

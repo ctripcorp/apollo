@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.openapi.repository;
 
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

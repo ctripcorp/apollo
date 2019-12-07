@@ -4,7 +4,6 @@ import com.ctrip.framework.apollo.common.dto.ItemChangeSets;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

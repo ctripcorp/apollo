@@ -1,15 +1,15 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 
 public class NamespaceEnvRolesAssignedUsers extends NamespaceRolesAssignedUsers {
-    private Env env;
+    private String env;
 
-    public Env getEnv() {
+    public String getEnv() {
         return env;
     }
 
-    public void setEnv(Env env) {
-        this.env = env;
+    public void setEnv(String env) {
+        this.env = Env.valueOf(env);
     }
 }

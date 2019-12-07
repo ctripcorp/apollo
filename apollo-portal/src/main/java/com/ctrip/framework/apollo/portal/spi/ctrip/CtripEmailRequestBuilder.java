@@ -3,18 +3,16 @@ package com.ctrip.framework.apollo.portal.spi.ctrip;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 public class CtripEmailRequestBuilder {
 

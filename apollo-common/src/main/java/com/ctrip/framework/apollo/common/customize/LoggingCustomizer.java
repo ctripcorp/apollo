@@ -1,18 +1,15 @@
 package com.ctrip.framework.apollo.common.customize;
 
-import com.google.common.base.Strings;
-
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.foundation.Foundation;
-
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Appender;
 
 /**
  * clogging config.only used in ctrip

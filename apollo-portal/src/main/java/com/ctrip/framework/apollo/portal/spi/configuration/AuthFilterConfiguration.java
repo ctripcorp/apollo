@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.spi.configuration;
 import com.ctrip.framework.apollo.openapi.filter.ConsumerAuthenticationFilter;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuditUtil;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
-
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,7 +3,6 @@ package com.ctrip.framework.apollo.portal.listener;
 import com.ctrip.framework.apollo.common.dto.AppDTO;
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
-import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.tracer.Tracer;
@@ -38,8 +37,8 @@ public class DeletionListener {
     String appId = appDTO.getAppId();
     String operator = appDTO.getDataChangeLastModifiedBy();
 
-    List<Env> envs = portalSettings.getActiveEnvs();
-    for (Env env : envs) {
+    List<String> envs = portalSettings.getActiveEnvs();
+    for (String env : envs) {
       try {
         appAPI.deleteApp(env, appId, operator);
       } catch (Throwable e) {
@@ -52,12 +51,12 @@ public class DeletionListener {
   @EventListener
   public void onAppNamespaceDeletionEvent(AppNamespaceDeletionEvent event) {
     AppNamespaceDTO appNamespace = BeanUtils.transform(AppNamespaceDTO.class, event.getAppNamespace());
-    List<Env> envs = portalSettings.getActiveEnvs();
+    List<String> envs = portalSettings.getActiveEnvs();
     String appId = appNamespace.getAppId();
     String namespaceName = appNamespace.getName();
     String operator = appNamespace.getDataChangeLastModifiedBy();
 
-    for (Env env : envs) {
+    for (String env : envs) {
       try {
         namespaceAPI.deleteAppNamespace(env, appId, namespaceName, operator);
       } catch (Throwable e) {

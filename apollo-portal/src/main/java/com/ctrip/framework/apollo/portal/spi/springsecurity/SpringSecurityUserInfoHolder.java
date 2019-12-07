@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.spi.springsecurity;
 
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 

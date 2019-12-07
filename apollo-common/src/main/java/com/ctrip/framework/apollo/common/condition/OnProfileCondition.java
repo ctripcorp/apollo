@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.common.condition;
 
 import com.google.common.collect.Sets;
-
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;

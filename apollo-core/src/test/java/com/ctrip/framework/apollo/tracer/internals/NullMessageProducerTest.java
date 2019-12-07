@@ -1,11 +1,10 @@
 package com.ctrip.framework.apollo.tracer.internals;
 
 import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jason Song(song_s@ctrip.com)

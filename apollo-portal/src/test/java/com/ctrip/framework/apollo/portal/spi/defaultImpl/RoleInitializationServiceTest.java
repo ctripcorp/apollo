@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.defaultImpl;
 
 import com.ctrip.framework.apollo.common.entity.App;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.core.constants.Env;
 import com.ctrip.framework.apollo.portal.AbstractUnitTest;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.PermissionType;
@@ -20,9 +20,7 @@ import org.mockito.Mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class RoleInitializationServiceTest extends AbstractUnitTest {
@@ -161,8 +159,8 @@ public class RoleInitializationServiceTest extends AbstractUnitTest {
     return permission;
   }
 
-  private List<Env> mockPortalSupportedEnvs(){
-    List<Env> envArray = new ArrayList<>();
+  private List<String> mockPortalSupportedEnvs(){
+    List<String> envArray = new ArrayList<>();
     envArray.add(Env.DEV);
     envArray.add(Env.FAT);
     return envArray;
