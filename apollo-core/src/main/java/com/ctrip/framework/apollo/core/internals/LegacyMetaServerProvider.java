@@ -5,6 +5,8 @@ import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.ctrip.framework.apollo.core.utils.PropertiesUtil;
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,8 @@ import java.util.Properties;
  * For legacy meta server configuration use, i.e. apollo-env.properties
  */
 public class LegacyMetaServerProvider implements MetaServerProvider {
+
+  private static final Logger logger = LoggerFactory.getLogger(LegacyMetaServerProvider.class);
 
   // make it as lowest as possible, yet not the lowest
   public static final int ORDER = MetaServerProvider.LOWEST_PRECEDENCE - 1;
@@ -27,12 +31,12 @@ public class LegacyMetaServerProvider implements MetaServerProvider {
     Properties prop = new Properties();
     prop = ResourceUtils.readConfigFile("apollo-env.properties", prop);
 
-    domains.put(Env.LOCAL, getMetaServerAddress(prop, "local_meta", "local.meta"));
-    domains.put(Env.DEV, getMetaServerAddress(prop, "dev_meta", "dev.meta"));
-    domains.put(Env.FAT, getMetaServerAddress(prop, "fat_meta", "fat.meta"));
-    domains.put(Env.UAT, getMetaServerAddress(prop, "uat_meta", "uat.meta"));
-    domains.put(Env.LPT, getMetaServerAddress(prop, "lpt_meta", "lpt.meta"));
-    domains.put(Env.PRO, getMetaServerAddress(prop, "pro_meta", "pro.meta"));
+//    domains.put(Env.LOCAL, getMetaServerAddress(prop, "local_meta", "local.meta"));
+//    domains.put(Env.DEV, getMetaServerAddress(prop, "dev_meta", "dev.meta"));
+//    domains.put(Env.FAT, getMetaServerAddress(prop, "fat_meta", "fat.meta"));
+//    domains.put(Env.UAT, getMetaServerAddress(prop, "uat_meta", "uat.meta"));
+//    domains.put(Env.LPT, getMetaServerAddress(prop, "lpt_meta", "lpt.meta"));
+//    domains.put(Env.PRO, getMetaServerAddress(prop, "pro_meta", "pro.meta"));
 
 
     // find key-value from System Property which key ends with "_meta"
@@ -58,8 +62,12 @@ public class LegacyMetaServerProvider implements MetaServerProvider {
     metaServerAddresses.putAll(metaServerAddressesFromSystemProperty);
 
     // add to domain
-    domains.putAll(metaServerAddresses);
-
+    for(Map.Entry<String, String> entry : metaServerAddresses.entrySet()) {
+      String key = Env.valueOf(entry.getKey());
+      String value = entry.getValue();
+      domains.put(key, value);
+    }
+    logger.info("environment's meta server: {}", domains);
   }
 
   private String getMetaServerAddress(Properties prop, String sourceName, String propName) {
