@@ -45,8 +45,13 @@ public class PortalConfig extends RefreshableConfig {
     String[] configurations = getArrayProperty("apollo.portal.envs", new String[]{"FAT", "UAT", "PRO"});
     List<Env> envs = Lists.newLinkedList();
 
-    for (String env : configurations) {
-      envs.add(Env.fromString(env));
+    for (String environmentName : configurations) {
+      // add environment
+      Env.addEnv(environmentName);
+      // get Env above added
+      Env env = Env.valueOf(environmentName);
+      // add to list
+      envs.add(env);
     }
 
     return envs;
