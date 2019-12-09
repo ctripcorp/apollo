@@ -6,19 +6,19 @@ import com.ctrip.framework.apollo.core.enums.Env;
 import java.util.List;
 
 public class EnvClusterInfo {
-  private Env env;
+  private String env;
   private List<ClusterDTO> clusters;
 
   public EnvClusterInfo(Env env) {
-    this.env = env;
+    this.env = env.toString();
   }
 
   public Env getEnv() {
-    return env;
+    return Env.valueOf(env);
   }
 
   public void setEnv(Env env) {
-    this.env = env;
+    this.env = env.toString();
   }
 
   public List<ClusterDTO> getClusters() {
