@@ -1,32 +1,35 @@
 package com.ctrip.framework.apollo.core.enums;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class EnvUtils {
-  
-  public static Env transformEnv(String envName) {
-    if (StringUtils.isBlank(envName)) {
+
+  private static final Logger logger = LoggerFactory.getLogger(EnvUtils.class);
+
+  /**
+   * add some change to environment name
+   * trim and to upper
+   * @param environmentName
+   * @return
+   */
+  static String getWellFormName(String environmentName) {
+    return environmentName.trim().toUpperCase();
+  }
+
+  /**
+   * wrapper of {@code Env.valueOf}
+   * Return {@code Env.UNKNOWN} instead of throwing IllegalArgumentException
+   * when environment not existed.
+   * @param name
+   * @return
+   */
+  public static Env transformEnv(String name) {
+    if(Env.exist(name)) {
+      return Env.valueOf(name);
+    } else {
+      logger.info("environment [{}] not exist, so give you [{}]", name, Env.UNKNOWN);
       return Env.UNKNOWN;
-    }
-    switch (envName.trim().toUpperCase()) {
-      case "LPT":
-        return Env.LPT;
-      case "FAT":
-      case "FWS":
-        return Env.FAT;
-      case "UAT":
-        return Env.UAT;
-      case "PRO":
-      case "PROD": //just in case
-        return Env.PRO;
-      case "DEV":
-        return Env.DEV;
-      case "LOCAL":
-        return Env.LOCAL;
-      case "TOOLS":
-        return Env.TOOLS;
-      default:
-        return Env.UNKNOWN;
     }
   }
 }

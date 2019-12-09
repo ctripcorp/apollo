@@ -29,35 +29,27 @@ public class TitanSettings {
   private String proTitanDbname;
 
   public String getTitanUrl() {
-    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    switch (env) {
-      case FAT:
-      case FWS:
-        return fatTitanUrl;
-      case UAT:
-        return uatTitanUrl;
-      case TOOLS:
-      case PRO:
-        return proTitanUrl;
-      default:
-        return "";
+    Env env = Env.valueOf(Foundation.server().getEnvType());
+    if (Env.FAT.equals(env) || Env.FWS.equals(env)) {
+      return fatTitanUrl;
+    } else if (Env.UAT.equals(env)) {
+      return uatTitanUrl;
+    } else if (Env.TOOLS.equals(env) || Env.PRO.equals(env)) {
+      return proTitanUrl;
     }
+    return "";
   }
 
   public String getTitanDbname() {
-    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
-    switch (env) {
-      case FAT:
-      case FWS:
-        return fatTitanDbname;
-      case UAT:
-        return uatTitanDbname;
-      case TOOLS:
-      case PRO:
-        return proTitanDbname;
-      default:
-        return "";
+    Env env = Env.valueOf(Foundation.server().getEnvType());
+    if (Env.FAT.equals(env) || Env.FWS.equals(env)) {
+      return fatTitanDbname;
+    } else if (Env.UAT.equals(env)) {
+      return uatTitanDbname;
+    } else if (Env.TOOLS.equals(env) || Env.PRO.equals(env)) {
+      return proTitanDbname;
     }
+    return "";
   }
 
 }

@@ -25,4 +25,12 @@ public class EnvUtilsTest {
   public void testFromInvalidString() throws Exception {
     Env.fromString("someInvalidEnv");
   }
+
+  @Test
+  public void getWellFormName() {
+    assertEquals("ABC", EnvUtils.getWellFormName("aBc"));
+    assertEquals("A1C", EnvUtils.getWellFormName("   a1C "));
+    assertEquals("VVBC", EnvUtils.getWellFormName(" VvBc"));
+  }
+
 }
