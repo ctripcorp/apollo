@@ -7,12 +7,16 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
+import org.springframework.util.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -21,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 public class HttpUtil {
   private ConfigUtil m_configUtil;
   private Gson gson;
-
+  private static String cookieVal;
   /**
    * Constructor.
    */
@@ -77,7 +81,7 @@ public class HttpUtil {
       HttpURLConnection conn = (HttpURLConnection) new URL(httpRequest.getUrl()).openConnection();
 
       conn.setRequestMethod("GET");
-
+      setAuth(conn,httpRequest);
       int connectTimeout = httpRequest.getConnectTimeout();
       if (connectTimeout < 0) {
         connectTimeout = m_configUtil.getConnectTimeout();
@@ -90,7 +94,9 @@ public class HttpUtil {
 
       conn.setConnectTimeout(connectTimeout);
       conn.setReadTimeout(readTimeout);
-
+      if (!StringUtils.isEmpty(cookieVal)) {
+        conn.setRequestProperty("Cookie", cookieVal);
+      }
       conn.connect();
 
       statusCode = conn.getResponseCode();
@@ -98,6 +104,10 @@ public class HttpUtil {
 
       try {
         isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+        String cookie = conn.getHeaderField("Set-Cookie");
+        if(!StringUtils.isEmpty(cookie)){
+          cookieVal = cookie;
+        }
         response = CharStreams.toString(isr);
       } catch (IOException ex) {
         /**
@@ -156,6 +166,45 @@ public class HttpUtil {
 
     throw new ApolloConfigStatusCodeException(statusCode,
         String.format("Get operation failed for %s", httpRequest.getUrl()));
+  }
+
+  /**
+   * 简单添加Authorization授权登录
+   * @param conn
+   * @param httpRequest
+   */
+  private void setAuth(HttpURLConnection conn,HttpRequest httpRequest){
+    String url = httpRequest.getUrl();
+    if(StringUtils.isEmpty(url)){
+      return;
+    }
+    int b = url.indexOf("@");
+    if(b<=0){
+      return;
+    }
+    int a = url.indexOf("//");
+    if(a<=0||a+2>b){
+      return;
+    }
+    String up = url.substring(a+2,b);
+    if(StringUtils.isEmpty(up)){
+      return;
+    }
+    String[] sts = StringUtils.split(up,":");
+    if(sts==null||sts.length < 2){
+      return;
+    }
+    try {
+      String username = URLDecoder.decode(sts[0], "UTF-8");
+      String password = URLDecoder.decode(sts[1], "UTF-8");
+      String input = username + ":" + password;
+      //String encoding = java.util.Base64.getEncoder().encodeToString(input.getBytes());
+      String encoding = new sun.misc.BASE64Encoder().encode(input.getBytes());
+      conn.setRequestProperty("Authorization", "Basic " + encoding);
+    } catch (UnsupportedEncodingException e) {
+      throw new ApolloConfigStatusCodeException(401,
+              String.format("Get Authorization failed for %s", httpRequest.getUrl()));
+    }
   }
 
 }
