@@ -78,10 +78,9 @@ public final class  Env {
     name = EnvUtils.getWellFormName(name);
     if(STRING_ENV_MAP.containsKey(name)) {
       // has been existed
-      logger.info("{} has been existed.", name);
+      logger.debug("{} already exists.", name);
     } else {
       // not existed
-      logger.info("{} not existed. Now add it.", name);
       STRING_ENV_MAP.put(name, new Env(name));
     }
     return STRING_ENV_MAP.get(name);
