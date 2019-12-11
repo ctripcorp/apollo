@@ -29,7 +29,7 @@ public class TitanSettings {
   private String proTitanDbname;
 
   public String getTitanUrl() {
-    Env env = Env.valueOf(Foundation.server().getEnvType());
+    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
     if (Env.FAT.equals(env) || Env.FWS.equals(env)) {
       return fatTitanUrl;
     } else if (Env.UAT.equals(env)) {
@@ -41,7 +41,7 @@ public class TitanSettings {
   }
 
   public String getTitanDbname() {
-    Env env = Env.valueOf(Foundation.server().getEnvType());
+    Env env = EnvUtils.transformEnv(Foundation.server().getEnvType());
     if (Env.FAT.equals(env) || Env.FWS.equals(env)) {
       return fatTitanDbname;
     } else if (Env.UAT.equals(env)) {
