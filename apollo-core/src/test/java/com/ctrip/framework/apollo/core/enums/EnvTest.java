@@ -11,23 +11,23 @@ public class EnvTest {
 
     @Test
     public void exist() {
-        assertEquals(false, Env.exist("xxxyyy234"));
-        assertEquals(true, Env.exist("local"));
-        assertEquals(true, Env.exist("dev"));
+        assertEquals(false, Env.exists("xxxyyy234"));
+        assertEquals(true, Env.exists("local"));
+        assertEquals(true, Env.exists("dev"));
     }
 
     @Test
     public void addEnv() {
         String name = "someEEEE";
-        assertEquals(false, Env.exist(name));
+        assertEquals(false, Env.exists(name));
         Env.addEnv(name);
-        assertEquals(true, Env.exist(name));
+        assertEquals(true, Env.exists(name));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void valueOf() {
         String name = "notexist";
-        assertEquals(false, Env.exist(name));
+        assertEquals(false, Env.exists(name));
         assertEquals(Env.valueOf(name), Env.UNKNOWN);
         assertEquals(Env.valueOf("dev"), Env.DEV);
         assertEquals(Env.valueOf("UAT"), Env.UAT);

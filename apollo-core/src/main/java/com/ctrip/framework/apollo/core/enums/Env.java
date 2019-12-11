@@ -60,7 +60,7 @@ public final class  Env {
    * @param name
    * @return
    */
-  public static boolean exist(String name) {
+  public static boolean exists(String name) {
     name = EnvUtils.getWellFormName(name);
     return STRING_ENV_MAP.containsKey(name);
   }
@@ -96,7 +96,7 @@ public final class  Env {
    */
   public static Env valueOf(String name) {
     name = EnvUtils.getWellFormName(name);
-    if(exist(name)) {
+    if(exists(name)) {
       return STRING_ENV_MAP.get(name);
     } else {
       throw new IllegalArgumentException(name + " not exist");
