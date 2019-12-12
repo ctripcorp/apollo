@@ -15,6 +15,20 @@ public class PropertiesUtil {
    * @return the string containing the properties
    * @throws IOException
    */
+  public static String toString(Properties properties) throws IOException {
+    StringWriter writer = new StringWriter();
+    properties.store(writer, null);
+    StringBuffer stringBuffer = writer.getBuffer();
+    filterPropertiesComment(stringBuffer);
+    return stringBuffer.toString();
+  }
+
+  /**
+   * Transform the properties to string format
+   * @param properties the LinkedHashMap object
+   * @return the string containing the properties
+   * @throws IOException
+   */
   public static String toString(LinkedHashMap properties) throws IOException {
     StringWriter writer = new StringWriter();
     Properties toWrite=new Properties();
