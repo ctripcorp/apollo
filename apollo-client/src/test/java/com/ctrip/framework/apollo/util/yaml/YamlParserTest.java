@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.util.yaml;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import org.junit.Test;
@@ -58,7 +59,9 @@ public class YamlParserTest {
     yamlPropertiesFactoryBean.setResources(new ByteArrayResource(yamlContent.getBytes()));
     Properties expected = yamlPropertiesFactoryBean.getObject();
 
-    Properties actual = parser.yamlToProperties(yamlContent);
+    LinkedHashMap map = parser.yamlToProperties(yamlContent);
+    Properties actual =new Properties();
+    actual.putAll(map);
 
     assertTrue("expected: " + expected + " actual: " + actual, checkPropertiesEquals(expected, actual));
   }

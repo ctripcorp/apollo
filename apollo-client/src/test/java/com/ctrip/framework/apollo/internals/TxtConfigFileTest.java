@@ -5,6 +5,8 @@ import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +28,10 @@ public class TxtConfigFileTest {
 
   @Test
   public void testWhenHasContent() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 

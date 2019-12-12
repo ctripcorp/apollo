@@ -1,10 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +93,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   }
 
   @Override
-  public Properties getConfig() {
+  public LinkedHashMap getConfig() {
     if (m_configCache.get() == null) {
       this.sync();
     }
@@ -157,8 +155,8 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     }
   }
 
-  private Properties transformApolloConfigToProperties(ApolloConfig apolloConfig) {
-    Properties result = new Properties();
+  private LinkedHashMap transformApolloConfigToProperties(ApolloConfig apolloConfig) {
+    LinkedHashMap result = new LinkedHashMap();
     result.putAll(apolloConfig.getConfigurations());
     return result;
   }

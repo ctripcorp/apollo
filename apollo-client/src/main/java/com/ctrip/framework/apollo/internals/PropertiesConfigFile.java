@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -25,7 +26,7 @@ public class PropertiesConfigFile extends AbstractConfigFile {
   }
 
   @Override
-  protected void update(Properties newProperties) {
+  protected void update(LinkedHashMap newProperties) {
     m_configProperties.set(newProperties);
     m_contentCache.set(null);
   }

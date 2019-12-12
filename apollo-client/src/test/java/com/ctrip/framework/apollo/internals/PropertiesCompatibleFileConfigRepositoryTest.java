@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 import com.ctrip.framework.apollo.PropertiesCompatibleConfigFile;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +28,7 @@ public class PropertiesCompatibleFileConfigRepositoryTest {
   private String someNamespaceName;
 
   @Mock
-  private Properties someProperties;
+  private LinkedHashMap someProperties;
 
   @Before
   public void setUp() throws Exception {
@@ -65,7 +67,7 @@ public class PropertiesCompatibleFileConfigRepositoryTest {
     // recovered
     reset(configFile);
 
-    Properties someProperties = mock(Properties.class);
+    LinkedHashMap someProperties = mock(LinkedHashMap.class);
 
     when(configFile.asProperties()).thenReturn(someProperties);
 
@@ -96,7 +98,7 @@ public class PropertiesCompatibleFileConfigRepositoryTest {
 
   @Test
   public void testOnChange() throws Exception {
-    Properties anotherProperties = mock(Properties.class);
+    LinkedHashMap anotherProperties = mock(LinkedHashMap.class);
     ConfigFileChangeEvent someChangeEvent = mock(ConfigFileChangeEvent.class);
 
     RepositoryChangeListener someListener = mock(RepositoryChangeListener.class);

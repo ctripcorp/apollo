@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Properties;
+
+import java.util.LinkedHashMap;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -11,7 +12,7 @@ public interface ConfigRepository {
    * Get the config from this repository.
    * @return config
    */
-  public Properties getConfig();
+  public LinkedHashMap getConfig();
 
   /**
    * Set the fallback repo for this repository.

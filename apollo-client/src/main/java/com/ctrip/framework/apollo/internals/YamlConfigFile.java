@@ -1,6 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.util.ExceptionUtil;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -18,7 +20,7 @@ import com.ctrip.framework.apollo.util.yaml.YamlParser;
  */
 public class YamlConfigFile extends PlainTextConfigFile implements PropertiesCompatibleConfigFile {
   private static final Logger logger = LoggerFactory.getLogger(YamlConfigFile.class);
-  private volatile Properties cachedProperties;
+  private volatile LinkedHashMap cachedProperties;
 
   public YamlConfigFile(String namespace, ConfigRepository configRepository) {
     super(namespace, configRepository);
@@ -31,13 +33,13 @@ public class YamlConfigFile extends PlainTextConfigFile implements PropertiesCom
   }
 
   @Override
-  protected void update(Properties newProperties) {
+  protected void update(LinkedHashMap newProperties) {
     super.update(newProperties);
     tryTransformToProperties();
   }
 
   @Override
-  public Properties asProperties() {
+  public LinkedHashMap asProperties() {
     if (cachedProperties == null) {
       transformToProperties();
     }
@@ -59,9 +61,9 @@ public class YamlConfigFile extends PlainTextConfigFile implements PropertiesCom
     cachedProperties = toProperties();
   }
 
-  private Properties toProperties() {
+  private LinkedHashMap toProperties() {
     if (!this.hasContent()) {
-      return new Properties();
+      return new LinkedHashMap();
     }
 
     try {

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
   private final String m_namespace;
   private File m_baseDir;
   private final ConfigUtil m_configUtil;
-  private volatile Properties m_fileProperties;
+  private volatile LinkedHashMap m_fileProperties;
   private volatile ConfigRepository m_upstream;
 
   private volatile ConfigSourceType m_sourceType = ConfigSourceType.LOCAL;
@@ -84,11 +85,11 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
   }
 
   @Override
-  public Properties getConfig() {
+  public LinkedHashMap getConfig() {
     if (m_fileProperties == null) {
       sync();
     }
-    Properties result = new Properties();
+    LinkedHashMap result = new LinkedHashMap();
     result.putAll(m_fileProperties);
     return result;
   }
@@ -113,11 +114,11 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
   }
 
   @Override
-  public void onRepositoryChange(String namespace, Properties newProperties) {
+  public void onRepositoryChange(String namespace, LinkedHashMap newProperties) {
     if (newProperties.equals(m_fileProperties)) {
       return;
     }
-    Properties newFileProperties = new Properties();
+    LinkedHashMap newFileProperties = new LinkedHashMap();
     newFileProperties.putAll(newProperties);
     updateFileProperties(newFileProperties, m_upstream.getSourceType());
     this.fireRepositoryChange(namespace, newProperties);
@@ -171,7 +172,7 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
     return false;
   }
 
-  private synchronized void updateFileProperties(Properties newProperties, ConfigSourceType sourceType) {
+  private synchronized void updateFileProperties(LinkedHashMap newProperties, ConfigSourceType sourceType) {
     this.m_sourceType = sourceType;
     if (newProperties.equals(m_fileProperties)) {
       return;
@@ -180,11 +181,11 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
     persistLocalCacheFile(m_baseDir, m_namespace);
   }
 
-  private Properties loadFromLocalCacheFile(File baseDir, String namespace) throws IOException {
+  private LinkedHashMap loadFromLocalCacheFile(File baseDir, String namespace) throws IOException {
     Preconditions.checkNotNull(baseDir, "Basedir cannot be null");
 
     File file = assembleLocalCacheFile(baseDir, namespace);
-    Properties properties = null;
+    LinkedHashMap properties = null;
 
     if (file.isFile() && file.canRead()) {
       InputStream in = null;
@@ -192,8 +193,10 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       try {
         in = new FileInputStream(file);
 
-        properties = new Properties();
-        properties.load(in);
+        properties = new LinkedHashMap();
+        Properties tempProperties=new Properties();
+        tempProperties.load(in);
+        properties.putAll(tempProperties);
         logger.debug("Loading local config file {} successfully!", file.getAbsolutePath());
       } catch (IOException ex) {
         Tracer.logError(ex);
@@ -228,7 +231,9 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
     transaction.addData("LocalConfigFile", file.getAbsolutePath());
     try {
       out = new FileOutputStream(file);
-      m_fileProperties.store(out, "Persisted by DefaultConfig");
+      Properties toWrite=new Properties();
+      toWrite.putAll(m_fileProperties);
+      toWrite.store(out, "Persisted by DefaultConfig");
       transaction.setStatus(Transaction.SUCCESS);
     } catch (IOException ex) {
       ApolloConfigException exception =

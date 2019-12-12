@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import com.ctrip.framework.apollo.ConfigFileChangeListener;
@@ -11,7 +12,7 @@ import com.google.common.base.Preconditions;
 public class PropertiesCompatibleFileConfigRepository extends AbstractConfigRepository implements
     ConfigFileChangeListener {
   private final PropertiesCompatibleConfigFile configFile;
-  private volatile Properties cachedProperties;
+  private volatile LinkedHashMap cachedProperties;
 
   public PropertiesCompatibleFileConfigRepository(PropertiesCompatibleConfigFile configFile) {
     this.configFile = configFile;
@@ -21,7 +22,7 @@ public class PropertiesCompatibleFileConfigRepository extends AbstractConfigRepo
 
   @Override
   protected synchronized void sync() {
-    Properties current = configFile.asProperties();
+    LinkedHashMap current = configFile.asProperties();
 
     Preconditions.checkState(current != null, "PropertiesCompatibleConfigFile.asProperties should never return null");
 
@@ -32,7 +33,7 @@ public class PropertiesCompatibleFileConfigRepository extends AbstractConfigRepo
   }
 
   @Override
-  public Properties getConfig() {
+  public LinkedHashMap getConfig() {
     if (cachedProperties == null) {
       sync();
     }

@@ -6,23 +6,22 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Properties;
-
+import java.util.LinkedHashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RunWith(MockitoJUnitRunner.class)
 public class JsonConfigFileTest {
+
   private String someNamespace;
   @Mock
   private ConfigRepository configRepository;
@@ -36,10 +35,10 @@ public class JsonConfigFileTest {
 
   @Test
   public void testWhenHasContent() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     someSourceType = ConfigSourceType.LOCAL;
 
@@ -78,11 +77,11 @@ public class JsonConfigFileTest {
 
   @Test
   public void testOnRepositoryChange() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
     String anotherValue = "anotherValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     someSourceType = ConfigSourceType.LOCAL;
 
@@ -94,8 +93,8 @@ public class JsonConfigFileTest {
     assertEquals(someValue, configFile.getContent());
     assertEquals(someSourceType, configFile.getSourceType());
 
-    Properties anotherProperties = new Properties();
-    anotherProperties.setProperty(key, anotherValue);
+    LinkedHashMap anotherProperties = new LinkedHashMap();
+    anotherProperties.put(key, anotherValue);
 
     ConfigSourceType anotherSourceType = ConfigSourceType.REMOTE;
     when(configRepository.getSourceType()).thenReturn(anotherSourceType);
@@ -108,10 +107,10 @@ public class JsonConfigFileTest {
 
   @Test
   public void testWhenConfigRepositoryHasErrorAndThenRecovered() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     someSourceType = ConfigSourceType.LOCAL;
 

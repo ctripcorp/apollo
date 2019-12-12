@@ -23,12 +23,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -490,18 +485,18 @@ public abstract class AbstractConfig implements Config {
     return false;
   }
 
-  List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,
-                                         Properties current) {
+  List<ConfigChange> calcPropertyChanges(String namespace, LinkedHashMap previous,
+                                         LinkedHashMap current) {
     if (previous == null) {
-      previous = new Properties();
+      previous = new LinkedHashMap();
     }
 
     if (current == null) {
-      current = new Properties();
+      current = new LinkedHashMap();
     }
 
-    Set<String> previousKeys = previous.stringPropertyNames();
-    Set<String> currentKeys = current.stringPropertyNames();
+    Set<String> previousKeys = previous.keySet();
+    Set<String> currentKeys = current.keySet();
 
     Set<String> commonKeys = Sets.intersection(previousKeys, currentKeys);
     Set<String> newKeys = Sets.difference(currentKeys, commonKeys);
@@ -510,18 +505,18 @@ public abstract class AbstractConfig implements Config {
     List<ConfigChange> changes = Lists.newArrayList();
 
     for (String newKey : newKeys) {
-      changes.add(new ConfigChange(namespace, newKey, null, current.getProperty(newKey),
+      changes.add(new ConfigChange(namespace, newKey, null, (String) current.get(newKey),
           PropertyChangeType.ADDED));
     }
 
     for (String removedKey : removedKeys) {
-      changes.add(new ConfigChange(namespace, removedKey, previous.getProperty(removedKey), null,
+      changes.add(new ConfigChange(namespace, removedKey, (String) previous.get(removedKey), null,
           PropertyChangeType.DELETED));
     }
 
     for (String commonKey : commonKeys) {
-      String previousValue = previous.getProperty(commonKey);
-      String currentValue = current.getProperty(commonKey);
+      String previousValue = (String) previous.get(commonKey);
+      String currentValue = (String) current.get(commonKey);
       if (Objects.equal(previousValue, currentValue)) {
         continue;
       }

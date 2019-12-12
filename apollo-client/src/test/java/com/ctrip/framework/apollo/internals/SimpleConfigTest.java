@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +41,10 @@ public class SimpleConfigTest {
 
   @Test
   public void testGetProperty() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     someSourceType = ConfigSourceType.LOCAL;
 
@@ -70,14 +72,14 @@ public class SimpleConfigTest {
 
   @Test
   public void testOnRepositoryChange() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
     String anotherKey = "anotherKey";
     String anotherValue = "anotherValue";
     someProperties.putAll(ImmutableMap.of(someKey, someValue, anotherKey, anotherValue));
 
-    Properties anotherProperties = new Properties();
+    LinkedHashMap anotherProperties = new LinkedHashMap();
     String newKey = "newKey";
     String newValue = "newValue";
     String someValueNew = "someValueNew";

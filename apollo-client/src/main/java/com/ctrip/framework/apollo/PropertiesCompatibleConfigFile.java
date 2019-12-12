@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo;
 
-import java.util.Properties;
+import java.util.LinkedHashMap;
 
 /**
  * Config files that are properties compatible, e.g. yaml
@@ -14,5 +14,5 @@ public interface PropertiesCompatibleConfigFile extends ConfigFile {
    *
    * @throws RuntimeException if the content could not be transformed to properties
    */
-  Properties asProperties();
+  LinkedHashMap asProperties();
 }

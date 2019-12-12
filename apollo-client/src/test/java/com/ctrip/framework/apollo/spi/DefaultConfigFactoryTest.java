@@ -11,7 +11,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.internals.PropertiesCompatibleFileConfigRepository;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +29,8 @@ import com.ctrip.framework.apollo.internals.XmlConfigFile;
 import com.ctrip.framework.apollo.internals.YamlConfigFile;
 import com.ctrip.framework.apollo.internals.YmlConfigFile;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+
+import java.util.LinkedHashMap;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -51,10 +52,10 @@ public class DefaultConfigFactoryTest {
   @Test
   public void testCreate() throws Exception {
     String someNamespace = "someName";
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     LocalFileConfigRepository someLocalConfigRepo = mock(LocalFileConfigRepository.class);
     when(someLocalConfigRepo.getConfig()).thenReturn(someProperties);
@@ -83,10 +84,10 @@ public class DefaultConfigFactoryTest {
   public void testCreatePropertiesCompatibleFileConfigRepository() throws Exception {
     ConfigFileFormat somePropertiesCompatibleFormat = ConfigFileFormat.YML;
     String someNamespace = "someName" + "." + somePropertiesCompatibleFormat;
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     PropertiesCompatibleFileConfigRepository someRepository = mock(PropertiesCompatibleFileConfigRepository.class);
     when(someRepository.getConfig()).thenReturn(someProperties);
@@ -106,7 +107,7 @@ public class DefaultConfigFactoryTest {
     String someNamespace = "someName";
     String anotherNamespace = "anotherName";
     String yetAnotherNamespace = "yetAnotherNamespace";
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
 
     LocalFileConfigRepository someLocalConfigRepo = mock(LocalFileConfigRepository.class);
     when(someLocalConfigRepo.getConfig()).thenReturn(someProperties);

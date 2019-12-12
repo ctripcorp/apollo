@@ -13,6 +13,7 @@ import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import org.junit.After;
@@ -34,7 +35,7 @@ public class LocalFileConfigRepositoryTest {
   private File someBaseDir;
   private String someNamespace;
   private ConfigRepository upstreamRepo;
-  private Properties someProperties;
+  private LinkedHashMap someProperties;
   private static String someAppId = "someApp";
   private static String someCluster = "someCluster";
   private String defaultKey;
@@ -47,10 +48,10 @@ public class LocalFileConfigRepositoryTest {
     someBaseDir.mkdir();
 
     someNamespace = "someName";
-    someProperties = new Properties();
+    someProperties = new LinkedHashMap();
     defaultKey = "defaultKey";
     defaultValue = "defaultValue";
-    someProperties.setProperty(defaultKey, defaultValue);
+    someProperties.put(defaultKey, defaultValue);
     someSourceType = ConfigSourceType.REMOTE;
     upstreamRepo = mock(ConfigRepository.class);
     when(upstreamRepo.getConfig()).thenReturn(someProperties);
@@ -90,15 +91,15 @@ public class LocalFileConfigRepositoryTest {
     String someKey = "someKey";
     String someValue = "someValue\nxxx\nyyy";
 
-    Properties someProperties = new Properties();
-    someProperties.setProperty(someKey, someValue);
+    LinkedHashMap someProperties = new LinkedHashMap();
+    someProperties.put(someKey, someValue);
     createLocalCachePropertyFile(someProperties);
 
     LocalFileConfigRepository localRepo = new LocalFileConfigRepository(someNamespace);
     localRepo.setLocalCacheDir(someBaseDir, true);
-    Properties properties = localRepo.getConfig();
+    LinkedHashMap properties = localRepo.getConfig();
 
-    assertEquals(someValue, properties.getProperty(someKey));
+    assertEquals(someValue, properties.get(someKey));
     assertEquals(ConfigSourceType.LOCAL, localRepo.getSourceType());
   }
 
@@ -113,9 +114,9 @@ public class LocalFileConfigRepositoryTest {
     LocalFileConfigRepository localRepo = new LocalFileConfigRepository(someNamespace, upstreamRepo);
     localRepo.setLocalCacheDir(someBaseDir, true);
 
-    Properties properties = localRepo.getConfig();
+    LinkedHashMap properties = localRepo.getConfig();
 
-    assertEquals(defaultValue, properties.getProperty(defaultKey));
+    assertEquals(defaultValue, properties.get(defaultKey));
     assertEquals(someSourceType, localRepo.getSourceType());
   }
 
@@ -125,7 +126,7 @@ public class LocalFileConfigRepositoryTest {
         new LocalFileConfigRepository(someNamespace, upstreamRepo);
     localFileConfigRepository.setLocalCacheDir(someBaseDir, true);
 
-    Properties result = localFileConfigRepository.getConfig();
+    LinkedHashMap result = localFileConfigRepository.getConfig();
 
     assertThat(
         "LocalFileConfigRepository's properties should be the same as fallback repo's when there is no local cache",
@@ -139,14 +140,14 @@ public class LocalFileConfigRepositoryTest {
         new LocalFileConfigRepository(someNamespace, upstreamRepo);
     localRepo.setLocalCacheDir(someBaseDir, true);
 
-    Properties someProperties = localRepo.getConfig();
+    LinkedHashMap someProperties = localRepo.getConfig();
 
     LocalFileConfigRepository
         anotherLocalRepoWithNoFallback =
         new LocalFileConfigRepository(someNamespace);
     anotherLocalRepoWithNoFallback.setLocalCacheDir(someBaseDir, true);
 
-    Properties anotherProperties = anotherLocalRepoWithNoFallback.getConfig();
+    LinkedHashMap anotherProperties = anotherLocalRepoWithNoFallback.getConfig();
 
     assertThat(
         "LocalFileConfigRepository should persist local cache files and return that afterwards",
@@ -168,7 +169,7 @@ public class LocalFileConfigRepositoryTest {
 
     localFileConfigRepository.getConfig();
 
-    Properties anotherProperties = new Properties();
+    LinkedHashMap anotherProperties = new LinkedHashMap();
     anotherProperties.put("anotherKey", "anotherValue");
 
     ConfigSourceType anotherSourceType = ConfigSourceType.NONE;
@@ -176,7 +177,7 @@ public class LocalFileConfigRepositoryTest {
 
     localFileConfigRepository.onRepositoryChange(someNamespace, anotherProperties);
 
-    final ArgumentCaptor<Properties> captor = ArgumentCaptor.forClass(Properties.class);
+    final ArgumentCaptor<LinkedHashMap> captor = ArgumentCaptor.forClass(LinkedHashMap.class);
 
     verify(someListener, times(1)).onRepositoryChange(eq(someNamespace), captor.capture());
 
@@ -196,12 +197,14 @@ public class LocalFileConfigRepositoryTest {
     }
   }
 
-  private File createLocalCachePropertyFile(Properties properties) throws IOException {
+  private File createLocalCachePropertyFile(LinkedHashMap properties) throws IOException {
     File file = new File(someBaseDir, assembleLocalCacheFileName());
     FileOutputStream in = null;
     try {
       in = new FileOutputStream(file);
-      properties.store(in, "Persisted by LocalFileConfigRepositoryTest");
+      Properties p=new Properties();
+      p.putAll(properties);
+      p.store(in, "Persisted by LocalFileConfigRepositoryTest");
     } finally {
       if (in != null) {
         in.close();

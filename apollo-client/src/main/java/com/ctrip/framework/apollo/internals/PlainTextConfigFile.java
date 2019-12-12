@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import java.util.Properties;
+
+import java.util.LinkedHashMap;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -17,7 +18,7 @@ public abstract class PlainTextConfigFile extends AbstractConfigFile {
     if (!this.hasContent()) {
       return null;
     }
-    return m_configProperties.get().getProperty(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
+    return (String) m_configProperties.get().get(ConfigConsts.CONFIG_FILE_CONTENT_KEY);
   }
 
   @Override
@@ -29,7 +30,7 @@ public abstract class PlainTextConfigFile extends AbstractConfigFile {
   }
 
   @Override
-  protected void update(Properties newProperties) {
+  protected void update(LinkedHashMap newProperties) {
     m_configProperties.set(newProperties);
   }
 }

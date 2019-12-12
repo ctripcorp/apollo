@@ -1,11 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +21,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
   private static final Logger logger = LoggerFactory.getLogger(SimpleConfig.class);
   private final String m_namespace;
   private final ConfigRepository m_configRepository;
-  private volatile Properties m_configProperties;
+  private volatile LinkedHashMap m_configProperties;
   private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
 
   /**
@@ -59,7 +56,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
       logger.warn("Could not load config from Apollo, always return default value!");
       return defaultValue;
     }
-    return this.m_configProperties.getProperty(key, defaultValue);
+    return (String)this.m_configProperties.getOrDefault(key, defaultValue);
   }
 
   @Override
@@ -68,7 +65,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
       return Collections.emptySet();
     }
 
-    return m_configProperties.stringPropertyNames();
+    return m_configProperties.keySet();
   }
 
   @Override
@@ -77,11 +74,11 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
   }
 
   @Override
-  public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
+  public synchronized void onRepositoryChange(String namespace, LinkedHashMap newProperties) {
     if (newProperties.equals(m_configProperties)) {
       return;
     }
-    Properties newConfigProperties = new Properties();
+    LinkedHashMap newConfigProperties = new LinkedHashMap();
     newConfigProperties.putAll(newProperties);
 
     List<ConfigChange> changes = calcPropertyChanges(namespace, m_configProperties, newConfigProperties);
@@ -101,7 +98,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
     Tracer.logEvent("Apollo.Client.ConfigChanges", m_namespace);
   }
 
-  private void updateConfig(Properties newConfigProperties, ConfigSourceType sourceType) {
+  private void updateConfig(LinkedHashMap newConfigProperties, ConfigSourceType sourceType) {
     m_configProperties = newConfigProperties;
     m_sourceType = sourceType;
   }

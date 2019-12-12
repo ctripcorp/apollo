@@ -3,13 +3,7 @@ package com.ctrip.framework.apollo.internals;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -32,7 +26,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   private static final Logger logger = LoggerFactory.getLogger(DefaultConfig.class);
   private final String m_namespace;
   private final Properties m_resourceProperties;
-  private final AtomicReference<Properties> m_configProperties;
+  private final AtomicReference<LinkedHashMap> m_configProperties;
   private final ConfigRepository m_configRepository;
   private final RateLimiter m_warnLogRateLimiter;
 
@@ -74,7 +68,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
     // step 2: check local cached properties file
     if (value == null && m_configProperties.get() != null) {
-      value = m_configProperties.get().getProperty(key);
+      value = (String)m_configProperties.get().get(key);
     }
 
     /**
@@ -100,7 +94,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
   @Override
   public Set<String> getPropertyNames() {
-    Properties properties = m_configProperties.get();
+    LinkedHashMap properties = m_configProperties.get();
     if (properties == null) {
       return Collections.emptySet();
     }
@@ -113,10 +107,11 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     return m_sourceType;
   }
 
-  private Set<String> stringPropertyNames(Properties properties) {
+  private Set<String> stringPropertyNames(LinkedHashMap properties) {
     //jdk9以下版本Properties#enumerateStringProperties方法存在性能问题，keys() + get(k) 重复迭代, jdk9之后改为entrySet遍历.
-    Map<String, String> h = new HashMap<>();
-    for (Map.Entry<Object, Object> e : properties.entrySet()) {
+    Map<String, String> h = new LinkedHashMap<>();
+    Set<Map.Entry> entrySet = properties.entrySet();
+    for (Map.Entry e : entrySet) {
       Object k = e.getKey();
       Object v = e.getValue();
       if (k instanceof String && v instanceof String) {
@@ -127,13 +122,13 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   }
 
   @Override
-  public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
+  public synchronized void onRepositoryChange(String namespace, LinkedHashMap newProperties) {
     if (newProperties.equals(m_configProperties.get())) {
       return;
     }
 
     ConfigSourceType sourceType = m_configRepository.getSourceType();
-    Properties newConfigProperties = new Properties();
+    LinkedHashMap newConfigProperties = new LinkedHashMap();
     newConfigProperties.putAll(newProperties);
 
     Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties, sourceType);
@@ -148,12 +143,12 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     Tracer.logEvent("Apollo.Client.ConfigChanges", m_namespace);
   }
 
-  private void updateConfig(Properties newConfigProperties, ConfigSourceType sourceType) {
+  private void updateConfig(LinkedHashMap newConfigProperties, ConfigSourceType sourceType) {
     m_configProperties.set(newConfigProperties);
     m_sourceType = sourceType;
   }
 
-  private Map<String, ConfigChange> updateAndCalcConfigChanges(Properties newConfigProperties,
+  private Map<String, ConfigChange> updateAndCalcConfigChanges(LinkedHashMap newConfigProperties,
       ConfigSourceType sourceType) {
     List<ConfigChange> configChanges =
         calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);

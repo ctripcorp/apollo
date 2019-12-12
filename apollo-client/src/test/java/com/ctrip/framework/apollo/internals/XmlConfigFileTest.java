@@ -10,6 +10,8 @@ import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
 import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import java.util.concurrent.TimeUnit;
@@ -38,10 +40,10 @@ public class XmlConfigFileTest {
 
   @Test
   public void testWhenHasContent() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
@@ -75,11 +77,11 @@ public class XmlConfigFileTest {
 
   @Test
   public void testOnRepositoryChange() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
     String anotherValue = "anotherValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
@@ -87,8 +89,8 @@ public class XmlConfigFileTest {
 
     assertEquals(someValue, configFile.getContent());
 
-    Properties anotherProperties = new Properties();
-    anotherProperties.setProperty(key, anotherValue);
+    LinkedHashMap anotherProperties = new LinkedHashMap();
+    anotherProperties.put(key, anotherValue);
 
     final SettableFuture<ConfigFileChangeEvent> configFileChangeFuture = SettableFuture.create();
     ConfigFileChangeListener someListener = new ConfigFileChangeListener() {
@@ -113,7 +115,7 @@ public class XmlConfigFileTest {
 
   @Test
   public void testOnRepositoryChangeWithContentAdded() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
 
@@ -123,8 +125,8 @@ public class XmlConfigFileTest {
 
     assertEquals(null, configFile.getContent());
 
-    Properties anotherProperties = new Properties();
-    anotherProperties.setProperty(key, someValue);
+    LinkedHashMap anotherProperties = new LinkedHashMap();
+    anotherProperties.put(key, someValue);
 
     final SettableFuture<ConfigFileChangeEvent> configFileChangeFuture = SettableFuture.create();
     ConfigFileChangeListener someListener = new ConfigFileChangeListener() {
@@ -149,10 +151,10 @@ public class XmlConfigFileTest {
 
   @Test
   public void testOnRepositoryChangeWithContentDeleted() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
@@ -160,7 +162,7 @@ public class XmlConfigFileTest {
 
     assertEquals(someValue, configFile.getContent());
 
-    Properties anotherProperties = new Properties();
+    LinkedHashMap anotherProperties = new LinkedHashMap();
 
     final SettableFuture<ConfigFileChangeEvent> configFileChangeFuture = SettableFuture.create();
     ConfigFileChangeListener someListener = new ConfigFileChangeListener() {
@@ -185,10 +187,10 @@ public class XmlConfigFileTest {
 
   @Test
   public void testWhenConfigRepositoryHasErrorAndThenRecovered() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
     String someValue = "someValue";
-    someProperties.setProperty(key, someValue);
+    someProperties.put(key, someValue);
 
     when(configRepository.getConfig()).thenThrow(new RuntimeException("someError"));
 

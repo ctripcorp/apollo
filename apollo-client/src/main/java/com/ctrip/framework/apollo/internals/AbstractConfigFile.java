@@ -1,8 +1,9 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,7 +29,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
   private static ExecutorService m_executorService;
   protected final ConfigRepository m_configRepository;
   protected final String m_namespace;
-  protected final AtomicReference<Properties> m_configProperties;
+  protected final AtomicReference<LinkedHashMap> m_configProperties;
   private final List<ConfigFileChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
 
   private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
@@ -65,14 +66,14 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
     return m_namespace;
   }
 
-  protected abstract void update(Properties newProperties);
+  protected abstract void update(LinkedHashMap newProperties);
 
   @Override
-  public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
+  public synchronized void onRepositoryChange(String namespace, LinkedHashMap newProperties) {
     if (newProperties.equals(m_configProperties.get())) {
       return;
     }
-    Properties newConfigProperties = new Properties();
+    LinkedHashMap newConfigProperties = new LinkedHashMap();
     newConfigProperties.putAll(newProperties);
 
     String oldValue = getContent();

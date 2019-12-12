@@ -11,8 +11,8 @@ import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.google.common.primitives.Ints;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     int newBatch = 2001;
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -44,7 +44,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
         BATCH_PROPERTY, String.valueOf(newBatch));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
@@ -67,7 +67,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
 
     MockInjector.setInstance(ConfigUtil.class, mockConfigUtil);
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -79,7 +79,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
         BATCH_PROPERTY, String.valueOf(newBatch));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
@@ -97,9 +97,9 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     int newBatch = 2001;
 
-    Properties applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(initialTimeout));
-    Properties fxApolloProperties = assembleProperties(BATCH_PROPERTY,
+    LinkedHashMap fxApolloProperties = assembleProperties(BATCH_PROPERTY,
         String.valueOf(initialBatch));
 
     SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION,
@@ -113,7 +113,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(newTimeout));
 
     applicationConfig
@@ -124,7 +124,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(newTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newFxApolloProperties = assembleProperties(BATCH_PROPERTY, String.valueOf(newBatch));
+    LinkedHashMap newFxApolloProperties = assembleProperties(BATCH_PROPERTY, String.valueOf(newBatch));
 
     fxApolloConfig.onRepositoryChange(FX_APOLLO_NAMESPACE, newFxApolloProperties);
 
@@ -142,9 +142,9 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int someNewTimeout = 1001;
     int someNewBatch = 2001;
 
-    Properties applicationProperties = assembleProperties(BATCH_PROPERTY,
+    LinkedHashMap applicationProperties = assembleProperties(BATCH_PROPERTY,
         String.valueOf(someBatch));
-    Properties fxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap fxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
 
     prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationProperties);
@@ -157,7 +157,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(someTimeout, bean.getTimeout());
     assertEquals(someBatch, bean.getBatch());
 
-    Properties newFxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap newFxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(someNewTimeout), BATCH_PROPERTY, String.valueOf(someNewBatch));
 
     fxApolloConfig.onRepositoryChange(FX_APOLLO_NAMESPACE, newFxApolloProperties);
@@ -174,7 +174,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     int newBatch = 2001;
 
-    Properties applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(initialTimeout));
 
     SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION,
@@ -187,7 +187,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(DEFAULT_BATCH, bean.getBatch());
 
-    Properties newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(newTimeout), BATCH_PROPERTY, String.valueOf(newBatch));
 
     applicationConfig
@@ -209,7 +209,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     String anotherIrrelevantKey = "anotherIrrelevantKey";
     String anotherIrrelevantValue = "anotherIrrelevantValue";
 
-    Properties applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap applicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(initialTimeout), someIrrelevantKey, someIrrelevantValue);
 
     SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION,
@@ -222,7 +222,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(DEFAULT_BATCH, bean.getBatch());
 
-    Properties newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap newApplicationProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(initialTimeout), anotherIrrelevantKey, String.valueOf(anotherIrrelevantValue));
 
     applicationConfig
@@ -239,7 +239,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int initialTimeout = 1000;
     int initialBatch = 2000;
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -251,7 +251,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = new Properties();
+    LinkedHashMap newProperties = new LinkedHashMap();
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
@@ -267,9 +267,9 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int someBatch = 2000;
     int anotherBatch = 3000;
 
-    Properties applicationProperties = assembleProperties(BATCH_PROPERTY,
+    LinkedHashMap applicationProperties = assembleProperties(BATCH_PROPERTY,
         String.valueOf(someBatch));
-    Properties fxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
+    LinkedHashMap fxApolloProperties = assembleProperties(TIMEOUT_PROPERTY,
         String.valueOf(someTimeout), BATCH_PROPERTY, String.valueOf(anotherBatch));
 
     SimpleConfig applicationConfig = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION,
@@ -283,7 +283,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(someTimeout, bean.getTimeout());
     assertEquals(someBatch, bean.getBatch());
 
-    Properties newProperties = new Properties();
+    LinkedHashMap newProperties = new LinkedHashMap();
 
     applicationConfig.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
@@ -299,7 +299,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int initialBatch = 2000;
     int newTimeout = 1001;
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -311,7 +311,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout));
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 
@@ -328,7 +328,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     String newBatch = "newBatch";
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -340,7 +340,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
         BATCH_PROPERTY, newBatch);
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
@@ -358,7 +358,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     int newBatch = 2001;
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -370,7 +370,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
         BATCH_PROPERTY, String.valueOf(newBatch));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
@@ -389,7 +389,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     int newTimeout = 1001;
     int newBatch = 2001;
 
-    Properties properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
+    LinkedHashMap properties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(initialTimeout),
         BATCH_PROPERTY, String.valueOf(initialBatch));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
@@ -401,7 +401,7 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(initialTimeout, bean.getTimeout());
     assertEquals(initialBatch, bean.getBatch());
 
-    Properties newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
+    LinkedHashMap newProperties = assembleProperties(TIMEOUT_PROPERTY, String.valueOf(newTimeout),
         BATCH_PROPERTY, String.valueOf(newBatch));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
@@ -438,18 +438,18 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     Date someNewDate = assembleDate(2018, 2, 23, 21, 2, 3, 345);
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(someDateFormat, Locale.US);
 
-    Properties properties = new Properties();
-    properties.setProperty("intProperty", String.valueOf(someInt));
-    properties.setProperty("intArrayProperty", Ints.join(", ", someIntArray));
-    properties.setProperty("longProperty", String.valueOf(someLong));
-    properties.setProperty("shortProperty", String.valueOf(someShort));
-    properties.setProperty("floatProperty", String.valueOf(someFloat));
-    properties.setProperty("doubleProperty", String.valueOf(someDouble));
-    properties.setProperty("byteProperty", String.valueOf(someByte));
-    properties.setProperty("booleanProperty", String.valueOf(someBoolean));
-    properties.setProperty("stringProperty", String.valueOf(someString));
-    properties.setProperty("dateFormat", String.valueOf(someDateFormat));
-    properties.setProperty("dateProperty", simpleDateFormat.format(someDate));
+    LinkedHashMap properties = new LinkedHashMap();
+    properties.put("intProperty", String.valueOf(someInt));
+    properties.put("intArrayProperty", Ints.join(", ", someIntArray));
+    properties.put("longProperty", String.valueOf(someLong));
+    properties.put("shortProperty", String.valueOf(someShort));
+    properties.put("floatProperty", String.valueOf(someFloat));
+    properties.put("doubleProperty", String.valueOf(someDouble));
+    properties.put("byteProperty", String.valueOf(someByte));
+    properties.put("booleanProperty", String.valueOf(someBoolean));
+    properties.put("stringProperty", String.valueOf(someString));
+    properties.put("dateFormat", String.valueOf(someDateFormat));
+    properties.put("dateProperty", simpleDateFormat.format(someDate));
 
     SimpleConfig config = prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
     ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/XmlConfigPlaceholderTest10.xml");
@@ -467,18 +467,18 @@ public class XmlConfigPlaceholderAutoUpdateTest extends AbstractSpringIntegratio
     assertEquals(someString, bean.getStringProperty());
     assertEquals(someDate, bean.getDateProperty());
 
-    Properties newProperties = new Properties();
-    newProperties.setProperty("intProperty", String.valueOf(someNewInt));
-    newProperties.setProperty("intArrayProperty", Ints.join(", ", someNewIntArray));
-    newProperties.setProperty("longProperty", String.valueOf(someNewLong));
-    newProperties.setProperty("shortProperty", String.valueOf(someNewShort));
-    newProperties.setProperty("floatProperty", String.valueOf(someNewFloat));
-    newProperties.setProperty("doubleProperty", String.valueOf(someNewDouble));
-    newProperties.setProperty("byteProperty", String.valueOf(someNewByte));
-    newProperties.setProperty("booleanProperty", String.valueOf(someNewBoolean));
-    newProperties.setProperty("stringProperty", String.valueOf(someNewString));
-    newProperties.setProperty("dateFormat", String.valueOf(someDateFormat));
-    newProperties.setProperty("dateProperty", simpleDateFormat.format(someNewDate));
+    LinkedHashMap newProperties = new LinkedHashMap();
+    newProperties.put("intProperty", String.valueOf(someNewInt));
+    newProperties.put("intArrayProperty", Ints.join(", ", someNewIntArray));
+    newProperties.put("longProperty", String.valueOf(someNewLong));
+    newProperties.put("shortProperty", String.valueOf(someNewShort));
+    newProperties.put("floatProperty", String.valueOf(someNewFloat));
+    newProperties.put("doubleProperty", String.valueOf(someNewDouble));
+    newProperties.put("byteProperty", String.valueOf(someNewByte));
+    newProperties.put("booleanProperty", String.valueOf(someNewBoolean));
+    newProperties.put("stringProperty", String.valueOf(someNewString));
+    newProperties.put("dateFormat", String.valueOf(someDateFormat));
+    newProperties.put("dateProperty", simpleDateFormat.format(someNewDate));
 
     config.onRepositoryChange(ConfigConsts.NAMESPACE_APPLICATION, newProperties);
 

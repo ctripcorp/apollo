@@ -6,6 +6,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.Set;
 
@@ -118,7 +120,7 @@ public class DefaultConfigManagerTest {
           return new AbstractConfigFile(namespace, someConfigRepository) {
 
             @Override
-            protected void update(Properties newProperties) {
+            protected void update(LinkedHashMap newProperties) {
 
             }
 

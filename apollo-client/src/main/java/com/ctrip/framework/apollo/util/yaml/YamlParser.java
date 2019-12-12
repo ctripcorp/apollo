@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -28,12 +27,12 @@ public class YamlParser {
   /**
    * Transform yaml content to properties
    */
-  public Properties yamlToProperties(String yamlContent) {
+  public LinkedHashMap yamlToProperties(String yamlContent) {
     Yaml yaml = createYaml();
-    final Properties result = new Properties();
+    final LinkedHashMap result = new LinkedHashMap();
     process(new MatchCallback() {
       @Override
-      public void process(Properties properties, Map<String, Object> map) {
+      public void process(LinkedHashMap properties, Map<String, Object> map) {
         result.putAll(properties);
       }
     }, yaml, yamlContent);
@@ -91,7 +90,7 @@ public class YamlParser {
   }
 
   private boolean process(Map<String, Object> map, MatchCallback callback) {
-    Properties properties = new Properties();
+    LinkedHashMap properties = new LinkedHashMap();
     properties.putAll(getFlattenedMap(map));
 
     if (logger.isDebugEnabled()) {
@@ -140,7 +139,7 @@ public class YamlParser {
   }
 
   private interface MatchCallback {
-    void process(Properties properties, Map<String, Object> map);
+    void process(LinkedHashMap properties, Map<String, Object> map);
   }
 
   private static class StrictMapAppenderConstructor extends Constructor {

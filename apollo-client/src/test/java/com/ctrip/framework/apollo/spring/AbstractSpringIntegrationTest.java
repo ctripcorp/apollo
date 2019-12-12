@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import java.util.Properties;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.util.ReflectionUtils;
@@ -62,7 +62,7 @@ public abstract class AbstractSpringIntegrationTest {
     doTearDown();
   }
 
-  protected SimpleConfig prepareConfig(String namespaceName, Properties properties) {
+  protected SimpleConfig prepareConfig(String namespaceName, LinkedHashMap properties) {
     ConfigRepository configRepository = mock(ConfigRepository.class);
 
     when(configRepository.getConfig()).thenReturn(properties);
@@ -74,18 +74,18 @@ public abstract class AbstractSpringIntegrationTest {
     return config;
   }
 
-  protected static Properties readYamlContentAsConfigFileProperties(String caseName) throws IOException {
+  protected static LinkedHashMap readYamlContentAsConfigFileProperties(String caseName) throws IOException {
     File file = new File("src/test/resources/spring/yaml/" + caseName);
 
     String yamlContent = Files.toString(file, Charsets.UTF_8);
 
-    Properties properties = new Properties();
-    properties.setProperty(ConfigConsts.CONFIG_FILE_CONTENT_KEY, yamlContent);
+    LinkedHashMap properties = new LinkedHashMap();
+    properties.put(ConfigConsts.CONFIG_FILE_CONTENT_KEY, yamlContent);
 
     return properties;
   }
 
-  protected static YamlConfigFile prepareYamlConfigFile(String namespaceNameWithFormat, Properties properties) {
+  protected static YamlConfigFile prepareYamlConfigFile(String namespaceNameWithFormat, LinkedHashMap properties) {
     ConfigRepository configRepository = mock(ConfigRepository.class);
 
     when(configRepository.getConfig()).thenReturn(properties);
@@ -97,28 +97,28 @@ public abstract class AbstractSpringIntegrationTest {
     return configFile;
   }
 
-  protected Properties assembleProperties(String key, String value) {
-    Properties properties = new Properties();
-    properties.setProperty(key, value);
+  protected LinkedHashMap assembleProperties(String key, String value) {
+    LinkedHashMap properties = new LinkedHashMap();
+    properties.put(key, value);
 
     return properties;
   }
 
-  protected Properties assembleProperties(String key, String value, String key2, String value2) {
-    Properties properties = new Properties();
-    properties.setProperty(key, value);
-    properties.setProperty(key2, value2);
+  protected LinkedHashMap assembleProperties(String key, String value, String key2, String value2) {
+    LinkedHashMap properties = new LinkedHashMap();
+    properties.put(key, value);
+    properties.put(key2, value2);
 
     return properties;
   }
 
-  protected Properties assembleProperties(String key, String value, String key2, String value2,
+  protected LinkedHashMap assembleProperties(String key, String value, String key2, String value2,
       String key3, String value3) {
 
-    Properties properties = new Properties();
-    properties.setProperty(key, value);
-    properties.setProperty(key2, value2);
-    properties.setProperty(key3, value3);
+    LinkedHashMap properties = new LinkedHashMap();
+    properties.put(key, value);
+    properties.put(key2, value2);
+    properties.put(key3, value3);
 
     return properties;
   }

@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.core.utils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 /**
@@ -14,9 +15,11 @@ public class PropertiesUtil {
    * @return the string containing the properties
    * @throws IOException
    */
-  public static String toString(Properties properties) throws IOException {
+  public static String toString(LinkedHashMap properties) throws IOException {
     StringWriter writer = new StringWriter();
-    properties.store(writer, null);
+    Properties toWrite=new Properties();
+    toWrite.putAll(properties);
+    toWrite.store(writer, null);
     StringBuffer stringBuffer = writer.getBuffer();
     filterPropertiesComment(stringBuffer);
     return stringBuffer.toString();

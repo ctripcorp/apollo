@@ -10,6 +10,8 @@ import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
 import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 import java.util.concurrent.TimeUnit;
@@ -37,10 +39,10 @@ public class PropertiesConfigFileTest {
 
   @Test
   public void testWhenHasContent() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
@@ -74,11 +76,11 @@ public class PropertiesConfigFileTest {
 
   @Test
   public void testOnRepositoryChange() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
     String anotherValue = "anotherValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
@@ -86,8 +88,8 @@ public class PropertiesConfigFileTest {
 
     assertTrue(configFile.getContent().contains(String.format("%s=%s", someKey, someValue)));
 
-    Properties anotherProperties = new Properties();
-    anotherProperties.setProperty(someKey, anotherValue);
+    LinkedHashMap anotherProperties = new LinkedHashMap();
+    anotherProperties.put(someKey, anotherValue);
 
     final SettableFuture<ConfigFileChangeEvent> configFileChangeFuture = SettableFuture.create();
     ConfigFileChangeListener someListener = new ConfigFileChangeListener() {
@@ -114,10 +116,10 @@ public class PropertiesConfigFileTest {
 
   @Test
   public void testWhenConfigRepositoryHasErrorAndThenRecovered() throws Exception {
-    Properties someProperties = new Properties();
+    LinkedHashMap someProperties = new LinkedHashMap();
     String someKey = "someKey";
     String someValue = "someValue";
-    someProperties.setProperty(someKey, someValue);
+    someProperties.put(someKey, someValue);
 
     when(configRepository.getConfig()).thenThrow(new RuntimeException("someError"));
 
