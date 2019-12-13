@@ -49,7 +49,7 @@ push image <br/>
 ## 二、Deploy apollo on kubernetes
 
 ### 2.1 部署 MySQL 服务
-你可以选用 MySQL-Galera-WSrep 或 TiDB 来提高你的 MySQL 服务的可用性 <br/>
+你可以选用 MySQL-Galera-WSrep 来提高你的 MySQL 服务的可用性 <br/>
 MySQL 部署步骤略
 
 ### 2.1 导入 MySQL DB 文件
