@@ -55,4 +55,8 @@ public class ConfigChangeEvent {
   public String getNamespace() {
     return m_namespace;
   }
+
+  public Map<String, ConfigChange> getChangeValue(){
+        return m_changes;
+    }
 }
