@@ -60,6 +60,10 @@ public class ItemController {
       throw new BadRequestException("User " + item.getDataChangeCreatedBy() + " doesn't exist!");
     }
 
+    if( (item.getComment() == null ? 0 : item.getComment().length())  > 64){
+      throw new BadRequestException("The item comment length is greater than 64");
+    }
+
     ItemDTO toCreate = OpenApiBeanUtils.transformToItemDTO(item);
 
     //protect
@@ -91,6 +95,10 @@ public class ItemController {
 
     if (userService.findByUserId(item.getDataChangeLastModifiedBy()) == null) {
       throw new BadRequestException("user(dataChangeLastModifiedBy) not exists");
+    }
+
+    if( (item.getComment() == null ? 0 : item.getComment().length())  > 64){
+      throw new BadRequestException("The item comment length is greater than 64");
     }
 
     try {
