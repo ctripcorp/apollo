@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import com.ctrip.framework.apollo.openapi.util.OpenApiBeanUtils;
 import com.ctrip.framework.apollo.portal.service.ItemService;
 import com.ctrip.framework.apollo.portal.spi.UserService;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,7 +61,7 @@ public class ItemController {
       throw new BadRequestException("User " + item.getDataChangeCreatedBy() + " doesn't exist!");
     }
 
-    if( (item.getComment() == null ? 0 : item.getComment().length())  > 64){
+    if( (Objects.isNull(item.getComment()) ? 0 : item.getComment().length())  > 64){
       throw new BadRequestException("The item comment length is greater than 64");
     }
 
@@ -97,7 +98,7 @@ public class ItemController {
       throw new BadRequestException("user(dataChangeLastModifiedBy) not exists");
     }
 
-    if( (item.getComment() == null ? 0 : item.getComment().length())  > 64){
+    if( (Objects.isNull(item.getComment()) ? 0 : item.getComment().length())  > 64){
       throw new BadRequestException("The item comment length is greater than 64");
     }
 
