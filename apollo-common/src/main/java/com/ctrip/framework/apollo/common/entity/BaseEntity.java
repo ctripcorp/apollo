@@ -90,8 +90,12 @@ public abstract class BaseEntity {
 
   @PrePersist
   protected void prePersist() {
-    if (this.dataChangeCreatedTime == null) dataChangeCreatedTime = new Date();
-    if (this.dataChangeLastModifiedTime == null) dataChangeLastModifiedTime = new Date();
+    if (this.dataChangeCreatedTime == null) {
+        dataChangeCreatedTime = new Date();
+    }
+    if (this.dataChangeLastModifiedTime == null) {
+        dataChangeLastModifiedTime = new Date();
+    }
   }
 
   @PreUpdate

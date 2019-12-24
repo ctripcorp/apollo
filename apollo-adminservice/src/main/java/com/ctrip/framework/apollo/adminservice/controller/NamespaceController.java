@@ -47,8 +47,10 @@ public class NamespaceController {
                      @PathVariable("clusterName") String clusterName,
                      @PathVariable("namespaceName") String namespaceName, @RequestParam String operator) {
     Namespace entity = namespaceService.findOne(appId, clusterName, namespaceName);
-    if (entity == null) throw new NotFoundException(
-            String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
+    if (entity == null) {
+        throw new NotFoundException(
+                String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
+    }
 
     namespaceService.deleteNamespace(entity, operator);
   }
@@ -63,8 +65,9 @@ public class NamespaceController {
   @GetMapping("/namespaces/{namespaceId}")
   public NamespaceDTO get(@PathVariable("namespaceId") Long namespaceId) {
     Namespace namespace = namespaceService.findOne(namespaceId);
-    if (namespace == null)
-      throw new NotFoundException(String.format("namespace not found for %s", namespaceId));
+    if (namespace == null) {
+        throw new NotFoundException(String.format("namespace not found for %s", namespaceId));
+    }
     return BeanUtils.transform(NamespaceDTO.class, namespace);
   }
 
@@ -73,8 +76,10 @@ public class NamespaceController {
                           @PathVariable("clusterName") String clusterName,
                           @PathVariable("namespaceName") String namespaceName) {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
-    if (namespace == null) throw new NotFoundException(
-            String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
+    if (namespace == null) {
+        throw new NotFoundException(
+                String.format("namespace not found for %s %s %s", appId, clusterName, namespaceName));
+    }
     return BeanUtils.transform(NamespaceDTO.class, namespace);
   }
 
