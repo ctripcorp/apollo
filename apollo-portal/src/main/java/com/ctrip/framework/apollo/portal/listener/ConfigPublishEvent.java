@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.portal.listener;
 
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 
 import org.springframework.context.ApplicationEvent;
 
@@ -75,7 +75,7 @@ public class ConfigPublishEvent extends ApplicationEvent {
 
   public static class ConfigPublishInfo {
 
-    private Env env;
+    private String env;
     private String appId;
     private String clusterName;
     private String namespaceName;
@@ -87,11 +87,11 @@ public class ConfigPublishEvent extends ApplicationEvent {
     private boolean isGrayPublishEvent;
 
     public Env getEnv() {
-      return env;
+      return Env.valueOf(env);
     }
 
     public void setEnv(Env env) {
-      this.env = env;
+      this.env = env.toString();
     }
 
     public String getAppId() {

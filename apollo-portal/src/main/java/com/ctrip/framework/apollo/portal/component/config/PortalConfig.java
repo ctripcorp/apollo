@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.portal.component.config;
 
 import com.ctrip.framework.apollo.common.config.RefreshableConfig;
 import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.entity.vo.Organization;
 import com.ctrip.framework.apollo.portal.service.PortalDBPropertySource;
 import com.ctrip.framework.apollo.portal.service.SystemRoleManagerService;
@@ -46,7 +46,7 @@ public class PortalConfig extends RefreshableConfig {
     List<Env> envs = Lists.newLinkedList();
 
     for (String env : configurations) {
-      envs.add(Env.fromString(env));
+      envs.add(Env.addEnvironment(env));
     }
 
     return envs;

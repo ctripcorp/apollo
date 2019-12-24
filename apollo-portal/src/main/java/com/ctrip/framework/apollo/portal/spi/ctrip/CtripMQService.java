@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.portal.spi.ctrip;
 import com.google.gson.Gson;
 
 import com.ctrip.framework.apollo.common.entity.App;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 import com.ctrip.framework.apollo.portal.service.AppService;

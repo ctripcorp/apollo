@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 
 import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.GrayReleaseRuleItemDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
 
 import org.springframework.stereotype.Component;

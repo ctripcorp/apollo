@@ -1,9 +1,9 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.Apollo;
-import com.ctrip.framework.apollo.core.MetaDomainConsts;
+import com.ctrip.framework.apollo.portal.environment.PortalMetaDomainConsts;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.component.RestTemplateFactory;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvironmentInfo;
@@ -101,13 +101,13 @@ public class SystemInfoController {
 
   private EnvironmentInfo adaptEnv2EnvironmentInfo(final Env env) {
     EnvironmentInfo environmentInfo = new EnvironmentInfo();
-    String metaServerAddresses = MetaDomainConsts.getMetaServerAddress(env);
+    String metaServerAddresses = PortalMetaDomainConsts.getMetaServerAddress(env);
 
     environmentInfo.setEnv(env);
     environmentInfo.setActive(portalSettings.isEnvActive(env));
     environmentInfo.setMetaServerAddress(metaServerAddresses);
 
-    String selectedMetaServerAddress = MetaDomainConsts.getDomain(env);
+    String selectedMetaServerAddress = PortalMetaDomainConsts.getDomain(env);
     try {
       environmentInfo.setConfigServices(getServerAddress(selectedMetaServerAddress, CONFIG_SERVICE_URL_PATH));
 

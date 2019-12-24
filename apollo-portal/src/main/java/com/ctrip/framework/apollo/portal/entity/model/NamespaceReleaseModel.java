@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.entity.model;
 
 
-import com.ctrip.framework.apollo.core.enums.Env;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 
 public class NamespaceReleaseModel implements Verifiable {
