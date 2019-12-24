@@ -81,17 +81,16 @@ public class FilterLdapByGroupUserSearch extends FilterBasedLdapUserSearch {
               }
             }
             throw new UsernameNotFoundException("User " + username + " not found in directory.");
-          } else {
-            String[] memberUids = ((DirContextAdapter) ctx)
-                .getStringAttributes(groupMembershipAttrName);
-            for (String memberUid : memberUids) {
-              if (memberUid.equalsIgnoreCase(username)) {
-                Name name = searchUserById(memberUid);
-                LdapName ldapName = LdapUtils.newLdapName(name);
-                LdapName ldapRdn = LdapUtils
-                    .removeFirst(ldapName, LdapUtils.newLdapName(searchBase));
-                return new DirContextAdapter(ldapRdn);
-              }
+          }
+          String[] memberUids = ((DirContextAdapter) ctx)
+              .getStringAttributes(groupMembershipAttrName);
+          for (String memberUid : memberUids) {
+            if (memberUid.equalsIgnoreCase(username)) {
+              Name name = searchUserById(memberUid);
+              LdapName ldapName = LdapUtils.newLdapName(name);
+              LdapName ldapRdn = LdapUtils
+                  .removeFirst(ldapName, LdapUtils.newLdapName(searchBase));
+              return new DirContextAdapter(ldapRdn);
             }
           }
           throw new UsernameNotFoundException("User " + username + " not found in directory.");

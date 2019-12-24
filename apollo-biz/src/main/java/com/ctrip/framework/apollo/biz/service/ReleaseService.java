@@ -242,9 +242,8 @@ public class ReleaseService {
     if (parentNamespace != null) {
       return publishBranchNamespace(parentNamespace, namespace, operateNamespaceItems,
               releaseName, releaseComment, operator, isEmergencyPublish, grayDelKeys);
-    }else {
-      throw new NotFoundException("Parent namespace not found");
     }
+    throw new NotFoundException("Parent namespace not found");
   }
 
   private void checkLock(Namespace namespace, boolean isEmergencyPublish, String operator) {

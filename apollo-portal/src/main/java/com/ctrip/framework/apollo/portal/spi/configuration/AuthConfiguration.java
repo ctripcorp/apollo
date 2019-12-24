@@ -373,15 +373,15 @@ public class AuthConfiguration {
             ldapProperties.getSearchFilter(), ldapContextSource);
         filterBasedLdapUserSearch.setSearchSubtree(true);
         return filterBasedLdapUserSearch;
-      } else {
-        FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
-            ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
-            ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
-            ldapExtendProperties.getMapping().getRdnKey(),
-            ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
-        filterLdapByGroupUserSearch.setSearchSubtree(true);
-        return filterLdapByGroupUserSearch;
       }
+
+      FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
+          ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
+          ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
+          ldapExtendProperties.getMapping().getRdnKey(),
+          ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
+      filterLdapByGroupUserSearch.setSearchSubtree(true);
+      return filterLdapByGroupUserSearch;
     }
 
     @Bean

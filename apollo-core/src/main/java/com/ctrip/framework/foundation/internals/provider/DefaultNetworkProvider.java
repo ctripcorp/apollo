@@ -10,7 +10,8 @@ public class DefaultNetworkProvider implements NetworkProvider {
     if ("host.address".equalsIgnoreCase(name)) {
       String val = getHostAddress();
       return val == null ? defaultValue : val;
-    } else if ("host.name".equalsIgnoreCase(name)) {
+    }
+    if ("host.name".equalsIgnoreCase(name)) {
       String val = getHostName();
       return val == null ? defaultValue : val;
     } else {

@@ -86,33 +86,32 @@ public class ConsumerController {
     }
     if (Objects.equals("AppRole", type)) {
       return Collections.singletonList(consumerService.assignAppRoleToConsumer(token, appId));
-    } else {
-      if (StringUtils.isEmpty(namespaceName)) {
-        throw new BadRequestException("Params(NamespaceName) can not be empty.");
-      }
-      if (null != envs){
-        String[] envArray = envs.split(",");
-        List<String> envList = Lists.newArrayList();
-        // validate env parameter
-        for (String env : envArray) {
-          if (Strings.isNullOrEmpty(env)) {
-            continue;
-          }
-          if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
-            throw new BadRequestException(String.format("env: %s is illegal", env));
-          }
-          envList.add(env);
-        }
-
-        List<ConsumerRole> consumeRoles = new ArrayList<>();
-        for (String env : envList) {
-          consumeRoles.addAll(consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName, env));
-        }
-        return consumeRoles;
-      }
-
-      return consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName);
     }
+    if (StringUtils.isEmpty(namespaceName)) {
+      throw new BadRequestException("Params(NamespaceName) can not be empty.");
+    }
+    if (null != envs){
+      String[] envArray = envs.split(",");
+      List<String> envList = Lists.newArrayList();
+      // validate env parameter
+      for (String env : envArray) {
+        if (Strings.isNullOrEmpty(env)) {
+          continue;
+        }
+        if (Env.UNKNOWN == EnvUtils.transformEnv(env)) {
+          throw new BadRequestException(String.format("env: %s is illegal", env));
+        }
+        envList.add(env);
+      }
+
+      List<ConsumerRole> consumeRoles = new ArrayList<>();
+      for (String env : envList) {
+        consumeRoles.addAll(consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName, env));
+      }
+      return consumeRoles;
+    }
+
+    return consumerService.assignNamespaceRoleToConsumer(token, appId, namespaceName);
   }
 
 

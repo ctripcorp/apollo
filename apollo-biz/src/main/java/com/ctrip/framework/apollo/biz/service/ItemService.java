@@ -100,9 +100,8 @@ public class ItemService {
     Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
     if (namespace != null) {
       return findItemsWithoutOrdered(namespace.getId());
-    } else {
-      return Collections.emptyList();
     }
+    return Collections.emptyList();
   }
 
   public List<Item> findItemsWithOrdered(Long namespaceId) {
