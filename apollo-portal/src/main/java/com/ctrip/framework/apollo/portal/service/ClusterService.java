@@ -26,7 +26,7 @@ public class ClusterService {
     return clusterAPI.findClustersByApp(appId, env);
   }
 
-  public ClusterDTO createCluster(Env env, ClusterDTO cluster) {
+  public synchronized ClusterDTO createCluster(Env env, ClusterDTO cluster) {
     if (!clusterAPI.isClusterUnique(cluster.getAppId(), env, cluster.getName())) {
       throw new BadRequestException(String.format("cluster %s already exists.", cluster.getName()));
     }
