@@ -67,7 +67,8 @@ public class ApolloLdapAuthenticationProvider extends LdapAuthenticationProvider
     if (!StringUtils.hasLength(username)) {
       throw new BadCredentialsException(
           this.messages.getMessage("LdapAuthenticationProvider.emptyUsername", "Empty Username"));
-    } else if (!StringUtils.hasLength(password)) {
+    }
+    if (!StringUtils.hasLength(password)) {
       throw new BadCredentialsException(this.messages
           .getMessage("AbstractLdapAuthenticationProvider.emptyPassword", "Empty Password"));
     }

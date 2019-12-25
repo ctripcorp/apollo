@@ -291,11 +291,10 @@ public class LdapUserService implements UserService {
           userIds);
       userList.addAll(userListByGroup);
       return userList;
-    } else {
-      ContainerCriteria criteria = query().where(loginIdAttrName).is(userIds.get(0));
-      userIds.stream().skip(1).forEach(userId -> criteria.or(loginIdAttrName).is(userId));
-      return ldapTemplate.search(ldapQueryCriteria().and(criteria), ldapUserInfoMapper);
     }
+    ContainerCriteria criteria = query().where(loginIdAttrName).is(userIds.get(0));
+    userIds.stream().skip(1).forEach(userId -> criteria.or(loginIdAttrName).is(userId));
+    return ldapTemplate.search(ldapQueryCriteria().and(criteria), ldapUserInfoMapper);
   }
 
 }
