@@ -50,10 +50,9 @@ public class ItemController {
     Item managedEntity = itemService.findOne(appId, clusterName, namespaceName, entity.getKey());
     if (managedEntity != null) {
       throw new BadRequestException("item already exists");
-    } else {
-      entity = itemService.save(entity);
-      builder.createItem(entity);
     }
+    entity = itemService.save(entity);
+    builder.createItem(entity);
     dto = BeanUtils.transform(ItemDTO.class, entity);
 
     Commit commit = new Commit();

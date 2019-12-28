@@ -101,9 +101,8 @@ public class ConfigPublishListener {
       if (publishInfo.isRollbackEvent()) {
         return releaseHistoryService
             .findLatestByPreviousReleaseIdAndOperation(env, publishInfo.getPreviousReleaseId(), operation);
-      } else {
-        return releaseHistoryService.findLatestByReleaseIdAndOperation(env, publishInfo.getReleaseId(), operation);
       }
+      return releaseHistoryService.findLatestByReleaseIdAndOperation(env, publishInfo.getReleaseId(), operation);
 
     }
 

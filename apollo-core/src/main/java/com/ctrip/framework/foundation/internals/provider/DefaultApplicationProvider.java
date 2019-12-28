@@ -66,10 +66,9 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     if ("app.id".equals(name)) {
       String val = getAppId();
       return val == null ? defaultValue : val;
-    } else {
-      String val = m_appProperties.getProperty(name, defaultValue);
-      return val == null ? defaultValue : val;
     }
+    String val = m_appProperties.getProperty(name, defaultValue);
+    return val == null ? defaultValue : val;
   }
 
   @Override

@@ -239,10 +239,10 @@ public class ItemService {
 
     if (sourceComment == null) {
       return !StringUtils.isEmpty(targetComment);
-    } else if (targetComment != null) {
-      return !sourceComment.equals(targetComment);
-    } else {
-      return false;
     }
+    if (targetComment != null) {
+      return !sourceComment.equals(targetComment);
+    }
+    return false;
   }
 }
