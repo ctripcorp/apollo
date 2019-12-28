@@ -194,9 +194,7 @@ public class ItemController {
       configService.syncItems(model.getSyncToNamespaces(), model.getSyncItems());
       return ResponseEntity.status(HttpStatus.OK).build();
     }
-    else {
-        throw new AccessDeniedException(String.format("You don't have the permission to modify environment: %s", envNoPermission));
-    }
+    throw new AccessDeniedException(String.format("You don't have the permission to modify environment: %s", envNoPermission));
   }
 
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
