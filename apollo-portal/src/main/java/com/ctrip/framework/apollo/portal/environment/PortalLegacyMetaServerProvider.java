@@ -10,16 +10,19 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * a fake class to replace com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider in apollo-portal
+ * Only use in apollo-portal
+ * load all meta server address from
+ *  - System Property           [key ends with "_meta"]
+ *  - OS environment variable   [key ends with "_meta"]
+ *  - user's configuration file [key ends with ".meta"]
+ * when apollo-portal start up.
  * @see com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider
  * @author wxq
  */
-public class PortalLegacyMetaServerProvider implements PortalMetaServerProvider {
+public class PortalLegacyMetaServerProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalLegacyMetaServerProvider.class);
 
-    // make it as lowest as possible, yet not the lowest
-    public static final int ORDER = PortalMetaServerProvider.LOWEST_PRECEDENCE - 1;
     private static final Map<Env, String> domains = new HashMap<>();
 
     public PortalLegacyMetaServerProvider() {
@@ -68,15 +71,9 @@ public class PortalLegacyMetaServerProvider implements PortalMetaServerProvider 
         logger.info("All environment's meta server address: {}", domains);
     }
 
-    @Override
     public String getMetaServerAddress(Env targetEnv) {
         String metaServerAddress = domains.get(targetEnv);
         return metaServerAddress == null ? null : metaServerAddress.trim();
-    }
-
-    @Override
-    public int getOrder() {
-        return ORDER;
     }
 
 }

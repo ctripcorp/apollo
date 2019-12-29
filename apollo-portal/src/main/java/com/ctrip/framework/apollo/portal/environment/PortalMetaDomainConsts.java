@@ -4,22 +4,25 @@ import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.core.utils.NetUtil;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-import com.ctrip.framework.foundation.internals.ServiceBootstrap;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * a fake class only use in apollo-portal
- * For the replace of com.ctrip.framework.apollo.core.MetaDomainConsts in apollo-core
+ * Only use in apollo-portal
+ * Provider an available meta server url.
+ * If there is no available meta server url for the given environment,
+ * the default meta server url will be used(http://apollo.meta).
  * @see com.ctrip.framework.apollo.core.MetaDomainConsts
  * @author wxq
  */
@@ -29,15 +32,15 @@ public class PortalMetaDomainConsts {
 
     // env -> meta server address cache
     private static final Map<Env, String> metaServerAddressCache = Maps.newConcurrentMap();
-    private static volatile List<PortalMetaServerProvider> metaServerProviders = null;
+
+    // initialize meta server provider without cache
+    private static final PortalLegacyMetaServerProvider metaServerProvider = new PortalLegacyMetaServerProvider();
 
     private static final long REFRESH_INTERVAL_IN_SECOND = 60;// 1 min
     private static final Logger logger = LoggerFactory.getLogger(PortalMetaDomainConsts.class);
     // comma separated meta server address -> selected single meta server address cache
     private static final Map<String, String> selectedMetaServerAddressCache = Maps.newConcurrentMap();
     private static final AtomicBoolean periodicRefreshStarted = new AtomicBoolean(false);
-
-    private static final Object LOCK = new Object();
 
     /**
      * Return one meta server address. If multiple meta server addresses are configured, will select one.
@@ -55,58 +58,39 @@ public class PortalMetaDomainConsts {
      * Return meta server address. If multiple meta server addresses are configured, will return the comma separated string.
      */
     public static String getMetaServerAddress(Env env) {
+        // in cache?
         if (!metaServerAddressCache.containsKey(env)) {
-            initMetaServerAddress(env);
+            // put it to cache
+            metaServerAddressCache.put(
+                    env,
+                    getMetaServerAddressCacheValue(metaServerProvider, env)
+            );
         }
 
+        // get from cache
         return metaServerAddressCache.get(env);
     }
 
-    private static void initMetaServerAddress(Env env) {
-        if (metaServerProviders == null) {
-            synchronized (LOCK) {
-                if (metaServerProviders == null) {
-                    metaServerProviders = initMetaServerProviders();
-                }
-            }
-        }
-
-        String metaAddress = null;
-
-        for (PortalMetaServerProvider provider : metaServerProviders) {
-            metaAddress = provider.getMetaServerAddress(env);
-            if (!Strings.isNullOrEmpty(metaAddress)) {
-                logger.info("Located meta server address {} for env {} from {}", metaAddress, env,
-                        provider.getClass().getName());
-                break;
-            }
-        }
+    /**
+     * Get the meta server from provider by given environment.
+     * If there is no available meta server url for the given environment,
+     * the default meta server url will be used(http://apollo.meta).
+     * @param provider
+     * @param env
+     * @return
+     */
+    private static String getMetaServerAddressCacheValue(PortalLegacyMetaServerProvider provider, Env env) {
+        String metaAddress = provider.getMetaServerAddress(env);
+        logger.info("Located meta server address [{}] for env [{}]", metaAddress, env);
 
         if (Strings.isNullOrEmpty(metaAddress)) {
             // Fallback to default meta address
             metaAddress = DEFAULT_META_URL;
             logger.warn(
-                    "Meta server address fallback to {} for env {}, because it is not available in all MetaServerProviders",
+                    "Meta server address fallback to [{}] for env [{}], because it is not available in MetaServerProvider",
                     metaAddress, env);
         }
-
-        metaServerAddressCache.put(env, metaAddress.trim());
-    }
-
-    private static List<PortalMetaServerProvider> initMetaServerProviders() {
-        Iterator<PortalMetaServerProvider> metaServerProviderIterator = ServiceBootstrap.loadAll(PortalMetaServerProvider.class);
-
-        List<PortalMetaServerProvider> metaServerProviders = Lists.newArrayList(metaServerProviderIterator);
-
-        Collections.sort(metaServerProviders, new Comparator<PortalMetaServerProvider>() {
-            @Override
-            public int compare(PortalMetaServerProvider o1, PortalMetaServerProvider o2) {
-                // the smaller order has higher priority
-                return Integer.compare(o1.getOrder(), o2.getOrder());
-            }
-        });
-
-        return metaServerProviders;
+        return metaAddress.trim();
     }
 
     /**
