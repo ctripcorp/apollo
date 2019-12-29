@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.environment;
 
 import com.ctrip.framework.apollo.core.utils.ResourceUtils;
 import com.ctrip.framework.apollo.portal.util.KeyValueUtils;
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,20 +66,6 @@ public class PortalLegacyMetaServerProvider implements PortalMetaServerProvider 
 
         // log all
         logger.info("All environment's meta server address: {}", domains);
-    }
-
-    private String getMetaServerAddress(Properties prop, String sourceName, String propName) {
-        // 1. Get from System Property.
-        String metaAddress = System.getProperty(sourceName);
-        if (Strings.isNullOrEmpty(metaAddress)) {
-            // 2. Get from OS environment variable, which could not contain dot and is normally in UPPER case,like DEV_META.
-            metaAddress = System.getenv(sourceName.toUpperCase());
-        }
-        if (Strings.isNullOrEmpty(metaAddress)) {
-            // 3. Get from properties file.
-            metaAddress = prop.getProperty(propName);
-        }
-        return metaAddress;
     }
 
     @Override
