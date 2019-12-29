@@ -75,9 +75,8 @@ public class AppController {
   public List<App> findApps(@RequestParam(value = "appIds", required = false) String appIds) {
     if (StringUtils.isEmpty(appIds)) {
       return appService.findAll();
-    } else {
-      return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
     }
+    return appService.findByAppIds(Sets.newHashSet(appIds.split(",")));
   }
 
   @GetMapping("/search/by-appid-or-name")
@@ -85,9 +84,8 @@ public class AppController {
       Pageable pageable) {
     if (StringUtils.isEmpty(query)) {
       return appService.findAll(pageable);
-    } else {
-      return appService.searchByAppIdOrAppName(query, pageable);
     }
+    return appService.searchByAppIdOrAppName(query, pageable);
   }
 
   @GetMapping("/by-owner")

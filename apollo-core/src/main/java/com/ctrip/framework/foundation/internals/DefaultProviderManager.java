@@ -44,11 +44,10 @@ public class DefaultProviderManager implements ProviderManager {
 
     if (provider != null) {
       return (T) provider;
-    } else {
-      logger.error("No provider [{}] found in DefaultProviderManager, please make sure it is registered in DefaultProviderManager ",
-          clazz.getName());
-      return (T) NullProviderManager.provider;
     }
+    logger.error("No provider [{}] found in DefaultProviderManager, please make sure it is registered in DefaultProviderManager ",
+        clazz.getName());
+    return (T) NullProviderManager.provider;
   }
 
   @Override

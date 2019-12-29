@@ -126,9 +126,8 @@ public class ReleaseService {
     List<ReleaseDTO> releases = findReleaseByIds(env, releaseIds);
     if (CollectionUtils.isEmpty(releases)) {
       return null;
-    } else {
-      return releases.get(0);
     }
+    return releases.get(0);
 
   }
 

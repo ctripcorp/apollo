@@ -86,13 +86,13 @@ public class DefaultServerProvider implements ServerProvider {
     if ("env".equalsIgnoreCase(name)) {
       String val = getEnvType();
       return val == null ? defaultValue : val;
-    } else if ("dc".equalsIgnoreCase(name)) {
+    }
+    if ("dc".equalsIgnoreCase(name)) {
       String val = getDataCenter();
       return val == null ? defaultValue : val;
-    } else {
-      String val = m_serverProperties.getProperty(name, defaultValue);
-      return val == null ? defaultValue : val.trim();
     }
+    String val = m_serverProperties.getProperty(name, defaultValue);
+    return val == null ? defaultValue : val.trim();
   }
 
   @Override

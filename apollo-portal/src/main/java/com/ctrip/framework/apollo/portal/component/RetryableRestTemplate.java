@@ -219,10 +219,9 @@ public class RetryableRestTemplate {
       return nestedException instanceof SocketTimeoutException
              || nestedException instanceof HttpHostConnectException
              || nestedException instanceof ConnectTimeoutException;
-    } else {
-      return nestedException instanceof HttpHostConnectException
-             || nestedException instanceof ConnectTimeoutException;
     }
+    return nestedException instanceof HttpHostConnectException
+           || nestedException instanceof ConnectTimeoutException;
   }
 
 }

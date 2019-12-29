@@ -56,23 +56,22 @@ public class GrayPublishEmailBuilder extends ConfigPublishEmailBuilder {
 
     if (CollectionUtils.isEmpty(ruleItems)) {
       return bodyTemplate.replaceAll(EMAIL_CONTENT_GRAY_RULES_MODULE, "<br><h4>无灰度规则</h4>");
-    } else {
-      StringBuilder rulesHtmlBuilder = new StringBuilder();
-      for (GrayReleaseRuleItemDTO ruleItem : ruleItems) {
-        String clientAppId = ruleItem.getClientAppId();
-        Set<String> ips = ruleItem.getClientIpList();
-
-        rulesHtmlBuilder.append("<b>AppId:&nbsp;</b>")
-                .append(clientAppId)
-                .append("&nbsp;&nbsp; <b>IP:&nbsp;</b>");
-
-        IP_JOINER.appendTo(rulesHtmlBuilder, ips);
-      }
-      String grayRulesModuleContent = portalConfig.emailGrayRulesModuleTemplate().replaceAll(EMAIL_CONTENT_GRAY_RULES_CONTENT,
-              Matcher.quoteReplacement(rulesHtmlBuilder.toString()));
-
-      return bodyTemplate.replaceAll(EMAIL_CONTENT_GRAY_RULES_MODULE, Matcher.quoteReplacement(grayRulesModuleContent));
     }
+    StringBuilder rulesHtmlBuilder = new StringBuilder();
+    for (GrayReleaseRuleItemDTO ruleItem : ruleItems) {
+      String clientAppId = ruleItem.getClientAppId();
+      Set<String> ips = ruleItem.getClientIpList();
+
+      rulesHtmlBuilder.append("<b>AppId:&nbsp;</b>")
+              .append(clientAppId)
+              .append("&nbsp;&nbsp; <b>IP:&nbsp;</b>");
+
+      IP_JOINER.appendTo(rulesHtmlBuilder, ips);
+    }
+    String grayRulesModuleContent = portalConfig.emailGrayRulesModuleTemplate().replaceAll(EMAIL_CONTENT_GRAY_RULES_CONTENT,
+            Matcher.quoteReplacement(rulesHtmlBuilder.toString()));
+
+    return bodyTemplate.replaceAll(EMAIL_CONTENT_GRAY_RULES_MODULE, Matcher.quoteReplacement(grayRulesModuleContent));
 
   }
 }

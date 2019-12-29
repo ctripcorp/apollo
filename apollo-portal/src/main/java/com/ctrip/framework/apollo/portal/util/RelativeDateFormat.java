@@ -53,9 +53,8 @@ public class RelativeDateFormat {
     long months = toMonths(delta);
     if (months <= 3) {
       return (months <= 0 ? 1 : months) + ONE_MONTH_AGO;
-    } else {
-      return TIMESTAMP_FORMAT.format(date);
     }
+    return TIMESTAMP_FORMAT.format(date);
   }
 
   private static long toSeconds(long date) {

@@ -48,9 +48,8 @@ public class UserInfo {
 
       UserInfo anotherUser = (UserInfo) o;
       return userId.equals(anotherUser.userId);
-    } else {
-      return false;
     }
+    return false;
 
   }
 }

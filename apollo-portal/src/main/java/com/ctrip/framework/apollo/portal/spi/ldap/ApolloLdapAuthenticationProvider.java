@@ -67,16 +67,16 @@ public class ApolloLdapAuthenticationProvider extends LdapAuthenticationProvider
     if (!StringUtils.hasLength(username)) {
       throw new BadCredentialsException(
           this.messages.getMessage("LdapAuthenticationProvider.emptyUsername", "Empty Username"));
-    } else if (!StringUtils.hasLength(password)) {
+    }
+    if (!StringUtils.hasLength(password)) {
       throw new BadCredentialsException(this.messages
           .getMessage("AbstractLdapAuthenticationProvider.emptyPassword", "Empty Password"));
-    } else {
-      Assert.notNull(password, "Null password was supplied in authentication token");
-      DirContextOperations userData = this.doAuthentication(userToken);
-      String loginId = userData.getStringAttribute(properties.getMapping().getLoginId());
-      UserDetails user = this.userDetailsContextMapper.mapUserFromContext(userData, loginId,
-          this.loadUserAuthorities(userData, loginId, (String) authentication.getCredentials()));
-      return this.createSuccessfulAuthentication(userToken, user);
     }
+    Assert.notNull(password, "Null password was supplied in authentication token");
+    DirContextOperations userData = this.doAuthentication(userToken);
+    String loginId = userData.getStringAttribute(properties.getMapping().getLoginId());
+    UserDetails user = this.userDetailsContextMapper.mapUserFromContext(userData, loginId,
+        this.loadUserAuthorities(userData, loginId, (String) authentication.getCredentials()));
+    return this.createSuccessfulAuthentication(userToken, user);
   }
 }
