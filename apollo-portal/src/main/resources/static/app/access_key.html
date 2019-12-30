@@ -37,28 +37,32 @@
             <div class="panel-body row">
 
                 <section class="context" ng-show="hasAssignUserPermission">
-                    <!--project admin-->
-                    <section class="form-horizontal" ng-show="hasManageAppMasterPermission">
-                        <h5>{{'App.Setting.Admin' | translate }}
-                            <small>
-                                {{'App.AccessKey.AdminTips' | translate }}
-                            </small>
-                        </h5>
-                        <hr>
-
+                    <section class="form-horizontal">
+                        <div class="alert alert-info no-radius" role="alert">
+                            <strong>Tips:</strong>
+                            <ul>
+                                <li>{{'AccessKey.Tips.1' | translate }}</li>
+                                <li>{{'AccessKey.Tips.2' | translate }}</li>
+                                <li>{{'AccessKey.Tips.3' | translate }}</li>
+                                <ul>
+                                    <li>{{'AccessKey.Tips.3.1' | translate }}</li>
+                                    <li>{{'AccessKey.Tips.3.2' | translate }}</li>
+                                    <li>{{'AccessKey.Tips.3.3' | translate }}</li>
+                                </ul>
+                            </ul>
+                        </div>
+                    </section>
+                    <section>
                         <div class="row">
-                            <label class="col-sm-1 control-label" style="width: 150px;">
-                                {{'AccessKey.AddButton.Label' | translate }}
-                            </label>
                             <form class="col-sm-8 form-inline" ng-submit="create()">
-                                <div class="form-group" style="padding-left: 15px">
+                                <div class="form-group">
                                     <select class="form-control input-sm" style="width: 450px;" ng-model="addAccessKeySelectedEnv">
                                         <option value="">{{'Cluster.PleaseChooseEnvironment' | translate }}</option>
                                         <option ng-repeat="env in envs" ng-value="env">{{env}}</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-default" style="margin-left: 20px;"
-                                    ng-disabled="addAccessKeySelectedEnv == ''">{{'App.Setting.Add' | translate }}
+                                        ng-disabled="addAccessKeySelectedEnv == ''">{{'App.Setting.Add' | translate }}
                                 </button>
                             </form>
                         </div>
@@ -72,42 +76,36 @@
 
                         <table class="table table-striped table-hover table-bordered">
                             <thead>
-                            <tr>
-                                <th>{{'AccessKey.ConfigAccessKeys.Secret' | translate }}</th>
-                                <th>{{'AccessKey.ConfigAccessKeys.Status' | translate }}</th>
-                              <th>{{'AccessKey.ConfigAccessKeys.LastModify' | translate }}</th>
-                              <th>{{'AccessKey.ConfigAccessKeys.LastModifyTime' | translate }}</th>
-                                <th>{{'AccessKey.ConfigAccessKeys.Operator' | translate }}</th>
-                            </tr>
+                                <tr>
+                                    <th>{{'AccessKey.ConfigAccessKeys.Secret' | translate }}</th>
+                                    <th>{{'AccessKey.ConfigAccessKeys.Status' | translate }}</th>
+                                    <th>{{'AccessKey.ConfigAccessKeys.LastModify' | translate }}</th>
+                                    <th>{{'AccessKey.ConfigAccessKeys.LastModifyTime' | translate }}</th>
+                                    <th>{{'AccessKey.ConfigAccessKeys.Operator' | translate }}</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr ng-show="(!accessKeys[env] || accessKeys[env].length < 1)">
-                                <td colspan="4">{{'AccessKey.NoAccessKeyServiceTips' | translate }}</td>
-                            </tr>
-                            <tr ng-show="accessKeys[env] && accessKeys[env].length > 0"
-                                ng-repeat="accessKey in accessKeys[env]">
-                                <td style="text-align: center;">{{accessKey.secret}}</td>
-                                <td style="text-align: center;" ng-style="{'color': accessKey.enabled ? '#5cb85c' : '#d20707'}">{{accessKey.enabled ? ('AccessKey.Operator.Enabled' | translate) : ('AccessKey.Operator.Disabled' | translate) }}</td>
-                              <td style="text-align: center;">
-                                {{accessKey.dataChangeLastModifiedBy}}
-                              </td>
-                              <td style="text-align: center;">{{accessKey.dataChangeLastModifiedTime
-                                | date: 'yyyy-MM-dd HH:mm:ss'}}
-                              </td>
-                                <td style="text-align: center;">
-                                    <a href="javascript:;"
-                                       ng-click="enable(accessKey.id, env)" ng-if="!accessKey.enabled">{{'AccessKey.Operator.Enable' | translate}}</a>
-                                    <a href="javascript:;"
-                                       ng-click="disable(accessKey.id, env)" ng-if="accessKey.enabled">{{'AccessKey.Operator.Disable' | translate}}</a>
-                                    <a href="javascript:;"
-                                       ng-click="remove(accessKey.id, env)">{{'AccessKey.Operator.Remove' | translate }}</a>
-                                </td>
-                            </tr>
+                                <tr ng-show="(!accessKeys[env] || accessKeys[env].length < 1)">
+                                    <td colspan="5" style="text-align: center;">{{'AccessKey.NoAccessKeyServiceTips' | translate }}</td>
+                                </tr>
+                                <tr ng-show="accessKeys[env] && accessKeys[env].length > 0"
+                                    ng-repeat="accessKey in accessKeys[env]">
+                                    <td style="text-align: center;">{{accessKey.secret}}</td>
+                                    <td style="text-align: center;" ng-style="{'color': accessKey.enabled ? '#5cb85c' : '#d20707'}">{{accessKey.enabled ? ('AccessKey.Operator.Enabled' | translate) : ('AccessKey.Operator.Disabled' | translate) }}</td>
+                                    <td style="text-align: center;">{{accessKey.dataChangeLastModifiedBy}}</td>
+                                    <td style="text-align: center;">{{accessKey.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td style="text-align: center;">
+                                        <a href="javascript:;"
+                                           ng-click="enable(accessKey.id, env)" ng-if="!accessKey.enabled">{{'AccessKey.Operator.Enable' | translate}}</a>
+                                        <a href="javascript:;"
+                                           ng-click="disable(accessKey.id, env)" ng-if="accessKey.enabled">{{'AccessKey.Operator.Disable' | translate}}</a>
+                                        <a href="javascript:;"
+                                           ng-click="remove(accessKey.id, env)" ng-if="!accessKey.enabled">{{'AccessKey.Operator.Remove' | translate }}</a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </section>
-
-
                 </section>
 
                 <section class="context" ng-show="!hasAssignUserPermission">

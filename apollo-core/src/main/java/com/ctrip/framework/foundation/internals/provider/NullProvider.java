@@ -29,6 +29,11 @@ public class NullProvider implements ApplicationProvider, NetworkProvider, Serve
   }
 
   @Override
+  public String getAccessKeySecret() {
+    return null;
+  }
+
+  @Override
   public boolean isAppIdSet() {
     return false;
   }

@@ -345,18 +345,12 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
 
         });
 
+
         PermissionService.has_assign_user_permission(appId).then(function (result) {
             $scope.hasAssignUserPermission = result.hasPermission;
         }, function (result) {
 
         });
-
-      PermissionService.has_manage_access_key_permission(appId).then(
-          function (result) {
-            $scope.hasCreateClusterPermission = result.hasPermission;
-          }, function (result) {
-
-          });
 
         $scope.showMasterPermissionTips = function () {
             $("#masterNoPermissionDialog").modal('show');

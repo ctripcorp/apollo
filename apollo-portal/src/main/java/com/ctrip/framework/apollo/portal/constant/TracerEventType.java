@@ -14,6 +14,8 @@ public interface TracerEventType {
 
   String CREATE_CLUSTER = "Cluster.Create";
 
+  String CREATE_ACCESS_KEY = "AccessKey.Create";
+
   String CREATE_NAMESPACE = "Namespace.Create";
 
   String API_RETRY = "API.Retry";

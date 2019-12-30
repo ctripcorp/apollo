@@ -67,6 +67,15 @@ public class ConfigUtil {
   }
 
   /**
+   * Get the access key secret for the current application.
+   *
+   * @return the current access key secret, null if there is no such secret.
+   */
+  public String getAccessKeySecret() {
+    return Foundation.app().getAccessKeySecret();
+  }
+
+  /**
    * Get the data center info for the current application.
    *
    * @return the current data center, null if there is no such info.

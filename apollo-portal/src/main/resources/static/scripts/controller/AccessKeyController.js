@@ -33,17 +33,9 @@ function AccessKeyController($scope, $location, $translate, toastr,
     init();
 
     function init() {
-        initEnv();
         initPermission();
+        initAdmins();
         initApplication();
-    }
-
-    function initEnv() {
-        EnvService.find_all_envs()
-            .then(function (result) {
-                $scope.envs = result;
-                initAccessKeys();
-            });
     }
 
     function initPermission() {
@@ -51,31 +43,20 @@ function AccessKeyController($scope, $location, $translate, toastr,
             .then(function (result) {
                 $scope.hasAssignUserPermission = result.hasPermission;
 
-                PermissionService.has_open_manage_app_master_role_limit().then(function (value) {
-                    if (!value.isManageAppMasterPermissionEnabled) {
-                        $scope.hasManageAppMasterPermission = $scope.hasAssignUserPermission;
-                        return;
-                    }
-
-                    PermissionService.has_manage_app_master_permission($scope.pageContext.appId).then(function (res) {
-                        $scope.hasManageAppMasterPermission = res.hasPermission && $scope.hasAssignUserPermission;
-
-                        PermissionService.has_root_permission().then(function (value) {
-                            $scope.hasManageAppMasterPermission = value.hasPermission || $scope.hasManageAppMasterPermission;
-                        });
-                    });
-                });
+                if (result.hasPermission) {
+                    initEnv();
+                }
             });
     }
 
-    function initApplication() {
-        AppService.load($scope.pageContext.appId).then(function (app) {
-            $scope.app = app;
-            $scope.viewApp = _.clone(app);
-            $('.project-setting .panel').removeClass('hidden');
-        })
+    function initEnv() {
+        EnvService.find_all_envs()
+        .then(function (result) {
+            $scope.envs = result;
+            initAccessKeys();
+        });
     }
-    
+
     function initAccessKeys() {
         $scope.accessKeys = {};
         for (var iLoop = 0; iLoop < $scope.envs.length; iLoop++) {
@@ -90,6 +71,25 @@ function AccessKeyController($scope, $location, $translate, toastr,
             }, function (result) {
                 toastr.error(AppUtil.errorMsg(result), $translate.instant('AccessKey.LoadError', { env }));
             });
+    }
+
+    function initAdmins() {
+        PermissionService.get_app_role_users($scope.pageContext.appId)
+        .then(function (result) {
+            $scope.appRoleUsers = result;
+            $scope.admins = [];
+            $scope.appRoleUsers.masterUsers.forEach(function (user) {
+                $scope.admins.push(user.userId);
+            });
+        });
+    }
+
+    function initApplication() {
+        AppService.load($scope.pageContext.appId).then(function (app) {
+            $scope.app = app;
+            $scope.viewApp = _.clone(app);
+            $('.project-setting .panel').removeClass('hidden');
+        })
     }
 
     function create() {
