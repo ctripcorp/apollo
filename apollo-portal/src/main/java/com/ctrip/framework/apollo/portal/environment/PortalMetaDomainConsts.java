@@ -34,7 +34,7 @@ public class PortalMetaDomainConsts {
     private static final Map<Env, String> metaServerAddressCache = Maps.newConcurrentMap();
 
     // initialize meta server provider without cache
-    private static final PortalLegacyMetaServerProvider metaServerProvider = new PortalLegacyMetaServerProvider();
+    private static final PortalMetaServerProvider metaServerProvider = new PortalMetaServerProvider();
 
     private static final long REFRESH_INTERVAL_IN_SECOND = 60;// 1 min
     private static final Logger logger = LoggerFactory.getLogger(PortalMetaDomainConsts.class);
@@ -79,7 +79,7 @@ public class PortalMetaDomainConsts {
      * @param env
      * @return
      */
-    private static String getMetaServerAddressCacheValue(PortalLegacyMetaServerProvider provider, Env env) {
+    private static String getMetaServerAddressCacheValue(PortalMetaServerProvider provider, Env env) {
         String metaAddress = provider.getMetaServerAddress(env);
         logger.info("Located meta server address [{}] for env [{}]", metaAddress, env);
 

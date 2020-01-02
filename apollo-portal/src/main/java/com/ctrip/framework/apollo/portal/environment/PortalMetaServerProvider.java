@@ -19,13 +19,13 @@ import java.util.Properties;
  * @see com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider
  * @author wxq
  */
-public class PortalLegacyMetaServerProvider {
+public class PortalMetaServerProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(PortalLegacyMetaServerProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(PortalMetaServerProvider.class);
 
     private static final Map<Env, String> domains = new HashMap<>();
 
-    public PortalLegacyMetaServerProvider() {
+    public PortalMetaServerProvider() {
         initialize();
     }
 
