@@ -7,13 +7,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Component;
 
 @Component
 public class BizConfig extends RefreshableConfig {
@@ -23,6 +22,8 @@ public class BizConfig extends RefreshableConfig {
   private static final int DEFAULT_APPNAMESPACE_CACHE_REBUILD_INTERVAL = 60; //60s
   private static final int DEFAULT_GRAY_RELEASE_RULE_SCAN_INTERVAL = 60; //60s
   private static final int DEFAULT_APPNAMESPACE_CACHE_SCAN_INTERVAL = 1; //1s
+  private static final int DEFAULT_ACCESSKEY_CACHE_SCAN_INTERVAL = 1; //1s
+  private static final int DEFAULT_ACCESSKEY_CACHE_REBUILD_INTERVAL = 60; //60s
   private static final int DEFAULT_RELEASE_MESSAGE_CACHE_SCAN_INTERVAL = 1; //1s
   private static final int DEFAULT_RELEASE_MESSAGE_SCAN_INTERVAL_IN_MS = 1000; //1000ms
   private static final int DEFAULT_RELEASE_MESSAGE_NOTIFICATION_BATCH = 100;
@@ -116,6 +117,24 @@ public class BizConfig extends RefreshableConfig {
   }
 
   public TimeUnit appNamespaceCacheRebuildIntervalTimeUnit() {
+    return TimeUnit.SECONDS;
+  }
+
+  public int accessKeyCacheScanInterval() {
+    int interval = getIntProperty("apollo.access-key-cache-scan.interval", DEFAULT_ACCESSKEY_CACHE_SCAN_INTERVAL);
+    return checkInt(interval, 1, Integer.MAX_VALUE, DEFAULT_ACCESSKEY_CACHE_SCAN_INTERVAL);
+  }
+
+  public TimeUnit accessKeyCacheScanIntervalTimeUnit() {
+    return TimeUnit.SECONDS;
+  }
+
+  public int accessKeyCacheRebuildInterval() {
+    int interval = getIntProperty("apollo.access-key-cache-rebuild.interval", DEFAULT_ACCESSKEY_CACHE_REBUILD_INTERVAL);
+    return checkInt(interval, 1, Integer.MAX_VALUE, DEFAULT_ACCESSKEY_CACHE_REBUILD_INTERVAL);
+  }
+
+  public TimeUnit accessKeyCacheRebuildIntervalTimeUnit() {
     return TimeUnit.SECONDS;
   }
 

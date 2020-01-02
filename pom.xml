@@ -907,7 +907,7 @@
 							</dependency>
 						</dependencies>
 						<configuration>
-							<configFile>scripts/db/migration/flyway-configdb.properties</configFile>
+							<configFile>scripts/flyway/flyway-configdb.properties</configFile>
 						</configuration>
 						<inherited>false</inherited>
 					</plugin>
@@ -930,7 +930,7 @@
 							</dependency>
 						</dependencies>
 						<configuration>
-							<configFile>scripts/db/migration/flyway-portaldb.properties</configFile>
+							<configFile>scripts/flyway/flyway-portaldb.properties</configFile>
 						</configuration>
 						<inherited>false</inherited>
 					</plugin>

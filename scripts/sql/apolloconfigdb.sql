@@ -8,9 +8,9 @@
 
 # Create Database
 # ------------------------------------------------------------
-CREATE DATABASE IF NOT EXISTS TestBetaApolloConfigDB DEFAULT CHARACTER SET = utf8mb4;
+CREATE DATABASE IF NOT EXISTS ApolloConfigDB DEFAULT CHARACTER SET = utf8mb4;
 
-Use TestBetaApolloConfigDB;
+Use ApolloConfigDB;
 
 # Dump of table app
 # ------------------------------------------------------------
@@ -384,7 +384,7 @@ CREATE TABLE `AccessKey` (
 # ------------------------------------------------------------
 INSERT INTO `ServerConfig` (`Key`, `Cluster`, `Value`, `Comment`)
 VALUES
-    ('eureka.service.url', 'default', 'http://statefulset-apollo-config-server-test-beta-0.service-apollo-meta-server-test-beta:8080/eureka/,http://statefulset-apollo-config-server-test-beta-1.service-apollo-meta-server-test-beta:8080/eureka/,http://statefulset-apollo-config-server-test-beta-2.service-apollo-meta-server-test-beta:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
+    ('eureka.service.url', 'default', 'http://localhost:8080/eureka/', 'Eureka服务Url，多个service以英文逗号分隔'),
     ('namespace.lock.switch', 'default', 'false', '一次发布只能有一个人修改开关'),
     ('item.key.length.limit', 'default', '128', 'item key 最大长度限制'),
     ('item.value.length.limit', 'default', '20000', 'item value最大长度限制'),

@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.internals;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
@@ -12,29 +13,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-
 import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.dto.ApolloConfig;
 import com.ctrip.framework.apollo.core.dto.ApolloConfigNotification;
 import com.ctrip.framework.apollo.core.dto.ApolloNotificationMessages;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
+import com.ctrip.framework.apollo.core.signature.Signature;
+import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.util.ConfigUtil;
 import com.ctrip.framework.apollo.util.http.HttpRequest;
@@ -46,6 +31,20 @@ import com.google.common.collect.Maps;
 import com.google.common.net.UrlEscapers;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 /**
  * Created by Jason on 4/9/16.
@@ -63,6 +62,10 @@ public class RemoteConfigRepositoryTest {
   @Mock
   private static HttpResponse<List<ApolloConfigNotification>> pollResponse;
   private RemoteConfigLongPollService remoteConfigLongPollService;
+
+  private static String someAppId;
+  private static String someCluster;
+  private static String someSecret;
 
   @Before
   public void setUp() throws Exception {
@@ -88,6 +91,9 @@ public class RemoteConfigRepositoryTest {
     remoteConfigLongPollService = new RemoteConfigLongPollService();
 
     MockInjector.setInstance(RemoteConfigLongPollService.class, remoteConfigLongPollService);
+
+    someAppId = "someAppId";
+    someCluster = "someCluster";
   }
 
   @Test
@@ -100,6 +106,39 @@ public class RemoteConfigRepositoryTest {
 
     when(someResponse.getStatusCode()).thenReturn(200);
     when(someResponse.getBody()).thenReturn(someApolloConfig);
+
+    RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
+
+    Properties config = remoteConfigRepository.getConfig();
+
+    assertEquals(configurations, config);
+    assertEquals(ConfigSourceType.REMOTE, remoteConfigRepository.getSourceType());
+    remoteConfigLongPollService.stopLongPollingRefresh();
+  }
+
+  @Test
+  public void testLoadConfigWithAccessKeySecret() throws Exception {
+    someSecret = "someSecret";
+    String someKey = "someKey";
+    String someValue = "someValue";
+    Map<String, String> configurations = Maps.newHashMap();
+    configurations.put(someKey, someValue);
+    ApolloConfig someApolloConfig = assembleApolloConfig(configurations);
+
+    when(someResponse.getStatusCode()).thenReturn(200);
+    when(someResponse.getBody()).thenReturn(someApolloConfig);
+    doAnswer(new Answer<HttpResponse<ApolloConfig>>() {
+      @Override
+      public HttpResponse<ApolloConfig> answer(InvocationOnMock invocation) throws Throwable {
+        HttpRequest request = invocation.getArgumentAt(0, HttpRequest.class);
+        Map<String, String> headers = request.getHeaders();
+        assertNotNull(headers);
+        assertTrue(headers.containsKey(Signature.HTTP_HEADER_TIMESTAMP));
+        assertTrue(headers.containsKey(Signature.HTTP_HEADER_AUTHORIZATION));
+
+        return someResponse;
+      }
+    }).when(httpUtil).doGet(any(HttpRequest.class), any(Class.class));
 
     RemoteConfigRepository remoteConfigRepository = new RemoteConfigRepository(someNamespace);
 
@@ -254,12 +293,17 @@ public class RemoteConfigRepositoryTest {
   public static class MockConfigUtil extends ConfigUtil {
     @Override
     public String getAppId() {
-      return "someApp";
+      return someAppId;
     }
 
     @Override
     public String getCluster() {
-      return "someCluster";
+      return someCluster;
+    }
+
+    @Override
+    public String getAccessKeySecret() {
+      return someSecret;
     }
 
     @Override

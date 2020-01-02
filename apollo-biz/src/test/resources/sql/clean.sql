@@ -1,3 +1,4 @@
+DELETE FROM AccessKey;
 DELETE FROM App;
 DELETE FROM AppNamespace;
 DELETE FROM Cluster;
