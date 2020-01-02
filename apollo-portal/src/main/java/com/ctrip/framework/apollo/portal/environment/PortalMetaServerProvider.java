@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Only use in apollo-portal
@@ -23,16 +24,23 @@ public class PortalMetaServerProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalMetaServerProvider.class);
 
-    private static final Map<Env, String> domains = new HashMap<>();
+    /**
+     * environments and their meta server address
+     * properties file path
+     */
+    private static final String APOLLO_ENV_PROPERTIES_FILE_PATH = "apollo-env.properties";
+
+    // thread safe
+    private static volatile Map<Env, String> domains = initializeDomains();
 
     public PortalMetaServerProvider() {
-        initialize();
+
     }
 
     /**
-     * load all environment's meta address dynamically
+     * load all environment's meta address dynamically when this class loaded by JVM
      */
-    private void initialize() {
+    private static Map<Env, String> initializeDomains() {
         // find key-value from System Property which key ends with "_meta"
         Map<String, String> metaServerAddressesFromSystemProperty = KeyValueUtils.filterWithKeyEndswith(System.getProperties(), "_meta");
         // remove key's suffix "_meta"
@@ -45,7 +53,7 @@ public class PortalMetaServerProvider {
 
         // find key-value from properties file which key ends with ".meta"
         Properties properties = new Properties();
-        properties = ResourceUtils.readConfigFile("apollo-env.properties", properties);
+        properties = ResourceUtils.readConfigFile(APOLLO_ENV_PROPERTIES_FILE_PATH, properties);
         Map<String, String> metaServerAddressesFromPropertiesFile = KeyValueUtils.filterWithKeyEndswith(properties, ".meta");
         // remove key's suffix ".meta"
         metaServerAddressesFromPropertiesFile = KeyValueUtils.removeKeySuffix(metaServerAddressesFromPropertiesFile, ".meta".length());
@@ -58,22 +66,66 @@ public class PortalMetaServerProvider {
         metaServerAddresses.putAll(metaServerAddressesFromSystemProperty);
 
         // add to domain
+        Map<Env, String> map = new ConcurrentHashMap<>();
         for(Map.Entry<String, String> entry : metaServerAddresses.entrySet()) {
             // add new environment
             Env env = Env.addEnvironment(entry.getKey());
             // get meta server address value
             String value = entry.getValue();
             // put pair (Env, meta server address)
-            domains.put(env, value);
+            map.put(env, value);
         }
 
         // log all
-        logger.info("All environment's meta server address: {}", domains);
+        logger.info("All environment's meta server address: {}", map);
+        return map;
     }
 
-    public String getMetaServerAddress(Env targetEnv) {
+    /**
+     * reload all
+     * environments and meta server addresses
+     */
+    public static void reloadAll() {
+        domains = initializeDomains();
+    }
+
+    public static String getMetaServerAddress(Env targetEnv) {
         String metaServerAddress = domains.get(targetEnv);
         return metaServerAddress == null ? null : metaServerAddress.trim();
+    }
+
+    /**
+     * add a environment's meta server address
+     * for the feature: add self-define environment in the web ui
+     * @param env
+     * @param metaServerAddress
+     */
+    public static void addMetaServerAddress(Env env, String metaServerAddress) {
+        domains.put(env, metaServerAddress);
+    }
+
+    /**
+     * delete the meta server address of the environment
+     * @param env
+     */
+    public static void deleteMetaServerAddress(Env env) {
+        domains.remove(env);
+    }
+
+    /**
+     * update the meta server address of the environment
+     * @param env
+     * @param metaServerAddress
+     */
+    public static void updateMetaServerAddress(Env env, String metaServerAddress) {
+        domains.put(env, metaServerAddress);
+    }
+
+    /**
+     * clear all environments and meta server addresses saved
+     */
+    public static void clear() {
+        domains.clear();
     }
 
 }
