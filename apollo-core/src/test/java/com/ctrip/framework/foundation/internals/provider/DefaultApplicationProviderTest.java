@@ -6,11 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import com.ctrip.framework.foundation.internals.provider.DefaultApplicationProvider;
 
 public class DefaultApplicationProviderTest {
   private DefaultApplicationProvider defaultApplicationProvider;
@@ -43,12 +40,16 @@ public class DefaultApplicationProviderTest {
   @Test
   public void testLoadAppPropertiesWithSystemProperty() throws Exception {
     String someAppId = "someAppId";
+    String someSecret = "someSecret";
     System.setProperty("app.id", someAppId);
+    System.setProperty("apollo.accesskey.secret", someSecret);
     defaultApplicationProvider.initialize();
     System.clearProperty("app.id");
+    System.clearProperty("apollo.accesskey.secret");
 
     assertEquals(someAppId, defaultApplicationProvider.getAppId());
     assertTrue(defaultApplicationProvider.isAppIdSet());
+    assertEquals(someSecret, defaultApplicationProvider.getAccessKeySecret());
   }
 
   @Test

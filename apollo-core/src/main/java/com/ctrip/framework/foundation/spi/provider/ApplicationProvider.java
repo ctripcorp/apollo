@@ -12,6 +12,11 @@ public interface ApplicationProvider extends Provider {
   public String getAppId();
 
   /**
+   * @return the application's access key secret
+   */
+  public String getAccessKeySecret();
+
+  /**
    * @return whether the application's app id is set or not
    */
   public boolean isAppIdSet();

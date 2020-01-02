@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.portal.api;
 
-
 import com.ctrip.framework.apollo.common.dto.*;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.google.common.base.Joiner;
@@ -212,6 +211,36 @@ public class AdminServiceAPI {
 
     public void delete(Env env, String appId, String clusterName, String operator) {
       restTemplate.delete(env, "apps/{appId}/clusters/{clusterName}?operator={operator}", appId, clusterName, operator);
+    }
+  }
+
+  @Service
+  public static class AccessKeyAPI extends API {
+
+    public AccessKeyDTO create(Env env, AccessKeyDTO accessKey) {
+      return restTemplate.post(env, "apps/{appId}/accesskeys",
+          accessKey, AccessKeyDTO.class, accessKey.getAppId());
+    }
+
+    public List<AccessKeyDTO> findByAppId(Env env, String appId) {
+      AccessKeyDTO[] accessKeys = restTemplate.get(env, "apps/{appId}/accesskeys",
+          AccessKeyDTO[].class, appId);
+      return Arrays.asList(accessKeys);
+    }
+
+    public void delete(Env env, String appId, long id, String operator) {
+      restTemplate.delete(env, "apps/{appId}/accesskeys/{id}?operator={operator}",
+          appId, id, operator);
+    }
+
+    public void enable(Env env, String appId, long id, String operator) {
+      restTemplate.put(env, "apps/{appId}/accesskeys/{id}/enable?operator={operator}",
+          null, appId, id, operator);
+    }
+
+    public void disable(Env env, String appId, long id, String operator) {
+      restTemplate.put(env, "apps/{appId}/accesskeys/{id}/disable?operator={operator}",
+          null, appId, id, operator);
     }
   }
 
