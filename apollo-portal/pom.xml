@@ -56,6 +56,15 @@
 			<artifactId>javassist</artifactId>
 		</dependency>
 		<!-- end of JDK 11+ -->
+
+		<!-- test -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- end of test -->
+
 	</dependencies>
 	<build>
 		<plugins>
