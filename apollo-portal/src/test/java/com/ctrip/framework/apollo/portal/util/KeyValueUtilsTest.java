@@ -18,7 +18,7 @@ public class KeyValueUtilsTest {
         map.put("abc_meta", "none");
         map.put("2bc.meta", "none");
         map.put("abc?met", "none");
-        Map<String, String> afterFilter = KeyValueUtils.filterWithKeyEndswith(map, "_meta");
+        Map<String, String> afterFilter = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(map, "_meta");
         for(Map.Entry<String, String> entry : afterFilter.entrySet()) {
             String key = entry.getKey();
             assertTrue(key.endsWith("_meta"));

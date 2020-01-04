@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Only use in apollo-portal
  * load all meta server address from
- *  - System Property           [key ends with "_meta"]
- *  - OS environment variable   [key ends with "_meta"]
- *  - user's configuration file [key ends with ".meta"]
+ *  - System Property           [key ends with "_meta" (case insensitive)]
+ *  - OS environment variable   [key ends with "_meta" (case insensitive)]
+ *  - user's configuration file [key ends with ".meta" (case insensitive)]
  * when apollo-portal start up.
  * @see com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider
  * @author wxq
@@ -41,21 +41,21 @@ public class PortalMetaServerProvider {
      * load all environment's meta address dynamically when this class loaded by JVM
      */
     private static Map<Env, String> initializeDomains() {
-        // find key-value from System Property which key ends with "_meta"
-        Map<String, String> metaServerAddressesFromSystemProperty = KeyValueUtils.filterWithKeyEndswith(System.getProperties(), "_meta");
-        // remove key's suffix "_meta"
+        // find key-value from System Property which key ends with "_meta" (case insensitive)
+        Map<String, String> metaServerAddressesFromSystemProperty = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(System.getProperties(), "_meta");
+        // remove key's suffix "_meta" (case insensitive)
         metaServerAddressesFromSystemProperty = KeyValueUtils.removeKeySuffix(metaServerAddressesFromSystemProperty, "_meta".length());
 
-        // find key-value from OS environment variable which key ends with "_meta"
-        Map<String, String> metaServerAddressesFromOSEnvironment = KeyValueUtils.filterWithKeyEndswith(System.getenv(), "_meta");
-        // remove key's suffix "_meta"
+        // find key-value from OS environment variable which key ends with "_meta" (case insensitive)
+        Map<String, String> metaServerAddressesFromOSEnvironment = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(System.getenv(), "_meta");
+        // remove key's suffix "_meta" (case insensitive)
         metaServerAddressesFromOSEnvironment = KeyValueUtils.removeKeySuffix(metaServerAddressesFromOSEnvironment, "_meta".length());
 
-        // find key-value from properties file which key ends with ".meta"
+        // find key-value from properties file which key ends with ".meta" (case insensitive)
         Properties properties = new Properties();
         properties = ResourceUtils.readConfigFile(APOLLO_ENV_PROPERTIES_FILE_PATH, properties);
-        Map<String, String> metaServerAddressesFromPropertiesFile = KeyValueUtils.filterWithKeyEndswith(properties, ".meta");
-        // remove key's suffix ".meta"
+        Map<String, String> metaServerAddressesFromPropertiesFile = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(properties, ".meta");
+        // remove key's suffix ".meta" (case insensitive)
         metaServerAddressesFromPropertiesFile = KeyValueUtils.removeKeySuffix(metaServerAddressesFromPropertiesFile, ".meta".length());
 
         // begin to add key-value, key is environment, value is meta server address matched

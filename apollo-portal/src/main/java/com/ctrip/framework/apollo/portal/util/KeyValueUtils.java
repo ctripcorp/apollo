@@ -13,33 +13,37 @@ public class KeyValueUtils {
     /**
      * make a filter on properties.
      * and convert properties to a map
+     * the suffix match is case insensitive
      * @param properties
      * @param suffix suffix in a key
      * @return a map which key is ends with suffix
      */
-    public static Map<String, String> filterWithKeyEndswith(Properties properties, String suffix) {
+    public static Map<String, String> filterWithKeyIgnoreCaseEndsWith(Properties properties, String suffix) {
         // use O(n log(n)) algorithm
         Map<String, String> keyValues = new HashMap<>();
         for(String propertyName : properties.stringPropertyNames()) {
             keyValues.put(propertyName, properties.getProperty(propertyName));
         }
-        return filterWithKeyEndswith(keyValues, suffix);
+        return filterWithKeyIgnoreCaseEndsWith(keyValues, suffix);
     }
 
     /**
      * make a filter on map's key,
      * keep the k-v which key ends with suffix given
+     * the suffix match is case insensitive
      * @param keyValues
      * @param suffix suffix in a key
      * @return a map which key is ends with suffix
      */
-    public static Map<String, String> filterWithKeyEndswith(Map<String, String> keyValues, String suffix) {
+    public static Map<String, String> filterWithKeyIgnoreCaseEndsWith(Map<String, String> keyValues, String suffix) {
         // use O(n) algorithm
         Map<String, String> map = new HashMap<>();
         for(Map.Entry<String, String> entry : keyValues.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if(key.endsWith(suffix)) {
+            // let key and suffix both to upper,
+            // so the suffix match doesn't care about the character is upper or lower
+            if(key.toUpperCase().endsWith(suffix.toUpperCase())) {
                 map.put(key, value);
             }
         }
