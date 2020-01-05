@@ -1,11 +1,11 @@
 package com.ctrip.framework.apollo.core.signature;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import com.google.common.io.BaseEncoding;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author nisiyong
@@ -23,7 +23,7 @@ public class HmacSha1Utils {
           ALGORITHM_NAME
       ));
       byte[] signData = mac.doFinal(stringToSign.getBytes(ENCODING));
-      return DatatypeConverter.printBase64Binary(signData);
+      return BaseEncoding.base64().encode(signData);
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException | InvalidKeyException e) {
       throw new IllegalArgumentException(e.toString());
     }
