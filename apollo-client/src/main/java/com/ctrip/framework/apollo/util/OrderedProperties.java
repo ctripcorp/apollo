@@ -107,7 +107,9 @@ public class OrderedProperties extends Properties {
 
   @Override
   public synchronized Object remove(Object key) {
-    this.propertyNames.remove(key);
+    if (key instanceof String) {
+      this.propertyNames.remove(key);
+    }
     return super.remove(key);
   }
 

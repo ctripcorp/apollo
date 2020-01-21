@@ -44,6 +44,7 @@ public abstract class BaseIntegrationTest {
   protected static String someDataCenter;
   protected static int refreshInterval;
   protected static TimeUnit refreshTimeUnit;
+  protected static boolean propertiesOrderEnabled;
   private Server server;
   protected Gson gson = new Gson();
 
@@ -64,6 +65,7 @@ public abstract class BaseIntegrationTest {
     someDataCenter = "someDC";
     refreshInterval = 5;
     refreshTimeUnit = TimeUnit.MINUTES;
+    propertiesOrderEnabled = false;
 
     //as ConfigService is singleton, so we must manually clear its container
     ConfigService.reset();
@@ -140,6 +142,10 @@ public abstract class BaseIntegrationTest {
     BaseIntegrationTest.refreshTimeUnit = refreshTimeUnit;
   }
 
+  protected void setPropertiesOrderEnabled(boolean propertiesOrderEnabled) {
+    BaseIntegrationTest.propertiesOrderEnabled = propertiesOrderEnabled;
+  }
+
   public static class MockConfigUtil extends ConfigUtil {
 
     @Override
@@ -204,7 +210,7 @@ public abstract class BaseIntegrationTest {
 
     @Override
     public boolean isPropertiesOrderEnabled() {
-      return true;
+      return propertiesOrderEnabled;
     }
   }
 

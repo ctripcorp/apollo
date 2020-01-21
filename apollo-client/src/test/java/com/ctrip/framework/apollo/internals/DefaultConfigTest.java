@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
-import com.ctrip.framework.apollo.util.factory.DefaultPropertiesFactory;
+import com.ctrip.framework.apollo.util.OrderedProperties;
 import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -44,6 +44,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.SettableFuture;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -54,12 +56,21 @@ public class DefaultConfigTest {
   private ConfigRepository configRepository;
   private Properties someProperties;
   private ConfigSourceType someSourceType;
+  private PropertiesFactory propertiesFactory;
 
   @Before
   public void setUp() throws Exception {
     MockInjector.reset();
     MockInjector.setInstance(ConfigUtil.class, new MockConfigUtil());
-    MockInjector.setInstance(PropertiesFactory.class, new DefaultPropertiesFactory());
+
+    propertiesFactory = mock(PropertiesFactory.class);
+    when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
+      @Override
+      public Properties answer(InvocationOnMock invocation) {
+        return new Properties();
+      }
+    });
+    MockInjector.setInstance(PropertiesFactory.class, propertiesFactory);
 
     someResourceDir = new File(ClassLoaderUtil.getClassPath() + "/META-INF/config");
     someResourceDir.mkdirs();
@@ -726,15 +737,15 @@ public class DefaultConfigTest {
   @Test
   public void testRemoveChangeListener() throws Exception {
     String someNamespace = "someNamespace";
-    final ConfigChangeEvent someConfigChangEvent = mock(ConfigChangeEvent.class);
-    ConfigChangeEvent anotherConfigChangEvent = mock(ConfigChangeEvent.class);
+    final ConfigChangeEvent someConfigChangeEvent = mock(ConfigChangeEvent.class);
+    ConfigChangeEvent anotherConfigChangeEvent = mock(ConfigChangeEvent.class);
 
     final SettableFuture<ConfigChangeEvent> someListenerFuture1 = SettableFuture.create();
     final SettableFuture<ConfigChangeEvent> someListenerFuture2 = SettableFuture.create();
     ConfigChangeListener someListener = new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
-        if (someConfigChangEvent == changeEvent) {
+        if (someConfigChangeEvent == changeEvent) {
           someListenerFuture1.set(changeEvent);
         } else {
           someListenerFuture2.set(changeEvent);
@@ -747,7 +758,7 @@ public class DefaultConfigTest {
     ConfigChangeListener anotherListener = new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
-        if (someConfigChangEvent == changeEvent) {
+        if (someConfigChangeEvent == changeEvent) {
           anotherListenerFuture1.set(changeEvent);
         } else {
           anotherListenerFuture2.set(changeEvent);
@@ -762,17 +773,17 @@ public class DefaultConfigTest {
     config.addChangeListener(someListener);
     config.addChangeListener(anotherListener);
 
-    config.fireConfigChange(someConfigChangEvent);
+    config.fireConfigChange(someConfigChangeEvent);
 
-    assertEquals(someConfigChangEvent, someListenerFuture1.get(500, TimeUnit.MILLISECONDS));
-    assertEquals(someConfigChangEvent, anotherListenerFuture1.get(500, TimeUnit.MILLISECONDS));
+    assertEquals(someConfigChangeEvent, someListenerFuture1.get(500, TimeUnit.MILLISECONDS));
+    assertEquals(someConfigChangeEvent, anotherListenerFuture1.get(500, TimeUnit.MILLISECONDS));
 
     assertFalse(config.removeChangeListener(yetAnotherListener));
     assertTrue(config.removeChangeListener(someListener));
 
-    config.fireConfigChange(anotherConfigChangEvent);
+    config.fireConfigChange(anotherConfigChangeEvent);
 
-    assertEquals(anotherConfigChangEvent, anotherListenerFuture2.get(500, TimeUnit.MILLISECONDS));
+    assertEquals(anotherConfigChangeEvent, anotherListenerFuture2.get(500, TimeUnit.MILLISECONDS));
 
     TimeUnit.MILLISECONDS.sleep(100);
 
@@ -792,8 +803,34 @@ public class DefaultConfigTest {
 
     when(configRepository.getConfig()).thenReturn(someProperties);
 
-    DefaultConfig defaultConfig =
-            new DefaultConfig(someNamespace, configRepository);
+    DefaultConfig defaultConfig = new DefaultConfig(someNamespace, configRepository);
+
+    Set<String> propertyNames = defaultConfig.getPropertyNames();
+
+    assertEquals(10, propertyNames.size());
+    assertEquals(someProperties.stringPropertyNames(), propertyNames);
+  }
+
+  @Test
+  public void testGetPropertyNamesWithOrderedProperties() {
+    String someKeyPrefix = "someKey";
+    String someValuePrefix = "someValue";
+
+    when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
+      @Override
+      public Properties answer(InvocationOnMock invocation) {
+        return new OrderedProperties();
+      }
+    });
+    //set up config repo
+    someProperties = new OrderedProperties();
+    for (int i = 0; i < 10; i++) {
+      someProperties.setProperty(someKeyPrefix + i, someValuePrefix + i);
+    }
+
+    when(configRepository.getConfig()).thenReturn(someProperties);
+
+    DefaultConfig defaultConfig = new DefaultConfig(someNamespace, configRepository);
 
     Set<String> propertyNames = defaultConfig.getPropertyNames();
 

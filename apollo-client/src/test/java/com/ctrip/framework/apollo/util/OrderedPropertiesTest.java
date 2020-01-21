@@ -6,13 +6,11 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class OrderedPropertiesTest {
 
   private OrderedProperties orderedProperties;
-  private Properties legacyProperties;
 
   @Before
   public void setUp() {
@@ -23,7 +21,7 @@ public class OrderedPropertiesTest {
 
   @Test
   public void testOrderedPropertiesInvokedAsLegacyProperties() {
-    legacyProperties = orderedProperties;
+    Properties legacyProperties = orderedProperties;
     assertEquals(orderedProperties.size(), legacyProperties.size());
 
     legacyProperties.put("key3", "value3");
@@ -85,10 +83,9 @@ public class OrderedPropertiesTest {
 
   @Test
   public void testPropertyNames() {
-    Enumeration<String> propertyNames = (Enumeration<String>) orderedProperties.propertyNames();
-    assertTrue(propertyNames.nextElement().equals("key1"));
-    assertTrue(propertyNames.nextElement().equals("key2"));
-
+    Enumeration<?> propertyNames = orderedProperties.propertyNames();
+    assertEquals("key1", propertyNames.nextElement());
+    assertEquals("key2", propertyNames.nextElement());
   }
 
 

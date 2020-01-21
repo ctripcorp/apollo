@@ -88,7 +88,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
     // step 4: check properties file from classpath
     if (value == null && m_resourceProperties != null) {
-      value = (String) m_resourceProperties.getProperty(key);
+      value = m_resourceProperties.getProperty(key);
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
