@@ -25,7 +25,7 @@ appService.service('EventManager', [function () {
 
         context = context || {};
 
-        if (objectId) {
+        if (objectId != null && objectId != ALL_OBJECT) {
             emitEventToSubscribers(eventRegistry[eventType][objectId], context);
             emitEventToSubscribers(eventRegistry[eventType][ALL_OBJECT]);
         } else {
