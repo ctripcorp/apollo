@@ -11,6 +11,7 @@ import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.ctrip.framework.apollo.util.ConfigUtil;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import com.ctrip.framework.apollo.util.function.Functions;
 import com.ctrip.framework.apollo.util.parser.Parsers;
 import com.google.common.base.Function;
@@ -58,6 +59,8 @@ public abstract class AbstractConfig implements Config {
   private final List<Cache> allCaches;
   private final AtomicLong m_configVersion; //indicate config version
 
+  protected PropertiesFactory propertiesFactory;
+
   static {
     m_executorService = Executors.newCachedThreadPool(ApolloThreadFactory
         .create("Config", true));
@@ -68,6 +71,7 @@ public abstract class AbstractConfig implements Config {
     m_configVersion = new AtomicLong();
     m_arrayCache = Maps.newConcurrentMap();
     allCaches = Lists.newArrayList();
+    propertiesFactory = ApolloInjector.getInstance(PropertiesFactory.class);
   }
 
   @Override
@@ -493,11 +497,11 @@ public abstract class AbstractConfig implements Config {
   List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,
                                          Properties current) {
     if (previous == null) {
-      previous = new Properties();
+      previous = propertiesFactory.getPropertiesInstance();
     }
 
     if (current == null) {
-      current = new Properties();
+      current =  propertiesFactory.getPropertiesInstance();
     }
 
     Set<String> previousKeys = previous.stringPropertyNames();

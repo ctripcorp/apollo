@@ -1,17 +1,24 @@
 package com.ctrip.framework.apollo.util.yaml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.ctrip.framework.apollo.build.MockInjector;
+import com.ctrip.framework.apollo.util.OrderedProperties;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
-
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.yaml.snakeyaml.parser.ParserException;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 public class YamlParserTest {
 
@@ -37,12 +44,48 @@ public class YamlParserTest {
     testInvalid("case8.yaml");
   }
 
-  private void test(String caseName) throws Exception {
-    File file = new File("src/test/resources/yaml/" + caseName);
+  @Test
+  public void testOrderProperties() throws IOException {
+    String yamlContent = loadYaml("orderedcase.yaml");
 
-    String yamlContent = Files.toString(file, Charsets.UTF_8);
+    Properties nonOrderedProperties = parser.yamlToProperties(yamlContent);
+
+    MockInjector.reset();
+
+    PropertiesFactory propertiesFactory = mock(PropertiesFactory.class);;
+    when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
+      @Override
+      public Properties answer(InvocationOnMock invocation) {
+        return new OrderedProperties();
+      }
+    });
+    MockInjector.setInstance(PropertiesFactory.class, propertiesFactory);
+
+    parser = new YamlParser();
+
+    Properties orderedProperties = parser.yamlToProperties(yamlContent);
+
+    assertTrue(orderedProperties instanceof OrderedProperties);
+
+    checkPropertiesEquals(nonOrderedProperties, orderedProperties);
+
+    String[] propertyNames = orderedProperties.stringPropertyNames().toArray(new String[0]);
+
+    assertEquals("k2", propertyNames[0]);
+    assertEquals("k4", propertyNames[1]);
+    assertEquals("k1", propertyNames[2]);
+  }
+
+  private void test(String caseName) throws Exception {
+    String yamlContent = loadYaml(caseName);
 
     check(yamlContent);
+  }
+
+  private String loadYaml(String caseName) throws IOException {
+    File file = new File("src/test/resources/yaml/" + caseName);
+
+    return Files.toString(file, Charsets.UTF_8);
   }
 
   private void testInvalid(String caseName) throws Exception {

@@ -7,21 +7,28 @@ import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
+import com.ctrip.framework.apollo.util.OrderedProperties;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import com.ctrip.framework.apollo.util.yaml.YamlParser;
 import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YamlConfigFileTest {
+
   private String someNamespace;
   @Mock
   private ConfigRepository configRepository;
   @Mock
   private YamlParser yamlParser;
+  @Mock
+  private PropertiesFactory propertiesFactory;
 
   private ConfigSourceType someSourceType;
 
@@ -31,6 +38,14 @@ public class YamlConfigFileTest {
 
     MockInjector.reset();
     MockInjector.setInstance(YamlParser.class, yamlParser);
+
+    when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
+      @Override
+      public Properties answer(InvocationOnMock invocation) {
+        return new Properties();
+      }
+    });
+    MockInjector.setInstance(PropertiesFactory.class, propertiesFactory);
   }
 
   @Test
@@ -52,6 +67,36 @@ public class YamlConfigFileTest {
 
     assertSame(someContent, configFile.getContent());
     assertSame(yamlProperties, configFile.asProperties());
+  }
+
+  @Test
+  public void testWhenHasContentWithOrder() throws Exception {
+    when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
+      @Override
+      public Properties answer(InvocationOnMock invocation) {
+        return new OrderedProperties();
+      }
+    });
+    Properties someProperties = new Properties();
+    String key = ConfigConsts.CONFIG_FILE_CONTENT_KEY;
+    String someContent = "someKey: 'someValue'\nsomeKey2: 'someValue2'";
+    someProperties.setProperty(key, someContent);
+    someSourceType = ConfigSourceType.LOCAL;
+
+    Properties yamlProperties = new YamlParser().yamlToProperties(someContent);
+
+    when(configRepository.getConfig()).thenReturn(someProperties);
+    when(configRepository.getSourceType()).thenReturn(someSourceType);
+    when(yamlParser.yamlToProperties(someContent)).thenReturn(yamlProperties);
+
+    YamlConfigFile configFile = new YamlConfigFile(someNamespace, configRepository);
+
+    assertSame(someContent, configFile.getContent());
+    assertSame(yamlProperties, configFile.asProperties());
+
+    String[] actualArrays = configFile.asProperties().keySet().toArray(new String[]{});
+    String[] expectedArrays = {"someKey", "someKey2"};
+    assertArrayEquals(expectedArrays, actualArrays);
   }
 
   @Test
@@ -78,7 +123,8 @@ public class YamlConfigFileTest {
 
     when(configRepository.getConfig()).thenReturn(someProperties);
     when(configRepository.getSourceType()).thenReturn(someSourceType);
-    when(yamlParser.yamlToProperties(someInvalidContent)).thenThrow(new RuntimeException("some exception"));
+    when(yamlParser.yamlToProperties(someInvalidContent))
+        .thenThrow(new RuntimeException("some exception"));
 
     YamlConfigFile configFile = new YamlConfigFile(someNamespace, configRepository);
 

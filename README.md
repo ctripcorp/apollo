@@ -367,6 +367,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![竹贝](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zhubei.png) 
 ![iMile(中东)](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/imile.png) 
 ![哈罗出行](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/helloglobal.png) 
+![智联招聘](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zhaopin.png) 
+![阿卡索](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/acadsoc.png) 
 
 # Awards
 
