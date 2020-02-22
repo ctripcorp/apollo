@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PrefixPathController {
 
-  @Value("${prefixPath:}")
+  @Value("${prefix.path:}")
   private String prefixPath;
 
   @GetMapping("/prefix-path")
