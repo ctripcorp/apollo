@@ -84,6 +84,8 @@ public class GrayReleaseRulesHolderTest {
 
     assertEquals(someReleaseId, grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule
         (someClientAppId, someClientIp, someAppId, someClusterName, someNamespaceName));
+    assertEquals(someReleaseId, grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule
+        (someClientAppId.toUpperCase(), someClientIp, someAppId.toUpperCase(), someClusterName, someNamespaceName.toUpperCase()));
     assertNull(grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule(someClientAppId,
         anotherClientIp, someAppId, someClusterName, someNamespaceName));
 
@@ -94,6 +96,8 @@ public class GrayReleaseRulesHolderTest {
 
     assertTrue(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, someClientIp,
         someNamespaceName));
+    assertTrue(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId.toUpperCase(), someClientIp,
+        someNamespaceName.toUpperCase()));
     assertFalse(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, anotherClientIp,
         someNamespaceName));
     assertFalse(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, someClientIp,

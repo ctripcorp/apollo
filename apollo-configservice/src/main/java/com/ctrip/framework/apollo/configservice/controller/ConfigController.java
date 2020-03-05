@@ -177,7 +177,7 @@ public class ConfigController {
    * Release in lower index override those in higher index
    */
   Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
-    Map<String, String> result = Maps.newHashMap();
+    Map<String, String> result = Maps.newLinkedHashMap();
     for (Release release : Lists.reverse(releases)) {
       result.putAll(gson.fromJson(release.getConfigurations(), configurationTypeReference));
     }

@@ -341,35 +341,52 @@ public class NotificationControllerV2Test {
   }
 
   @Test
-  public void testPollNotificationWithCaseInsensitiveAppId() throws Exception {
-    String someWatchKey = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
+  public void testPollNotificationWithIncorrectCase() throws Exception {
+    String appIdWithIncorrectCase = someAppId.toUpperCase();
+    String namespaceWithIncorrectCase = defaultNamespace.toUpperCase();
+    String someMessage = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
         .join(someAppId, someCluster, defaultNamespace);
-    String anotherWatchKey = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
-        .join("someAPPID", someCluster, defaultNamespace);
+    String someWatchKey = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR)
+        .join(appIdWithIncorrectCase, someCluster, defaultNamespace);
 
     Multimap<String, String> watchKeysMap =
         assembleMultiMap(defaultNamespace, Lists.newArrayList(someWatchKey));
 
     String notificationAsString =
-        transformApolloConfigNotificationsToString(defaultNamespace, someNotificationId);
+        transformApolloConfigNotificationsToString(defaultNamespace.toUpperCase(), someNotificationId);
 
+    when(namespaceUtil.filterNamespaceName(namespaceWithIncorrectCase)).thenReturn(namespaceWithIncorrectCase);
+    when(namespaceUtil.normalizeNamespace(appIdWithIncorrectCase, namespaceWithIncorrectCase)).thenReturn(defaultNamespace);
     when(watchKeysUtil
-        .assembleAllWatchKeys(someAppId, someCluster, Sets.newHashSet(defaultNamespace),
+        .assembleAllWatchKeys(appIdWithIncorrectCase, someCluster, Sets.newHashSet(defaultNamespace),
             someDataCenter)).thenReturn(watchKeysMap);
 
     DeferredResult<ResponseEntity<List<ApolloConfigNotification>>>
         deferredResult = controller
-        .pollNotification(someAppId, someCluster, notificationAsString, someDataCenter,
+        .pollNotification(appIdWithIncorrectCase, someCluster, notificationAsString, someDataCenter,
             someClientIp);
 
     long someId = 1;
-    ReleaseMessage someReleaseMessage = new ReleaseMessage(anotherWatchKey);
+    ReleaseMessage someReleaseMessage = new ReleaseMessage(someMessage);
     someReleaseMessage.setId(someId);
 
     controller.handleMessage(someReleaseMessage, Topics.APOLLO_RELEASE_TOPIC);
 
-    //now both of them should have result
     assertTrue(deferredResult.hasResult());
+
+    ResponseEntity<List<ApolloConfigNotification>> response =
+        (ResponseEntity<List<ApolloConfigNotification>>) deferredResult.getResult();
+
+    assertEquals(1, response.getBody().size());
+    ApolloConfigNotification notification = response.getBody().get(0);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(namespaceWithIncorrectCase, notification.getNamespaceName());
+    assertEquals(someId, notification.getNotificationId());
+
+    ApolloNotificationMessages notificationMessages = notification.getMessages();
+    assertEquals(1, notificationMessages.getDetails().size());
+    assertEquals(someId, notificationMessages.get(someMessage).longValue());
+
   }
 
   private String transformApolloConfigNotificationsToString(

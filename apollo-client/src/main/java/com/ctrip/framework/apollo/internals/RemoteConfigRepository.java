@@ -158,7 +158,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   }
 
   private Properties transformApolloConfigToProperties(ApolloConfig apolloConfig) {
-    Properties result = new Properties();
+    Properties result = propertiesFactory.getPropertiesInstance();
     result.putAll(apolloConfig.getConfigurations());
     return result;
   }

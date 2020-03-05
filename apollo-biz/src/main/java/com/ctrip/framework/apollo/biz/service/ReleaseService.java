@@ -31,14 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -153,7 +146,7 @@ public class ReleaseService {
 
     Map<String, String> operateNamespaceItems = getNamespaceItems(namespace);
 
-    Map<String, Object> operationContext = Maps.newHashMap();
+    Map<String, Object> operationContext = Maps.newLinkedHashMap();
     operationContext.put(ReleaseOperationContext.SOURCE_BRANCH, branchName);
     operationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, branchReleaseId);
     operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
@@ -188,7 +181,7 @@ public class ReleaseService {
     }
 
     //master release
-    Map<String, Object> operationContext = Maps.newHashMap();
+    Map<String, Object> operationContext = Maps.newLinkedHashMap();
     operationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
 
     Release release = masterRelease(namespace, releaseName, releaseComment, operateNamespaceItems,
@@ -211,7 +204,7 @@ public class ReleaseService {
     Release parentLatestRelease = findLatestActiveRelease(parentNamespace);
     Map<String, String> parentConfigurations = parentLatestRelease != null ?
             gson.fromJson(parentLatestRelease.getConfigurations(),
-                    GsonType.CONFIG) : new HashMap<>();
+                    GsonType.CONFIG) : new LinkedHashMap<>();
     long baseReleaseId = parentLatestRelease == null ? 0 : parentLatestRelease.getId();
 
     Map<String, String> configsToPublish = mergeConfiguration(parentConfigurations, childNamespaceItems);
@@ -342,7 +335,7 @@ public class ReleaseService {
                                                       childNamespace.getNamespaceName());
     long previousReleaseId = previousRelease == null ? 0 : previousRelease.getId();
 
-    Map<String, Object> releaseOperationContext = Maps.newHashMap();
+    Map<String, Object> releaseOperationContext = Maps.newLinkedHashMap();
     releaseOperationContext.put(ReleaseOperationContext.BASE_RELEASE_ID, baseReleaseId);
     releaseOperationContext.put(ReleaseOperationContext.IS_EMERGENCY_PUBLISH, isEmergencyPublish);
     releaseOperationContext.put(ReleaseOperationContext.BRANCH_RELEASE_KEYS, branchReleaseKeys);
@@ -372,7 +365,7 @@ public class ReleaseService {
 
   private Map<String, String> mergeConfiguration(Map<String, String> baseConfigurations,
                                                  Map<String, String> coverConfigurations) {
-    Map<String, String> result = new HashMap<>();
+    Map<String, String> result = new LinkedHashMap<>();
     //copy base configuration
     for (Map.Entry<String, String> entry : baseConfigurations.entrySet()) {
       result.put(entry.getKey(), entry.getValue());
@@ -388,8 +381,8 @@ public class ReleaseService {
 
 
   private Map<String, String> getNamespaceItems(Namespace namespace) {
-    List<Item> items = itemService.findItemsWithoutOrdered(namespace.getId());
-    Map<String, String> configurations = new HashMap<>();
+    List<Item> items = itemService.findItemsWithOrdered(namespace.getId());
+    Map<String, String> configurations = new LinkedHashMap<>();
     for (Item item : items) {
       if (StringUtils.isEmpty(item.getKey())) {
         continue;
@@ -520,7 +513,7 @@ public class ReleaseService {
       Map<String, String> masterReleaseConfigs, Map<String, String> branchReleaseConfigs,
       Collection<String> branchReleaseKeys) {
 
-    Map<String, String> modifiedConfigs = new HashMap<>();
+    Map<String, String> modifiedConfigs = new LinkedHashMap<>();
 
     if (CollectionUtils.isEmpty(branchReleaseConfigs)) {
       return modifiedConfigs;

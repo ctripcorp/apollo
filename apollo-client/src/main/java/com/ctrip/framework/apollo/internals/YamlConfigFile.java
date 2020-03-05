@@ -61,7 +61,7 @@ public class YamlConfigFile extends PlainTextConfigFile implements PropertiesCom
 
   private Properties toProperties() {
     if (!this.hasContent()) {
-      return new Properties();
+      return propertiesFactory.getPropertiesInstance();
     }
 
     try {

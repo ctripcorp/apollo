@@ -30,17 +30,27 @@ public class PortalMetaServerProvider {
      */
     private static final String APOLLO_ENV_PROPERTIES_FILE_PATH = "apollo-env.properties";
 
-    // thread safe
-    private static volatile Map<Env, String> domains = initializeDomains();
+    private static final PortalMetaServerProvider instance = new PortalMetaServerProvider();
 
-    public PortalMetaServerProvider() {
+    private Map<Env, String> domains;
 
+    private PortalMetaServerProvider() {
+        domains = initializeDomains();
+    }
+
+    public static PortalMetaServerProvider getInstance() {
+        return instance;
+    }
+
+    String getMetaServerAddress(Env targetEnv) {
+        String metaServerAddress = domains.get(targetEnv);
+        return metaServerAddress == null ? null : metaServerAddress.trim();
     }
 
     /**
      * load all environment's meta address dynamically when this class loaded by JVM
      */
-    private static Map<Env, String> initializeDomains() {
+    private Map<Env, String> initializeDomains() {
         // find key-value from System Property which key ends with "_meta" (case insensitive)
         Map<String, String> metaServerAddressesFromSystemProperty = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(System.getProperties(), "_meta");
         // remove key's suffix "_meta" (case insensitive)
@@ -77,55 +87,23 @@ public class PortalMetaServerProvider {
         }
 
         // log all
-        logger.info("All environment's meta server address: {}", map);
+        logger.info("Loaded meta server addresses: {}", map);
         return map;
-    }
-
-    /**
-     * reload all
-     * environments and meta server addresses
-     */
-    public static void reloadAll() {
-        domains = initializeDomains();
-    }
-
-    public static String getMetaServerAddress(Env targetEnv) {
-        String metaServerAddress = domains.get(targetEnv);
-        return metaServerAddress == null ? null : metaServerAddress.trim();
     }
 
     /**
      * add a environment's meta server address
      * for the feature: add self-define environment in the web ui
-     * @param env
-     * @param metaServerAddress
      */
-    public static void addMetaServerAddress(Env env, String metaServerAddress) {
+    void mockMetaServerAddress(Env env, String metaServerAddress) {
         domains.put(env, metaServerAddress);
     }
 
     /**
-     * delete the meta server address of the environment
-     * @param env
+     * only for test
+     * reload all environments and meta server addresses
      */
-    public static void deleteMetaServerAddress(Env env) {
-        domains.remove(env);
+    void reset() {
+        domains = initializeDomains();
     }
-
-    /**
-     * update the meta server address of the environment
-     * @param env
-     * @param metaServerAddress
-     */
-    public static void updateMetaServerAddress(Env env, String metaServerAddress) {
-        domains.put(env, metaServerAddress);
-    }
-
-    /**
-     * clear all environments and meta server addresses saved
-     */
-    public static void clear() {
-        domains.clear();
-    }
-
 }

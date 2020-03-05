@@ -8,55 +8,51 @@ import static org.junit.Assert.assertEquals;
 
 public class PortalMetaServerProviderTest {
 
-    /**
-     * may be the environments and meta server addresses
-     * have been clear, so we need to reload when start the every unit test
-     */
-    @Before
-    public void reload() {
-        PortalMetaServerProvider.reloadAll();
-    }
+  private PortalMetaServerProvider portalMetaServerProvider;
 
-    @After
-    public void tearDown() throws Exception {
-        System.clearProperty("dev_meta");
-    }
+  @Before
+  public void setUp() throws Exception {
+    portalMetaServerProvider = PortalMetaServerProvider.getInstance();
+  }
 
-    @Test
-    public void testFromPropertyFile() {
-        assertEquals("http://localhost:8080", PortalMetaServerProvider.getMetaServerAddress(Env.LOCAL));
-        assertEquals("${dev_meta}", PortalMetaServerProvider.getMetaServerAddress(Env.DEV));
-        assertEquals("${pro_meta}", PortalMetaServerProvider.getMetaServerAddress(Env.PRO));
-    }
+  @After
+  public void tearDown() throws Exception {
+    System.clearProperty("dev_meta");
+    System.clearProperty("fat_meta");
+    PortalMetaServerProvider.getInstance().reset();
+  }
 
-    /**
-     * testing the environment dynamic added from system property
-     */
-    @Test
-    public void testDynamicEnvironmentFromSystemProperty() {
-        String someDevMetaAddress = "someMetaAddress";
-        String someFatMetaAddress = "someFatMetaAddress";
-        System.setProperty("dev_meta", someDevMetaAddress);
-        System.setProperty("fat_meta", someFatMetaAddress);
-        // reload above added
-        PortalMetaServerProvider.reloadAll();
-        assertEquals(someDevMetaAddress, PortalMetaServerProvider.getMetaServerAddress(Env.DEV));
-        assertEquals(someFatMetaAddress, PortalMetaServerProvider.getMetaServerAddress(Env.FAT));
+  @Test
+  public void testFromPropertyFile() {
+    assertEquals("http://localhost:8080", portalMetaServerProvider.getMetaServerAddress(Env.LOCAL));
+    assertEquals("${dev_meta}", portalMetaServerProvider.getMetaServerAddress(Env.DEV));
+    assertEquals("${pro_meta}", portalMetaServerProvider.getMetaServerAddress(Env.PRO));
+  }
 
-        String randomAddress = "randomAddress";
-        String randomEnvironment = "randomEnvironment";
-        System.setProperty(randomEnvironment + "_meta", randomAddress);
-        // reload above added
-        PortalMetaServerProvider.reloadAll();
-        assertEquals(
-                randomAddress,
-                PortalMetaServerProvider.getMetaServerAddress(
-                        Env.valueOf(randomEnvironment)
-                )
-        );
+  /**
+   * testing the environment dynamic added from system property
+   */
+  @Test
+  public void testDynamicEnvironmentFromSystemProperty() {
+    String someDevMetaAddress = "someMetaAddress";
+    String someFatMetaAddress = "someFatMetaAddress";
+    System.setProperty("dev_meta", someDevMetaAddress);
+    System.setProperty("fat_meta", someFatMetaAddress);
+    // reload above added
+    portalMetaServerProvider.reset();
+    assertEquals(someDevMetaAddress, portalMetaServerProvider.getMetaServerAddress(Env.DEV));
+    assertEquals(someFatMetaAddress, portalMetaServerProvider.getMetaServerAddress(Env.FAT));
 
-        // clear the property
-        System.clearProperty(randomEnvironment + "_meta");
-    }
+    String randomAddress = "randomAddress";
+    String randomEnvironment = "randomEnvironment";
+    System.setProperty(randomEnvironment + "_meta", randomAddress);
+    // reload above added
+    portalMetaServerProvider.reset();
+    assertEquals(randomAddress,
+        portalMetaServerProvider.getMetaServerAddress(Env.valueOf(randomEnvironment)));
+
+    // clear the property
+    System.clearProperty(randomEnvironment + "_meta");
+  }
 
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class GrayReleaseRuleCache {
+public class GrayReleaseRuleCache implements Comparable<GrayReleaseRuleCache> {
   private long ruleId;
   private String branchName;
   private String namespaceName;
@@ -66,5 +66,10 @@ public class GrayReleaseRuleCache {
       }
     }
     return false;
+  }
+
+  @Override
+  public int compareTo(GrayReleaseRuleCache that) {
+    return Long.compare(this.ruleId, that.ruleId);
   }
 }

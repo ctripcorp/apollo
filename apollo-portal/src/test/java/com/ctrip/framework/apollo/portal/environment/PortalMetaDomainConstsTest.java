@@ -14,14 +14,14 @@ public class PortalMetaDomainConstsTest extends BaseIntegrationTest {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        MockMetaServerProvider.clear();
+        clear();
     }
 
     @Test
     public void testGetMetaDomain() {
         // local
         String localMetaServerAddress = "http://localhost:8080";
-        PortalMetaServerProvider.updateMetaServerAddress(Env.LOCAL, localMetaServerAddress);
+        mockMetaServerAddress(Env.LOCAL, localMetaServerAddress);
         assertEquals(localMetaServerAddress, PortalMetaDomainConsts.getDomain(Env.LOCAL));
 
         // add this environment without meta server address
@@ -38,8 +38,8 @@ public class PortalMetaDomainConstsTest extends BaseIntegrationTest {
         String validServer = " http://localhost:" + PORT + " ";
         String invalidServer = "http://localhost:" + findFreePort();
 
-        MockMetaServerProvider.mock(Env.FAT, validServer + "," + invalidServer);
-        MockMetaServerProvider.mock(Env.UAT, invalidServer + "," + validServer);
+        mockMetaServerAddress(Env.FAT, validServer + "," + invalidServer);
+        mockMetaServerAddress(Env.UAT, invalidServer + "," + validServer);
 
         assertEquals(validServer.trim(), PortalMetaDomainConsts.getDomain(Env.FAT));
         assertEquals(validServer.trim(), PortalMetaDomainConsts.getDomain(Env.UAT));
@@ -50,21 +50,18 @@ public class PortalMetaDomainConstsTest extends BaseIntegrationTest {
         String invalidServer = "http://localhost:" + findFreePort() + " ";
         String anotherInvalidServer = "http://localhost:" + findFreePort() + " ";
 
-        MockMetaServerProvider.mock(Env.LPT, invalidServer + "," + anotherInvalidServer);
+        mockMetaServerAddress(Env.LPT, invalidServer + "," + anotherInvalidServer);
 
         String metaServer = PortalMetaDomainConsts.getDomain(Env.LPT);
 
         assertTrue(metaServer.equals(invalidServer.trim()) || metaServer.equals(anotherInvalidServer.trim()));
     }
 
-    public static class MockMetaServerProvider {
+    private void mockMetaServerAddress(Env env, String metaServerAddress) {
+        PortalMetaServerProvider.getInstance().mockMetaServerAddress(env, metaServerAddress);
+    }
 
-        private static void mock(Env env, String metaServerAddress) {
-            PortalMetaServerProvider.addMetaServerAddress(env, metaServerAddress);
-        }
-
-        private static void clear() {
-            PortalMetaServerProvider.clear();
-        }
+    private void clear() {
+        PortalMetaServerProvider.getInstance().reset();
     }
 }

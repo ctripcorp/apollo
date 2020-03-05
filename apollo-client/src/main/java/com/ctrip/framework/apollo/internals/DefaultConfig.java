@@ -4,12 +4,12 @@ import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -88,7 +88,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
     // step 4: check properties file from classpath
     if (value == null && m_resourceProperties != null) {
-      value = (String) m_resourceProperties.get(key);
+      value = m_resourceProperties.getProperty(key);
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
@@ -115,7 +115,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
 
   private Set<String> stringPropertyNames(Properties properties) {
     //jdk9以下版本Properties#enumerateStringProperties方法存在性能问题，keys() + get(k) 重复迭代, jdk9之后改为entrySet遍历.
-    Map<String, String> h = new HashMap<>();
+    Map<String, String> h = new LinkedHashMap<>();
     for (Map.Entry<Object, Object> e : properties.entrySet()) {
       Object k = e.getKey();
       Object v = e.getValue();
@@ -133,7 +133,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     ConfigSourceType sourceType = m_configRepository.getSourceType();
-    Properties newConfigProperties = new Properties();
+    Properties newConfigProperties = propertiesFactory.getPropertiesInstance();
     newConfigProperties.putAll(newProperties);
 
     Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties, sourceType);
@@ -213,7 +213,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     Properties properties = null;
 
     if (in != null) {
-      properties = new Properties();
+      properties = propertiesFactory.getPropertiesInstance();
 
       try {
         properties.load(in);
