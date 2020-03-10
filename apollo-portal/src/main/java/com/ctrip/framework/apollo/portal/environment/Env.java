@@ -192,5 +192,23 @@ public class Env {
     public String getName() {
         return name;
     }
-    
+
+    /**
+     * conversion key from {@link String} to {@link Env}
+     * @param metaServerAddresses key is environment, value is environment's meta server address
+     * @return relationship between {@link Env} and meta server address
+     */
+    public static Map<Env, String> conversionKey(Map<String, String> metaServerAddresses) {
+        // add to domain
+        Map<Env, String> map = new ConcurrentHashMap<>();
+        for(Map.Entry<String, String> entry : metaServerAddresses.entrySet()) {
+            // add new environment
+            Env env = Env.addEnvironment(entry.getKey());
+            // get meta server address value
+            String value = entry.getValue();
+            // put pair (Env, meta server address)
+            map.put(env, value);
+        }
+        return map;
+    }
 }

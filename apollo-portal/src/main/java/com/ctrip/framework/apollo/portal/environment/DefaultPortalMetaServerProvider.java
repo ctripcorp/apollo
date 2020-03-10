@@ -1,0 +1,106 @@
+package com.ctrip.framework.apollo.portal.environment;
+
+import static com.ctrip.framework.apollo.portal.environment.Env.conversionKey;
+
+import com.ctrip.framework.apollo.core.utils.ResourceUtils;
+import com.ctrip.framework.apollo.portal.util.KeyValueUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Only use in apollo-portal
+ * load all meta server address from
+ *  - System Property           [key ends with "_meta" (case insensitive)]
+ *  - OS environment variable   [key ends with "_meta" (case insensitive)]
+ *  - user's configuration file [key ends with ".meta" (case insensitive)]
+ * when apollo-portal start up.
+ * @see com.ctrip.framework.apollo.core.internals.LegacyMetaServerProvider
+ * @author wxq
+ */
+class DefaultPortalMetaServerProvider implements PortalMetaServerProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultPortalMetaServerProvider.class);
+
+    /**
+     * environments and their meta server address
+     * properties file path
+     */
+    private static final String APOLLO_ENV_PROPERTIES_FILE_PATH = "apollo-env.properties";
+
+    private static final DefaultPortalMetaServerProvider INSTANCE = new DefaultPortalMetaServerProvider();
+
+
+    public static DefaultPortalMetaServerProvider getInstance() {
+        return INSTANCE;
+    }
+
+    private volatile Map<Env, String> domains;
+
+    private DefaultPortalMetaServerProvider() {
+        domains = initializeDomains();
+    }
+
+    @Override
+    public String getMetaServerAddress(Env targetEnv) {
+        String metaServerAddress = domains.get(targetEnv);
+        return metaServerAddress == null ? null : metaServerAddress.trim();
+    }
+
+    @Override
+    public boolean exists(Env targetEnv) {
+        return domains.containsKey(targetEnv);
+    }
+
+    @Override
+    public void reload() {
+        domains = initializeDomains();
+    }
+
+    /**
+     * load all environment's meta address dynamically when this class loaded by JVM
+     */
+    private static Map<Env, String> initializeDomains() {
+
+        // add to domain
+        Map<Env, String> map = new ConcurrentHashMap<>();
+        // lower priority add first
+        map.putAll(getDomainsFromPropertiesFile());
+        map.putAll(getDomainsFromOSEnvironment());
+        map.putAll(getDomainsFromSystemProperty());
+
+        // log all
+        logger.info("Loaded meta server addresses: {}", map);
+        return map;
+    }
+
+    static Map<Env, String> getDomainsFromSystemProperty() {
+        // find key-value from System Property which key ends with "_meta" (case insensitive)
+        Map<String, String> metaServerAddressesFromSystemProperty = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(System.getProperties(), "_meta");
+        // remove key's suffix "_meta" (case insensitive)
+        metaServerAddressesFromSystemProperty = KeyValueUtils.removeKeySuffix(metaServerAddressesFromSystemProperty, "_meta".length());
+        return conversionKey(metaServerAddressesFromSystemProperty);
+    }
+
+    static Map<Env, String> getDomainsFromOSEnvironment() {
+        // find key-value from OS environment variable which key ends with "_meta" (case insensitive)
+        Map<String, String> metaServerAddressesFromOSEnvironment = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(System.getenv(), "_meta");
+        // remove key's suffix "_meta" (case insensitive)
+        metaServerAddressesFromOSEnvironment = KeyValueUtils.removeKeySuffix(metaServerAddressesFromOSEnvironment, "_meta".length());
+        return conversionKey(metaServerAddressesFromOSEnvironment);
+    }
+
+    static Map<Env, String> getDomainsFromPropertiesFile() {
+        // find key-value from properties file which key ends with ".meta" (case insensitive)
+        Properties properties = new Properties();
+        properties = ResourceUtils.readConfigFile(APOLLO_ENV_PROPERTIES_FILE_PATH, properties);
+        Map<String, String> metaServerAddressesFromPropertiesFile = KeyValueUtils.filterWithKeyIgnoreCaseEndsWith(properties, ".meta");
+        // remove key's suffix ".meta" (case insensitive)
+        metaServerAddressesFromPropertiesFile = KeyValueUtils.removeKeySuffix(metaServerAddressesFromPropertiesFile, ".meta".length());
+        return conversionKey(metaServerAddressesFromPropertiesFile);
+    }
+
+}
