@@ -88,7 +88,7 @@ appService.service('EventManager', [function () {
     }
 
     /**
-     * 
+     *
      * @param eventType  acquired. event type
      * @param subscriberId acquired. subscriber id which get from event manager when subscribe
      * @param objectId optional.    subscribe object id and empty value means subscribe event type with all object
@@ -127,6 +127,7 @@ appService.service('EventManager', [function () {
         EventType: {
             REFRESH_NAMESPACE: 'refresh_namespace',
             PUBLISH_NAMESPACE: 'pre_public_namespace',
+            TEXT_COMPARE: 'text_compare',
             MERGE_AND_PUBLISH_NAMESPACE: 'merge_and_publish_namespace',
             PRE_ROLLBACK_NAMESPACE: 'pre_rollback_namespace',
             ROLLBACK_NAMESPACE: 'rollback_namespace',

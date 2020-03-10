@@ -51,52 +51,67 @@
                         <table class="table table-bordered table-striped text-center table-hover"
                             ng-if="toReleaseNamespace.isPropertiesFormat && !toReleaseNamespace.isBranch">
                             <thead>
-                                <tr>
-                                    <th>
-                                        {{'Component.Publish.Key' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.PublishedValue' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.NoPublishedValue' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.ModifyUser' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.ModifyTime' | translate }}
-                                    </th>
-                                </tr>
+                            <tr>
+                                <th>
+                                    {{'Component.Publish.Key' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.PublishedValue' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.NoPublishedValue' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.ModifyUser' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.ModifyTime' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.Compare'|translate}}
+                                </th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="config in toReleaseNamespace.items"
-                                    ng-if="config.item.key && config.isModified">
-                                    <td width="20%" title="{{config.item.key}}">
-                                        <span ng-bind="config.item.key"></span>
-                                        <span class="label label-success" ng-if="config.isModified && !config.oldValue"
-                                            data-tooltip="tooltip" data-placement="bottom"
-                                            title="{{'Component.Publish.NewAddedTips' | translate }}">{{'Component.Publish.NewAdded' | translate }}</span>
-                                        <span class="label label-info"
-                                            ng-if="config.isModified && config.oldValue && !config.isDeleted"
-                                            data-tooltip="tooltip" data-placement="bottom"
-                                            title="{{'Component.Publish.ModifiedTips' | translate }}">{{'Component.Publish.Modified' | translate }}</span>
-                                        <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
-                                            data-placement="bottom"
-                                            title="{{'Component.Publish.DeletedTips' | translate }}">{{'Component.Publish.Deleted' | translate }}</span>
-                                    </td>
-                                    <td width="25%" title="{{config.oldValue}}">
-                                        <span ng-bind="config.oldValue"></span>
-                                    </td>
-                                    <td width="25%" title="{{config.newValue}}">
-                                        <span ng-bind="config.newValue"></span>
-                                    </td>
-                                    <td width="15%" ng-bind="config.item.dataChangeLastModifiedBy">
-                                    </td>
-                                    <td width="15%"
-                                        ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
-                                    </td>
-                                </tr>
+                            <tr ng-repeat="config in toReleaseNamespace.items"
+                                ng-if="config.item.key && config.isModified">
+                                <td width="20%" title="{{config.item.key}}">
+                                    <span ng-bind="config.item.key"></span>
+                                    <span class="label label-success" ng-if="config.isModified && !config.oldValue"
+                                          data-tooltip="tooltip" data-placement="bottom"
+                                          title="{{'Component.Publish.NewAddedTips' | translate }}">{{'Component.Publish.NewAdded' | translate }}</span>
+                                    <span class="label label-info"
+                                          ng-if="config.isModified && config.oldValue && !config.isDeleted"
+                                          data-tooltip="tooltip" data-placement="bottom"
+                                          title="{{'Component.Publish.ModifiedTips' | translate }}">{{'Component.Publish.Modified' | translate }}</span>
+                                    <span class="label label-danger" ng-if="config.isDeleted" data-tooltip="tooltip"
+                                          data-placement="bottom"
+                                          title="{{'Component.Publish.DeletedTips' | translate }}">{{'Component.Publish.Deleted' | translate }}</span>
+                                </td>
+                                <td width="25%" title="{{config.oldValue}}">
+                                    <span ng-bind="config.oldValue"></span>
+                                </td>
+                                <td width="25%" title="{{config.newValue}}">
+                                    <span ng-bind="config.newValue"></span>
+                                </td>
+                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
+                                </td>
+                                <td width="10%"
+                                    ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
+                                </td>
+                                <td width="10%">
+                                    <span>
+                                        <button type="button" class="btn btn-success"
+                                                ng-click="compare(config,0)">{{'Component.Publish.Text.Compare' | translate
+                                        }}
+                                    </button>
+                                    <button type="button" style="margin-top: 20px"  class="btn btn-primary"
+                                            ng-click="compare(config,1)">{{'Component.Publish.Json.Compare' | translate
+                                        }}
+                                    </button>
+                                    </span>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
 
@@ -104,50 +119,65 @@
                         <table class="table table-bordered table-striped text-center table-hover" ng-if="toReleaseNamespace.isPropertiesFormat &&
                                toReleaseNamespace.isBranch && !toReleaseNamespace.mergeAndPublish">
                             <thead>
-                                <tr>
-                                    <th>
-                                        {{'Component.Publish.Key' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.MasterValue' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.GrayPublishedValue' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.GrayNoPublishedValue' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.ModifyUser' | translate }}
-                                    </th>
-                                    <th>
-                                        {{'Component.Publish.ModifyTime' | translate }}
-                                    </th>
-                                </tr>
+                            <tr>
+                                <th>
+                                    {{'Component.Publish.Key' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.MasterValue' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.GrayPublishedValue' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.GrayNoPublishedValue' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.ModifyUser' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.ModifyTime' | translate }}
+                                </th>
+                                <th>
+                                    {{'Component.Publish.Compare'|translate}}
+                                </th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="config in toReleaseNamespace.branchItems"
-                                    ng-if="config.isModified || config.isDeleted">
-                                    <td width="15%" title="{{config.item.key}}">
-                                        <span ng-bind="config.item.key"></span>
-                                        <span class="label label-danger"
-                                            ng-show="config.isDeleted">{{'Component.Publish.Deleted' | translate }}</span>
-                                    </td>
-                                    <td width="20%" title="{{config.masterReleaseValue}}">
-                                        <span ng-bind="config.masterReleaseValue"></span>
-                                    </td>
-                                    <td width="20%" title="{{config.oldValue}}">
-                                        <span ng-bind="config.oldValue"></span>
-                                    </td>
-                                    <td width="20%" title="{{config.newValue}}">
-                                        <span ng-bind="config.newValue"></span>
-                                    </td>
-                                    <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
-                                    </td>
-                                    <td width="15%"
-                                        ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
-                                    </td>
-                                </tr>
+                            <tr ng-repeat="config in toReleaseNamespace.branchItems"
+                                ng-if="config.isModified || config.isDeleted">
+                                <td width="15%" title="{{config.item.key}}">
+                                    <span ng-bind="config.item.key"></span>
+                                    <span class="label label-danger"
+                                          ng-show="config.isDeleted">{{'Component.Publish.Deleted' | translate }}</span>
+                                </td>
+                                <td width="20%" title="{{config.masterReleaseValue}}">
+                                    <span ng-bind="config.masterReleaseValue"></span>
+                                </td>
+                                <td width="20%" title="{{config.oldValue}}">
+                                    <span ng-bind="config.oldValue"></span>
+                                </td>
+                                <td width="20%" title="{{config.newValue}}">
+                                    <span ng-bind="config.newValue"></span>
+                                </td>
+                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
+                                </td>
+                                <td width="10%"
+                                    ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
+                                </td>
+                                <td width="5%">
+                                    <span>
+                                        <button type="button" class="btn btn-success"
+                                                ng-click="compare(config,0)">{{'Component.Publish.Text.Compare' | translate
+                                        }}
+                                    </button>
+                                    <button type="button" style="margin-top: 20px"  class="btn btn-primary"
+                                            ng-click="compare(config,1)">{{'Component.Publish.Json.Compare' | translate
+                                        }}
+                                    </button>
+                                    </span>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
 

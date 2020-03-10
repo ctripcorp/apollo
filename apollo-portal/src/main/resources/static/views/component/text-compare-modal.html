@@ -1,0 +1,35 @@
+<div class="modal fade" id="textCompareModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header panel-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{'Component.Publish.Compare' | translate }}</h4>
+            </div>
+            <div>
+                <div class="compare-text-div">
+                    <label for="oldV">{{'Component.Publish.PublishedValue' | translate }} changes</label>
+                    <span ng-bind-html="leftHtmlDiff" class="border-compare-text "
+                          ng-class="{'json_input':mode==1 && leftIsJson}"
+                          id="oldV" style="overflow: scroll"></span>
+                </div>
+
+                <div class="compare-text-div">
+                    <label for="newV">{{'Component.Publish.NoPublishedValue' | translate }} changes</label>
+                    <span ng-bind-html="rightHtmlDiff" class="border-compare-text "
+                          ng-class="{'json_input':mode==1 && rightIsJson}"
+                          id="newV"></span>
+                </div>
+            </div>
+
+
+            <div class="modal-footer" style="margin-top: 10px">
+                <button type="button" class="btn btn-success"
+                        data-dismiss="modal">{{'Common.Ok' | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

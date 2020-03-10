@@ -213,6 +213,9 @@
             <releasemodal app-id="pageContext.appId" env="pageContext.env" cluster="pageContext.clusterName">
             </releasemodal>
 
+            <textcomparemodal app-id="pageContext.appId" env="pageContext.env" cluster="pageContext.clusterName">
+            </textcomparemodal>
+
             <itemmodal to-operation-namespace="toOperationNamespace" app-id="pageContext.appId" env="pageContext.env"
                 cluster="pageContext.clusterName" item="item">
             </itemmodal>
@@ -411,6 +414,7 @@
     <script type="application/javascript" src="scripts/directive/namespace-panel-directive.js"></script>
     <script type="application/javascript" src="scripts/directive/diff-directive.js"></script>
     <script type="application/javascript" src="scripts/directive/release-modal-directive.js"></script>
+    <script type="application/javascript" src="scripts/directive/text-compare-modal-directive.js"></script>
     <script type="application/javascript" src="scripts/directive/item-modal-directive.js"></script>
     <script type="application/javascript" src="scripts/directive/show-text-modal-directive.js"></script>
     <script type="application/javascript" src="scripts/directive/rollback-modal-directive.js"></script>
@@ -424,7 +428,8 @@
     <script type="application/javascript" src="scripts/controller/config/ConfigBaseInfoController.js"></script>
 
     <script type="application/javascript" src="scripts/PageCommon.js"></script>
-
+    <script type="application/javascript" src="scripts/json/jsl.format.js"></script>
+    <script type="application/javascript" src="scripts/json/jsl.parse.js"></script>
     <script src="scripts/valdr.js" type="text/javascript"></script>
 </body>
 
