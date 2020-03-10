@@ -208,6 +208,13 @@ public class ItemController {
     return ResponseEntity.ok().build();
   }
 
+  @PutMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/revoke-items")
+  public void revokeItems(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName,
+      @PathVariable String namespaceName,@RequestBody NamespaceTextModel model) {
+
+    configService.revokeItem(model);
+
+  }
   private void doSyntaxCheck(NamespaceTextModel model) {
     if (StringUtils.isBlank(model.getConfigText())) {
       return;
