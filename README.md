@@ -32,7 +32,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 > 如访问github速度缓慢，可以访问[gitee镜像](https://gitee.com/nobodyiam/apollo)，不定期同步
 
 # Screenshots
-![配置界面](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/apollo-home-screenshot.png)
+![配置界面](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/apollo-home-screenshot.jpg)
 
 # Features
 * **统一管理不同环境、不同集群的配置**
@@ -373,6 +373,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![妙知旅](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mojory.png) 
 ![程多多](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/chengduoduo.png) 
 ![上汽通用五菱](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/baojunev.png) 
+![乐言科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/leyan.png) 
+![樊登读书](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/dushu.png) 
+![找一找教程网](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zyiz.png) 
 
 # Awards
 
