@@ -72,7 +72,14 @@ public class ItemService {
     Env env = model.getEnv();
     String clusterName = model.getClusterName();
     String namespaceName = model.getNamespaceName();
-    long namespaceId = model.getNamespaceId();
+
+    NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
+    if (namespace == null) {
+      throw new BadRequestException(
+          "namespace:" + namespaceName + " not exist in env:" + env + ", cluster:" + clusterName);
+    }
+    long namespaceId = namespace.getId();
+
     String configText = model.getConfigText();
 
     ConfigTextResolver resolver =
