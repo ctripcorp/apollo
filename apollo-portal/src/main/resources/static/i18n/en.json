@@ -185,7 +185,7 @@
   "Component.Namespace.Master.Items.SummitChanged": "Submit",
   "Component.Namespace.Master.Items.SortByKey": "Filter the configurations by key",
   "Component.Namespace.Master.Items.FilterItem": "Filter",
-  "Component.Namespace.Master.Items.RevokeItemTips": "Revoke configurations",
+  "Component.Namespace.Master.Items.RevokeItemTips": "Revoke configuration changes",
   "Component.Namespace.Master.Items.RevokeItem" :"Revoke",
   "Component.Namespace.Master.Items.SyncItemTips": "Synchronize configurations among environments",
   "Component.Namespace.Master.Items.SyncItem": "Synchronize",
@@ -347,8 +347,8 @@
   "Config.ClusterIsDefaultTipContent": "All instances that do not belong to the '{{name}}' cluster will fetch the default cluster (current page) configuration, and those that belong to the '{{name}}' cluster will use the corresponding cluster configuration!",
   "Config.ClusterIsCustomTipContent": "Instances belonging to the '{{name}}' cluster will only fetch the configuration of the '{{name}}' cluster (the current page), and the default cluster configuration will only be fetched when the corresponding namespace has not been released in the current cluster.",
   "Config.HasNotPublishNamespace": "The following environment/cluster has unreleased configurations, the client will not fetch the unreleased configurations, please release them in time.",
-  "Config.RevokeItem.DialogTitle": "Revoke configuration",
-  "Config.RevokeItem.DialogContent": "Modified but unpublished configurations in the current namespace will be revoked. Are you sure to revoke the configuration?",
+  "Config.RevokeItem.DialogTitle": "Revoke configuration changes",
+  "Config.RevokeItem.DialogContent": "Modified but unpublished configurations in the current namespace will be revoked. Are you sure to revoke the configuration changes?",
   "Config.DeleteItem.DialogTitle": "Delete configuration",
   "Config.DeleteItem.DialogContent": "You are deleting the configuration whose Key is <b>'{{config.key}}'</b> Value is <b>'{{config.value}}'</b>. <br> Are you sure to delete the configuration?",
   "Config.PublishNoPermission.DialogTitle": "Release",
@@ -750,5 +750,7 @@
   "ReleaseModal.AllPublishFailed": "Failed to Full Release",
   "Rollback.NoRollbackList": "No released history to rollback",
   "Rollback.RollbackSuccessfully": "Rollback Successfully",
-  "Rollback.RollbackFailed": "Failed to Rollback"
+  "Rollback.RollbackFailed": "Failed to Rollback",
+  "Revoke.RevokeFailed": "Failed to Revoke",
+  "Revoke.RevokeSuccessfully": "Revoke Successfully"
 }
