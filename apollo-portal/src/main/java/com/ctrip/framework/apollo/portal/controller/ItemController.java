@@ -208,12 +208,11 @@ public class ItemController {
     return ResponseEntity.ok().build();
   }
 
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @PutMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/revoke-items")
   public void revokeItems(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName,
-      @PathVariable String namespaceName,@RequestBody NamespaceTextModel model) {
-
-    configService.revokeItem(model);
-
+      @PathVariable String namespaceName) {
+    configService.revokeItem(appId, Env.valueOf(env), clusterName, namespaceName);
   }
   private void doSyntaxCheck(NamespaceTextModel model) {
     if (StringUtils.isBlank(model.getConfigText())) {

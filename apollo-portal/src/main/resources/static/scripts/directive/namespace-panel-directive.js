@@ -17,6 +17,7 @@ function directive($window, $translate, toastr, AppUtil, EventManager, Permissio
             createItem: '=',
             editItem: '=',
             preDeleteItem: '=',
+            preRevokeItem: '=',
             showText: '=',
             showNoModifyPermissionDialog: '=',
             preCreateBranch: '=',

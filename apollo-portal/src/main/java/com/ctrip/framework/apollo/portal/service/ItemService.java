@@ -50,7 +50,7 @@ public class ItemService {
       final UserInfoHolder userInfoHolder,
       final NamespaceAPI namespaceAPI,
       final ItemAPI itemAPI,
-      ReleaseAPI releaseAPI,
+      final ReleaseAPI releaseAPI,
       final @Qualifier("fileTextResolver") ConfigTextResolver fileTextResolver,
       final @Qualifier("propertyResolver") ConfigTextResolver propertyResolver) {
     this.userInfoHolder = userInfoHolder;
@@ -157,13 +157,14 @@ public class ItemService {
   }
 
 
-  public void revokeItem(NamespaceTextModel model) {
+  public void revokeItem(String appId, Env env, String clusterName, String namespaceName) {
 
-    String appId = model.getAppId();
-    Env env = model.getEnv();
-    String clusterName = model.getClusterName();
-    String namespaceName = model.getNamespaceName();
-    long namespaceId = model.getNamespaceId();
+    NamespaceDTO namespace = namespaceAPI.loadNamespace(appId, env, clusterName, namespaceName);
+    if (namespace == null) {
+      throw new BadRequestException(
+          "namespace:" + namespaceName + " not exist in env:" + env + ", cluster:" + clusterName);
+    }
+    long namespaceId = namespace.getId();
 
     Map<String, String> releaseItemDTOs = new HashMap<>();
     ReleaseDTO latestRelease = releaseAPI.loadLatestRelease(appId,env,clusterName,namespaceName);
@@ -185,7 +186,7 @@ public class ItemService {
       ItemDTO oldItem = oldKeyMapItem.get(key);
       if (oldItem == null) {
         ItemDTO deletedItemDto = deletedItemDTOs.computeIfAbsent(key, k -> new ItemDTO());
-        changeSets.addCreateItem(buildNormalItem(0L,namespaceId,key,value,deletedItemDto.getComment(),lineNum.get()));
+        changeSets.addCreateItem(buildNormalItem(0L, namespaceId,key,value,deletedItemDto.getComment(),lineNum.get()));
       } else if (!oldItem.getValue().equals(value) || lineNum.get() != oldItem
           .getLineNum()) {
         changeSets.addUpdateItem(buildNormalItem(oldItem.getId(), namespaceId, key,
