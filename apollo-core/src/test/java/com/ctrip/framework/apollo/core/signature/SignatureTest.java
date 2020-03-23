@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.core.signature;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class SignatureTest {
     String actualSignature = Signature.signature(timestamp, pathWithQuery, secret);
 
     String expectedSignature = "EoKyziXvKqzHgwx+ijDJwgVTDgE=";
-    assertThat(actualSignature).isEqualTo(expectedSignature);
+    assertEquals(expectedSignature, actualSignature);
   }
 
   @Test
@@ -30,7 +31,7 @@ public class SignatureTest {
 
     Map<String, String> actualHttpHeaders = Signature.buildHttpHeaders(url, appId, secret);
 
-    assertThat(actualHttpHeaders)
-        .containsKeys(Signature.HTTP_HEADER_AUTHORIZATION, Signature.HTTP_HEADER_TIMESTAMP);
+    assertTrue(actualHttpHeaders.containsKey(Signature.HTTP_HEADER_AUTHORIZATION));
+    assertTrue(actualHttpHeaders.containsKey(Signature.HTTP_HEADER_TIMESTAMP));
   }
 }

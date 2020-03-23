@@ -376,6 +376,8 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![乐言科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/leyan.png) 
 ![樊登读书](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/dushu.png) 
 ![找一找教程网](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/zyiz.png) 
+![中油碧辟石油有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bppc.png) 
+![四川商旅无忧科技服务有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/shanglv51.png) 
 
 # Awards
 
