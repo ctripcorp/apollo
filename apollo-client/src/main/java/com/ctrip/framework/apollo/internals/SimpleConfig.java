@@ -77,6 +77,14 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
   }
 
   @Override
+  public Properties getProps() {
+    if (m_configProperties == null) {
+      return new Properties();
+    }
+    return m_configProperties;
+  }
+
+  @Override
   public synchronized void onRepositoryChange(String namespace, Properties newProperties) {
     if (newProperties.equals(m_configProperties)) {
       return;

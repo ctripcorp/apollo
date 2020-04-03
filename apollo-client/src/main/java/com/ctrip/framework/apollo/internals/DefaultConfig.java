@@ -113,6 +113,11 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     return m_sourceType;
   }
 
+  @Override
+  public Properties getProps() {
+    return m_configProperties.get();
+  }
+
   private Set<String> stringPropertyNames(Properties properties) {
     //jdk9以下版本Properties#enumerateStringProperties方法存在性能问题，keys() + get(k) 重复迭代, jdk9之后改为entrySet遍历.
     Map<String, String> h = new LinkedHashMap<>();

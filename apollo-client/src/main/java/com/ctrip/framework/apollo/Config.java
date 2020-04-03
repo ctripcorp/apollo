@@ -5,6 +5,7 @@ import com.google.common.base.Function;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -234,4 +235,11 @@ public interface Config {
    * @since 1.1.0
    */
   public ConfigSourceType getSourceType();
+
+  /**
+   * Return a {@link Properties} which contains all the properties
+   *
+   * @return all the properties
+   */
+  public Properties getProps();
 }

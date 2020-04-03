@@ -109,6 +109,11 @@ public class DefaultConfigManagerTest {
             public ConfigSourceType getSourceType() {
               return null;
             }
+
+            @Override
+            public Properties getProps() {
+              return null;
+            }
           };
         }
 

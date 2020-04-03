@@ -15,6 +15,7 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,25 @@ public class ConfigPropertySourceTest {
     verify(someConfig, times(1)).getPropertyNames();
 
     assertArrayEquals(somePropertyNames.toArray(), result);
+  }
+
+  @Test
+  public void testGetProps() {
+    String somePropertyName = "somePropertyName";
+    String somePropertyValue = "somePropertyValue";
+    String anotherPropertyName = "anotherPropertyName";
+    String anotherPropertyValue = "anotherPropertyValue";
+    Properties pros = new Properties();
+    pros.put(somePropertyName, somePropertyValue);
+    pros.put(anotherPropertyName, anotherPropertyValue);
+
+    when(someConfig.getProps()).thenReturn(pros);
+
+    Properties result = configPropertySource.getProps();
+
+    verify(someConfig, times(1)).getProps();
+
+    assertEquals(pros, result);
   }
 
   @Test

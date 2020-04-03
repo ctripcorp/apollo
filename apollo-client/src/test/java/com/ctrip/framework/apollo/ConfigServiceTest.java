@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo;
 import static org.junit.Assert.assertEquals;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Before;
@@ -105,6 +106,11 @@ public class ConfigServiceTest {
 
     @Override
     public ConfigSourceType getSourceType() {
+      return null;
+    }
+
+    @Override
+    public Properties getProps() {
       return null;
     }
   }
