@@ -19,7 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * @author nisiyong
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AccessKeyServiceWithCacheTest {
 
   private AccessKeyServiceWithCache accessKeyServiceWithCache;
@@ -63,7 +63,7 @@ public class AccessKeyServiceWithCacheTest {
     when(accessKeyRepository.findAllById(anyList()))
         .thenReturn(Lists.newArrayList(firstAccessKey, secondAccessKey));
 
-    TimeUnit.SECONDS.sleep(1);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
     assertThat(accessKeyServiceWithCache.getAvailableSecrets(appId)).isEmpty();
 
     // Update access key, enable both of them
@@ -74,7 +74,7 @@ public class AccessKeyServiceWithCacheTest {
     when(accessKeyRepository.findAllById(anyList()))
         .thenReturn(Lists.newArrayList(firstAccessKey, secondAccessKey));
 
-    TimeUnit.SECONDS.sleep(1);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
     assertThat(accessKeyServiceWithCache.getAvailableSecrets(appId)).containsExactly("secret-1", "secret-2");
 
     // Update access key, disable the first one
@@ -84,14 +84,14 @@ public class AccessKeyServiceWithCacheTest {
     when(accessKeyRepository.findAllById(anyList()))
         .thenReturn(Lists.newArrayList(firstAccessKey, secondAccessKey));
 
-    TimeUnit.SECONDS.sleep(1);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
     assertThat(accessKeyServiceWithCache.getAvailableSecrets(appId)).containsExactly("secret-2");
 
     // Delete access key, delete the second one
     when(accessKeyRepository.findAllById(anyList()))
         .thenReturn(Lists.newArrayList(firstAccessKey));
 
-    TimeUnit.SECONDS.sleep(1);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
     assertThat(accessKeyServiceWithCache.getAvailableSecrets(appId)).isEmpty();
 
     // Add new access key in runtime, enable by default
@@ -100,7 +100,7 @@ public class AccessKeyServiceWithCacheTest {
     when(accessKeyRepository.findAllById(anyList()))
         .thenReturn(Lists.newArrayList(firstAccessKey, thirdAccessKey));
 
-    TimeUnit.SECONDS.sleep(1);
+    scanIntervalTimeUnit.sleep(scanInterval * 10);
     assertThat(accessKeyServiceWithCache.getAvailableSecrets(appId)).containsExactly("secret-3");
   }
 

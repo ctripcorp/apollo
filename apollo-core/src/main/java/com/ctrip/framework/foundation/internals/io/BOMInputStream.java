@@ -180,7 +180,8 @@ public class BOMInputStream extends ProxyInputStream {
     if (!boms.contains(bom)) {
       throw new IllegalArgumentException("Stream not configure to detect " + bom);
     }
-    return byteOrderMark != null && getBOM().equals(bom);
+    getBOM();
+    return byteOrderMark != null && byteOrderMark.equals(bom);
   }
 
   /**

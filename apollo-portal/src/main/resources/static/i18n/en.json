@@ -185,6 +185,8 @@
   "Component.Namespace.Master.Items.SummitChanged": "Submit",
   "Component.Namespace.Master.Items.SortByKey": "Filter the configurations by key",
   "Component.Namespace.Master.Items.FilterItem": "Filter",
+  "Component.Namespace.Master.Items.RevokeItemTips": "Revoke configuration changes",
+  "Component.Namespace.Master.Items.RevokeItem" :"Revoke",
   "Component.Namespace.Master.Items.SyncItemTips": "Synchronize configurations among environments",
   "Component.Namespace.Master.Items.SyncItem": "Synchronize",
   "Component.Namespace.Master.Items.DiffItemTips": "Compare the configurations among environments",
@@ -345,6 +347,8 @@
   "Config.ClusterIsDefaultTipContent": "All instances that do not belong to the '{{name}}' cluster will fetch the default cluster (current page) configuration, and those that belong to the '{{name}}' cluster will use the corresponding cluster configuration!",
   "Config.ClusterIsCustomTipContent": "Instances belonging to the '{{name}}' cluster will only fetch the configuration of the '{{name}}' cluster (the current page), and the default cluster configuration will only be fetched when the corresponding namespace has not been released in the current cluster.",
   "Config.HasNotPublishNamespace": "The following environment/cluster has unreleased configurations, the client will not fetch the unreleased configurations, please release them in time.",
+  "Config.RevokeItem.DialogTitle": "Revoke configuration changes",
+  "Config.RevokeItem.DialogContent": "Modified but unpublished configurations in the current namespace will be revoked. Are you sure to revoke the configuration changes?",
   "Config.DeleteItem.DialogTitle": "Delete configuration",
   "Config.DeleteItem.DialogContent": "You are deleting the configuration whose Key is <b>'{{config.key}}'</b> Value is <b>'{{config.value}}'</b>. <br> Are you sure to delete the configuration?",
   "Config.PublishNoPermission.DialogTitle": "Release",
@@ -466,9 +470,9 @@
   "ServiceConfig.KeyExistsAndSaveTip": "Key: '{{key}}' already exists. Click Save will override the configuration item.",
   "AccessKey.Tips.1": "Add up to 5 access keys per environment.",
   "AccessKey.Tips.2": "Once the environment has any enabled access key, the client will be required to configure access key, or the configurations cannot be obtained.",
-  "AccessKey.Tips.3": "Configure the access key to prevent unauthorized clients from obtaining the application configuration. The configuration method is as follows:",
+  "AccessKey.Tips.3": "Configure the access key to prevent unauthorized clients from obtaining the application configuration. The configuration method is as follows(requires apollo-client version 1.6.0+):",
   "AccessKey.Tips.3.1": "Via jvm parameter -Dapollo.accesskey.secret",
-  "AccessKey.Tips.3.2": "Through the environment variable APOLLO_ACCESSKEY_SECRET",
+  "AccessKey.Tips.3.2": "Through the os environment variable APOLLO_ACCESSKEY_SECRET",
   "AccessKey.Tips.3.3": "Configure apollo.accesskey.secret via META-INF/app.properties or application.properties (note that the multi-environment secret is different)",
   "AccessKey.NoAccessKeyServiceTips": "There are no access keys in this environment.",
   "AccessKey.ConfigAccessKeys.Secret": "Access Key Secret",
@@ -746,5 +750,7 @@
   "ReleaseModal.AllPublishFailed": "Failed to Full Release",
   "Rollback.NoRollbackList": "No released history to rollback",
   "Rollback.RollbackSuccessfully": "Rollback Successfully",
-  "Rollback.RollbackFailed": "Failed to Rollback"
+  "Rollback.RollbackFailed": "Failed to Rollback",
+  "Revoke.RevokeFailed": "Failed to Revoke",
+  "Revoke.RevokeSuccessfully": "Revoke Successfully"
 }

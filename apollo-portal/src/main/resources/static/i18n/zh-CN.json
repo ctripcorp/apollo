@@ -187,6 +187,8 @@
   "Component.Namespace.Master.Items.FilterItem": "过滤配置",
   "Component.Namespace.Master.Items.SyncItemTips": "同步各环境间配置",
   "Component.Namespace.Master.Items.SyncItem": "同步配置",
+  "Component.Namespace.Master.Items.RevokeItemTips": "撤销配置的修改",
+  "Component.Namespace.Master.Items.RevokeItem": "撤销配置",
   "Component.Namespace.Master.Items.DiffItemTips": "比较各环境间配置",
   "Component.Namespace.Master.Items.DiffItem": "比较配置",
   "Component.Namespace.Master.Items.AddItem": "新增配置",
@@ -345,6 +347,8 @@
   "Config.ClusterIsDefaultTipContent": "所有不属于 '{{name}}' 集群的实例会使用default集群（当前页面）的配置，属于 '{{name}}' 的实例会使用对应集群的配置！",
   "Config.ClusterIsCustomTipContent": "属于 '{{name}}' 集群的实例只会使用 '{{name}}' 集群（当前页面）的配置，只有当对应namespace在当前集群没有发布过配置时，才会使用default集群的配置。",
   "Config.HasNotPublishNamespace": "以下环境/集群有未发布的配置，客户端获取不到未发布的配置，请及时发布。",
+  "Config.RevokeItem.DialogTitle": "撤销配置",
+  "Config.RevokeItem.DialogContent": "当前命名空间下已修改但尚未发布的配置将被撤销，确定要撤销么?",
   "Config.DeleteItem.DialogTitle": "删除配置",
   "Config.DeleteItem.DialogContent": "您正在删除 Key 为 <b> '{{config.key}}' </b> Value 为 <b> '{{config.value}}' </b> 的配置.<br>确定要删除配置吗?",
   "Config.PublishNoPermission.DialogTitle": "发布",
@@ -466,9 +470,9 @@
   "ServiceConfig.KeyExistsAndSaveTip": "Key: '{{key}}' 已存在，点击保存后会覆盖该配置项",
   "AccessKey.Tips.1": "每个环境最多可添加5个访问密钥",
   "AccessKey.Tips.2": "一旦该环境有启用的访问密钥，客户端将被要求配置密钥，否则无法获取配置",
-  "AccessKey.Tips.3": "配置访问密钥防止非法客户端获取护应用配置，配置方式如下：",
+  "AccessKey.Tips.3": "配置访问密钥防止非法客户端获取该应用配置，配置方式如下（需要apollo-client 1.6.0+版本）：",
   "AccessKey.Tips.3.1": "通过jvm参数-Dapollo.accesskey.secret",
-  "AccessKey.Tips.3.2": "通过环境变量APOLLO_ACCESSKEY_SECRET",
+  "AccessKey.Tips.3.2": "通过操作系统环境变量APOLLO_ACCESSKEY_SECRET",
   "AccessKey.Tips.3.3": "通过META-INF/app.properties或application.properties配置apollo.accesskey.secret（注意多环境secret不一样）",
   "AccessKey.NoAccessKeyServiceTips": "该环境没有配置访问密钥",
   "AccessKey.ConfigAccessKeys.Secret": "访问密钥",
@@ -746,5 +750,7 @@
   "ReleaseModal.AllPublishFailed": "全量发布失败",
   "Rollback.NoRollbackList": "没有可以回滚的发布历史",
   "Rollback.RollbackSuccessfully": "回滚成功",
-  "Rollback.RollbackFailed": "回滚失败"
+  "Rollback.RollbackFailed": "回滚失败",
+  "Revoke.RevokeFailed": "撤销失败",
+  "Revoke.RevokeSuccessfully": "撤销成功"
 }
