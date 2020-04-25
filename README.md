@@ -378,6 +378,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![稿定科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/gaoding.jpg) 
 ![搵樓 - 利嘉閣](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ricacorp.png) 
 ![南京领行科技股份有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/t3go.png) 
+![北京希瑞亚斯科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mokahr.jpg) 
+![印彩虹印刷公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/printrainbow.png) 
+![Million Tech](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/milliontech.png) 
 
 # Awards
 

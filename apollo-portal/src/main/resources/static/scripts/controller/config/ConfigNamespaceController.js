@@ -156,7 +156,9 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
             return;
         }
 
-        $scope.config = item;
+        $scope.config = {};
+        $scope.config.key = _.escape(item.key);
+        $scope.config.value = _.escape(item.value);
         $scope.toOperationNamespace = namespace;
         toDeleteItemId = item.id;
 
