@@ -1,11 +1,19 @@
 package com.ctrip.framework.apollo.portal;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.component.AdminServiceAddressLocator;
 import com.ctrip.framework.apollo.portal.component.RetryableRestTemplate;
-
+import com.ctrip.framework.apollo.portal.environment.Env;
+import com.ctrip.framework.apollo.portal.environment.PortalMetaDomainService;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.Collections;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -19,21 +27,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.SocketTimeoutException;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class RetryableRestTemplateTest extends AbstractUnitTest {
 
   @Mock
   private AdminServiceAddressLocator serviceAddressLocator;
   @Mock
   private RestTemplate restTemplate;
+  @Mock
+  private PortalMetaDomainService portalMetaDomainService;
   @InjectMocks
   private RetryableRestTemplate retryableRestTemplate;
 

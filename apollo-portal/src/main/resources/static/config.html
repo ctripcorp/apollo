@@ -122,7 +122,7 @@
 
                         <apolloentrance apollo-title="'Config.AccessKeyManage' | translate"
                                         apollo-img-src="'accesskey-manage'"
-                                        apollo-href="'/app/access_key.html?#/appid=' + pageContext.appId"></apolloentrance>
+                                        apollo-href="'app/access_key.html?#/appid=' + pageContext.appId"></apolloentrance>
 
                         <a class="list-group-item" ng-show="missEnvs.length > 0" ng-click="createAppInMissEnv()">
                             <div class="row icon-text icon-plus-orange">
@@ -208,7 +208,8 @@
             <apollonspanel ng-repeat="namespace in namespaces" namespace="namespace" app-id="pageContext.appId"
                 env="pageContext.env" lock-check="lockCheck" cluster="pageContext.clusterName" user="currentUser"
                 pre-release-ns="prepareReleaseNamespace" create-item="createItem" edit-item="editItem"
-                pre-delete-item="preDeleteItem" show-text="showText"
+                pre-delete-item="preDeleteItem" pre-revoke-item="preRevokeItem"
+                show-text="showText"
                 show-no-modify-permission-dialog="showNoModifyPermissionDialog" show-body="namespaces.length < 3"
                 lazy-load="namespaces.length > 10" pre-create-branch="preCreateBranch"
                 pre-delete-branch="preDeleteBranch">
@@ -318,6 +319,12 @@
                 apollo-detail="syntaxCheckContext.syntaxCheckMessage" apollo-extra-class="'pre'">
             </apolloconfirmdialog>
 
+            <apolloconfirmdialog apollo-dialog-id="'revokeItemConfirmDialog'"
+                apollo-title="'Config.RevokeItem.DialogTitle' | translate"
+                apollo-detail="'Config.RevokeItem.DialogContent' | translate:this" apollo-show-cancel-btn="true"
+                apollo-confirm="revokeItem">
+           </apolloconfirmdialog>
+
 
             <div class="modal fade" id="createBranchTips" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -338,6 +345,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

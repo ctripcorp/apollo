@@ -9,10 +9,12 @@ import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.configuration.LdapExtendProperties;
 import com.ctrip.framework.apollo.portal.spi.configuration.LdapProperties;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import javax.naming.Name;
 import javax.naming.directory.Attribute;
@@ -200,10 +202,10 @@ public class LdapUserService implements UserService {
 
     return ldapTemplate
         .searchForObject(groupBase, groupSearch, ctx -> {
-          String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
+            List<UserInfo> userInfos = new ArrayList<>();
 
           if (!MEMBER_UID_ATTR_NAME.equals(groupMembershipAttrName)) {
-            List<UserInfo> userInfos = new ArrayList<>();
+            String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
             for (String item : members) {
               LdapName ldapName = LdapUtils.newLdapName(item);
               LdapName memberRdn = LdapUtils.removeFirst(ldapName, LdapUtils.newLdapName(base));
@@ -223,9 +225,12 @@ public class LdapUserService implements UserService {
             }
             return userInfos;
           }
-          List<UserInfo> userInfos = new ArrayList<>();
-          String[] memberUids = ((DirContextAdapter) ctx)
-              .getStringAttributes(groupMembershipAttrName);
+
+          Set<String> memberUids = Sets.newHashSet(((DirContextAdapter) ctx)
+              .getStringAttributes(groupMembershipAttrName));
+          if (!CollectionUtils.isEmpty(userIds)) {
+            memberUids = Sets.intersection(memberUids, Sets.newHashSet(userIds));
+          }
           for (String memberUid : memberUids) {
             UserInfo userInfo = searchUserById(memberUid);
             if (userInfo != null) {

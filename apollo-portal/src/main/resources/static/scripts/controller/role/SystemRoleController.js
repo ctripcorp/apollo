@@ -69,8 +69,10 @@ angular.module('systemRole', ['app.service', 'apollo.directive', 'app.util', 'to
                     PermissionService.has_root_permission()
                         .then(function (result) {
                             $scope.isRootUser = result.hasPermission;
+                            if ($scope.isRootUser) {
+                                getCreateApplicationRoleUsers();
+                            }
                         });
-                    getCreateApplicationRoleUsers();
                 }
 
                 $scope.getAppInfo = function () {

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConfigServiceTest extends AbstractUnitTest {
@@ -54,6 +55,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
     String appId = "6666";
     String clusterName = "default";
     String namespaceName = "application";
+    long someNamespaceId = 123L;
 
     NamespaceTextModel model = new NamespaceTextModel();
     model.setEnv("DEV");
@@ -66,8 +68,12 @@ public class ConfigServiceTest extends AbstractUnitTest {
     ItemChangeSets changeSets = new ItemChangeSets();
     changeSets.addCreateItem(new ItemDTO("d", "c", "", 4));
 
+    NamespaceDTO someNamespaceDto = mock(NamespaceDTO.class);
+    when(someNamespaceDto.getId()).thenReturn(someNamespaceId);
+    when(namespaceAPI.loadNamespace(appId, model.getEnv(), clusterName, namespaceName))
+        .thenReturn(someNamespaceDto);
     when(itemAPI.findItems(appId, Env.DEV, clusterName, namespaceName)).thenReturn(itemDTOs);
-    when(resolver.resolve(0, model.getConfigText(), itemDTOs)).thenReturn(changeSets);
+    when(resolver.resolve(someNamespaceId, model.getConfigText(), itemDTOs)).thenReturn(changeSets);
 
     UserInfo userInfo = new UserInfo();
     userInfo.setUserId("test");

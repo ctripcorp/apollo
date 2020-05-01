@@ -23,24 +23,15 @@ appService.service('EventManager', [function () {
             return;
         }
 
-        if (!context) {
-            context = {};
+        context = context || {};
+
+        if (objectId != null && objectId != ALL_OBJECT) {
+            emitEventToSubscribers(eventRegistry[eventType][objectId], context);
+            emitEventToSubscribers(eventRegistry[eventType][ALL_OBJECT]);
+        } else {
+            //emit event to subscriber which subscribed all object
+            emitEventToSubscribers(eventRegistry[eventType][ALL_OBJECT], context);
         }
-
-        if (!objectId) {
-            objectId = ALL_OBJECT;
-        }
-
-        var subscribers = eventRegistry[eventType][objectId];
-        emitEventToSubscribers(subscribers, context);
-
-        if (objectId == ALL_OBJECT) {
-            return;
-        }
-
-        //emit event to subscriber which subscribed all object
-        subscribers = eventRegistry[eventType][ALL_OBJECT];
-        emitEventToSubscribers(subscribers);
     }
 
     function emitEventToSubscribers(subscribers, context) {
@@ -62,27 +53,15 @@ appService.service('EventManager', [function () {
             return;
         }
 
-        if (!objectId) {
-            objectId = ALL_OBJECT;
-        }
-
-        var subscribedObjects = eventRegistry[eventType];
-        if (!subscribedObjects) {
-            subscribedObjects = {};
-            eventRegistry[eventType] = subscribedObjects;
-        }
-
-        var callbacks = subscribedObjects[objectId];
-        if (!callbacks) {
-            callbacks = [];
-            subscribedObjects[objectId] = callbacks;
-        }
+        objectId = objectId || ALL_OBJECT;
+        eventRegistry[eventType] = eventRegistry[eventType] || {};
+        eventRegistry[eventType][objectId] = eventRegistry[eventType][objectId] || [];
 
         var subscriber = {
             id: Math.random() * Math.random(),
             callback: callback
         };
-        callbacks.push(subscriber);
+        eventRegistry[eventType][objectId].push(subscriber);
 
         return subscriber.id;
     }
@@ -98,23 +77,17 @@ appService.service('EventManager', [function () {
             return;
         }
 
-        if (!objectId) {
-            objectId = ALL_OBJECT;
+            objectId = objectId || ALL_OBJECT;
+
+        if (eventRegistry[eventType] && eventRegistry[eventType][objectId]) {
+            var subscribers = eventRegistry[eventType][objectId];
+
+            subscribers.forEach(function (subscriber, index) {
+                if (subscriber.id == subscriberId) {
+                    subscribers.splice(index, 1);
+                }
+            })
         }
-
-        var subscribers = eventRegistry[eventType] ?
-                          eventRegistry[eventType][objectId] : undefined;
-
-        if (!subscribers) {
-            return;
-        }
-
-        subscribers.forEach(function (subscriber, index) {
-            if (subscriber.id == subscriberId) {
-                subscribers.splice(index, 1);
-            }
-        })
-
     }
 
     return {

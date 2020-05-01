@@ -11,6 +11,8 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
     $scope.deleteItem = deleteItem;
     $scope.editItem = editItem;
     $scope.createItem = createItem;
+    $scope.preRevokeItem = preRevokeItem;
+    $scope.revokeItem = revokeItem;
     $scope.closeTip = closeTip;
     $scope.showText = showText;
     $scope.createBranch = createBranch;
@@ -154,7 +156,9 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
             return;
         }
 
-        $scope.config = item;
+        $scope.config = {};
+        $scope.config.key = _.escape(item.key);
+        $scope.config.value = _.escape(item.value);
         $scope.toOperationNamespace = namespace;
         toDeleteItemId = item.id;
 
@@ -176,6 +180,33 @@ function controller($rootScope, $scope, $translate, toastr, AppUtil, EventManage
                 }, function (result) {
                     toastr.error(AppUtil.errorMsg(result), $translate.instant('Config.DeleteFailed'));
                 });
+    }
+
+    function preRevokeItem(namespace) {
+        if (!lockCheck(namespace)) {
+            return;
+        }
+        $scope.toOperationNamespace = namespace;
+        toRevokeItemId = namespace.baseInfo.id;
+        $("#revokeItemConfirmDialog").modal("show");
+    }
+
+    function revokeItem() {
+        ConfigService.revoke_item($rootScope.pageContext.appId,
+            $rootScope.pageContext.env,
+            $scope.toOperationNamespace.baseInfo.clusterName,
+            $scope.toOperationNamespace.baseInfo.namespaceName).then(
+            function (result) {
+                toastr.success($translate.instant('Revoke.RevokeSuccessfully'));
+                EventManager.emit(EventManager.EventType.REFRESH_NAMESPACE,
+                    {
+                        namespace: $scope.toOperationNamespace
+                    });
+
+            }, function (result) {
+                toastr.error(AppUtil.errorMsg(result), $translate.instant('Revoke.RevokeFailed'));
+            }
+        );
     }
 
     //修改配置

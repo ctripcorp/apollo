@@ -17,20 +17,18 @@
 <body>
 
     <apollonav></apollonav>
-    <div class="container-fluid apollo-container">
-
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel">
+    <div class="container-fluid apollo-container" ng-controller="UserController">
+        <div class="col-md-8 col-md-offset-2 panel">
+            <section class="panel-body" ng-show="isRootUser">
+                <div class="row">
                     <header class="panel-heading">
                         {{'UserMange.Title' | translate }}
                         <small>
                             {{'UserMange.TitleTips' | translate }}
                         </small>
                     </header>
-
-                    <form class="form-horizontal panel-body" name="appForm" ng-controller="UserController"
-                        valdr-type="App" ng-submit="createOrUpdateUser()">
+                    <form class="form-horizontal panel-body" name="appForm"
+                          valdr-type="App" ng-submit="createOrUpdateUser()">
                         <div class="form-group" valdr-form-group>
                             <label class="col-sm-2 control-label">
                                 <apollorequiredfield></apollorequiredfield>
@@ -69,9 +67,11 @@
                             </div>
                         </div>
                     </form>
-
                 </div>
-            </div>
+            </section>
+            <section class="panel-body text-center" ng-if="!isRootUser">
+                <h4>{{'Common.IsRootUser' | translate }}</h4>
+            </section>
         </div>
     </div>
 
