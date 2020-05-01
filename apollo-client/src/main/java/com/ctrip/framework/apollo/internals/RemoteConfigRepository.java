@@ -243,7 +243,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
                 "Could not find config for namespace - appId: %s, cluster: %s, namespace: %s, " +
                     "please check whether the configs are released in Apollo!",
                 appId, cluster, m_namespace);
-            statusCodeException =  new ApolloConfigStatusCodeException(ex.getStatusCode(),
+            statusCodeException = new ApolloConfigStatusCodeException(ex.getStatusCode(),
                 message);
           }
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(statusCodeException));
