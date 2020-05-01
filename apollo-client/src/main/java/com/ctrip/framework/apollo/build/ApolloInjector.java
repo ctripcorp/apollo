@@ -13,11 +13,13 @@ public class ApolloInjector {
   private static final Object lock = new Object();
 
   private static Injector getInjector() {
-    if (s_injector == null) {
+    Injector injector = s_injector;
+    if (injector == null) {
       synchronized (lock) {
-        if (s_injector == null) {
+        injector = s_injector;
+        if (injector == null) {
           try {
-            s_injector = ServiceBootstrap.loadFirst(Injector.class);
+            s_injector = injector = ServiceBootstrap.loadFirst(Injector.class);
           } catch (Throwable ex) {
             ApolloConfigException exception = new ApolloConfigException("Unable to initialize Apollo Injector!", ex);
             Tracer.logError(exception);
@@ -27,7 +29,7 @@ public class ApolloInjector {
       }
     }
 
-    return s_injector;
+    return injector;
   }
 
   public static <T> T getInstance(Class<T> clazz) {
