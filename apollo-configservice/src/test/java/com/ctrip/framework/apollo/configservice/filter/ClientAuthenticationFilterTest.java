@@ -68,6 +68,22 @@ public class ClientAuthenticationFilterTest {
   }
 
   @Test
+  public void testRequestTimeOneMinFasterThenCurrentTime() throws Exception {
+    String appId = "someAppId";
+    List<String> secrets = Lists.newArrayList("someSecret");
+    String oneMinAfterTimestamp = Long.toString(System.currentTimeMillis() + 61 * 1000);
+
+    when(accessKeyUtil.extractAppIdFromRequest(any())).thenReturn(appId);
+    when(accessKeyUtil.findAvailableSecret(appId)).thenReturn(secrets);
+    when(request.getHeader(Signature.HTTP_HEADER_TIMESTAMP)).thenReturn(oneMinAfterTimestamp);
+
+    clientAuthenticationFilter.doFilter(request, response, filterChain);
+
+    verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "RequestTimeTooSkewed");
+    verify(filterChain, never()).doFilter(request, response);
+  }
+
+  @Test
   public void testUnauthorized() throws Exception {
     String appId = "someAppId";
     String availableSignature = "someSignature";

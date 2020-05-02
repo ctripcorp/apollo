@@ -89,7 +89,7 @@ public class ClientAuthenticationFilter implements Filter {
     }
 
     long x = System.currentTimeMillis() - requestTimeMillis;
-    return x <= TIMESTAMP_INTERVAL;
+    return x >= -TIMESTAMP_INTERVAL && x <= TIMESTAMP_INTERVAL;
   }
 
   private boolean checkAuthorization(String authorization, List<String> availableSecrets,
