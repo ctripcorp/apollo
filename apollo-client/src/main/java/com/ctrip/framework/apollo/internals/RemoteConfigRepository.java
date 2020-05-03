@@ -240,17 +240,18 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
           ApolloConfigStatusCodeException statusCodeException = ex;
           //config not found
           if (ex.getStatusCode() == 404) {
-            break retryLabel;
+            String message = String.format(
+                    "Could not find config for namespace - appId: %s, cluster: %s, namespace: %s, " +
+                            "please check whether the configs are released in Apollo!",
+                    appId, cluster, m_namespace);
+            statusCodeException = new ApolloConfigStatusCodeException(ex.getStatusCode(),
+                    message);
           }
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(statusCodeException));
           transaction.setStatus(statusCodeException);
           exception = statusCodeException;
           if(ex.getStatusCode() == 404) {
-            //config not found don't retry
-            String message = String.format(
-                    "Load Apollo Config failed - appId: %s, cluster: %s, namespace: %s, url: %s",
-                    appId, cluster, m_namespace, url);
-            throw new ApolloConfigException(message, exception);
+            break retryLabel;
           }
         } catch (Throwable ex) {
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
