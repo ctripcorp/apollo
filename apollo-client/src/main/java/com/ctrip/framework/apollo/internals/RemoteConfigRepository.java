@@ -182,6 +182,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     List<ServiceDTO> configServices = getConfigServices();
     String url = null;
+    retryLoopLabel:
     for (int i = 0; i < maxRetries; i++) {
       List<ServiceDTO> randomConfigServices = Lists.newLinkedList(configServices);
       Collections.shuffle(randomConfigServices);
@@ -249,6 +250,9 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(statusCodeException));
           transaction.setStatus(statusCodeException);
           exception = statusCodeException;
+          if(ex.getStatusCode() == 404) {
+            break retryLoopLabel;
+          }
         } catch (Throwable ex) {
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
           transaction.setStatus(ex);
