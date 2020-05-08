@@ -116,17 +116,17 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 <table>
   <thead>
     <th>Apollo技术支持⑤群<br />群号：914839843（未满）</th>
+    <th>Apollo技术支持②群<br />群号：904287263（未满）</th>
     <th>Apollo技术支持④群<br />群号：516773934（已满）</th>
     <th>Apollo技术支持③群<br />群号：742035428（已满）</th>
-    <th>Apollo技术支持②群<br />群号：904287263（已满）</th>
     <th>Apollo技术支持①群<br />群号：375526581（已满）</th>
   </thead>
   <tbody>
     <tr>
       <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-5.png" alt="tech-support-qq-5"></td>
+      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-2.png" alt="tech-support-qq-2"></td>
       <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-4.png" alt="tech-support-qq-4"></td>
       <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-3.png" alt="tech-support-qq-3"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-2.png" alt="tech-support-qq-2"></td>
       <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-1.png" alt="tech-support-qq-1"></td>
     </tr>
   </tbody>
@@ -378,6 +378,12 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![稿定科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/gaoding.jpg) 
 ![搵樓 - 利嘉閣](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ricacorp.png) 
 ![南京领行科技股份有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/t3go.png) 
+![北京希瑞亚斯科技有限公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mokahr.jpg) 
+![印彩虹印刷公司](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/printrainbow.png) 
+![Million Tech](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/milliontech.png) 
+![果果科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/guoguokeji.jpg) 
+![昆明航空](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/airkunming.png) 
+![我爱我家](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/5i5j.png) 
 
 # Awards
 
