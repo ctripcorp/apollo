@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.mockserver;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.ctrip.framework.apollo.Config;
@@ -8,6 +9,8 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -53,5 +56,79 @@ public class ApolloMockServerApiTest {
     assertEquals("otherValue2", otherConfig.getProperty("key2", null));
 
     assertTrue(changeEvent.isChanged("key1"));
+  }
+
+  @Test
+  public void testUpdateSamePropertyTwice() throws Exception {
+    String someNewValue = "someNewValue";
+
+    Config otherConfig = ConfigService.getConfig(anotherNamespace);
+
+    final Semaphore changes = new Semaphore(0);
+
+    otherConfig.addChangeListener(new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        changes.release();
+      }
+    });
+
+    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
+    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+
+    embeddedApollo.addOrModifyProperty(anotherNamespace, "key1", someNewValue);
+    embeddedApollo.addOrModifyProperty(anotherNamespace, "key1", someNewValue);
+
+    assertTrue(changes.tryAcquire(5, TimeUnit.SECONDS));
+    assertEquals(someNewValue, otherConfig.getProperty("key1", null));
+    assertEquals(0, changes.availablePermits());
+  }
+
+  @Test
+  public void testDeleteProperties() throws Exception {
+    Config otherConfig = ConfigService.getConfig(anotherNamespace);
+
+    final SettableFuture<ConfigChangeEvent> future = SettableFuture.create();
+
+    otherConfig.addChangeListener(new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        future.set(changeEvent);
+      }
+    });
+
+    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
+    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+
+    embeddedApollo.deleteProperty(anotherNamespace, "key1");
+
+    ConfigChangeEvent changeEvent = future.get(5, TimeUnit.SECONDS);
+
+    assertNull(otherConfig.getProperty("key1", null));
+    assertTrue(changeEvent.isChanged("key1"));
+  }
+
+  @Test
+  public void testDeleteSamePropertyTwice() throws Exception {
+    Config otherConfig = ConfigService.getConfig(anotherNamespace);
+
+    final Semaphore changes = new Semaphore(0);
+
+    otherConfig.addChangeListener(new ConfigChangeListener() {
+      @Override
+      public void onChange(ConfigChangeEvent changeEvent) {
+        changes.release();
+      }
+    });
+
+    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
+    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+
+    embeddedApollo.deleteProperty(anotherNamespace, "key1");
+    embeddedApollo.deleteProperty(anotherNamespace, "key1");
+
+    assertTrue(changes.tryAcquire(5, TimeUnit.SECONDS));
+    assertNull(otherConfig.getProperty("key1", null));
+    assertEquals(0, changes.availablePermits());
   }
 }
