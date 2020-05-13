@@ -12,6 +12,7 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -54,7 +55,6 @@ public class ApolloMockServerApiTest {
 
     assertEquals(someNewValue, otherConfig.getProperty("key1", null));
     assertEquals("otherValue2", otherConfig.getProperty("key2", null));
-
     assertTrue(changeEvent.isChanged("key1"));
   }
 
@@ -73,14 +73,13 @@ public class ApolloMockServerApiTest {
       }
     });
 
-    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
-    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+    assertEquals("otherValue3", otherConfig.getProperty("key3", null));
 
-    embeddedApollo.addOrModifyProperty(anotherNamespace, "key1", someNewValue);
-    embeddedApollo.addOrModifyProperty(anotherNamespace, "key1", someNewValue);
+    embeddedApollo.addOrModifyProperty(anotherNamespace, "key3", someNewValue);
+    embeddedApollo.addOrModifyProperty(anotherNamespace, "key3", someNewValue);
 
     assertTrue(changes.tryAcquire(5, TimeUnit.SECONDS));
-    assertEquals(someNewValue, otherConfig.getProperty("key1", null));
+    assertEquals(someNewValue, otherConfig.getProperty("key3", null));
     assertEquals(0, changes.availablePermits());
   }
 
@@ -97,15 +96,16 @@ public class ApolloMockServerApiTest {
       }
     });
 
-    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
-    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+    assertEquals("otherValue4", otherConfig.getProperty("key4", null));
+    assertEquals("otherValue5", otherConfig.getProperty("key5", null));
 
-    embeddedApollo.deleteProperty(anotherNamespace, "key1");
+    embeddedApollo.deleteProperty(anotherNamespace, "key4");
 
     ConfigChangeEvent changeEvent = future.get(5, TimeUnit.SECONDS);
 
-    assertNull(otherConfig.getProperty("key1", null));
-    assertTrue(changeEvent.isChanged("key1"));
+    assertNull(otherConfig.getProperty("key4", null));
+    assertEquals("otherValue5", otherConfig.getProperty("key5", null));
+    assertTrue(changeEvent.isChanged("key4"));
   }
 
   @Test
@@ -121,14 +121,13 @@ public class ApolloMockServerApiTest {
       }
     });
 
-    assertEquals("otherValue1", otherConfig.getProperty("key1", null));
-    assertEquals("otherValue2", otherConfig.getProperty("key2", null));
+    assertEquals("otherValue6", otherConfig.getProperty("key6", null));
 
-    embeddedApollo.deleteProperty(anotherNamespace, "key1");
-    embeddedApollo.deleteProperty(anotherNamespace, "key1");
+    embeddedApollo.deleteProperty(anotherNamespace, "key6");
+    embeddedApollo.deleteProperty(anotherNamespace, "key6");
 
     assertTrue(changes.tryAcquire(5, TimeUnit.SECONDS));
-    assertNull(otherConfig.getProperty("key1", null));
+    assertNull(otherConfig.getProperty("key6", null));
     assertEquals(0, changes.availablePermits());
   }
 }
