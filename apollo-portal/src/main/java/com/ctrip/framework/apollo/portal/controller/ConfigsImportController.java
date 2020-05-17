@@ -3,9 +3,8 @@ package com.ctrip.framework.apollo.portal.controller;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.environment.Env;
-import com.ctrip.framework.apollo.portal.service.ItemService;
+import com.ctrip.framework.apollo.portal.service.ConfigsImportService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import com.google.common.base.Splitter;
@@ -29,15 +28,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class ConfigsImportController {
 
-  private final ItemService configService;
-
   private final NamespaceService namespaceService;
 
+  private final ConfigsImportService configsImportService;
+
   public ConfigsImportController(
-      final ItemService configService,
-      final @Lazy NamespaceService namespaceService) {
-    this.configService = configService;
+      final @Lazy NamespaceService namespaceService,
+      final ConfigsImportService configsImportService) {
     this.namespaceService = namespaceService;
+    this.configsImportService = configsImportService;
   }
 
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
@@ -49,35 +48,28 @@ public class ConfigsImportController {
       throw new BadRequestException("The file is empty.");
     }
 
-    NamespaceDTO namespaceDTO = namespaceService
+    final NamespaceDTO namespaceDTO = namespaceService
         .loadNamespaceBaseInfo(appId, Env.fromString(env), clusterName, namespaceName);
 
     if (Objects.isNull(namespaceDTO)) {
       throw new BadRequestException(String.format("Namespace: %s not exist.", namespaceName));
     }
 
-    NamespaceTextModel model = new NamespaceTextModel();
-    List<String> fileNameSplit = Splitter.on(".").splitToList(file.getOriginalFilename());
+    final List<String> fileNameSplit = Splitter.on(".").splitToList(file.getOriginalFilename());
     if (fileNameSplit.size() <= 1) {
       throw new BadRequestException("The file format is invalid.");
     }
 
-    String format = fileNameSplit.get(fileNameSplit.size() - 1);
-    model.setFormat(format);
-    model.setAppId(appId);
-    model.setEnv(env);
-    model.setClusterName(clusterName);
-    model.setNamespaceName(namespaceName);
-    model.setNamespaceId(namespaceDTO.getId());
-    String configText;
+    final String format = fileNameSplit.get(fileNameSplit.size() - 1);
+
+    final String configText;
     try(InputStream in = file.getInputStream()){
       configText = ConfigToFileUtils.fileToString(in);
     }catch (IOException e) {
       throw new ServiceException("Read config file errors:{}", e);
     }
-    model.setConfigText(configText);
 
-    configService.updateConfigItemByText(model);
+    configsImportService.importConfig(appId, env, clusterName, namespaceName, namespaceDTO.getId(), format, configText);
   }
 
 }
