@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
-import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.service.ConfigsImportService;
@@ -10,7 +9,6 @@ import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import com.ctrip.framework.apollo.portal.util.MultipartFileUtils;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,16 +49,12 @@ public class ConfigsImportController {
     final String format = MultipartFileUtils.getFormat(file.getOriginalFilename());
 
     final NamespaceDTO namespaceDTO = namespaceService
-        .loadNamespaceBaseInfo(appId, Env.fromString(env), clusterName, namespaceName);
-
-    if (Objects.isNull(namespaceDTO)) {
-      throw new BadRequestException(String.format("Namespace: %s not exist.", namespaceName));
-    }
+        .loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
 
     final String configText;
     try(InputStream in = file.getInputStream()){
       configText = ConfigToFileUtils.fileToString(in);
-    }catch (IOException e) {
+    } catch (IOException e) {
       throw new ServiceException("Read config file errors:{}", e);
     }
 
