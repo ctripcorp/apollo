@@ -43,6 +43,19 @@ public class ConfigsImportController {
   public void importConfigFile(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
       @RequestParam("file") MultipartFile file) {
+    importOneConfigFile(appId, env, clusterName, namespaceName, file);
+  }
+
+  /**
+   * import one config from file
+   */
+  private void importOneConfigFile(
+      final String appId,
+      final String env,
+      final String clusterName,
+      final String namespaceName,
+      MultipartFile file
+  ) {
     // check file
     MultipartFileUtils.check(file);
     // get file format
