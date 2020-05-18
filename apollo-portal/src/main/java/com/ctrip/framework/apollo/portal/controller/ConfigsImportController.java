@@ -1,6 +1,9 @@
 package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.portal.service.ConfigsImportService;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,4 +37,22 @@ public class ConfigsImportController {
     configsImportService.importOneConfigFromFile(appId, env, clusterName, namespaceName, file);
   }
 
+  /**
+   * import multiple config files.
+   * @param env while environment's configs will be change
+   * @param multipartFiles configs from files
+   */
+  @PostMapping("/envs/{env}/items/import")
+  public Map<String, String> importConfigFiles(
+      @PathVariable final String env,
+      @RequestParam("files") MultipartFile[] multipartFiles) {
+    final Map<String, String> importResults = Stream.of(multipartFiles)
+        .collect(
+            Collectors.toMap(
+                MultipartFile::getOriginalFilename,
+                multipartFile -> configsImportService.importOneConfigFromFileQuiet(env, multipartFile)
+            )
+        );
+    return importResults;
+  }
 }
