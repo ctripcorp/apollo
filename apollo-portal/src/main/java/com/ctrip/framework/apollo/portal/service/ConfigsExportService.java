@@ -7,6 +7,7 @@ import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -38,16 +39,19 @@ public class ConfigsExportService {
   }
 
   public void exportAll(Env env, OutputStream outputStream) throws IOException {
+    // write a zip file content
     final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
     final List<App> apps = appService.findAll();
-    logger.info("{}", apps);
+    logger.info("export {} app's config", apps.size());
     for (final App app : apps) {
+      final String ownerName = app.getOwnerName();
       final String appId = app.getAppId();
       // find clusters
       final List<ClusterDTO> clusterDTOS = clusterService.findClusters(env, appId);
       for (final ClusterDTO clusterDTO : clusterDTOS) {
         final String clusterName = clusterDTO.getName();
+        // find namespaces in one cluster
         final List<NamespaceBO> namespaceBOS = namespaceService.findNamespaceBOs(appId, env, clusterName);
         for (final NamespaceBO namespaceBO : namespaceBOS) {
           final String namespace = namespaceBO.getBaseInfo().getNamespaceName();
@@ -55,7 +59,9 @@ public class ConfigsExportService {
           final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
           // put path
           final String configFilename = ConfigFileUtils.toFilename(appId, clusterName, namespace, configFileFormat);
-          final ZipEntry zipEntry = new ZipEntry(configFilename);
+          // path = ownerName/configFilename
+          final ZipEntry zipEntry = new ZipEntry(String.join(File.separator, ownerName, configFilename));
+
           zipOutputStream.putNextEntry(zipEntry);
           zipOutputStream.write(configFileContent.getBytes());
           zipOutputStream.closeEntry();
