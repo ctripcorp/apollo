@@ -1,6 +1,9 @@
 package com.ctrip.framework.apollo.portal.controller;
 
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.service.ConfigsImportService;
+import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
+import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,8 +36,12 @@ public class ConfigsImportController {
   @PostMapping("/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/import")
   public void importConfigFile(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
-      @RequestParam("file") MultipartFile file) {
-    configsImportService.importOneConfigFromFile(appId, env, clusterName, namespaceName, file);
+      @RequestParam("file") MultipartFile file) throws IOException {
+    // check file
+    ConfigFileUtils.check(file);
+    final String format = ConfigFileUtils.getFormat(file.getOriginalFilename());
+    final String standardFilename = ConfigFileUtils.toFilename(appId, clusterName, namespaceName, ConfigFileFormat.fromString(format));
+    configsImportService.importOneConfigFromFile(env, standardFilename, file.getInputStream());
   }
 
   /**
@@ -46,6 +53,9 @@ public class ConfigsImportController {
   public Map<String, String> importConfigFiles(
       @PathVariable final String env,
       @RequestParam("files") MultipartFile[] multipartFiles) {
+    // check all files
+    Stream.of(multipartFiles).forEach(ConfigFileUtils::check);
+
     final Map<String, String> importResults = Stream.of(multipartFiles)
         .collect(
             Collectors.toMap(

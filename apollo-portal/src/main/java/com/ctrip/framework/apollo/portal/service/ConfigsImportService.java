@@ -66,23 +66,11 @@ public class ConfigsImportService {
       final String env,
       final String clusterName,
       final String namespaceName,
-      final MultipartFile file
+      final String configText,
+      final String format
   ) {
-    // check file
-    ConfigFileUtils.check(file);
-    // get file format
-    final String format = ConfigFileUtils.getFormat(file.getOriginalFilename());
-
     final NamespaceDTO namespaceDTO = namespaceService
         .loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
-
-    final String configText;
-    try(InputStream in = file.getInputStream()){
-      configText = ConfigToFileUtils.fileToString(in);
-    } catch (IOException e) {
-      throw new ServiceException("Read config file errors:{}", e);
-    }
-
     this.importConfig(appId, env, clusterName, namespaceName, namespaceDTO.getId(), format, configText);
   }
 
@@ -97,19 +85,26 @@ public class ConfigsImportService {
    * </pre>
    * so we can get the information of appId, cluster, namespace, format from the file name.
    * @param env environment
-   * @param file appId+cluster+namespace.format
+   * @param standardFilename appId+cluster+namespace.format
+   * @param inputStream the input stream of file
    * @throws BadRequestException if file not valid
    */
   public void importOneConfigFromFile(
       final String env,
-      final MultipartFile file
+      final String standardFilename,
+      final InputStream inputStream
   ) {
-    ConfigFileUtils.check(file);
-    final String originalFilename = file.getOriginalFilename();
-    final String appId = ConfigFileUtils.getAppId(originalFilename);
-    final String clusterName = ConfigFileUtils.getClusterName(originalFilename);
-    final String namespace = ConfigFileUtils.getNamespace(originalFilename);
-    this.importOneConfigFromFile(appId, env, clusterName, namespace, file);
+    final String appId = ConfigFileUtils.getAppId(standardFilename);
+    final String clusterName = ConfigFileUtils.getClusterName(standardFilename);
+    final String namespace = ConfigFileUtils.getNamespace(standardFilename);
+    final String format = ConfigFileUtils.getFormat(standardFilename);
+    final String configText;
+    try(InputStream in = inputStream) {
+      configText = ConfigToFileUtils.fileToString(in);
+    } catch (IOException e) {
+      throw new ServiceException("Read config file errors:{}", e);
+    }
+    this.importOneConfigFromFile(appId, env, clusterName, namespace, configText, format);
   }
 
   public String importOneConfigFromFileQuiet(
@@ -118,7 +113,7 @@ public class ConfigsImportService {
   ) {
     final String originalFilename = file.getOriginalFilename();
     try {
-      importOneConfigFromFile(env, file);
+      importOneConfigFromFile(env, originalFilename, file.getInputStream());
     } catch (Exception e) {
       logger.error("import " + originalFilename + " fail. ", e);
       return "import " + originalFilename + " fail. " + e.getMessage();
