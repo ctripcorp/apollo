@@ -4,10 +4,12 @@ import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
+import com.ctrip.framework.apollo.portal.service.ConfigsExportService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
@@ -23,10 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/apps")
 public class ConfigsExportController {
 
+  private final ConfigsExportService configsExportService;
+
   private final NamespaceService namespaceService;
 
   public ConfigsExportController(
+      final ConfigsExportService configsExportService,
       final @Lazy NamespaceService namespaceService) {
+    this.configsExportService = configsExportService;
     this.namespaceService = namespaceService;
   }
 
@@ -51,5 +57,16 @@ public class ConfigsExportController {
     } catch (Exception e) {
       throw new ServiceException("export items failed:{}", e);
     }
+  }
+
+  // add permission, TODO
+  @GetMapping("/envs/{env}/export/all")
+  public void exportAll(
+      @PathVariable String env,
+      HttpServletResponse response
+  ) throws IOException {
+    final Env envEnum = Env.valueOf(env);
+    response.setHeader("Content-Disposition", "attachment;filename=" + envEnum.toString() + ".zip");
+    configsExportService.exportAll(envEnum, response.getOutputStream());
   }
 }

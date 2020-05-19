@@ -6,7 +6,7 @@ import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
-import com.ctrip.framework.apollo.portal.util.MultipartFileUtils;
+import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import org.slf4j.Logger;
@@ -69,9 +69,9 @@ public class ConfigsImportService {
       final MultipartFile file
   ) {
     // check file
-    MultipartFileUtils.check(file);
+    ConfigFileUtils.check(file);
     // get file format
-    final String format = MultipartFileUtils.getFormat(file.getOriginalFilename());
+    final String format = ConfigFileUtils.getFormat(file.getOriginalFilename());
 
     final NamespaceDTO namespaceDTO = namespaceService
         .loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
@@ -104,11 +104,11 @@ public class ConfigsImportService {
       final String env,
       final MultipartFile file
   ) {
-    MultipartFileUtils.check(file);
+    ConfigFileUtils.check(file);
     final String originalFilename = file.getOriginalFilename();
-    final String appId = MultipartFileUtils.getAppId(originalFilename);
-    final String clusterName = MultipartFileUtils.getClusterName(originalFilename);
-    final String namespace = MultipartFileUtils.getNamespace(originalFilename);
+    final String appId = ConfigFileUtils.getAppId(originalFilename);
+    final String clusterName = ConfigFileUtils.getClusterName(originalFilename);
+    final String namespace = ConfigFileUtils.getNamespace(originalFilename);
     this.importOneConfigFromFile(appId, env, clusterName, namespace, file);
   }
 

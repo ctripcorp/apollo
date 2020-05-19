@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  * First version: move from {@link ConfigsImportController#importConfigFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.springframework.web.multipart.MultipartFile)}
  * @author wxq
  */
-public class MultipartFileUtils {
+public class ConfigFileUtils {
 
   public static void check(MultipartFile file) {
     checkEmpty(file);
@@ -112,4 +112,27 @@ public class MultipartFileUtils {
       return namespace + "." + format;
     }
   }
+
+  /**
+   * <pre>
+   *   appId    cluster   namespace       return
+   *   666      default   application     666+default+application.properties
+   *   123      none      action.yml      123+none+action.yml
+   * </pre>
+   */
+  public static String toFilename(
+      final String appId,
+      final String clusterName,
+      final String namespace,
+      final ConfigFileFormat configFileFormat
+  ) {
+    final String suffix;
+    if (ConfigFileFormat.Properties.equals(configFileFormat)) {
+      suffix = "." + ConfigFileFormat.Properties.getValue();
+    } else {
+      suffix = "";
+    }
+    return appId + "+" + clusterName + "+" + namespace + suffix;
+  }
+
 }
