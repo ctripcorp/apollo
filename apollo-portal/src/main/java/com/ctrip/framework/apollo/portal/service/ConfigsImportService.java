@@ -134,23 +134,24 @@ public class ConfigsImportService {
       final InputStream inputStream
   ) throws IOException {
     final Map<String, String> map = new ConcurrentHashMap<>();
-    ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-    for (
-        ZipEntry zipEntry = zipInputStream.getNextEntry();
-        null != zipEntry;
-        zipEntry = zipInputStream.getNextEntry()
-    ) {
-      // handle path through file
-      final File file = new File(zipEntry.getName());
-      // get last
-      final String standardFilename = file.getName();
-      final String configText = ConfigToFileUtils.fileToString(zipInputStream);
-      try {
-        importOneConfigFromText(env, standardFilename, configText);
-        map.put(standardFilename, "0");
-      } catch (Exception e) {
-        logger.error("", e);
-        map.put(standardFilename, e.getMessage());
+    try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+      for (
+          ZipEntry zipEntry = zipInputStream.getNextEntry();
+          null != zipEntry;
+          zipEntry = zipInputStream.getNextEntry()
+      ) {
+        // handle path through file
+        final File file = new File(zipEntry.getName());
+        // get last
+        final String standardFilename = file.getName();
+        final String configText = ConfigToFileUtils.fileToString(zipInputStream);
+        try {
+          importOneConfigFromText(env, standardFilename, configText);
+          map.put(standardFilename, "0");
+        } catch (Exception e) {
+          logger.error("", e);
+          map.put(standardFilename, e.getMessage());
+        }
       }
     }
     return map;

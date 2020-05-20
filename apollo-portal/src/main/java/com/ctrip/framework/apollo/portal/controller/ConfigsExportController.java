@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal.controller;
 
 import com.ctrip.framework.apollo.common.exception.ServiceException;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.service.ConfigsExportService;
@@ -9,8 +10,8 @@ import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
@@ -30,11 +31,15 @@ public class ConfigsExportController {
 
   private final NamespaceService namespaceService;
 
+  private final PortalSettings portalSettings;
+
   public ConfigsExportController(
       final ConfigsExportService configsExportService,
-      final @Lazy NamespaceService namespaceService) {
+      final @Lazy NamespaceService namespaceService,
+      PortalSettings portalSettings) {
     this.configsExportService = configsExportService;
     this.namespaceService = namespaceService;
+    this.portalSettings = portalSettings;
   }
 
   @GetMapping("/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
@@ -68,6 +73,9 @@ public class ConfigsExportController {
   ) throws IOException {
     final Env envEnum = Env.valueOf(env);
     response.setHeader("Content-Disposition", "attachment;filename=" + envEnum.toString() + ".zip");
-    configsExportService.exportAll(envEnum, new BufferedOutputStream(response.getOutputStream()));
+    try (OutputStream outputStream = response.getOutputStream()) {
+      configsExportService.exportAll(envEnum, outputStream);
+    }
   }
+
 }
