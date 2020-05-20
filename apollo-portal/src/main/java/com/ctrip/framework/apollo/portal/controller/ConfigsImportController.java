@@ -50,13 +50,13 @@ public class ConfigsImportController {
    * @param multipartFiles configs from files
    */
   @PostMapping("/envs/{env}/items/import")
-  public Map<String, String> importConfigFiles(
+  public Map<String, Object> importConfigFiles(
       @PathVariable final String env,
       @RequestParam("files") MultipartFile[] multipartFiles) {
     // check all files
     Stream.of(multipartFiles).forEach(ConfigFileUtils::check);
 
-    final Map<String, String> importResults = Stream.of(multipartFiles)
+    final Map<String, Object> importResults = Stream.of(multipartFiles)
         .collect(
             Collectors.toMap(
                 MultipartFile::getOriginalFilename,

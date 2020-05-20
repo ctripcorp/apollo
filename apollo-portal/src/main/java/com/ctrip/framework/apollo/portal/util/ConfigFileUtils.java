@@ -90,17 +90,21 @@ public class ConfigFileUtils {
    *  "application+default+application.properties" -> "application"
    *  "application+default+application.yml" -> "application.yml"
    *  "application+default+application.json" -> "application.json"
+   *  "application+default+application.333.yml" -> "application.333.yml"
    * </pre>
    * @throws BadRequestException if file's name is invalid
    */
   public static String getNamespace(final String originalFilename) {
     checkThreePart(originalFilename);
-    final String[] namespaceAndFormat = getThreePart(originalFilename)[2].split("\\.");
-    if (2 != namespaceAndFormat.length) {
+    final String[] threeParts = getThreePart(originalFilename);
+    final String suffix = threeParts[2];
+    if (!suffix.contains(".")) {
       throw new BadRequestException(originalFilename + " namespace and format is invalid!");
     }
-    final String namespace = namespaceAndFormat[0];
-    final String format = namespaceAndFormat[1];
+    final int lastDotIndex = suffix.lastIndexOf(".");
+    final String namespace = suffix.substring(0, lastDotIndex);
+    // format after last character '.'
+    final String format = suffix.substring(lastDotIndex + 1);
     if (!ConfigFileFormat.isValidFormat(format)) {
       throw new BadRequestException(originalFilename + " format is invalid!");
     }
