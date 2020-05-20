@@ -59,8 +59,8 @@ public class ConfigsExportService {
           final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
           // put path
           final String configFilename = ConfigFileUtils.toFilename(appId, clusterName, namespace, configFileFormat);
-          // path = ownerName/configFilename
-          final ZipEntry zipEntry = new ZipEntry(String.join(File.separator, ownerName, configFilename));
+          // path = ownerName/appId/configFilename
+          final ZipEntry zipEntry = new ZipEntry(String.join(File.separator, ownerName, appId, configFilename));
 
           zipOutputStream.putNextEntry(zipEntry);
           zipOutputStream.write(configFileContent.getBytes());

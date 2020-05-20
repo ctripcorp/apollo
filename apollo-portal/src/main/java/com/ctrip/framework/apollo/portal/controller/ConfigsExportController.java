@@ -9,6 +9,7 @@ import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +68,6 @@ public class ConfigsExportController {
   ) throws IOException {
     final Env envEnum = Env.valueOf(env);
     response.setHeader("Content-Disposition", "attachment;filename=" + envEnum.toString() + ".zip");
-    configsExportService.exportAll(envEnum, response.getOutputStream());
+    configsExportService.exportAll(envEnum, new BufferedOutputStream(response.getOutputStream()));
   }
 }
