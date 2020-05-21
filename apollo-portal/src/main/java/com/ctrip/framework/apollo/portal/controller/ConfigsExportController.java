@@ -17,14 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * jian.tan
  */
 @RestController
-@RequestMapping("/apps")
 public class ConfigsExportController {
 
   private final ConfigsExportService configsExportService;
@@ -42,7 +40,7 @@ public class ConfigsExportController {
     this.portalSettings = portalSettings;
   }
 
-  @GetMapping("/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
+  @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
   public void exportItems(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
       HttpServletResponse res) {
@@ -66,7 +64,7 @@ public class ConfigsExportController {
   }
 
   // add permission, TODO
-  @GetMapping("/envs/{env}/export/all")
+  @GetMapping("/apps/envs/{env}/export/all")
   public void exportAll(
       @PathVariable String env,
       HttpServletResponse response
