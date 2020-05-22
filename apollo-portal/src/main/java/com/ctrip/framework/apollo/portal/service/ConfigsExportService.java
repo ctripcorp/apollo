@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -58,18 +59,18 @@ public class ConfigsExportService {
   public static void writeAsZipOutputStream(Stream<ConfigBO> configBOStream, OutputStream outputStream)
       throws IOException {
     try (final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-      // use reduce
-      final BiFunction<ZipOutputStream, ConfigBO, ZipOutputStream> biFunction = (zipOutputStream1, configBO1) -> {
+      final Consumer<ConfigBO> configBOConsumer = configBO -> {
         try {
-          return write2ZipOutputStream(
-              zipOutputStream1, configBO1);
+          // TODO, Stream.reduce will cause some problems. Is There other way to speed up the downloading?
+          synchronized (zipOutputStream) {
+            write2ZipOutputStream(zipOutputStream, configBO);
+          }
         } catch (IOException e) {
-          logger.error("Write error. {}", configBO1);
+          logger.error("Write error. {}", configBO);
           throw new IllegalStateException(e);
         }
       };
-      final BinaryOperator<ZipOutputStream> binaryOperator = (zipOutputStream1, zipOutputStream2) -> zipOutputStream;
-      configBOStream.reduce(zipOutputStream, biFunction, binaryOperator);
+      configBOStream.forEach(configBOConsumer);
     }
   }
 
