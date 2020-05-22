@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.util;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.controller.ConfigsImportController;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.google.common.base.Splitter;
 import java.io.File;
 import java.util.List;
@@ -141,14 +142,15 @@ public class ConfigFileUtils {
   }
 
   /**
-   * file path = ownerName/appId/configFilename
+   * file path = ownerName/appId/env/configFilename
    * @return file path in compressed file
    */
   public static String toFilePath(
       final String ownerName,
       final String appId,
+      final Env env,
       final String configFilename
   ) {
-    return String.join(File.separator, ownerName, appId, configFilename);
+    return String.join(File.separator, ownerName, appId, env.getName(), configFilename);
   }
 }

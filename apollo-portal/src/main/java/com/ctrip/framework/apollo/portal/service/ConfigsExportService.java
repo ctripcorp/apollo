@@ -8,9 +8,9 @@ import com.ctrip.framework.apollo.portal.entity.bo.ConfigBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -78,7 +78,7 @@ public class ConfigsExportService {
    * Watch out the concurrent problem!
    * zip output stream is same like cannot write concurrently!
    * the name of file is determined by {@link ConfigFileUtils#toFilename(String, String, String, ConfigFileFormat)}.
-   * the path of file is determined by {@link ConfigFileUtils#toFilePath(String, String, String)}.
+   * the path of file is determined by {@link ConfigFileUtils#toFilePath(String, String, Env, String)}.
    * @param zipOutputStream zip file output stream
    * @param configBO a namespace represent
    * @return zip file output stream same as parameter zipOutputStream
@@ -87,6 +87,7 @@ public class ConfigsExportService {
       final ZipOutputStream zipOutputStream,
       final ConfigBO configBO
   ) throws IOException {
+    final Env env = configBO.getEnv();
     final String ownerName = configBO.getOwnerName();
     final String appId = configBO.getAppId();
     final String clusterName = configBO.getClusterName();
@@ -94,7 +95,7 @@ public class ConfigsExportService {
     final String configFileContent = configBO.getConfigFileContent();
     final ConfigFileFormat configFileFormat = configBO.getFormat();
     final String configFilename = ConfigFileUtils.toFilename(appId, clusterName, namespace, configFileFormat);
-    final String filePath = ConfigFileUtils.toFilePath(ownerName, appId, configFilename);
+    final String filePath = ConfigFileUtils.toFilePath(ownerName, appId, env, configFilename);
     final ZipEntry zipEntry = new ZipEntry(filePath);
     try {
       zipOutputStream.putNextEntry(zipEntry);
@@ -136,12 +137,17 @@ public class ConfigsExportService {
     return apps.parallelStream().flatMap(function);
   }
 
+  public Stream<ConfigBO> makeStreamBy(
+      final Collection<Env> envs
+  ) {
+    return envs.parallelStream().flatMap(this::makeStreamBy);
+  }
+
   public void exportBy(Env env, String appId, String clusterName, OutputStream outputStream)
       throws IOException {
     final App app = appService.findByAppId(appId);
     final String ownerName = app.getOwnerName();
     final Stream<ConfigBO> configBOStream = this.makeStreamBy(env, ownerName, appId, clusterName);
-
     writeAsZipOutputStream(configBOStream, outputStream);
   }
 
@@ -159,17 +165,7 @@ public class ConfigsExportService {
 
   public void exportBy(OutputStream outputStream) throws IOException {
     final List<Env> activeEnvs = portalSettings.getActiveEnvs();
-    try (
-        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
-        final ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
-    ) {
-      // nested zip file
-      for (Env activeEnv : activeEnvs) {
-        final ZipEntry zipEntry = new ZipEntry(String.join(".", activeEnv.getName(), ".zip"));
-        zipOutputStream.putNextEntry(zipEntry);
-        this.exportBy(activeEnv, zipOutputStream);
-        zipOutputStream.closeEntry();
-      }
-    }
+    final Stream<ConfigBO> configBOStream = this.makeStreamBy(activeEnvs);
+    writeAsZipOutputStream(configBOStream, outputStream);
   }
 }

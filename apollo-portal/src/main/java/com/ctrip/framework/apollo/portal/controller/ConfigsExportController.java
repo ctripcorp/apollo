@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,7 +62,7 @@ public class ConfigsExportController {
         (env), clusterName, namespaceName);
 
     //generate a file.
-    res.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+    res.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName);
     // file content
     final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
     try {
@@ -94,7 +95,7 @@ public class ConfigsExportController {
     final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
     final ConfigFileFormat configFileFormat = ConfigFileFormat.fromString(namespaceBO.getFormat());
     // set download file name
-    response.setHeader("Content-Disposition", "attachment;filename=" + ConfigFileUtils.toFilename(appId, clusterName, namespaceName, configFileFormat));
+    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + ConfigFileUtils.toFilename(appId, clusterName, namespaceName, configFileFormat));
     try (OutputStream outputStream = response.getOutputStream()) {
       // write content
       outputStream.write(configFileContent.getBytes());
@@ -114,7 +115,7 @@ public class ConfigsExportController {
   ) throws IOException {
     final Env envEnum = Env.valueOf(env);
     final String downloadFilename = String.join("+", Arrays.asList(env, appId, clusterName)) + ".zip";
-    response.setHeader("Content-Disposition", "attachment;filename=" + downloadFilename);
+    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFilename);
     try (OutputStream outputStream = response.getOutputStream()) {
       // write content
       configsExportService.exportBy(envEnum, appId, clusterName, outputStream);
@@ -133,7 +134,7 @@ public class ConfigsExportController {
   ) throws IOException {
     final Env envEnum = Env.valueOf(env);
     final String downloadFilename = String.join("+", Arrays.asList(env, appId)) + ".zip";
-    response.setHeader("Content-Disposition", "attachment;filename=" + downloadFilename);
+    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFilename);
     try (OutputStream outputStream = response.getOutputStream()) {
       // write content
       configsExportService.exportBy(envEnum, appId, outputStream);
@@ -151,7 +152,7 @@ public class ConfigsExportController {
   ) throws IOException {
     final Env envEnum = Env.valueOf(env);
     final String downloadFilename = envEnum.getName() + ".zip";
-    response.setHeader("Content-Disposition", "attachment;filename=" + downloadFilename);
+    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFilename);
     try (OutputStream outputStream = response.getOutputStream()) {
       configsExportService.exportBy(envEnum, outputStream);
     }
@@ -167,7 +168,7 @@ public class ConfigsExportController {
       @RequestParam(value = "filename", defaultValue = "AllConfigs") final String filename
   ) throws IOException {
     final String downloadFilename = filename + ".zip";
-    response.setHeader("Content-Disposition", "attachment;filename=" + downloadFilename);
+    response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFilename);
     try (OutputStream outputStream = response.getOutputStream()) {
       configsExportService.exportBy(outputStream);
     }
