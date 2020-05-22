@@ -3,14 +3,16 @@ package com.ctrip.framework.apollo.portal.service;
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.portal.entity.bo.ConfigBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
-import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
@@ -38,35 +40,62 @@ public class ConfigsExportService {
     this.namespaceService = namespaceService;
   }
 
-  public void exportAll(Env env, OutputStream outputStream) throws IOException {
+  public Stream<ConfigBO> export(
+      final Env env,
+      final String ownerName,
+      final String appId,
+      final String clusterName
+  ) {
+    final List<NamespaceBO> namespaceBOS = namespaceService.findNamespaceBOs(appId, env, clusterName);
+    final Function<NamespaceBO, ConfigBO> function = namespaceBO -> new ConfigBO(env, ownerName, appId, clusterName, namespaceBO);
+    return namespaceBOS.parallelStream().map(function);
+  }
+
+  public Stream<ConfigBO> export(
+      final Env env,
+      final String ownerName,
+      final String appId
+  ) {
+    final List<ClusterDTO> clusterDTOS = clusterService.findClusters(env, appId);
+    final Function<ClusterDTO, Stream<ConfigBO>> function = clusterDTO -> this.export(env, ownerName, appId, clusterDTO.getName());
+    return clusterDTOS.parallelStream().flatMap(function);
+  }
+
+  public Stream<ConfigBO> export(
+      final Env env
+  ) {
+    final List<App> apps = appService.findAll();
+    final Function<App, Stream<ConfigBO>> function = app -> this.export(env, app.getOwnerName(), app.getAppId());
+    return apps.parallelStream().flatMap(function);
+  }
+
+  public void exportAll(final Env env, OutputStream outputStream) throws IOException {
     // write a zip file content
     try (final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-      final List<App> apps = appService.findAll();
-      logger.info("export {} app's config", apps.size());
-      for (final App app : apps) {
-        final String ownerName = app.getOwnerName();
-        final String appId = app.getAppId();
-        // find clusters
-        final List<ClusterDTO> clusterDTOS = clusterService.findClusters(env, appId);
-        for (final ClusterDTO clusterDTO : clusterDTOS) {
-          final String clusterName = clusterDTO.getName();
-          // find namespaces in one cluster
-          final List<NamespaceBO> namespaceBOS = namespaceService.findNamespaceBOs(appId, env, clusterName);
-          for (final NamespaceBO namespaceBO : namespaceBOS) {
-            final String namespace = namespaceBO.getBaseInfo().getNamespaceName();
-            final ConfigFileFormat configFileFormat = ConfigFileFormat.fromString(namespaceBO.getFormat());
-            final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
-            // put path
-            final String configFilename = ConfigFileUtils.toFilename(appId, clusterName, namespace, configFileFormat);
-            // path = ownerName/appId/configFilename
-            final ZipEntry zipEntry = new ZipEntry(String.join(File.separator, ownerName, appId, configFilename));
+      export(env).forEach(
+          configBO -> {
+            final String ownerName = configBO.getOwnerName();
+            final String appId = configBO.getAppId();
+            final String clusterName = configBO.getClusterName();
+            final String namespace = configBO.getNamespace();
+            final String configFileContent = configBO.getConfigFileContent();
+            final ConfigFileFormat configFileFormat = configBO.getFormat();
+            synchronized (zipOutputStream) {
+              final String configFilename = ConfigFileUtils
+                    .toFilename(appId, clusterName, namespace, configFileFormat);
+              // path = ownerName/appId/configFilename
+              final ZipEntry zipEntry = new ZipEntry(String.join(File.separator, ownerName, appId, configFilename));
 
-            zipOutputStream.putNextEntry(zipEntry);
-            zipOutputStream.write(configFileContent.getBytes());
-            zipOutputStream.closeEntry();
+              try {
+                zipOutputStream.putNextEntry(zipEntry);
+                zipOutputStream.write(configFileContent.getBytes());
+                zipOutputStream.closeEntry();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            }
           }
-        }
-      }
+      );
     }
   }
 }
