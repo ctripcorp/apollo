@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.controller.ConfigsImportController;
 import com.google.common.base.Splitter;
+import java.io.File;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -139,4 +140,15 @@ public class ConfigFileUtils {
     return appId + "+" + clusterName + "+" + namespace + suffix;
   }
 
+  /**
+   * file path = ownerName/appId/configFilename
+   * @return file path in compressed file
+   */
+  public static String toFilePath(
+      final String ownerName,
+      final String appId,
+      final String configFilename
+  ) {
+    return String.join(File.separator, ownerName, appId, configFilename);
+  }
 }

@@ -4,6 +4,10 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 
+/**
+ * a namespace represent.
+ * @author wxq
+ */
 public class ConfigBO {
 
   private final Env env;
@@ -59,6 +63,19 @@ public class ConfigBO {
         || null == this.namespace
         || null == this.configFileContent
         || null == this.format;
+  }
+
+  @Override
+  public String toString() {
+    return "ConfigBO{" +
+        "env=" + env +
+        ", ownerName='" + ownerName + '\'' +
+        ", appId='" + appId + '\'' +
+        ", clusterName='" + clusterName + '\'' +
+        ", namespace='" + namespace + '\'' +
+        ", configFileContent='" + configFileContent + '\'' +
+        ", format=" + format +
+        '}';
   }
 
   public Env getEnv() {
