@@ -26,7 +26,7 @@ public class ConfigFileUtils {
    */
   static void checkEmpty(MultipartFile file) {
     if (file.isEmpty()) {
-      throw new BadRequestException("The file is empty.");
+      throw new BadRequestException("The file is empty. " + file.getOriginalFilename());
     }
   }
 
