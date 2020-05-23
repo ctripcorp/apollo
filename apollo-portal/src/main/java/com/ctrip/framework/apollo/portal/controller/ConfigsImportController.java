@@ -47,6 +47,7 @@ public class ConfigsImportController {
    * @param env while environment's configs will be change
    * @param multipartFiles configs from files
    */
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @PostMapping("/apps/envs/{env}/items/import")
   public Map<String, Object> importConfigFiles(
       @PathVariable final String env,

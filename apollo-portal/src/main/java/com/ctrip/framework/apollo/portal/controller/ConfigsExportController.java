@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +41,6 @@ public class ConfigsExportController {
     this.namespaceService = namespaceService;
   }
 
-  // add permission, TODO
   /**
    * export one config as file.
    * file name examples:
@@ -50,6 +50,7 @@ public class ConfigsExportController {
    *   application.json
    * </pre>
    */
+  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
   public void exportItems(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
@@ -58,7 +59,7 @@ public class ConfigsExportController {
 
     String fileName = fileNameSplit.size() <= 1 ? Joiner.on(".")
         .join(namespaceName, ConfigFileFormat.Properties.getValue()) : namespaceName;
-    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.fromString
+    NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.valueOf
         (env), clusterName, namespaceName);
 
     //generate a file.
@@ -73,7 +74,6 @@ public class ConfigsExportController {
     }
   }
 
-  // add permission, TODO
   /**
    * export one config as file.
    * file name examples:
@@ -83,6 +83,7 @@ public class ConfigsExportController {
    *   765323+shanghai+application.json
    * </pre>
    */
+  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
   @GetMapping("/envs/{env}/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/export")
   public void exportBy(
       @PathVariable String env,
@@ -102,10 +103,10 @@ public class ConfigsExportController {
     }
   }
 
-  // add permission, TODO
   /**
    * export multiple configs in a compressed file.
    */
+  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
   @GetMapping("/envs/{env}/apps/{appId}/clusters/{clusterName}/export")
   public void exportBy(
       @PathVariable String env,
@@ -122,10 +123,10 @@ public class ConfigsExportController {
     }
   }
 
-  // add permission, TODO
   /**
    * export multiple configs in a compressed file.
    */
+  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
   @GetMapping("/envs/{env}/apps/{appId}/export")
   public void exportBy(
       @PathVariable String env,
@@ -141,10 +142,10 @@ public class ConfigsExportController {
     }
   }
 
-  // add permission, TODO
   /**
    * export an environment's configs in a compressed file.
    */
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @GetMapping("/envs/{env}/export")
   public void exportBy(
       @PathVariable String env,
@@ -158,10 +159,10 @@ public class ConfigsExportController {
     }
   }
 
-  // add permission, TODO
   /**
    * export all configs in a compressed file.
    */
+  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @GetMapping("/export")
   public void exportBy(
       HttpServletResponse response,
