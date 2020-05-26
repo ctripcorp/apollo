@@ -131,6 +131,20 @@ public class ReleaseService {
     return releases;
   }
 
+  public List<Release> findByReleaseIdBetween(String appId, String clusterName, String namespaceName,
+                                                                long fromReleaseId, long toReleaseId) {
+    List<Release>
+            releases =
+            releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIdBetweenOrderByIdDesc(appId, clusterName,
+                                                                                                 namespaceName,
+                                                                                                 fromReleaseId,
+                                                                                                 toReleaseId);
+    if (releases == null) {
+      return Collections.emptyList();
+    }
+    return releases;
+  }
+
   @Transactional
   public Release mergeBranchChangeSetsAndRelease(Namespace namespace, String branchName, String releaseName,
                                                  String releaseComment, boolean isEmergencyPublish,
@@ -450,6 +464,57 @@ public class ReleaseService {
 
     //publish child namespace if namespace has child
     rollbackChildNamespace(appId, clusterName, namespaceName, twoLatestActiveReleases, operator);
+
+    return release;
+  }
+
+  @Transactional
+  public Release rollbackTo(long releaseId, long toReleaseId, String operator) {
+    if (releaseId == toReleaseId) {
+      throw new BadRequestException("current release equal to target release");
+    }
+
+    Release release = findOne(releaseId);
+    Release toRelease = findOne(toReleaseId);
+    if (release == null || toRelease == null) {
+      throw new NotFoundException("release not found");
+    }
+    if (release.isAbandoned()) {
+      throw new BadRequestException("release is not active");
+    }
+
+    String appId = release.getAppId();
+    String clusterName = release.getClusterName();
+    String namespaceName = release.getNamespaceName();
+
+    List<Release> releases;
+    boolean isBackward = toReleaseId < releaseId;
+    if (isBackward) {
+      releases = findByReleaseIdBetween(appId, clusterName, namespaceName,
+              toReleaseId, releaseId);
+      if (toRelease.isAbandoned()) {
+        toRelease.setAbandoned(false);
+        toRelease.setDataChangeLastModifiedBy(operator);
+        releaseRepository.save(toRelease);
+      }
+    } else {
+      releases = findByReleaseIdBetween(appId, clusterName, namespaceName,
+              releaseId, toReleaseId);
+    }
+
+    for (int i = 0; i < releases.size() - 1; i++) {
+      releases.get(i).setAbandoned(isBackward);
+      releases.get(i).setDataChangeLastModifiedBy(operator);
+    }
+
+    releaseRepository.saveAll(releases);
+
+    releaseHistoryService.createReleaseHistory(appId, clusterName,
+                                               namespaceName, clusterName, toReleaseId,
+                                               release.getId(), ReleaseOperation.ROLLBACK, null, operator);
+
+    //publish child namespace if namespace has child
+    rollbackChildNamespace(appId, clusterName, namespaceName, Lists.newArrayList(release, toRelease), operator);
 
     return release;
   }
