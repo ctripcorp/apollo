@@ -5,7 +5,6 @@ import com.ctrip.framework.apollo.portal.service.ConfigsImportService;
 import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
 import java.io.IOException;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,62 +43,28 @@ public class ConfigsImportController {
   }
 
   /**
-   * Import multiple text file.
-   * the name of config file must be special like
-   * appId+cluster+namespace.format
-   * Example:
+   * Import multiple config files.
+   * Permission will be checked inside service.
+   *
+   * Name of config file must be special like
    * <pre>
-   *   123456+default+application.properties (appId is 123456, cluster is default, namespace is application, format is properties)
-   *   654321+north+password.yml (appId is 654321, cluster is north, namespace is password, format is yml)
+   * appId+cluster+namespace.properties
+   * or
+   * appId+cluster+namespace
    * </pre>
-   * so we can get the information of appId, cluster, namespace, format from the file name.
-   * @param multipartFiles normal text files.
-   */
-  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
-  @PostMapping("/envs/{env}/apps/{appId}/import")
-  public Map<String, Object> importConfigFiles(
-      @PathVariable final String env,
-      @PathVariable final String appId,
-      @RequestParam("files") MultipartFile[] multipartFiles
-  ) {
-    // check all files
-    Stream.of(multipartFiles).forEach(ConfigFileUtils::check);
-
-    Predicate<MultipartFile> inAppId = multipartFile ->
-        appId.equals(ConfigFileUtils.getAppId(multipartFile.getOriginalFilename()));
-
-    return Stream.of(multipartFiles).collect(
-        Collectors.toMap(
-            MultipartFile::getOriginalFilename,
-            multipartFile -> inAppId.test(multipartFile) ?
-                configsImportService.importOneConfigFromFileQuiet(env, multipartFile)
-                :
-                "fail. no permission with " + multipartFile.getOriginalFilename()
-        )
-    );
-  }
-
-  /**
-   * import multiple config files.
-   * the name of config file must be special like
-   * appId+cluster+namespace.format
    * Example:
    * <pre>
    *   123456+default+application.properties (appId is 123456, cluster is default, namespace is application, format is properties)
-   *   654321+north+password.yml (appId is 654321, cluster is north, namespace is password, format is yml)
+   *   654321+north+password.yml (appId is 654321, cluster is north, namespace is password.yml, format is yml)
    * </pre>
    * so we can get the information of appId, cluster, namespace, format from the file name.
    * @param env while environment's configs will be change
    * @param multipartFiles configs from files
    */
-  @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @PostMapping("/envs/{env}/import")
   public Map<String, Object> importConfigFiles(
       @PathVariable final String env,
       @RequestParam("files") MultipartFile[] multipartFiles) {
-    // check all files
-    Stream.of(multipartFiles).forEach(ConfigFileUtils::check);
-
     final Map<String, Object> importResults = Stream.of(multipartFiles)
         .collect(
             Collectors.toMap(

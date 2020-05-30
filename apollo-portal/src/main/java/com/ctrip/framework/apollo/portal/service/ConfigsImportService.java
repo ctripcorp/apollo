@@ -2,21 +2,14 @@ package com.ctrip.framework.apollo.portal.service;
 
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.exception.ServiceException;
-import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
-import com.ctrip.framework.apollo.portal.entity.bo.ConfigBO;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.ConfigFileUtils;
 import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.security.AccessControlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -37,13 +30,30 @@ public class ConfigsImportService {
 
   private final NamespaceService namespaceService;
 
+  private final PermissionValidator permissionValidator;
+
   public ConfigsImportService(
       final AppService appService,
       final ItemService itemService,
-      final @Lazy NamespaceService namespaceService) {
+      final @Lazy NamespaceService namespaceService,
+      PermissionValidator permissionValidator) {
     this.appService = appService;
     this.itemService = itemService;
     this.namespaceService = namespaceService;
+    this.permissionValidator = permissionValidator;
+  }
+
+  /**
+   * @param standardFilename get appId and namespace from it
+   */
+  public boolean hasModifyNamespacePermission(String env, String standardFilename) {
+    final String appId = ConfigFileUtils.getAppId(standardFilename);
+    final String namespace = ConfigFileUtils.getNamespace(standardFilename);
+    if (permissionValidator.isAppAdmin(appId)) {
+      return true;
+    } else {
+      return permissionValidator.hasModifyNamespacePermission(appId, namespace, env);
+    }
   }
 
   /**
@@ -115,12 +125,18 @@ public class ConfigsImportService {
 
   /**
    * @see ConfigsImportService#importOneConfigFromText(java.lang.String, java.lang.String, java.lang.String)
+   * @throws AccessControlException if has no modify namespace permission
    */
   public void importOneConfigFromFile(
       final String env,
       final String standardFilename,
       final InputStream inputStream
   ) {
+    // check permission
+    if (!this.hasModifyNamespacePermission(env, standardFilename)) {
+      throw new AccessControlException("no permission with " + standardFilename);
+    }
+
     final String configText;
     try(InputStream in = inputStream) {
       configText = ConfigToFileUtils.fileToString(in);
@@ -131,44 +147,10 @@ public class ConfigsImportService {
   }
 
   /**
-   * There are many files in a zip file.
-   * @param env environment
-   * @param inputStream input stream of zip file
-   * @return key is filename, value is import result of this file
-   * @throws IOException meet read exception
-   */
-  public Map<String, String> importConfigsFromZipFile(
-      final String env,
-      final InputStream inputStream
-  ) throws IOException {
-    final Map<String, String> map = new ConcurrentHashMap<>();
-    try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
-      for (
-          ZipEntry zipEntry = zipInputStream.getNextEntry();
-          null != zipEntry;
-          zipEntry = zipInputStream.getNextEntry()
-      ) {
-        // handle path through file
-        final File file = new File(zipEntry.getName());
-        // get last
-        final String standardFilename = file.getName();
-        final String configText = ConfigToFileUtils.fileToString(zipInputStream);
-        try {
-          importOneConfigFromText(env, standardFilename, configText);
-          map.put(standardFilename, "0");
-        } catch (Exception e) {
-          logger.error("", e);
-          map.put(standardFilename, e.getMessage());
-        }
-      }
-    }
-    return map;
-  }
-
-  /**
+   * catch all exception in method.
    * @param env environment
    * @param file file uploaded, maybe a zip file
-   * @return import result. 0 if success
+   * @return import result. if success return 0, else return error message
    */
   public Object importOneConfigFromFileQuiet(
       final String env,
@@ -176,116 +158,12 @@ public class ConfigsImportService {
   ) {
     final String originalFilename = file.getOriginalFilename();
     try {
-      if (Objects.requireNonNull(file.getContentType()).endsWith("zip")) {
-        // a compressed zip file
-        return importConfigsFromZipFile(env, file.getInputStream());
-      } else {
-        importOneConfigFromFile(env, originalFilename, file.getInputStream());
-      }
+      ConfigFileUtils.check(file);
+      importOneConfigFromFile(env, originalFilename, file.getInputStream());
     } catch (Exception e) {
-      logger.error("import " + originalFilename + " fail. ", e);
+      logger.debug("import " + originalFilename + " fail. ", e);
       return "fail. " + e.getMessage();
     }
     return "0";
-  }
-
-  /**
-   * Modify one namespace from {@link ConfigBO}.
-   */
-  private void importConfigBO(ConfigBO configBO) {
-    final NamespaceDTO namespaceDTO = namespaceService
-        .loadNamespaceBaseInfo(configBO.getAppId(), configBO.getEnv(), configBO.getClusterName(), configBO.getNamespace());
-
-    final NamespaceTextModel model = new NamespaceTextModel();
-    model.setAppId(configBO.getAppId());
-    model.setEnv(configBO.getEnv().getName());
-    model.setClusterName(configBO.getClusterName());
-    model.setNamespaceName(configBO.getNamespace());
-    model.setNamespaceId(namespaceDTO.getId());
-    model.setFormat(configBO.getFormat().getValue());
-    model.setConfigText(configBO.getConfigFileContent());
-    itemService.updateConfigItemByText(model);
-  }
-
-  /**
-   * Another reference of {@link this#importConfigBO(ConfigBO)}.
-   */
-  private final Consumer<ConfigBO> configBOConsumer = this::importConfigBO;
-
-  private void consume(
-      final Consumer<ConfigBO> configBOConsumer,
-      final Env env,
-      final MultipartFile multipartFile
-  ) throws IOException {
-    final String originalFilename = multipartFile.getOriginalFilename();
-    final String contentType = multipartFile.getContentType();
-    final InputStream inputStream = multipartFile.getInputStream();
-    if (Objects.requireNonNull(contentType).endsWith("zip")) {
-      // a compressed zip file
-      consumeZip(configBOConsumer, env, inputStream);
-    } else {
-      // normal text file
-      final ConfigBO configBO = textToConfigBO(env, originalFilename, inputStream);
-      configBOConsumer.accept(configBO);
-    }
-  }
-
-  /**
-   * A zip file may exists multiple files.
-   * Pass a consumer to consume those files.
-   * @param configBOConsumer consumer
-   * @param env environment
-   * @param inputStream zip file input stream
-   * @throws IOException if meet input exception
-   */
-  private void consumeZip(
-      final Consumer<ConfigBO> configBOConsumer,
-      final Env env,
-      final InputStream inputStream
-  ) throws IOException {
-    try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
-      for (
-          ZipEntry zipEntry = zipInputStream.getNextEntry();
-          null != zipEntry;
-          zipEntry = zipInputStream.getNextEntry()
-      ) {
-        // handle path through file
-        final File file = new File(zipEntry.getName());
-        // get last
-        final String standardFilename = file.getName();
-        // support that it is a normal text file
-        final ConfigBO configBO = textToConfigBO(env, standardFilename, zipInputStream);
-        // invoke the consumer
-        configBOConsumer.accept(configBO);
-      }
-    }
-  }
-
-  /**
-   * Convert a file to a standard {@link ConfigBO}.
-   * The file cannot be a compressed file like "zip" file.
-   * @param originalFilename text file name
-   * @param inputStream text file's input stream
-   */
-  private ConfigBO textToConfigBO(
-      final Env env,
-      final String originalFilename,
-      final InputStream inputStream
-  ) {
-    final String appId = ConfigFileUtils.getAppId(originalFilename);
-    final String ownerName = appService.findByAppId(appId).getOwnerName();
-    final String clusterName = ConfigFileUtils.getClusterName(originalFilename);
-    final String namespace = ConfigFileUtils.getNamespace(originalFilename);
-    final String configFileContent = ConfigToFileUtils.fileToString(inputStream);
-    final ConfigFileFormat format = ConfigFileFormat.fromString(ConfigFileUtils.getFormat(originalFilename));
-    return new ConfigBO(
-        env,
-        ownerName,
-        appId,
-        clusterName,
-        namespace,
-        configFileContent,
-        format
-    );
   }
 }
