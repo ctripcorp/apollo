@@ -682,6 +682,7 @@
   "ConfigImport.Title": "配置导入",
   "ConfigImport.TitleTips": "配置的导入依赖于文件名提供相关信息。properties格式的配置，文件名为appId+cluster+namespace.properties，例如12345+default+application.properties。非properties格式的配置，文件名为appId+cluster+namespace，例如12345+default+application.yml。",
   "ConfigExport.Title": "配置导出",
+  "ConfigExport.Download": "点击下载",
   "App.CreateProject": "创建项目",
   "App.AppIdTips": "（应用唯一标识）",
   "App.AppNameTips": "(建议格式 xx-yy-zz 例:apollo-server)",
