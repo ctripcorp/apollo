@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.portal.util;
 
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.controller.ConfigsImportController;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.google.common.base.Splitter;
@@ -37,6 +38,12 @@ public class ConfigFileUtils {
     final List<String> fileNameSplit = Splitter.on(".").splitToList(originalFilename);
     if (fileNameSplit.size() <= 1) {
       throw new BadRequestException("The file format is invalid.");
+    }
+
+    for (String s : fileNameSplit) {
+      if (StringUtils.isEmpty(s)) {
+        throw new BadRequestException("The file format is invalid.");
+      }
     }
   }
 
