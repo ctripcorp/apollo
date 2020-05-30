@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.portal.service;
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.entity.bo.ConfigBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
@@ -16,6 +17,8 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,16 +40,19 @@ public class ConfigsExportService {
 
   private final PortalSettings portalSettings;
 
+  private final PermissionValidator permissionValidator;
+
   public ConfigsExportService(
       AppService appService,
       ClusterService clusterService,
       final @Lazy NamespaceService namespaceService,
-      PortalSettings portalSettings
-  ) {
+      PortalSettings portalSettings,
+      PermissionValidator permissionValidator) {
     this.appService = appService;
     this.clusterService = clusterService;
     this.namespaceService = namespaceService;
     this.portalSettings = portalSettings;
+    this.permissionValidator = permissionValidator;
   }
 
   /**
@@ -109,6 +115,9 @@ public class ConfigsExportService {
     return zipOutputStream;
   }
 
+  /**
+   * @return the namespaces current user exists
+   */
   public Stream<ConfigBO> makeStreamBy(
       final Env env,
       final String ownerName,
@@ -117,7 +126,8 @@ public class ConfigsExportService {
   ) {
     final List<NamespaceBO> namespaceBOS = namespaceService.findNamespaceBOs(appId, env, clusterName);
     final Function<NamespaceBO, ConfigBO> function = namespaceBO -> new ConfigBO(env, ownerName, appId, clusterName, namespaceBO);
-    return namespaceBOS.parallelStream().map(function);
+    return namespaceBOS.parallelStream()
+        .map(function);
   }
 
   public Stream<ConfigBO> makeStreamBy(
@@ -127,41 +137,40 @@ public class ConfigsExportService {
   ) {
     final List<ClusterDTO> clusterDTOS = clusterService.findClusters(env, appId);
     final Function<ClusterDTO, Stream<ConfigBO>> function = clusterDTO -> this.makeStreamBy(env, ownerName, appId, clusterDTO.getName());
-    return clusterDTOS.parallelStream().flatMap(function);
+    return clusterDTOS.parallelStream()
+        .flatMap(function);
   }
 
   public Stream<ConfigBO> makeStreamBy(
-      final Env env
+      final Env env, final List<App> apps
   ) {
-    final List<App> apps = appService.findAll();
     final Function<App, Stream<ConfigBO>> function = app -> this.makeStreamBy(env, app.getOwnerName(), app.getAppId());
-    return apps.parallelStream().flatMap(function);
+
+    return apps.parallelStream()
+        .flatMap(function);
   }
 
   public Stream<ConfigBO> makeStreamBy(
       final Collection<Env> envs
   ) {
-    return envs.parallelStream().flatMap(this::makeStreamBy);
-  }
+    // get all apps
+    final List<App> apps = appService.findAll();
 
-  public void exportBy(Env env, String appId, String clusterName, OutputStream outputStream)
-      throws IOException {
-    final App app = appService.findByAppId(appId);
-    final String ownerName = app.getOwnerName();
-    final Stream<ConfigBO> configBOStream = this.makeStreamBy(env, ownerName, appId, clusterName);
-    writeAsZipOutputStream(configBOStream, outputStream);
-  }
+    // permission check
+    final Predicate<App> isAppAdmin = app -> {
+      try{
+        return permissionValidator.isAppAdmin(app.getAppId());
+      } catch (Exception e) {
+        logger.error("app = {}", app);
+        logger.error(app.getAppId());
+      }
+      return false;
+    };
 
-  public void exportBy(Env envEnum, String appId, OutputStream outputStream) throws IOException {
-    final App app = appService.findByAppId(appId);
-    final String ownerName = app.getOwnerName();
-    final Stream<ConfigBO> configBOStream = this.makeStreamBy(envEnum, ownerName, appId);
-    writeAsZipOutputStream(configBOStream, outputStream);
-  }
-
-  public void exportBy(final Env env, OutputStream outputStream) throws IOException {
-    final Stream<ConfigBO> configBOStream = this.makeStreamBy(env);
-    writeAsZipOutputStream(configBOStream, outputStream);
+    // app admin permission filter
+    final List<App> appsExistPermission = apps.stream().filter(isAppAdmin).collect(Collectors.toList());
+    return envs.parallelStream()
+        .flatMap(env -> this.makeStreamBy(env, appsExistPermission));
   }
 
   public void exportBy(OutputStream outputStream) throws IOException {
