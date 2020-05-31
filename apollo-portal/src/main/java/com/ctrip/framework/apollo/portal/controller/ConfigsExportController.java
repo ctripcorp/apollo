@@ -49,7 +49,7 @@ public class ConfigsExportController {
    *   application.json
    * </pre>
    */
-  @PreAuthorize(value = "@permissionValidator.isAppAdmin(#appId)")
+  @PreAuthorize(value = "@permissionValidator.shouldShowConfigToCurrentUser(#appId, #env, #namespaceName)")
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
   public void exportItems(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
