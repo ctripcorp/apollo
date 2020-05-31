@@ -384,6 +384,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![果果科技](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/guoguokeji.jpg) 
 ![昆明航空](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/airkunming.png) 
 ![我爱我家](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/5i5j.png) 
+![国金证券](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/gjzq.png) 
 
 # Awards
 
