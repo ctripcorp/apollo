@@ -79,7 +79,7 @@ public class ConfigsExportController {
    * The permission check in service.
    */
   @GetMapping("/export")
-  public void exportBy(
+  public void exportAll(
       HttpServletResponse response,
       @RequestParam(value = "filename", defaultValue = "ApolloConfigs.zip") final String filename
   ) throws IOException {
