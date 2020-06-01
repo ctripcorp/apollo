@@ -131,14 +131,15 @@ public class ReleaseService {
     return releases;
   }
 
-  public List<Release> findByReleaseIdBetween(String appId, String clusterName, String namespaceName,
-                                                                long fromReleaseId, long toReleaseId) {
+  private List<Release> findActiveReleasesBetween(String appId, String clusterName, String namespaceName,
+                                                  long fromReleaseId, long toReleaseId) {
     List<Release>
-            releases =
-            releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIdBetweenOrderByIdDesc(appId, clusterName,
-                                                                                                 namespaceName,
-                                                                                                 fromReleaseId,
-                                                                                                 toReleaseId);
+        releases =
+        releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseAndIdBetweenOrderByIdDesc(appId,
+                                                                                                                clusterName,
+                                                                                                                namespaceName,
+                                                                                                                fromReleaseId,
+                                                                                                                toReleaseId);
     if (releases == null) {
       return Collections.emptyList();
     }
@@ -479,7 +480,7 @@ public class ReleaseService {
     if (release == null || toRelease == null) {
       throw new NotFoundException("release not found");
     }
-    if (release.isAbandoned()) {
+    if (release.isAbandoned() || toRelease.isAbandoned()) {
       throw new BadRequestException("release is not active");
     }
 
@@ -487,23 +488,11 @@ public class ReleaseService {
     String clusterName = release.getClusterName();
     String namespaceName = release.getNamespaceName();
 
-    List<Release> releases;
-    boolean isBackward = toReleaseId < releaseId;
-    if (isBackward) {
-      releases = findByReleaseIdBetween(appId, clusterName, namespaceName,
-              toReleaseId, releaseId);
-      if (toRelease.isAbandoned()) {
-        toRelease.setAbandoned(false);
-        toRelease.setDataChangeLastModifiedBy(operator);
-        releaseRepository.save(toRelease);
-      }
-    } else {
-      releases = findByReleaseIdBetween(appId, clusterName, namespaceName,
-              releaseId, toReleaseId);
-    }
+    List<Release> releases = findActiveReleasesBetween(appId, clusterName, namespaceName,
+                                                       toReleaseId, releaseId);
 
     for (int i = 0; i < releases.size() - 1; i++) {
-      releases.get(i).setAbandoned(isBackward);
+      releases.get(i).setAbandoned(true);
       releases.get(i).setDataChangeLastModifiedBy(operator);
     }
 

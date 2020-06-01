@@ -110,7 +110,7 @@ public class ReleaseServiceTest extends AbstractUnitTest {
   }
 
   @Test
-  public void testRollbackToBackward() {
+  public void testRollbackTo() {
     List<Release> releaseList = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       Release release = new Release();
@@ -125,52 +125,18 @@ public class ReleaseServiceTest extends AbstractUnitTest {
     long releaseId3 = 3;
     when(releaseRepository.findById(releaseId1)).thenReturn(Optional.of(releaseList.get(2)));
     when(releaseRepository.findById(releaseId3)).thenReturn(Optional.of(releaseList.get(0)));
-    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIdBetweenOrderByIdDesc(appId,
-            clusterName,
-            namespaceName,
-            releaseId1,
-            releaseId3))
-            .thenReturn(releaseList);
+    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseAndIdBetweenOrderByIdDesc(appId,
+                                                                                                                 clusterName,
+                                                                                                                 namespaceName,
+                                                                                                                 releaseId1,
+                                                                                                                 releaseId3))
+        .thenReturn(releaseList);
 
     releaseService.rollbackTo(releaseId3, releaseId1, user);
 
     verify(releaseRepository).saveAll(releaseList);
     Assert.assertTrue(releaseList.get(0).isAbandoned());
     Assert.assertTrue(releaseList.get(1).isAbandoned());
-    Assert.assertFalse(releaseList.get(2).isAbandoned());
-    Assert.assertEquals(user, releaseList.get(0).getDataChangeLastModifiedBy());
-    Assert.assertEquals(user, releaseList.get(1).getDataChangeLastModifiedBy());
-  }
-
-  @Test
-  public void testRollbackToForward() {
-    List<Release> releaseList = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
-      Release release = new Release();
-      release.setId(3 - i);
-      release.setAppId(appId);
-      release.setClusterName(clusterName);
-      release.setNamespaceName(namespaceName);
-      release.setAbandoned(true);
-      releaseList.add(release);
-    }
-    releaseList.get(2).setAbandoned(false);
-    long releaseId1 = 1;
-    long releaseId3 = 3;
-    when(releaseRepository.findById(releaseId1)).thenReturn(Optional.of(releaseList.get(2)));
-    when(releaseRepository.findById(releaseId3)).thenReturn(Optional.of(releaseList.get(0)));
-    when(releaseRepository.findByAppIdAndClusterNameAndNamespaceNameAndIdBetweenOrderByIdDesc(appId,
-            clusterName,
-            namespaceName,
-            releaseId1,
-            releaseId3))
-            .thenReturn(releaseList);
-
-    releaseService.rollbackTo(releaseId1, releaseId3, user);
-
-    verify(releaseRepository).saveAll(releaseList);
-    Assert.assertFalse(releaseList.get(0).isAbandoned());
-    Assert.assertFalse(releaseList.get(1).isAbandoned());
     Assert.assertFalse(releaseList.get(2).isAbandoned());
     Assert.assertEquals(user, releaseList.get(0).getDataChangeLastModifiedBy());
     Assert.assertEquals(user, releaseList.get(1).getDataChangeLastModifiedBy());

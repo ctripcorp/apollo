@@ -114,10 +114,8 @@
                             <div class="col-md-7 text-right">
                                 <button type="button" class="btn btn-default btn-sm" data-tooltip="tooltip" data-placement="bottom"
                                         title="{{'Config.History.RollbackToTips' | translate }}"
-                                        ng-show="namespace.hasReleasePermission
-                                            && (history.operation == 0  || history.operation == 1
-                                            || history.operation == 4 || history.operation == 5
-                                            || history.operation == 6)"
+                                        ng-show="namespace.hasReleasePermission && !history.isReleaseAbandoned
+                                            && (history.operation == 0 || history.operation == 1 || history.operation == 4)"
                                         ng-click="preRollback()">
                                     <img src="../img/rollback.png">
                                     {{'Config.History.RollbackTo' | translate }}
