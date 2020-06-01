@@ -104,6 +104,7 @@
                     <div class="panel-heading">
 
                         <span ng-bind="history.releaseTitle"></span>
+                        <span ng-if="history.isReleaseAbandoned">{{'Config.History.Abandoned' | translate }}</span>
                         <span class="pull-right" ng-bind="history.releaseTime | date: 'yyyy-MM-dd HH:mm:ss'"></span>
 
                         <div class="row" style="padding-top: 10px;">

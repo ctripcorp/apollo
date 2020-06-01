@@ -647,6 +647,7 @@
   "Config.History.OperationType8": "删除灰度(全量发布)",
   "Config.History.UrgentPublish": "紧急发布",
   "Config.History.LoadMore": "加载更多",
+  "Config.History.Abandoned": "已废弃",
   "Config.History.RollbackTo": "回滚到此版本",
   "Config.History.RollbackToTips": "回滚已发布的配置到此版本",
   "Config.History.ChangedItem": "变更的配置",

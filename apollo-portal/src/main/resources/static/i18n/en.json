@@ -647,6 +647,7 @@
   "Config.History.OperationType8": "Delete Grayscale(Full Release)",
   "Config.History.UrgentPublish": "Emergency Release",
   "Config.History.LoadMore": "Load more",
+  "Config.History.Abandoned": "Abandoned",
   "Config.History.RollbackTo": "Rollback To This Release",
   "Config.History.RollbackToTips": "Rollback released configuration to this release",
   "Config.History.ChangedItem": "Changed Configuration",
