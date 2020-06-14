@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.build.MockInjector;
+import com.ctrip.framework.apollo.internals.DefaultInjector;
 import com.ctrip.framework.apollo.util.OrderedProperties;
 import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import com.google.common.base.Charsets;
@@ -13,6 +14,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -22,7 +24,15 @@ import org.yaml.snakeyaml.parser.ParserException;
 
 public class YamlParserTest {
 
-  private YamlParser parser = new YamlParser();
+  private YamlParser parser;
+
+  @Before
+  public void setUp() throws Exception {
+    MockInjector.reset();
+    MockInjector.setDelegate(new DefaultInjector());
+
+    parser = new YamlParser();
+  }
 
   @Test
   public void testValidCases() throws Exception {
