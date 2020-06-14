@@ -5,7 +5,8 @@
 
         <div class="row">
             <div class="col-md-6 col-sm-6 header-namespace">
-                <b class="namespace-name" ng-bind="namespace.viewName"></b>
+                <b class="namespace-name" ng-bind="namespace.viewName"
+                   data-tooltip="tooltip" data-placement="bottom" title="{{namespace.comment}}"></b>
                 <span class="label label-warning no-radius namespace-label"
                     ng-show="namespace.branch.itemModifiedCnt > 0">{{'Component.Namespace.Branch.IsChanged' | translate }}
                     <span class="badge label badge-white namespace-label"
