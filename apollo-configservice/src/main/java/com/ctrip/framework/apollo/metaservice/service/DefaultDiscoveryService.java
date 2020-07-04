@@ -22,6 +22,7 @@ public class DefaultDiscoveryService implements DiscoveryService {
     this.discoveryClient = discoveryClient;
   }
 
+  @Override
   public List<ServiceDTO> getServiceInstances(String serviceId) {
     List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
     if (CollectionUtils.isEmpty(instances)) {
