@@ -279,7 +279,7 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.46</version>
+				<version>8.0.16</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
@@ -944,7 +944,7 @@
 							<dependency>
 								<groupId>mysql</groupId>
 								<artifactId>mysql-connector-java</artifactId>
-								<version>5.1.46</version>
+								<version>8.0.16</version>
 							</dependency>
 						</dependencies>
 						<configuration>
@@ -967,7 +967,7 @@
 							<dependency>
 								<groupId>mysql</groupId>
 								<artifactId>mysql-connector-java</artifactId>
-								<version>5.1.46</version>
+								<version>8.0.16</version>
 							</dependency>
 						</dependencies>
 						<configuration>
