@@ -10,21 +10,14 @@ import com.ctrip.framework.apollo.portal.util.ConfigToFileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author wxq
  */
 @Service
 public class ConfigsImportService {
-
-  private final static Logger logger = LoggerFactory.getLogger(ConfigsImportService.class);
-
-  private final AppService appService;
 
   private final ItemService itemService;
 
@@ -33,11 +26,9 @@ public class ConfigsImportService {
   private final PermissionValidator permissionValidator;
 
   public ConfigsImportService(
-      final AppService appService,
       final ItemService itemService,
       final @Lazy NamespaceService namespaceService,
       PermissionValidator permissionValidator) {
-    this.appService = appService;
     this.itemService = itemService;
     this.namespaceService = namespaceService;
     this.permissionValidator = permissionValidator;
@@ -144,26 +135,5 @@ public class ConfigsImportService {
       throw new ServiceException("Read config file errors:{}", e);
     }
     this.importOneConfigFromText(env, standardFilename, configText);
-  }
-
-  /**
-   * catch all exception in method.
-   * @param env environment
-   * @param file file uploaded, maybe a zip file
-   * @return import result. if success return 0, else return error message
-   */
-  public Object importOneConfigFromFileQuiet(
-      final String env,
-      final MultipartFile file
-  ) {
-    final String originalFilename = file.getOriginalFilename();
-    try {
-      ConfigFileUtils.check(file);
-      importOneConfigFromFile(env, originalFilename, file.getInputStream());
-    } catch (Exception e) {
-      logger.debug("import " + originalFilename + " fail. ", e);
-      return "fail. " + e.getMessage();
-    }
-    return "0";
   }
 }

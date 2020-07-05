@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="config_import_export">
+<html ng-app="config_export">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,22 +10,14 @@
     <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
     <link rel="stylesheet" type="text/css" media='all' href="vendor/angular/loading-bar.min.css">
     <link rel="stylesheet" type="text/css" href="styles/common-style.css">
-    <title>{{'ConfigImportExport.Title' | translate }}</title>
+    <title>{{'ConfigExport.Title' | translate }}</title>
 </head>
 
 <body>
     <apollonav></apollonav>
-    <div class="container-fluid" ng-controller="ConfigImportExportController">
+    <div class="container-fluid">
         <div class="col-md-8 col-md-offset-2 panel">
             <section class="panel-body">
-                <div class="row">
-                    <header class="panel-heading">
-                        {{'ConfigImport.Title' | translate }}
-                        <small>
-                            {{'ConfigImport.TitleTips' | translate }}
-                        </small>
-                    </header>
-                </div>
                 <div class="row">
                     <header class="panel-heading">
                         {{'ConfigExport.Title' | translate }}
@@ -92,8 +84,6 @@
 
     <script type="application/javascript" src="scripts/AppUtils.js"></script>
     <script type="application/javascript" src="scripts/services/OrganizationService.js"></script>
-
-    <script type="application/javascript" src="scripts/controller/ConfigImportExportController.js"></script>
 </body>
 
 </html>

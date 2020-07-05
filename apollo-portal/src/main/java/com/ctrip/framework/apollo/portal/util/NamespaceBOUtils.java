@@ -14,6 +14,8 @@ public class NamespaceBOUtils {
 
   /**
    * copy from old {@link ConfigsExportController}.
+   * convert {@link NamespaceBO} to a file content.
+   * @return content of config file
    */
   public static String convert2configFileContent(NamespaceBO namespaceBO) {
     List<String> fileItems = namespaceBO.getItems().stream().map(itemBO -> {

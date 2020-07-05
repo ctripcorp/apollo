@@ -173,7 +173,13 @@ public class ConfigsExportService {
         .flatMap(env -> this.makeStreamBy(env, appsExistPermission));
   }
 
-  public void exportBy(OutputStream outputStream) throws IOException {
+  /**
+   * Export all projects which current user own them.
+   * Permission check by {@link PermissionValidator#isAppAdmin(java.lang.String)}
+   * @param outputStream network file download stream to user
+   * @throws IOException
+   */
+  public void exportAllTo(OutputStream outputStream) throws IOException {
     final List<Env> activeEnvs = portalSettings.getActiveEnvs();
     final Stream<ConfigBO> configBOStream = this.makeStreamBy(activeEnvs);
     writeAsZipOutputStream(configBOStream, outputStream);

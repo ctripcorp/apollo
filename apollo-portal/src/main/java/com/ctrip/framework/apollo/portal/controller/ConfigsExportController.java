@@ -11,14 +11,18 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class ConfigsExportController {
+
+  private static final Logger logger = LoggerFactory.getLogger(ConfigsExportController.class);
 
   private final ConfigsExportService configsExportService;
 
@@ -79,13 +85,16 @@ public class ConfigsExportController {
    * The permission check in service.
    */
   @GetMapping("/export")
-  public void exportAll(
-      HttpServletResponse response,
-      @RequestParam(value = "filename", defaultValue = "ApolloConfigs.zip") final String filename
-  ) throws IOException {
+  public void exportAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // filename must contain the information of time
+    final String filename = "apollo_config_export_" + DateFormatUtils.format(new Date(), "yyyy_MMdd_HH_mm_ss") + ".zip";
+    // log who download the configs
+    logger.info("Download configs, remote addr [{}], remote host [{}]. Filename is [{}]", request.getRemoteAddr(), request.getRemoteHost(), filename);
+    // set downloaded filename
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename);
+
     try (OutputStream outputStream = response.getOutputStream()) {
-      configsExportService.exportBy(outputStream);
+      configsExportService.exportAllTo(outputStream);
     }
   }
 
