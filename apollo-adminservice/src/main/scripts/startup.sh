@@ -116,46 +116,51 @@ if [[ ! -f PATH_TO_JAR && -d current ]]; then
     done
 fi
 
-if [[ -f $SERVICE_NAME".jar" ]]; then
-  rm -rf $SERVICE_NAME".jar"
+# For Docker environment, start in foreground mode
+if [[ -n "$APOLLO_RUN_MODE" ]] && [[ "$APOLLO_RUN_MODE" == "Docker" ]]; then
+    $javaexe -Dsun.misc.URLClassPath.disableJarChecking=true $JAVA_OPTS -jar $PATH_TO_JAR
+else
+    if [[ -f $SERVICE_NAME".jar" ]]; then
+      rm -rf $SERVICE_NAME".jar"
+    fi
+
+    printf "$(date) ==== Starting ==== \n"
+
+    ln $PATH_TO_JAR $SERVICE_NAME".jar"
+    chmod a+x $SERVICE_NAME".jar"
+    ./$SERVICE_NAME".jar" start
+
+    rc=$?;
+
+    if [[ $rc != 0 ]];
+    then
+        echo "$(date) Failed to start $SERVICE_NAME.jar, return code: $rc"
+        exit $rc;
+    fi
+
+    declare -i counter=0
+    declare -i max_counter=48 # 48*5=240s
+    declare -i total_time=0
+
+    printf "Waiting for server startup"
+    until [[ (( counter -ge max_counter )) || "$(curl -X GET --silent --connect-timeout 1 --max-time 2 --head $SERVER_URL | grep "HTTP")" != "" ]];
+    do
+        printf "."
+        counter+=1
+        sleep 5
+
+        checkPidAlive
+    done
+
+    total_time=counter*5
+
+    if [[ (( counter -ge max_counter )) ]];
+    then
+        printf "\n$(date) Server failed to start in $total_time seconds!\n"
+        exit 1;
+    fi
+
+    printf "\n$(date) Server started in $total_time seconds!\n"
+
+    exit 0;
 fi
-
-printf "$(date) ==== Starting ==== \n"
-
-ln $PATH_TO_JAR $SERVICE_NAME".jar"
-chmod a+x $SERVICE_NAME".jar"
-./$SERVICE_NAME".jar" start
-
-rc=$?;
-
-if [[ $rc != 0 ]];
-then
-    echo "$(date) Failed to start $SERVICE_NAME.jar, return code: $rc"
-    exit $rc;
-fi
-
-declare -i counter=0
-declare -i max_counter=48 # 48*5=240s
-declare -i total_time=0
-
-printf "Waiting for server startup"
-until [[ (( counter -ge max_counter )) || "$(curl -X GET --silent --connect-timeout 1 --max-time 2 --head $SERVER_URL | grep "HTTP")" != "" ]];
-do
-    printf "."
-    counter+=1
-    sleep 5
-
-    checkPidAlive
-done
-
-total_time=counter*5
-
-if [[ (( counter -ge max_counter )) ]];
-then
-    printf "\n$(date) Server failed to start in $total_time seconds!\n"
-    exit 1;
-fi
-
-printf "\n$(date) Server started in $total_time seconds!\n"
-
-exit 0;

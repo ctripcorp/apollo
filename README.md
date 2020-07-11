@@ -385,6 +385,10 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 ![昆明航空](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/airkunming.png) 
 ![我爱我家](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/5i5j.png) 
 ![国金证券](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/gjzq.png) 
+![不亦乐乎](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/enjoymusic.jpg) 
+![惠农网](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/cnhnb.png) 
+![成都道壳](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/daoklab.jpg) 
+![澳优乳业](https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ausnutria.jpg) 
 
 # Awards
 

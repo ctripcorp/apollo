@@ -14,6 +14,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -28,10 +29,12 @@ public class YamlParserTest {
 
   @Before
   public void setUp() throws Exception {
-    MockInjector.reset();
-    MockInjector.setDelegate(new DefaultInjector());
-
     parser = new YamlParser();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    MockInjector.reset();
   }
 
   @Test
@@ -59,8 +62,6 @@ public class YamlParserTest {
     String yamlContent = loadYaml("orderedcase.yaml");
 
     Properties nonOrderedProperties = parser.yamlToProperties(yamlContent);
-
-    MockInjector.reset();
 
     PropertiesFactory propertiesFactory = mock(PropertiesFactory.class);;
     when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
