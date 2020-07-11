@@ -21,6 +21,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
+import org.yaml.snakeyaml.constructor.ConstructorException;
 import org.yaml.snakeyaml.parser.ParserException;
 
 public class YamlParserTest {
@@ -55,6 +56,11 @@ public class YamlParserTest {
   @Test(expected = ParserException.class)
   public void testcase8() throws Exception {
     testInvalid("case8.yaml");
+  }
+
+  @Test(expected = ConstructorException.class)
+  public void testcase9() throws Exception {
+    testInvalid("case9.yaml");
   }
 
   @Test

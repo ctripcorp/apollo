@@ -27,11 +27,12 @@
 			<groupId>com.ctrip.framework.apollo</groupId>
 			<artifactId>apollo-openapi</artifactId>
 		</dependency>
+		<!-- yml processing -->
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
 		</dependency>
+		<!-- end of yml processing -->
 		<!-- JDK 1.8+ -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -58,6 +59,11 @@
 		<!-- end of JDK 11+ -->
 
 		<!-- test -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
