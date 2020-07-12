@@ -24,16 +24,6 @@ public class ConfigBO {
 
   private final ConfigFileFormat format;
 
-  public ConfigBO() {
-    this.env = null;
-    this.ownerName = null;
-    this.appId = null;
-    this.clusterName = null;
-    this.namespace = null;
-    this.configFileContent = null;
-    this.format = null;
-  }
-
   public ConfigBO(Env env, String ownerName, String appId, String clusterName,
       String namespace, String configFileContent, ConfigFileFormat format) {
     this.env = env;
@@ -46,23 +36,11 @@ public class ConfigBO {
   }
 
   public ConfigBO(Env env, String ownerName, String appId, String clusterName, NamespaceBO namespaceBO) {
-    this.env = env;
-    this.ownerName = ownerName;
-    this.appId = appId;
-    this.clusterName = clusterName;
-    this.namespace = namespaceBO.getBaseInfo().getNamespaceName();
-    this.configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
-    this.format = ConfigFileFormat.fromString(namespaceBO.getFormat());
-  }
-
-  public boolean isFinished() {
-    return null == this.env
-        || null == this.ownerName
-        || null == this.appId
-        || null == this.clusterName
-        || null == this.namespace
-        || null == this.configFileContent
-        || null == this.format;
+    this(env, ownerName, appId, clusterName,
+        namespaceBO.getBaseInfo().getNamespaceName(),
+        NamespaceBOUtils.convert2configFileContent(namespaceBO),
+        ConfigFileFormat.fromString(namespaceBO.getFormat())
+    );
   }
 
   @Override
