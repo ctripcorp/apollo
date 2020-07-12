@@ -35,19 +35,6 @@ public class ConfigsImportService {
   }
 
   /**
-   * @param standardFilename get appId and namespace from it
-   */
-  public boolean hasModifyNamespacePermission(String env, String standardFilename) {
-    final String appId = ConfigFileUtils.getAppId(standardFilename);
-    final String namespace = ConfigFileUtils.getNamespace(standardFilename);
-    if (permissionValidator.isAppAdmin(appId)) {
-      return true;
-    } else {
-      return permissionValidator.hasModifyNamespacePermission(appId, namespace, env);
-    }
-  }
-
-  /**
    * move from {@link com.ctrip.framework.apollo.portal.controller.ConfigsImportController}
    */
   private void importConfig(
