@@ -62,7 +62,7 @@ public class ConfigsExportService {
    * @param outputStream receive zip file output stream
    * @throws IOException
    */
-  public static void writeAsZipOutputStream(Stream<ConfigBO> configBOStream, OutputStream outputStream)
+  private static void writeAsZipOutputStream(Stream<ConfigBO> configBOStream, OutputStream outputStream)
       throws IOException {
     try (final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
       final Consumer<ConfigBO> configBOConsumer = configBO -> {
@@ -90,7 +90,7 @@ public class ConfigsExportService {
    * @param configBO a namespace represent
    * @return zip file output stream same as parameter zipOutputStream
    */
-  public static ZipOutputStream write2ZipOutputStream(
+  private static ZipOutputStream write2ZipOutputStream(
       final ZipOutputStream zipOutputStream,
       final ConfigBO configBO
   ) throws IOException {
@@ -118,7 +118,7 @@ public class ConfigsExportService {
   /**
    * @return the namespaces current user exists
    */
-  public Stream<ConfigBO> makeStreamBy(
+  private Stream<ConfigBO> makeStreamBy(
       final Env env,
       final String ownerName,
       final String appId,
@@ -130,7 +130,7 @@ public class ConfigsExportService {
         .map(function);
   }
 
-  public Stream<ConfigBO> makeStreamBy(
+  private Stream<ConfigBO> makeStreamBy(
       final Env env,
       final String ownerName,
       final String appId
@@ -141,7 +141,7 @@ public class ConfigsExportService {
         .flatMap(function);
   }
 
-  public Stream<ConfigBO> makeStreamBy(
+  private Stream<ConfigBO> makeStreamBy(
       final Env env, final List<App> apps
   ) {
     final Function<App, Stream<ConfigBO>> function = app -> this.makeStreamBy(env, app.getOwnerName(), app.getAppId());
@@ -150,7 +150,7 @@ public class ConfigsExportService {
         .flatMap(function);
   }
 
-  public Stream<ConfigBO> makeStreamBy(
+  private Stream<ConfigBO> makeStreamBy(
       final Collection<Env> envs
   ) {
     // get all apps
