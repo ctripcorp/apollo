@@ -126,10 +126,6 @@ public class PermissionValidator {
     return !isAppAdmin(appId) && !hasOperateNamespacePermission(appId, namespaceName, env);
   }
 
-  public boolean shouldShowConfigToCurrentUser(String appId, String env, String namespaceName) {
-    return ! this.shouldHideConfigToCurrentUser(appId, env, namespaceName);
-  }
-
   public boolean hasCreateApplicationPermission() {
     return hasCreateApplicationPermission(userInfoHolder.getUser().getUserId());
   }
