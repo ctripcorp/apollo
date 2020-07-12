@@ -123,11 +123,6 @@ public class ConfigsImportService {
       final String standardFilename,
       final InputStream inputStream
   ) {
-    // check permission
-    if (!this.hasModifyNamespacePermission(env, standardFilename)) {
-      throw new AccessControlException("no permission with " + standardFilename);
-    }
-
     final String configText;
     try(InputStream in = inputStream) {
       configText = ConfigToFileUtils.fileToString(in);
