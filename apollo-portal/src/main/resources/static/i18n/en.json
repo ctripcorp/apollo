@@ -6,6 +6,7 @@
   "Common.Nav.HideNavBar": "Hide navigation bar",
   "Common.Nav.Help": "Help",
   "Common.Nav.AdminTools": "Admin Tools",
+  "Common.Nav.NonAdminTools": "Tools",
   "Common.Nav.UserManage": "User Management",
   "Common.Nav.SystemRoleManage": "System Permission Management",
   "Common.Nav.OpenMange": "Open Platform Authorization Management",

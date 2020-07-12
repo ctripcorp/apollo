@@ -6,6 +6,7 @@
   "Common.Nav.HideNavBar": "隐藏导航栏",
   "Common.Nav.Help": "帮助",
   "Common.Nav.AdminTools": "管理员工具",
+  "Common.Nav.NonAdminTools": "工具",
   "Common.Nav.UserManage": "用户管理",
   "Common.Nav.SystemRoleManage": "系统权限管理",
   "Common.Nav.OpenMange": "开放平台授权管理",
