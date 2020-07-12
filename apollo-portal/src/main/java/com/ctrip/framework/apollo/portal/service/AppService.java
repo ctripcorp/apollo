@@ -79,10 +79,6 @@ public class AppService {
     return new PageDTO<>(apps.getContent(), pageable, apps.getTotalElements());
   }
 
-  public App findByAppId(String appId) {
-    return appRepository.findByAppId(appId);
-  }
-
   public List<App> findByAppIds(Set<String> appIds) {
     return appRepository.findByAppIdIn(appIds);
   }
