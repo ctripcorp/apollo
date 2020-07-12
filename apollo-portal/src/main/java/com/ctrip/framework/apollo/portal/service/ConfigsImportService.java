@@ -50,7 +50,7 @@ public class ConfigsImportService {
   /**
    * move from {@link com.ctrip.framework.apollo.portal.controller.ConfigsImportController}
    */
-  public void importConfig(
+  private void importConfig(
       final String appId,
       final String env,
       final String clusterName,
@@ -75,7 +75,7 @@ public class ConfigsImportService {
   /**
    * import one config from file
    */
-  public void importOneConfigFromFile(
+  private void importOneConfigFromFile(
       final String appId,
       final String env,
       final String clusterName,
@@ -102,7 +102,7 @@ public class ConfigsImportService {
    * @param standardFilename appId+cluster+namespace.format
    * @param configText config content
    */
-  public void importOneConfigFromText(
+  private void importOneConfigFromText(
       final String env,
       final String standardFilename,
       final String configText
