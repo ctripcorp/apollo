@@ -685,7 +685,7 @@
   "Config.Diff.PleaseChooseTwoCluster": "请至少选择两个集群",
   "ConfigExport.Title": "配置导出",
   "ConfigExport.TitleTips" : "超级管理员会下载所有项目的配置，普通用户只会下载自己项目的配置",
-  "ConfigExport.Download": "点击下载",
+  "ConfigExport.Download": "下载",
   "App.CreateProject": "创建项目",
   "App.AppIdTips": "（应用唯一标识）",
   "App.AppNameTips": "(建议格式 xx-yy-zz 例:apollo-server)",
