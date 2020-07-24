@@ -685,7 +685,7 @@
   "Config.Diff.PleaseChooseTwoCluster": "Please select at least two clusters",
   "ConfigExport.Title": "Config Export",
   "ConfigExport.TitleTips" : "Super administrators will download the configuration of all projects, normal users will only download the configuration of their own projects",
-  "ConfigExport.Download": "download",
+  "ConfigExport.Download": "Download",
   "App.CreateProject": "Create Project",
   "App.AppIdTips": "(Application's unique identifiers)",
   "App.AppNameTips": "(Suggested format xx-yy-zz e.g. apollo-server)",
