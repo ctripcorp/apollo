@@ -18,7 +18,7 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
-    Class clazz = bean.getClass();
+    Class<? extends Object> clazz = bean.getClass();
     for (Field field : findAllField(clazz)) {
       processField(bean, beanName, field);
     }
@@ -50,7 +50,7 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
     return Ordered.LOWEST_PRECEDENCE;
   }
 
-  private List<Field> findAllField(Class clazz) {
+  private List<Field> findAllField(Class<? extends Object> clazz) {
     final List<Field> res = new LinkedList<>();
     ReflectionUtils.doWithFields(clazz, new ReflectionUtils.FieldCallback() {
       @Override
@@ -61,7 +61,7 @@ public abstract class ApolloProcessor implements BeanPostProcessor, PriorityOrde
     return res;
   }
 
-  private List<Method> findAllMethod(Class clazz) {
+  private List<Method> findAllMethod(Class<? extends Object> clazz) {
     final List<Method> res = new LinkedList<>();
     ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
       @Override
