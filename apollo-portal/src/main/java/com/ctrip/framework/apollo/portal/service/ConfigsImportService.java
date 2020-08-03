@@ -23,15 +23,12 @@ public class ConfigsImportService {
 
   private final NamespaceService namespaceService;
 
-  private final PermissionValidator permissionValidator;
-
   public ConfigsImportService(
       final ItemService itemService,
       final @Lazy NamespaceService namespaceService,
       PermissionValidator permissionValidator) {
     this.itemService = itemService;
     this.namespaceService = namespaceService;
-    this.permissionValidator = permissionValidator;
   }
 
   /**
