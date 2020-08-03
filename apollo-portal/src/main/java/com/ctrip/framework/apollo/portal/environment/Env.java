@@ -118,26 +118,25 @@ public class Env {
     }
 
     /**
-     * replace valueOf in enum
+     * Convert {@link String} to {@link Env}.
      * But what would happened if environment not exist?
      *
      * @param name
      * @throws IllegalArgumentException if this existed environment has no Env with the specified name
-     * @return
      */
     public static Env valueOf(String name) {
         name = getWellFormName(name);
         if(exists(name)) {
             return STRING_ENV_MAP.get(name);
         } else {
-            throw new IllegalArgumentException(name + " not exist");
+            throw new IllegalArgumentException(String.format("Env %s is invalid", name));
         }
     }
 
     /**
-     * Please use {@code Env.valueOf} instead this method
-     * @param env
-     * @return
+     * Convert {@link String} to {@link Env}.
+     * @param env environment name
+     * @deprecated Use {@link #valueOf(String)}
      */
     @Deprecated
     public static Env fromString(String env) {

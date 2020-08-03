@@ -97,7 +97,7 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     for (String env : configurations) {
-      result.add(Env.fromString(env));
+      result.add(Env.valueOf(env));
     }
 
     return result;
@@ -162,7 +162,7 @@ public class PortalConfig extends RefreshableConfig {
     }
 
     for (String env : configurations) {
-      result.add(Env.fromString(env));
+      result.add(Env.valueOf(env));
     }
 
     return result;
