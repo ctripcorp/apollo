@@ -15,7 +15,6 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceGrayDelReleaseMod
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
-import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;

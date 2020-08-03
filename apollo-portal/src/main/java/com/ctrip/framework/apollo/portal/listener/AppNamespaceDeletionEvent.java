@@ -6,6 +6,8 @@ import org.springframework.context.ApplicationEvent;
 
 public class AppNamespaceDeletionEvent extends ApplicationEvent {
 
+  private static final long serialVersionUID = 8944696391520680656L;
+
   public AppNamespaceDeletionEvent(Object source) {
     super(source);
   }

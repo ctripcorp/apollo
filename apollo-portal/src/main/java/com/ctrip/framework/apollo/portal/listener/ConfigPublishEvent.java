@@ -6,6 +6,8 @@ import org.springframework.context.ApplicationEvent;
 
 public class ConfigPublishEvent extends ApplicationEvent {
 
+  private static final long serialVersionUID = 3527991990922074865L;
+  
   private ConfigPublishInfo configPublishInfo;
 
   public ConfigPublishEvent(Object source) {
