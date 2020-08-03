@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class CatMessageProducer implements MessageProducer {
-  private static Class CAT_CLASS;
+  private static Class<?> CAT_CLASS;
   private static Method LOG_ERROR_WITH_CAUSE;
   private static Method LOG_ERROR_WITH_MESSAGE_AND_CAUSE;
   private static Method LOG_EVENT_WITH_TYPE_AND_NAME;
