@@ -56,7 +56,7 @@ public abstract class AbstractConfig implements Config {
   private volatile Cache<String, Date> m_dateCache;
   private volatile Cache<String, Long> m_durationCache;
   private final Map<String, Cache<String, String[]>> m_arrayCache;
-  private final List<Cache> allCaches;
+  private final List<Cache<?, ?>> allCaches;
   private final AtomicLong m_configVersion; //indicate config version
 
   protected PropertiesFactory propertiesFactory;
@@ -429,7 +429,7 @@ public abstract class AbstractConfig implements Config {
    */
   protected void clearConfigCache() {
     synchronized (this) {
-      for (Cache c : allCaches) {
+      for (Cache<?, ?> c : allCaches) {
         if (c != null) {
           c.invalidateAll();
         }

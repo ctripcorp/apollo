@@ -12,6 +12,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 
 /**
@@ -50,7 +51,7 @@ public abstract class LoggingCustomizer implements InitializingBean {
 
     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     Class<?> clazz = Class.forName(cLoggingAppenderClass);
-    Appender cLoggingAppender = (Appender) clazz.newInstance();
+    Appender<ILoggingEvent> cLoggingAppender = (Appender<ILoggingEvent>) clazz.newInstance();
 
     ReflectionUtils.findMethod(clazz, "setAppId", String.class).invoke(cLoggingAppender, appId);
     ReflectionUtils.findMethod(clazz, "setServerIp", String.class)

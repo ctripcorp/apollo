@@ -69,7 +69,7 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
     final List<ConfigChangeListener> applicationListeners = Lists.newArrayList();
     final List<ConfigChangeListener> fxApolloListeners = Lists.newArrayList();
 
-    doAnswer(new Answer() {
+    doAnswer(new Answer<Object>() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
         applicationListeners.add(invocation.getArgumentAt(0, ConfigChangeListener.class));
@@ -78,7 +78,7 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
       }
     }).when(applicationConfig).addChangeListener(any(ConfigChangeListener.class));
 
-    doAnswer(new Answer() {
+    doAnswer(new Answer<Object>() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
         fxApolloListeners.add(invocation.getArgumentAt(0, ConfigChangeListener.class));
@@ -155,7 +155,7 @@ public class XMLConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertEquals(2, applicationConfigInterestedKeys.getAllValues().size());
 
     Set<String> result = Sets.newHashSet();
-    for (Set interestedKeys : applicationConfigInterestedKeys.getAllValues()) {
+    for (Set<?> interestedKeys : applicationConfigInterestedKeys.getAllValues()) {
       result.addAll(interestedKeys);
     }
     assertEquals(Sets.newHashSet("someKey", "anotherKey"), result);
