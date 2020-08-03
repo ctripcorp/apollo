@@ -39,8 +39,8 @@ public class WebContextConfiguration {
   }
 
   @Bean
-  public FilterRegistrationBean userAccessFilter() {
-    FilterRegistrationBean filter = new FilterRegistrationBean();
+  public FilterRegistrationBean<UserAccessFilter> userAccessFilter() {
+    FilterRegistrationBean<UserAccessFilter> filter = new FilterRegistrationBean<UserAccessFilter>();
     filter.setFilter(new UserAccessFilter(userInfoHolder));
     filter.addUrlPatterns("/*");
     return filter;

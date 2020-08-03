@@ -74,24 +74,24 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public ServletListenerRegistrationBean redisAppSettingListner() {
-      ServletListenerRegistrationBean redisAppSettingListener = new ServletListenerRegistrationBean();
+    public ServletListenerRegistrationBean<EventListener> redisAppSettingListner() {
+      ServletListenerRegistrationBean<EventListener> redisAppSettingListener = new ServletListenerRegistrationBean<>();
       redisAppSettingListener
           .setListener(listener("org.jasig.cas.client.credis.CRedisAppSettingListner"));
       return redisAppSettingListener;
     }
 
     @Bean
-    public ServletListenerRegistrationBean singleSignOutHttpSessionListener() {
-      ServletListenerRegistrationBean singleSignOutHttpSessionListener = new ServletListenerRegistrationBean();
+    public ServletListenerRegistrationBean<EventListener> singleSignOutHttpSessionListener() {
+      ServletListenerRegistrationBean<EventListener> singleSignOutHttpSessionListener = new ServletListenerRegistrationBean<>();
       singleSignOutHttpSessionListener
           .setListener(listener("org.jasig.cas.client.session.SingleSignOutHttpSessionListener"));
       return singleSignOutHttpSessionListener;
     }
 
     @Bean
-    public FilterRegistrationBean casFilter() {
-      FilterRegistrationBean singleSignOutFilter = new FilterRegistrationBean();
+    public FilterRegistrationBean<Filter> casFilter() {
+      FilterRegistrationBean<Filter> singleSignOutFilter = new FilterRegistrationBean<>();
       singleSignOutFilter.setFilter(filter("org.jasig.cas.client.session.SingleSignOutFilter"));
       singleSignOutFilter.addUrlPatterns("/*");
       singleSignOutFilter.setOrder(1);
@@ -99,8 +99,8 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean authenticationFilter() {
-      FilterRegistrationBean casFilter = new FilterRegistrationBean();
+    public FilterRegistrationBean<Filter> authenticationFilter() {
+      FilterRegistrationBean<Filter> casFilter = new FilterRegistrationBean<>();
 
       Map<String, String> filterInitParam = Maps.newHashMap();
       filterInitParam.put("redisClusterName", "casClientPrincipal");
@@ -120,8 +120,8 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean casValidationFilter() {
-      FilterRegistrationBean casValidationFilter = new FilterRegistrationBean();
+    public FilterRegistrationBean<Filter> casValidationFilter() {
+      FilterRegistrationBean<Filter> casValidationFilter = new FilterRegistrationBean<>();
       Map<String, String> filterInitParam = Maps.newHashMap();
       filterInitParam.put("casServerUrlPrefix", portalConfig.casServerUrlPrefix());
       filterInitParam.put("serverName", portalConfig.portalServerName());
@@ -142,8 +142,8 @@ public class AuthConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean assertionHolder() {
-      FilterRegistrationBean assertionHolderFilter = new FilterRegistrationBean();
+    public FilterRegistrationBean<Filter> assertionHolder() {
+      FilterRegistrationBean<Filter> assertionHolderFilter = new FilterRegistrationBean<>();
 
       Map<String, String> filterInitParam = Maps.newHashMap();
       filterInitParam.put("/openapi.*", "exclude");

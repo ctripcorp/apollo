@@ -11,8 +11,8 @@ import javax.servlet.DispatcherType;
 public class CharacterEncodingFilterConfiguration {
 
   @Bean
-  public FilterRegistrationBean encodingFilter() {
-    FilterRegistrationBean bean = new FilterRegistrationBean();
+  public FilterRegistrationBean<CharacterEncodingFilter> encodingFilter() {
+    FilterRegistrationBean<CharacterEncodingFilter> bean = new FilterRegistrationBean<CharacterEncodingFilter>();
     bean.setFilter(new CharacterEncodingFilter());
     bean.addInitParameter("encoding", "UTF-8");
     //FIXME: https://github.com/Netflix/eureka/issues/702

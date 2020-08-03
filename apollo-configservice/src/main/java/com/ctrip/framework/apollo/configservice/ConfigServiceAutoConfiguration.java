@@ -48,8 +48,8 @@ public class ConfigServiceAutoConfiguration {
   }
 
   @Bean
-  public FilterRegistrationBean clientAuthenticationFilter(AccessKeyUtil accessKeyUtil) {
-    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+  public FilterRegistrationBean<ClientAuthenticationFilter> clientAuthenticationFilter(AccessKeyUtil accessKeyUtil) {
+    FilterRegistrationBean<ClientAuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<ClientAuthenticationFilter>();
 
     filterRegistrationBean.setFilter(new ClientAuthenticationFilter(accessKeyUtil));
     filterRegistrationBean.addUrlPatterns("/configs/*");

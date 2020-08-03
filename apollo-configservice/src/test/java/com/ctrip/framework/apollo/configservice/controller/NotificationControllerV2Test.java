@@ -429,7 +429,7 @@ public class NotificationControllerV2Test {
     return multimap;
   }
 
-  private void assertWatchKeys(Multimap<String, String> watchKeysMap, DeferredResult deferredResult) {
+  private void assertWatchKeys(Multimap<String, String> watchKeysMap, DeferredResult<ResponseEntity<List<ApolloConfigNotification>>> deferredResult) {
     for (String watchKey : watchKeysMap.values()) {
       Collection<DeferredResultWrapper> deferredResultWrappers = deferredResults.get(watchKey);
       boolean found = false;
