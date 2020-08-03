@@ -149,7 +149,7 @@ public class AppController {
         response.addResponseEntity(RichResponseEntity.ok(appService.createEnvNavNode(env, appId)));
       } catch (Exception e) {
         response.addResponseEntity(RichResponseEntity.error(HttpStatus.INTERNAL_SERVER_ERROR,
-            "load env:" + env.name() + " cluster error." + e
+            "load env:" + env.getName() + " cluster error." + e
                 .getMessage()));
       }
     }

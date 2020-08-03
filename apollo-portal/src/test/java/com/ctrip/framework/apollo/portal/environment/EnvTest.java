@@ -72,7 +72,7 @@ public class EnvTest {
 
     @Test
     public void name() {
-        assertEquals("DEV", Env.DEV.name());
+        assertEquals("DEV", Env.DEV.getName());
     }
 
     @Test

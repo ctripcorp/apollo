@@ -173,16 +173,16 @@ public class Env {
 
     /**
      * a Env convert to string, ie its name.
-     * @return
+     * @return its name
      */
     @Override
     public String toString() {
-        return name;
+        return this.getName();
     }
 
     /**
      * Backward compatibility with enum's name method
-     * @return
+     * @deprecated Use {@link #getName()}
      */
     @Deprecated
     public String name() {
