@@ -80,7 +80,7 @@ public class ConfigPropertySourceTest {
 
     final List<ConfigChangeListener> listeners = Lists.newArrayList();
 
-    doAnswer(new Answer() {
+    doAnswer(new Answer<Object>() {
       @Override
       public Object answer(InvocationOnMock invocation) throws Throwable {
         listeners.add(invocation.getArgumentAt(0, ConfigChangeListener.class));
