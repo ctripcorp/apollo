@@ -20,7 +20,7 @@ public class CtripEmailRequestBuilder {
 
   private static final Logger logger = LoggerFactory.getLogger(CtripEmailRequestBuilder.class);
 
-  private static Class sendEmailRequestClazz;
+  private static Class<?> sendEmailRequestClazz;
   private static Method setBodyContent;
   private static Method setRecipient;
   private static Method setSendCode;

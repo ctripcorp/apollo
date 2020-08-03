@@ -169,7 +169,7 @@ public class AuthConfiguration {
     }
 
     private Filter filter(String className) {
-      Class clazz = null;
+      Class<?> clazz = null;
       try {
         clazz = Class.forName(className);
         Object obj = clazz.newInstance();
@@ -180,7 +180,7 @@ public class AuthConfiguration {
     }
 
     private EventListener listener(String className) {
-      Class clazz = null;
+      Class<?> clazz = null;
       try {
         clazz = Class.forName(className);
         Object obj = clazz.newInstance();

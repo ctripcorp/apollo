@@ -33,13 +33,13 @@ public class CtripEmailService implements EmailService {
     try {
       initServiceClientConfig();
 
-      Class emailServiceClientClazz =
+      Class<?> emailServiceClientClazz =
               Class.forName("com.ctrip.framework.apolloctripservice.emailservice.EmailServiceClient");
 
       Method getInstanceMethod = emailServiceClientClazz.getMethod("getInstance");
       emailServiceClient = getInstanceMethod.invoke(null);
 
-      Class sendEmailRequestClazz =
+      Class<?> sendEmailRequestClazz =
               Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
       sendEmailAsync = emailServiceClientClazz.getMethod("sendEmailAsync", sendEmailRequestClazz);
       sendEmail = emailServiceClientClazz.getMethod("sendEmail", sendEmailRequestClazz);
@@ -51,13 +51,13 @@ public class CtripEmailService implements EmailService {
 
   private void initServiceClientConfig() throws Exception {
 
-    Class serviceClientConfigClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientConfig");
+    Class<?> serviceClientConfigClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientConfig");
     Object serviceClientConfig = serviceClientConfigClazz.newInstance();
     Method setFxConfigServiceUrlMethod = serviceClientConfigClazz.getMethod("setFxConfigServiceUrl", String.class);
 
     setFxConfigServiceUrlMethod.invoke(serviceClientConfig, portalConfig.soaServerAddress());
 
-    Class serviceClientBaseClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientBase");
+    Class<?> serviceClientBaseClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientBase");
     Method initializeMethod = serviceClientBaseClazz.getMethod("initialize", serviceClientConfigClazz);
     initializeMethod.invoke(null, serviceClientConfig);
   }

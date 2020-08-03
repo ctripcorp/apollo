@@ -16,7 +16,7 @@ public class CtripUserInfoHolder implements UserInfoHolder {
 
 
   public CtripUserInfoHolder() {
-    Class clazz = null;
+    Class<?> clazz = null;
     try {
       clazz = Class.forName("org.jasig.cas.client.util.AssertionHolder");
       assertionHolder = clazz.newInstance();
