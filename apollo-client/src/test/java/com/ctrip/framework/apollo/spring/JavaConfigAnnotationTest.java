@@ -242,7 +242,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
     assertEquals(2, applicationConfigInterestedKeys.getAllValues().size());
 
-    Set<String> result = Sets.newHashSet();
+    Set result = Sets.newHashSet();
     for (Set<?> interestedKeys : applicationConfigInterestedKeys.getAllValues()) {
       result.addAll(interestedKeys);
     }
