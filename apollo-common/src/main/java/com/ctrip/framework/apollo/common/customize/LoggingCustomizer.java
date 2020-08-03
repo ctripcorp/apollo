@@ -49,7 +49,7 @@ public abstract class LoggingCustomizer implements InitializingBean {
 
 
     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-    Class clazz = Class.forName(cLoggingAppenderClass);
+    Class<?> clazz = Class.forName(cLoggingAppenderClass);
     Appender cLoggingAppender = (Appender) clazz.newInstance();
 
     ReflectionUtils.findMethod(clazz, "setAppId", String.class).invoke(cLoggingAppender, appId);
