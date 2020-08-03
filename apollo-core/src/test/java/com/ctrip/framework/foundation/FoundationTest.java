@@ -2,7 +2,6 @@ package com.ctrip.framework.foundation;
 
 import static org.junit.Assert.assertTrue;
 
-import com.ctrip.framework.foundation.Foundation;
 import com.ctrip.framework.foundation.internals.provider.DefaultApplicationProvider;
 import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
 import org.junit.Assert;

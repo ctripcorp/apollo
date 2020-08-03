@@ -12,8 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ctrip.framework.foundation.internals.provider.DefaultServerProvider;
-
 public class DefaultServerProviderTest {
   private DefaultServerProvider defaultServerProvider;
 

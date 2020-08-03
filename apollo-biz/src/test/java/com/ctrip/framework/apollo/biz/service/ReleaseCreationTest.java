@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.biz.service;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import com.ctrip.framework.apollo.biz.AbstractIntegrationTest;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
@@ -19,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 
 public class ReleaseCreationTest extends AbstractIntegrationTest {
