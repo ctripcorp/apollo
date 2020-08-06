@@ -712,7 +712,7 @@
   "App.Setting.Deleted": "删除成功",
   "App.Setting.DeleteFailed": "删除失败",
   "App.Setting.Modified": "修改成功",
-  "Valdr.App.AppId.Size": "AppId长度不能多于32个字符",
+  "Valdr.App.AppId.Size": "AppId长度不能多于64个字符",
   "Valdr.App.AppId.Required": "AppId不能为空",
   "Valdr.App.appName.Size": "应用名称长度不能多于128个字符",
   "Valdr.App.appName.Required": "应用名称不能为空",
