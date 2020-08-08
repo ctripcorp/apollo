@@ -73,7 +73,7 @@
 	</developers>
 
 	<properties>
-		<revision>1.7.0</revision>
+		<revision>1.8.0-SNAPSHOT</revision>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<platform-bom.version>Cairo-SR4</platform-bom.version>
