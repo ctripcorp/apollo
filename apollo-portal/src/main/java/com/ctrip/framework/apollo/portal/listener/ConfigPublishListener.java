@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.listener;
 
 import com.ctrip.framework.apollo.common.constants.ReleaseOperation;
-import com.ctrip.framework.apollo.portal.component.WebHookNotify;
+import com.ctrip.framework.apollo.portal.component.ConfigReleaseWebhookNotifier;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
@@ -33,7 +33,7 @@ public class ConfigPublishListener {
   private final MergeEmailBuilder mergeEmailBuilder;
   private final PortalConfig portalConfig;
   private final MQService mqService;
-  private final WebHookNotify webHookNotify;
+  private final ConfigReleaseWebhookNotifier configReleaseWebhookNotifier;
 
   private ExecutorService executorService;
 
@@ -46,7 +46,7 @@ public class ConfigPublishListener {
       final MergeEmailBuilder mergeEmailBuilder,
       final PortalConfig portalConfig,
       final MQService mqService,
-	  final WebHookNotify webHookNotify) {
+      final ConfigReleaseWebhookNotifier configReleaseWebhookNotifier) {
     this.releaseHistoryService = releaseHistoryService;
     this.emailService = emailService;
     this.normalPublishEmailBuilder = normalPublishEmailBuilder;
@@ -55,7 +55,7 @@ public class ConfigPublishListener {
     this.mergeEmailBuilder = mergeEmailBuilder;
     this.portalConfig = portalConfig;
     this.mqService = mqService;
-    this.webHookNotify = webHookNotify;
+    this.configReleaseWebhookNotifier = configReleaseWebhookNotifier;
   }
 
   @PostConstruct
@@ -112,21 +112,21 @@ public class ConfigPublishListener {
 
     }
 
-	/**
-	* webhook send
-	*
-	* @param releaseHistory
-	*/
-  	private void sendPublishWebHook(ReleaseHistoryBO releaseHistory) {
-	  Env env = publishInfo.getEnv();
+    /**
+    * webhook send
+    *
+    * @param releaseHistory
+    */
+    private void sendPublishWebHook(ReleaseHistoryBO releaseHistory) {
+      Env env = publishInfo.getEnv();
 
-	  String[] webHookUrls = portalConfig.webHookUrls();
-	  if (!portalConfig.webHookSupportedEnvs().contains(env) || webHookUrls == null) {
-	  	return;
-	  }
+      String[] webHookUrls = portalConfig.webHookUrls();
+      if (!portalConfig.webHookSupportedEnvs().contains(env) || webHookUrls == null) {
+        return;
+      }
 
-	  webHookNotify.notify(webHookUrls, env, releaseHistory);
-  	}
+      configReleaseWebhookNotifier.notify(webHookUrls, env, releaseHistory);
+    }
 
     private void sendPublishEmail(ReleaseHistoryBO releaseHistory) {
       Env env = publishInfo.getEnv();

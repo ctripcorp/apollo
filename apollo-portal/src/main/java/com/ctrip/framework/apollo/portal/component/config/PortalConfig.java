@@ -290,7 +290,7 @@ public class PortalConfig extends RefreshableConfig {
   }
 
   public String[] webHookUrls() {
-    return getArrayProperty("webhook.service.url", null);
+    return getArrayProperty("config.release.webhook.service.url", null);
   }
 
 }
