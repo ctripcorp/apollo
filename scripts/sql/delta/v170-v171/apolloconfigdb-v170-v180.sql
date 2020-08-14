@@ -1,4 +1,4 @@
-# delta schema to upgrade apollo config db from v1.6.0 to v1.7.1
+# delta schema to upgrade apollo config db from v1.7.0 to v1.8.0
 
 Use ApolloConfigDB;
 alter table `AppNamespace`  change AppId AppId varchar(64) NOT NULL DEFAULT 'default' COMMENT 'app id';
