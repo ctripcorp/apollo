@@ -34,6 +34,7 @@ import static org.mockito.Mockito.*;
 
 public class ReleaseControllerTest extends AbstractControllerTest {
 
+  private static final  Gson GSON = new Gson();
   @Autowired
   ReleaseRepository releaseRepository;
 
@@ -88,8 +89,8 @@ public class ReleaseControllerTest extends AbstractControllerTest {
     configurations.put("k1", "v1");
     configurations.put("k2", "v2");
     configurations.put("k3", "v3");
-    Gson gson = new Gson();
-    Assert.assertEquals(gson.toJson(configurations), release.getConfigurations());
+
+    Assert.assertEquals(GSON.toJson(configurations), release.getConfigurations());
   }
 
   @Test

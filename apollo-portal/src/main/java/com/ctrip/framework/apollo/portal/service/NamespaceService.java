@@ -35,7 +35,7 @@ import java.util.*;
 public class NamespaceService {
 
   private Logger logger = LoggerFactory.getLogger(NamespaceService.class);
-  private Gson gson = new Gson();
+  private static final Gson GSON = new Gson();
 
   private final PortalConfig portalConfig;
   private final PortalSettings portalSettings;
@@ -223,7 +223,7 @@ public class NamespaceService {
     Map<String, ItemDTO> deletedItemDTOs = new HashMap<>();
     latestRelease = releaseService.loadLatestRelease(appId, env, clusterName, namespaceName);
     if (latestRelease != null) {
-      releaseItems = gson.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
+      releaseItems = GSON.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
     }
 
     //not Release config items

@@ -56,7 +56,7 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
   @InjectMocks
   private RetryableRestTemplate retryableRestTemplate;
 
-  private Gson gson = new Gson();
+  private static final Gson GSON = new Gson();
 
   private String path = "app";
   private String serviceOne = "http://10.0.0.1";
@@ -481,7 +481,7 @@ public class RetryableRestTemplateTest extends AbstractUnitTest {
     Map<String, String> tokenMap = Maps.newHashMap();
     tokenMap.put(env.getName(), token);
 
-    return gson.toJson(tokenMap);
+    return GSON.toJson(tokenMap);
   }
 
   private ServiceDTO mockService(String homeUrl) {
