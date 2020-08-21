@@ -154,14 +154,15 @@ public class DefaultRolePermissionService implements RolePermissionService {
      * Check whether user has the permission
      */
     public boolean userHasPermission(String userId, String permissionType, String targetId) {
+        
+        if (isSuperAdmin(userId)) {
+            return true;
+        }
+        
         Permission permission =
                 permissionRepository.findTopByPermissionTypeAndTargetId(permissionType, targetId);
         if (permission == null) {
             return false;
-        }
-
-        if (isSuperAdmin(userId)) {
-            return true;
         }
 
         List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
