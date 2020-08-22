@@ -111,7 +111,6 @@ public class NamespaceServiceIntegrationTest extends AbstractIntegrationTest {
     Date lastModifiedTimePage = simpleDateFormat.parse("2020-08-22 09:30:00");
     List<Commit> commitsByDatePage = commitService.find(commitTestApp, testCluster, testPrivateNamespace, lastModifiedTimePage, PageRequest.of(0, 1));
 
-
     assertEquals(1, commitsByDate.size());
     assertEquals(0, commitsByDateGreater.size());
     assertEquals(1, commitsByDatePage.size());
