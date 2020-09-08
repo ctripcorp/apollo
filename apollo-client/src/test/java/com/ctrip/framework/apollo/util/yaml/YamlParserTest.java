@@ -68,7 +68,7 @@ public class YamlParserTest {
 
     Properties nonOrderedProperties = parser.yamlToProperties(yamlContent);
 
-    PropertiesFactory propertiesFactory = mock(PropertiesFactory.class);;
+    PropertiesFactory propertiesFactory = mock(PropertiesFactory.class);
     when(propertiesFactory.getPropertiesInstance()).thenAnswer(new Answer<Properties>() {
       @Override
       public Properties answer(InvocationOnMock invocation) {

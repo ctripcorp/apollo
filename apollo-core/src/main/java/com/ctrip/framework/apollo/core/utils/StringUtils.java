@@ -324,7 +324,7 @@ public class StringUtils {
     return true;
   }
 
-  public static interface StringFormatter<T> {
+  public interface StringFormatter<T> {
     String format(T obj);
   }
 
