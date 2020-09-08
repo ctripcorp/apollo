@@ -193,8 +193,8 @@ public class ConfigControllerTest {
     when(someRelease.getReleaseKey()).thenReturn(someServerSideReleaseKey);
 
     ApolloConfig result =
-        configController.queryConfig(someAppId, someClusterName, defaultNamespaceName, someDataCenter, String.valueOf
-            (someClientSideReleaseKey), someClientIp, someMessagesAsString, someRequest, someResponse);
+        configController.queryConfig(someAppId, someClusterName, defaultNamespaceName, someDataCenter,
+            someClientSideReleaseKey, someClientIp, someMessagesAsString, someRequest, someResponse);
 
     assertNull(result);
     verify(someResponse, times(1)).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
