@@ -100,7 +100,7 @@ public class PropertyResolver implements ConfigTextResolver {
 
     String[] kv = new String[2];
     kv[0] = item.substring(0, kvSeparator).trim();
-    kv[1] = item.substring(kvSeparator + 1, item.length()).trim();
+    kv[1] = item.substring(kvSeparator + 1).trim();
     return kv;
   }
 
