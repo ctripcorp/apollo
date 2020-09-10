@@ -79,16 +79,15 @@ public class ItemController {
                         @PathVariable("namespaceName") String namespaceName,
                         @PathVariable("itemId") long itemId,
                         @RequestBody ItemDTO itemDTO) {
+    Item managedEntity = itemService.findOne(itemId);
+    if (managedEntity == null) {
+      throw new NotFoundException("item not found for itemId " + itemId);
+    }
 
     Item entity = BeanUtils.transform(Item.class, itemDTO);
 
     ConfigChangeContentBuilder builder = new ConfigChangeContentBuilder();
-
-    Item managedEntity = itemService.findOne(itemId);
-    if (managedEntity == null) {
-      throw new BadRequestException("item not exist");
-    }
-
+   
     Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);
 
     //protect. only value,comment,lastModifiedBy can be modified
@@ -146,7 +145,7 @@ public class ItemController {
   public List<ItemDTO> findDeletedItems(@PathVariable("appId") String appId,
                                         @PathVariable("clusterName") String clusterName,
                                         @PathVariable("namespaceName") String namespaceName) {
-    //get latatest release time
+    //get latest release time
     Release latestActiveRelease = releaseService.findLatestActiveRelease(appId, clusterName, namespaceName);
     List<Commit> commits;
     if (Objects.nonNull(latestActiveRelease)) {
