@@ -318,7 +318,7 @@ public class NamespaceService {
     String newValue = itemDTO.getValue();
     String oldValue = releaseItems.get(key);
     //new item or modified
-    if (!StringUtils.isEmpty(key) && (oldValue == null || !newValue.equals(oldValue))) {
+    if (!StringUtils.isEmpty(key) && (!newValue.equals(oldValue))) {
       itemBO.setModified(true);
       itemBO.setOldValue(oldValue == null ? "" : oldValue);
       itemBO.setNewValue(newValue);

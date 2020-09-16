@@ -501,6 +501,15 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 </tr>
 <tr>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ztrip.png" alt="在途商旅"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/hualala.png" alt="哗啦啦"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/xin.png" alt="优信二手车"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/maycur.png" alt="每刻科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bullyun.png" alt="杭州蛮牛"></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bestpay.png" alt="翼支付"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mockuai.png" alt="魔筷科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ct108.png" alt="畅唐网络"></td>
 </tr>
 </table>
 
