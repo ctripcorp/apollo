@@ -339,7 +339,7 @@
   "Config.MissEnv": "缺失的环境",
   "Config.MissNamespace": "缺失的Namespace",
   "Config.ProjectManage": "管理项目",
-  "Config.AccessKeyManage": "管理秘钥",
+  "Config.AccessKeyManage": "管理密钥",
   "Config.CreateAppMissEnv": "补缺环境",
   "Config.CreateAppMissNamespace": "补缺Namespace",
   "Config.AddCluster": "添加集群",
