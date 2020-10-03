@@ -510,6 +510,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/bestpay.png" alt="翼支付"></td>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mockuai.png" alt="魔筷科技"></td>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ct108.png" alt="畅唐网络"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jusdaglobal.jpg" alt="准时达"></td>
 </tr>
 </table>
 
