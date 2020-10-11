@@ -89,10 +89,9 @@ services:
     image: nobodyiam/apollo-quick-start
     container_name: apollo-quick-start
     environment:
-      - APOLLO_CONFIG_DB_URL=jdbc:mysql://192.168.1.10:3306/ApolloConfigDB?characterEncoding=utf8
-      - APOLLO_PORTAL_DB_URL=jdbc:mysql://192.168.1.10:3306/ApolloPortalDB?characterEncoding=utf8
+      - APOLLO_DB_HOST=192.168.1.10
       - APOLLO_DB_USERNAME=root
-      - APOLLO_DB_PASSWORD=youpassword
+      - APOLLO_DB_PASSWORD=root
     ports:
       - "8080:8080"
       - "8070:8070"
