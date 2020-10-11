@@ -21,7 +21,7 @@ services:
     depends_on:
       - apollo-dbdata
     ports:
-      - "13306:3306"
+      - "3306:3306"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     volumes_from:
