@@ -17,7 +17,7 @@ services:
     container_name: apollo-db
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: root
     depends_on:
       - apollo-dbdata
     ports:
