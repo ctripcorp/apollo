@@ -44,7 +44,7 @@ public class RetryableRestTemplate {
 
   private UriTemplateHandler uriTemplateHandler = new DefaultUriBuilderFactory();
 
-  private Gson gson = new Gson();
+  private static final Gson GSON = new Gson();
   /**
    * Admin service access tokens in "PortalDB.ServerConfig"
    */
@@ -106,7 +106,7 @@ public class RetryableRestTemplate {
                         Object... uriVariables) {
 
     if (path.startsWith("/")) {
-      path = path.substring(1, path.length());
+      path = path.substring(1);
     }
 
     String uri = uriTemplateHandler.expand(path, uriVariables).getPath();
@@ -149,7 +149,7 @@ public class RetryableRestTemplate {
   private <T> ResponseEntity<T> exchangeGet(Env env, String path, ParameterizedTypeReference<T> reference,
                                             Object... uriVariables) {
     if (path.startsWith("/")) {
-      path = path.substring(1, path.length());
+      path = path.substring(1);
     }
 
     String uri = uriTemplateHandler.expand(path, uriVariables).getPath();
@@ -242,7 +242,7 @@ public class RetryableRestTemplate {
     Map<Env, String> tokenMap = Maps.newHashMap();
     try {
       // try to parse
-      Map<String, String> map = gson.fromJson(accessTokens, ACCESS_TOKENS);
+      Map<String, String> map = GSON.fromJson(accessTokens, ACCESS_TOKENS);
       map.forEach((env, token) -> {
         if (Env.exists(env)) {
           tokenMap.put(Env.valueOf(env), token);

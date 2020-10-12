@@ -64,9 +64,9 @@ public class ClientAuthenticationFilter implements Filter {
       }
 
       // check signature
-      String path = request.getServletPath();
+      String uri = request.getRequestURI();
       String query = request.getQueryString();
-      if (!checkAuthorization(authorization, availableSecrets, timestamp, path, query)) {
+      if (!checkAuthorization(authorization, availableSecrets, timestamp, uri, query)) {
         logger.warn("Invalid authorization. appId={},authorization={}", appId, authorization);
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         return;

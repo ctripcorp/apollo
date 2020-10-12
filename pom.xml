@@ -269,7 +269,8 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>19.0</version>
+				<!-- for jdk 7 compatibility -->
+				<version>29.0-android</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
