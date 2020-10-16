@@ -38,8 +38,8 @@ spec:
         app: {{ $configServiceFullName }}
     spec:
       {{- with .Values.configService.imagePullSecrets }}
-        imagePullSecrets:
-          {{- toYaml . | nindent 8 }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
         - name: volume-configmap-{{ $configServiceFullName }}
