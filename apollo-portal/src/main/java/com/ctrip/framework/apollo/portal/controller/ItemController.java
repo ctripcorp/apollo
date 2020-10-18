@@ -113,7 +113,7 @@ public class ItemController {
     NamespaceDTO namespace = namespaceService.loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
 
     // In case someone constructs an attack scenario
-    if (item.getNamespaceId() != namespace.getId()) {
+    if (namespace == null || item.getNamespaceId() != namespace.getId()) {
       throw new BadRequestException("Invalid request, item and namespace do not match!");
     }
 
