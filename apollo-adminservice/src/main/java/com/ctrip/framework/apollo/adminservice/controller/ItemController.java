@@ -110,6 +110,13 @@ public class ItemController {
       throw new NotFoundException("item not found for itemId " + itemId);
     }
 
+
+    Namespace namespace = namespaceService.findOne(appId, clusterName, namespaceName);
+    // In case someone constructs an attack scenario
+    if (namespace == null || namespace.getId() != managedEntity.getNamespaceId()) {
+      throw new BadRequestException("Invalid request, item and namespace do not match!");
+    }
+
     // 以新换旧
     Item entity = BeanUtils.transform(Item.class, itemDTO);
     Item beforeUpdateItem = BeanUtils.transform(Item.class, managedEntity);

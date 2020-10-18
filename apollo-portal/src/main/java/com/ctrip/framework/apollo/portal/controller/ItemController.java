@@ -155,7 +155,7 @@ public class ItemController {
         .loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
 
     // In case someone constructs an attack scenario
-    if (!item.getNamespaceId().equals(namespace.getId())) {
+    if (namespace == null || !item.getNamespaceId().equals(namespace.getId())) {
       throw new BadRequestException("Invalid request, item and namespace do not match!");
     }
 
