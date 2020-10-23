@@ -10,6 +10,10 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -18,7 +22,12 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class ApolloAnnotationProcessor extends ApolloProcessor {
+public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFactoryAware {
+
+  /**
+   * resolve the expression.
+   */
+  private ConfigurableBeanFactory configurableBeanFactory;
 
   @Override
   protected void processField(Object bean, String beanName, Field field) {
@@ -39,6 +48,10 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
 
   @Override
   protected void processMethod(final Object bean, String beanName, final Method method) {
+    this.processApolloConfigChangeListener(bean, method);
+  }
+
+  private void processApolloConfigChangeListener(final Object bean, final Method method) {
     ApolloConfigChangeListener annotation = AnnotationUtils
         .findAnnotation(method, ApolloConfigChangeListener.class);
     if (annotation == null) {
@@ -67,7 +80,7 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
     Set<String> interestedKeyPrefixes = annotatedInterestedKeyPrefixes.length > 0 ? Sets.newHashSet(annotatedInterestedKeyPrefixes) : null;
 
     for (String namespace : namespaces) {
-      Config config = ConfigService.getConfig(namespace);
+      Config config = ConfigService.getConfig(this.configurableBeanFactory.resolveEmbeddedValue(namespace));
 
       if (interestedKeys == null && interestedKeyPrefixes == null) {
         config.addChangeListener(configChangeListener);
@@ -75,5 +88,10 @@ public class ApolloAnnotationProcessor extends ApolloProcessor {
         config.addChangeListener(configChangeListener, interestedKeys, interestedKeyPrefixes);
       }
     }
+  }
+
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    this.configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
   }
 }
