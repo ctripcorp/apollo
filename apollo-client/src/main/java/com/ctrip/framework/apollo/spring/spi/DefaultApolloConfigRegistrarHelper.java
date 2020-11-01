@@ -11,20 +11,31 @@ import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
 import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
-public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper {
+public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper,
+    BeanFactoryAware {
+
+  /**
+   * resolve the expression.
+   */
+  private ConfigurableBeanFactory configurableBeanFactory;
 
   @Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
     AnnotationAttributes attributes = AnnotationAttributes
         .fromMap(importingClassMetadata.getAnnotationAttributes(EnableApolloConfig.class.getName()));
-    String[] namespaces = attributes.getStringArray("value");
-    int order = attributes.getNumber("order");
-    PropertySourcesProcessor.addNamespaces(Lists.newArrayList(namespaces), order);
+    final String[] namespaces = attributes.getStringArray("value");
+    final int order = attributes.getNumber("order");
+    final String[] resolvedNamespaces = this.resolveNamespaces(namespaces);
+    PropertySourcesProcessor.addNamespaces(Lists.newArrayList(resolvedNamespaces), order);
 
     Map<String, Object> propertySourcesPlaceholderPropertyValues = new HashMap<>();
     // to make sure the default PropertySourcesPlaceholderConfigurer's priority is higher than PropertyPlaceholderConfigurer
@@ -44,8 +55,22 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
         ApolloJsonValueProcessor.class);
   }
 
+  private String[] resolveNamespaces(String[] namespaces) {
+    String[] resolvedNamespaces = new String[namespaces.length];
+    for (int i = 0; i < namespaces.length; i++) {
+      resolvedNamespaces[i] = this.configurableBeanFactory.resolveEmbeddedValue(namespaces[i]);
+    }
+    return resolvedNamespaces;
+  }
+
   @Override
   public int getOrder() {
     return Ordered.LOWEST_PRECEDENCE;
   }
+
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    this.configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+  }
+
 }
