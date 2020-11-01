@@ -39,8 +39,9 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
     Preconditions.checkArgument(Config.class.isAssignableFrom(field.getType()),
         "Invalid type: %s for field: %s, should be Config", field.getType(), field);
 
-    String namespace = annotation.value();
-    Config config = ConfigService.getConfig(namespace);
+    final String namespace = annotation.value();
+    final String resolvedNamespace = this.configurableBeanFactory.resolveEmbeddedValue(namespace);
+    Config config = ConfigService.getConfig(resolvedNamespace);
 
     ReflectionUtils.makeAccessible(field);
     ReflectionUtils.setField(field, bean, config);
