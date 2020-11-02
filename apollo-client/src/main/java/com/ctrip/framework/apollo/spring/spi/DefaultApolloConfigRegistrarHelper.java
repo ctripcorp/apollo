@@ -13,15 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
-public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper,
-    BeanFactoryAware {
+public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper {
 
   /**
    * resolve the expression.
