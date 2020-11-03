@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.spring.spi;
 
 import com.ctrip.framework.apollo.core.spi.Ordered;
 import com.ctrip.framework.apollo.spring.annotation.ApolloAnnotationProcessor;
-import com.ctrip.framework.apollo.spring.annotation.ApolloJsonValueProcessor;
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.ctrip.framework.apollo.spring.annotation.SpringValueProcessor;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
@@ -49,8 +48,6 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
         SpringValueProcessor.class);
     BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueDefinitionProcessor.class.getName(),
         SpringValueDefinitionProcessor.class);
-    BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApolloJsonValueProcessor.class.getName(),
-        ApolloJsonValueProcessor.class);
   }
 
   private String[] resolveNamespaces(String[] namespaces) {
