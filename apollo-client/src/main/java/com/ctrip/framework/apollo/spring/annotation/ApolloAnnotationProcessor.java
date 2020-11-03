@@ -41,16 +41,16 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
   private final PlaceholderHelper placeholderHelper;
   private final SpringValueRegistry springValueRegistry;
 
+  /**
+   * resolve the expression.
+   */
+  private ConfigurableBeanFactory configurableBeanFactory;
+
   public ApolloAnnotationProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
     placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
     springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
   }
-
-  /**
-   * resolve the expression.
-   */
-  private ConfigurableBeanFactory configurableBeanFactory;
 
   @Override
   protected void processField(Object bean, String beanName, Field field) {
