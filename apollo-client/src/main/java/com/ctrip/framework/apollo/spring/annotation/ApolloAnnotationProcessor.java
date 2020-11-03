@@ -31,6 +31,15 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
 
   @Override
   protected void processField(Object bean, String beanName, Field field) {
+    this.processApolloConfig(bean, field);
+  }
+
+  @Override
+  protected void processMethod(final Object bean, String beanName, final Method method) {
+    this.processApolloConfigChangeListener(bean, method);
+  }
+
+  private void processApolloConfig(Object bean, Field field) {
     ApolloConfig annotation = AnnotationUtils.getAnnotation(field, ApolloConfig.class);
     if (annotation == null) {
       return;
@@ -45,11 +54,6 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
 
     ReflectionUtils.makeAccessible(field);
     ReflectionUtils.setField(field, bean, config);
-  }
-
-  @Override
-  protected void processMethod(final Object bean, String beanName, final Method method) {
-    this.processApolloConfigChangeListener(bean, method);
   }
 
   private void processApolloConfigChangeListener(final Object bean, final Method method) {
