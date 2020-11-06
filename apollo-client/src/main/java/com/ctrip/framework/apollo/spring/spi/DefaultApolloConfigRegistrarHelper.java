@@ -10,20 +10,15 @@ import com.ctrip.framework.apollo.spring.util.BeanRegistrationUtil;
 import com.google.common.collect.Lists;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrarHelper {
 
-  /**
-   * resolve the expression.
-   */
-  private ConfigurableBeanFactory configurableBeanFactory;
+  private Environment environment;
 
   @Override
   public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
@@ -53,7 +48,8 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
   private String[] resolveNamespaces(String[] namespaces) {
     String[] resolvedNamespaces = new String[namespaces.length];
     for (int i = 0; i < namespaces.length; i++) {
-      resolvedNamespaces[i] = this.configurableBeanFactory.resolveEmbeddedValue(namespaces[i]);
+      // throw IllegalArgumentException if given text is null or if any placeholders are unresolvable
+      resolvedNamespaces[i] = this.environment.resolveRequiredPlaceholders(namespaces[i]);
     }
     return resolvedNamespaces;
   }
@@ -64,8 +60,7 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
   }
 
   @Override
-  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-    this.configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
   }
-
 }
