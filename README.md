@@ -522,7 +522,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 </tr>
 <tr>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/czbank.png" alt="浙商银行"></td>
-<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/czbyqy.png" alt="易企业银科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/czbyqy.png" alt="易企银科技"></td>
 </tr>
 </table>
 
