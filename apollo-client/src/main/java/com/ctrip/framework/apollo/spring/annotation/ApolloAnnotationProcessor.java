@@ -24,7 +24,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -32,7 +34,8 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFactoryAware {
+public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFactoryAware,
+    EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(ApolloAnnotationProcessor.class);
   private static final Gson GSON = new Gson();
@@ -45,6 +48,8 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
    * resolve the expression.
    */
   private ConfigurableBeanFactory configurableBeanFactory;
+
+  private Environment environment;
 
   public ApolloAnnotationProcessor() {
     configUtil = ApolloInjector.getInstance(ConfigUtil.class);
@@ -74,7 +79,7 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
         "Invalid type: %s for field: %s, should be Config", field.getType(), field);
 
     final String namespace = annotation.value();
-    final String resolvedNamespace = this.configurableBeanFactory.resolveEmbeddedValue(namespace);
+    final String resolvedNamespace = this.environment.resolveRequiredPlaceholders(namespace);
     Config config = ConfigService.getConfig(resolvedNamespace);
 
     ReflectionUtils.makeAccessible(field);
@@ -113,8 +118,8 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
             : null;
 
     for (String namespace : namespaces) {
-      Config config = ConfigService
-          .getConfig(this.configurableBeanFactory.resolveEmbeddedValue(namespace));
+      final String resolvedNamespace = this.environment.resolveRequiredPlaceholders(namespace);
+      Config config = ConfigService.getConfig(resolvedNamespace);
 
       if (interestedKeys == null && interestedKeyPrefixes == null) {
         config.addChangeListener(configChangeListener);
@@ -203,5 +208,10 @@ public class ApolloAnnotationProcessor extends ApolloProcessor implements BeanFa
   @Override
   public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
     this.configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+  }
+
+  @Override
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
   }
 }
