@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.configservice.filter;
 
 import com.ctrip.framework.apollo.configservice.util.AccessKeyUtil;
 import com.ctrip.framework.apollo.core.signature.Signature;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.google.common.net.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
@@ -15,19 +14,23 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
+ * 客户端认证过滤器
+ *
  * @author nisiyong
  */
+@Slf4j
 public class ClientAuthenticationFilter implements Filter {
 
-  private static final Logger logger = LoggerFactory.getLogger(ClientAuthenticationFilter.class);
 
   private static final Long TIMESTAMP_INTERVAL = 60 * 1000L;
-
+  /**
+   * 访问密钥工具类
+   */
   private final AccessKeyUtil accessKeyUtil;
 
   public ClientAuthenticationFilter(AccessKeyUtil accessKeyUtil) {
@@ -45,29 +48,35 @@ public class ClientAuthenticationFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) resp;
 
+    // 从请求中提取的应用id
     String appId = accessKeyUtil.extractAppIdFromRequest(request);
+    // 应用id不能为空
     if (StringUtils.isBlank(appId)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "InvalidAppId");
       return;
     }
 
+    // 查询可用的密钥
     List<String> availableSecrets = accessKeyUtil.findAvailableSecret(appId);
-    if (!CollectionUtils.isEmpty(availableSecrets)) {
+    if (CollectionUtils.isNotEmpty(availableSecrets)) {
+      // http请求中header时间戳
       String timestamp = request.getHeader(Signature.HTTP_HEADER_TIMESTAMP);
+      // header中的认证字符串
       String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-      // check timestamp, valid within 1 minute
+      // 检查时间戳，1分钟内有效
       if (!checkTimestamp(timestamp)) {
-        logger.warn("Invalid timestamp. appId={},timestamp={}", appId, timestamp);
+        log.warn("Invalid timestamp. appId={},timestamp={}", appId, timestamp);
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "RequestTimeTooSkewed");
         return;
       }
 
-      // check signature
+      // 检查签名
       String path = request.getServletPath();
+
       String query = request.getQueryString();
       if (!checkAuthorization(authorization, availableSecrets, timestamp, path, query)) {
-        logger.warn("Invalid authorization. appId={},authorization={}", appId, authorization);
+        log.warn("Invalid authorization. appId={},authorization={}", appId, authorization);
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         return;
       }
@@ -81,7 +90,14 @@ public class ClientAuthenticationFilter implements Filter {
     //nothing
   }
 
+  /**
+   * 检查时间戳范围（检查时间戳，1分钟内有效）
+   *
+   * @param timestamp 时间戳
+   * @return true, 有效，否则，false
+   */
   private boolean checkTimestamp(String timestamp) {
+    // 请求时间（毫秒）
     long requestTimeMillis = 0L;
     try {
       requestTimeMillis = Long.parseLong(timestamp);
@@ -90,9 +106,20 @@ public class ClientAuthenticationFilter implements Filter {
     }
 
     long x = System.currentTimeMillis() - requestTimeMillis;
+    // 时间差为±TIMESTAMP_INTERVAL，
     return x >= -TIMESTAMP_INTERVAL && x <= TIMESTAMP_INTERVAL;
   }
 
+  /**
+   * 检查认证
+   *
+   * @param authorization    认证字符串
+   * @param availableSecrets 可用的密钥
+   * @param timestamp        时间戳
+   * @param path             路径
+   * @param query            查询参数
+   * @return true, 认证有效，否则，false
+   */
   private boolean checkAuthorization(String authorization, List<String> availableSecrets,
       String timestamp, String path, String query) {
 
@@ -104,8 +131,11 @@ public class ClientAuthenticationFilter implements Filter {
       }
     }
 
+    // 循环遍历，检查签名
     for (String secret : availableSecrets) {
+      // 构建签名
       String availableSignature = accessKeyUtil.buildSignature(path, query, timestamp, secret);
+      // 签名相等说明可用
       if (Objects.equals(signature, availableSignature)) {
         return true;
       }

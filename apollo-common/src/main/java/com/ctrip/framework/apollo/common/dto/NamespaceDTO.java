@@ -2,49 +2,35 @@ package com.ctrip.framework.apollo.common.dto;
 
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import javax.validation.constraints.Pattern;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public class NamespaceDTO extends BaseDTO{
-  private long id;
+/**
+ * 名称空间 Dto
+ */
 
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class NamespaceDTO extends BaseDTO {
+
+  /**
+   * 主键id
+   */
+  private Long id;
+  /**
+   * AppId
+   */
   private String appId;
-
+  /**
+   * 集群的名称
+   */
   private String clusterName;
-
+  /**
+   * 命名空间的名称
+   */
   @Pattern(
       regexp = InputValidator.CLUSTER_NAMESPACE_VALIDATOR,
       message = "Invalid Namespace format: " + InputValidator.INVALID_CLUSTER_NAMESPACE_MESSAGE
   )
   private String namespaceName;
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
 }

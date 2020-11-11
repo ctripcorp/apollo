@@ -1,73 +1,45 @@
 package com.ctrip.framework.apollo.core.dto;
 
 import java.util.Map;
+import lombok.Data;
 
 /**
+ * apollo配置信息
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class ApolloConfig {
 
+  /**
+   * 应用id
+   */
   private String appId;
-
+  /**
+   * 集群
+   */
   private String cluster;
-
+  /**
+   * 名称空间名称
+   */
   private String namespaceName;
-
+  /**
+   * 配置集
+   */
   private Map<String, String> configurations;
-
+  /**
+   * 发布的key
+   */
   private String releaseKey;
 
-  public ApolloConfig() {
-  }
-
   public ApolloConfig(String appId,
-                      String cluster,
-                      String namespaceName,
-                      String releaseKey) {
+      String cluster,
+      String namespaceName,
+      String releaseKey) {
     this.appId = appId;
     this.cluster = cluster;
     this.namespaceName = namespaceName;
     this.releaseKey = releaseKey;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getCluster() {
-    return cluster;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public String getReleaseKey() {
-    return releaseKey;
-  }
-
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public void setCluster(String cluster) {
-    this.cluster = cluster;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public void setReleaseKey(String releaseKey) {
-    this.releaseKey = releaseKey;
-  }
-
-  public void setConfigurations(Map<String, String> configurations) {
-    this.configurations = configurations;
   }
 
   @Override

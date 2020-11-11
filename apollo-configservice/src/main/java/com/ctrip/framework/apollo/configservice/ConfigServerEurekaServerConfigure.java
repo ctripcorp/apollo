@@ -5,7 +5,7 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Start Eureka Server annotations according to configuration
+ * Eureka配置服务，根据配置启动Eureka服务器注解
  *
  * @author Zhiqiang Lin(linzhiqiang0514@163.com)
  */
@@ -13,4 +13,5 @@ import org.springframework.context.annotation.Configuration;
 @EnableEurekaServer
 @ConditionalOnProperty(name = "apollo.eureka.server.enabled", havingValue = "true", matchIfMissing = true)
 public class ConfigServerEurekaServerConfigure {
+
 }

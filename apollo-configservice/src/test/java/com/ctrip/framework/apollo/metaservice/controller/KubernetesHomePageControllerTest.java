@@ -33,9 +33,9 @@ public class KubernetesHomePageControllerTest {
     ServiceDTO someServiceDto = mock(ServiceDTO.class);
     ServiceDTO anotherServiceDto = mock(ServiceDTO.class);
 
-    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIGSERVICE)).thenReturn(
+    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIG_SERVICE)).thenReturn(
         Lists.newArrayList(someServiceDto));
-    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMINSERVICE)).thenReturn(
+    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMIN_SERVICE)).thenReturn(
         Lists.newArrayList(anotherServiceDto));
 
     List<ServiceDTO> allServices = homePageController.listAllServices();

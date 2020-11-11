@@ -1,42 +1,27 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
+import lombok.Data;
 
+/**
+ * 名称空间发布信息 Dto
+ */
+@Data
 public class NamespaceReleaseDTO {
 
+  /**
+   * 发布标题
+   */
   private String releaseTitle;
+  /**
+   * 发布说明
+   */
   private String releaseComment;
+  /**
+   * 发布者
+   */
   private String releasedBy;
-  private boolean isEmergencyPublish;
-
-  public String getReleaseTitle() {
-    return releaseTitle;
-  }
-
-  public void setReleaseTitle(String releaseTitle) {
-    this.releaseTitle = releaseTitle;
-  }
-
-  public String getReleaseComment() {
-    return releaseComment;
-  }
-
-  public void setReleaseComment(String releaseComment) {
-    this.releaseComment = releaseComment;
-  }
-
-  public String getReleasedBy() {
-    return releasedBy;
-  }
-
-  public void setReleasedBy(String releasedBy) {
-    this.releasedBy = releasedBy;
-  }
-
-  public boolean isEmergencyPublish() {
-    return isEmergencyPublish;
-  }
-
-  public void setEmergencyPublish(boolean emergencyPublish) {
-    isEmergencyPublish = emergencyPublish;
-  }
+  /**
+   * 是否紧急发布
+   */
+  private Boolean isEmergencyPublish;
 }

@@ -4,14 +4,19 @@ import com.ctrip.framework.apollo.portal.constant.TracerEventType;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
 import com.google.common.base.Strings;
-
-import javax.servlet.*;
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
-
+/**
+ * 用户访问过滤器
+ */
 public class UserAccessFilter implements Filter {
 
   private static final String STATIC_RESOURCE_REGEX = ".*\\.(js|html|htm|png|css|woff2)$";
@@ -23,7 +28,7 @@ public class UserAccessFilter implements Filter {
   }
 
   @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
+  public void init(FilterConfig filterConfig) {
 
   }
 
@@ -34,8 +39,10 @@ public class UserAccessFilter implements Filter {
     String requestUri = ((HttpServletRequest) request).getRequestURI();
 
     try {
+      // 如果不为开放API或者静态资源
       if (!isOpenAPIRequest(requestUri) && !isStaticResource(requestUri)) {
         UserInfo userInfo = userInfoHolder.getUser();
+        // 不为空，记录访问事件
         if (userInfo != null) {
           Tracer.logEvent(TracerEventType.USER_ACCESS, userInfo.getUserId());
         }
@@ -52,10 +59,22 @@ public class UserAccessFilter implements Filter {
 
   }
 
+  /**
+   * 是否为开放API请求
+   *
+   * @param uri uri字符串
+   * @return true, 是开放API请求，否则，false
+   */
   private boolean isOpenAPIRequest(String uri) {
     return !Strings.isNullOrEmpty(uri) && uri.startsWith("/openapi");
   }
 
+  /**
+   * 是否是静态资源
+   *
+   * @param uri uri字符串
+   * @return true, 是静态资源，否则，false
+   */
   private boolean isStaticResource(String uri) {
     return !Strings.isNullOrEmpty(uri) && uri.matches(STATIC_RESOURCE_REGEX);
   }

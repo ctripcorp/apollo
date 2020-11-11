@@ -1,20 +1,30 @@
 package com.ctrip.framework.apollo.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
- * To indicate the config's source type, i.e. where is the config loaded from
+ * 配置的源类型，表示从哪里加载配置
  *
  * @since 1.1.0
  */
+@AllArgsConstructor
+@Getter
 public enum ConfigSourceType {
-  REMOTE("Loaded from remote config service"), LOCAL("Loaded from local cache"), NONE("Load failed");
-
+  /**
+   * 远程
+   */
+  REMOTE("Loaded from remote config service"),
+  /**
+   * 本地
+   */
+  LOCAL("Loaded from local cache"),
+  /**
+   * 无
+   */
+  NONE("Load failed");
+  /**
+   * 描述
+   */
   private final String description;
-
-  ConfigSourceType(String description) {
-    this.description = description;
-  }
-
-  public String getDescription() {
-    return description;
-  }
 }

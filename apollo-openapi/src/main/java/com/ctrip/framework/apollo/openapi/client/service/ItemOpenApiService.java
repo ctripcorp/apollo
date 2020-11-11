@@ -9,13 +9,34 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * 配置项 开放API
+ */
 public class ItemOpenApiService extends AbstractOpenApiService {
 
+  /**
+   * 构建集群 开放API服务
+   *
+   * @param client  客户端
+   * @param baseUrl 基Url
+   * @param gson    Json对象
+   */
   public ItemOpenApiService(CloseableHttpClient client, String baseUrl, Gson gson) {
     super(client, baseUrl, gson);
   }
 
-  public OpenItemDTO getItem(String appId, String env, String clusterName, String namespaceName, String key) {
+  /**
+   * 获取配置项信息
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param key           配置项的key
+   * @return 指定的配置项信息
+   */
+  public OpenItemDTO getItem(String appId, String env, String clusterName, String namespaceName,
+      String key) {
     if (Strings.isNullOrEmpty(clusterName)) {
       clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
@@ -28,22 +49,36 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     checkNotEmpty(key, "Item key");
 
     String path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s",
-        escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName), escapePath(key));
+        escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName),
+        escapePath(key));
 
     try (CloseableHttpResponse response = get(path)) {
       return gson.fromJson(EntityUtils.toString(response.getEntity()), OpenItemDTO.class);
     } catch (Throwable ex) {
       // return null if item doesn't exist
-      if (ex instanceof ApolloOpenApiException && ((ApolloOpenApiException)ex).getStatus() == 404) {
+      if (ex instanceof ApolloOpenApiException
+          && ((ApolloOpenApiException) ex).getStatus() == 404) {
         return null;
       }
       throw new RuntimeException(String
-          .format("Get item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", key, appId, clusterName,
+          .format("Get item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", key,
+              appId, clusterName,
               namespaceName, env), ex);
     }
   }
 
-  public OpenItemDTO createItem(String appId, String env, String clusterName, String namespaceName, OpenItemDTO itemDTO) {
+  /**
+   * 获取配置项信息
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param itemDTO       配置项信息
+   * @return 指定的配置项信息
+   */
+  public OpenItemDTO createItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
     if (Strings.isNullOrEmpty(clusterName)) {
       clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
@@ -63,12 +98,24 @@ public class ItemOpenApiService extends AbstractOpenApiService {
       return gson.fromJson(EntityUtils.toString(response.getEntity()), OpenItemDTO.class);
     } catch (Throwable ex) {
       throw new RuntimeException(String
-          .format("Create item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", itemDTO.getKey(),
+          .format("Create item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed",
+              itemDTO.getKey(),
               appId, clusterName, namespaceName, env), ex);
     }
   }
 
-  public void updateItem(String appId, String env, String clusterName, String namespaceName, OpenItemDTO itemDTO) {
+  /**
+   * 更新配置项信息
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param itemDTO       配置项信息
+   * @return 更新后的配置项信息
+   */
+  public void updateItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
     if (Strings.isNullOrEmpty(clusterName)) {
       clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
@@ -88,12 +135,24 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     try (CloseableHttpResponse ignored = put(path, itemDTO)) {
     } catch (Throwable ex) {
       throw new RuntimeException(String
-          .format("Update item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", itemDTO.getKey(),
+          .format("Update item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed",
+              itemDTO.getKey(),
               appId, clusterName, namespaceName, env), ex);
     }
   }
 
-  public void createOrUpdateItem(String appId, String env, String clusterName, String namespaceName, OpenItemDTO itemDTO) {
+  /**
+   * 创建或更新配置项信息
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param itemDTO       配置项信息
+   * @return 创建或更新后的配置项信息
+   */
+  public void createOrUpdateItem(String appId, String env, String clusterName, String namespaceName,
+      OpenItemDTO itemDTO) {
     if (Strings.isNullOrEmpty(clusterName)) {
       clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
@@ -110,19 +169,34 @@ public class ItemOpenApiService extends AbstractOpenApiService {
       itemDTO.setDataChangeLastModifiedBy(itemDTO.getDataChangeCreatedBy());
     }
 
-    String path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s?createIfNotExists=true",
-        escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName),
-        escapePath(itemDTO.getKey()));
+    String path = String
+        .format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s?createIfNotExists=true",
+            escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName),
+            escapePath(itemDTO.getKey()));
 
     try (CloseableHttpResponse ignored = put(path, itemDTO)) {
     } catch (Throwable ex) {
       throw new RuntimeException(String
-          .format("CreateOrUpdate item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", itemDTO.getKey(),
+          .format(
+              "CreateOrUpdate item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed",
+              itemDTO.getKey(),
               appId, clusterName, namespaceName, env), ex);
     }
   }
 
-  public void removeItem(String appId, String env, String clusterName, String namespaceName, String key, String operator) {
+  /**
+   * 移除配置项信息
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param key           配置项的key
+   * @param operator      操作人
+   * @return 创建或更新后的配置项信息
+   */
+  public void removeItem(String appId, String env, String clusterName, String namespaceName,
+      String key, String operator) {
     if (Strings.isNullOrEmpty(clusterName)) {
       clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT;
     }
@@ -136,13 +210,15 @@ public class ItemOpenApiService extends AbstractOpenApiService {
     checkNotEmpty(operator, "Operator");
 
     String path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s?operator=%s",
-        escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName), escapePath(key),
+        escapePath(env), escapePath(appId), escapePath(clusterName), escapePath(namespaceName),
+        escapePath(key),
         escapeParam(operator));
 
     try (CloseableHttpResponse ignored = delete(path)) {
     } catch (Throwable ex) {
       throw new RuntimeException(String
-          .format("Remove item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed", key, appId,
+          .format("Remove item: %s for appId: %s, cluster: %s, namespace: %s in env: %s failed",
+              key, appId,
               clusterName, namespaceName, env), ex);
     }
 

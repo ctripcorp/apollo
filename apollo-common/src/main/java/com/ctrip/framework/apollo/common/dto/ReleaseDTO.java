@@ -1,93 +1,49 @@
 package com.ctrip.framework.apollo.common.dto;
 
-public class ReleaseDTO extends BaseDTO{
-  private long id;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+/**
+ * 发布信息 Dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class ReleaseDTO extends BaseDTO {
+
+  /**
+   * 主键Id
+   */
+  private Long id;
+  /**
+   * 发布的Key
+   */
   private String releaseKey;
-
+  /**
+   * 发布名字
+   */
   private String name;
-
+  /**
+   * AppID
+   */
   private String appId;
-
+  /**
+   * 集群的名称
+   */
   private String clusterName;
-
+  /**
+   * 命名空间的名称
+   */
   private String namespaceName;
-
+  /**
+   * 发布配置
+   */
   private String configurations;
-
+  /**
+   * 发布说明
+   */
   private String comment;
-
-  private boolean isAbandoned;
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getReleaseKey() {
-    return releaseKey;
-  }
-
-  public void setReleaseKey(String releaseKey) {
-    this.releaseKey = releaseKey;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public String getConfigurations() {
-    return configurations;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public void setConfigurations(String configurations) {
-    this.configurations = configurations;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public boolean isAbandoned() {
-    return isAbandoned;
-  }
-
-  public void setAbandoned(boolean abandoned) {
-    isAbandoned = abandoned;
-  }
+  /**
+   * 是否废弃
+   */
+  private Boolean isAbandoned;
 }

@@ -1,12 +1,13 @@
 package com.ctrip.framework.apollo.portal.component.emailbuilder;
 
 
-import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
-
+import com.ctrip.framework.apollo.portal.environment.Env;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * 配置发布邮箱构建器
+ */
 @Component
 public class NormalPublishEmailBuilder extends ConfigPublishEmailBuilder {
 

@@ -1,20 +1,18 @@
 package com.ctrip.framework.apollo.spring.annotation;
 
+import com.ctrip.framework.apollo.core.ConfigConsts;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 
-import com.ctrip.framework.apollo.core.ConfigConsts;
-
 /**
- * Use this annotation to register Apollo property sources when using Java Config.
+ * Apollo配置开关，使用Java配置时，使用此注解注册Apollo属性源.
  *
- * <p>Configuration example:</p>
+ * <p>配置示例:</p>
  * <pre class="code">
  * &#064;Configuration
  * &#064;EnableApolloConfig({"someNamespace","anotherNamespace"})
@@ -30,15 +28,17 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 @Documented
 @Import(ApolloConfigRegistrar.class)
 public @interface EnableApolloConfig {
+
   /**
-   * Apollo namespaces to inject configuration into Spring Property Sources.
+   * Apollo名称空间将配置注入到Spring属性源中 Sources.
    */
   String[] value() default {ConfigConsts.NAMESPACE_APPLICATION};
 
   /**
-   * The order of the apollo config, default is {@link Ordered#LOWEST_PRECEDENCE}, which is Integer.MAX_VALUE.
-   * If there are properties with the same name in different apollo configs, the apollo config with smaller order wins.
-   * @return
+   * Apollo配置的优先级顺序，默认为有序，最低的优先级，即Integer.MAX_值.
+   * <p>如果在不同的apollo配置中存在同名属性，则顺序较小的apollo配置将获胜。</p>
+   *
+   * @return Apollo配置的优先级顺序
    */
   int order() default Ordered.LOWEST_PRECEDENCE;
 }

@@ -11,6 +11,7 @@ import com.ctrip.framework.apollo.common.exception.NotFoundException;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -315,7 +316,7 @@ public class InstanceConfigControllerTest {
   }
 
   private void verifyInstance(Instance instance, InstanceDTO instanceDTO) {
-    assertEquals(instance.getId(), instanceDTO.getId());
+    assertEquals(instance.getId(), Optional.ofNullable(instanceDTO.getId()));
     assertEquals(instance.getAppId(), instanceDTO.getAppId());
     assertEquals(instance.getClusterName(), instanceDTO.getClusterName());
     assertEquals(instance.getDataCenter(), instanceDTO.getDataCenter());

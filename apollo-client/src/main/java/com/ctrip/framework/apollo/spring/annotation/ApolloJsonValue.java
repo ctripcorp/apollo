@@ -7,19 +7,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to inject json property from Apollo, support the same format as Spring @Value.
+ * 使用此注解从Apollo注入json属性，支持与Spring的@Value相同的格式
  *
- * <p>Usage example:</p>
+ * <p>使用示例:</p>
  * <pre class="code">
- * // Inject the json property value for type SomeObject.
- * // Suppose SomeObject has 2 properties, someString and someInt, then the possible config
- * // in Apollo is someJsonPropertyKey={"someString":"someValue", "someInt":10}.
+ * // 为SomeObject类型注入json属性值。.
+ * // 假设SomeObject有两个属性，someString和someInt，那么Apollo中可能的配置是someJsonPropertyKey={"someString":"someValue", "someInt":10}。
  * &#064;ApolloJsonValue("${someJsonPropertyKey:someDefaultValue}")
  * private SomeObject someObject;
  * </pre>
  *
- * Create by zhangzheng on 2018/3/6
- *
+ * @author zhangzheng on 2018/3/6
  * @see org.springframework.beans.factory.annotation.Value
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,7 +26,8 @@ import java.lang.annotation.Target;
 public @interface ApolloJsonValue {
 
   /**
-   * The actual value expression: e.g. "${someJsonPropertyKey:someDefaultValue}".
+   * 当前值表达式：例如："${someJsonPropertyKey:someDefaultValue}".
    */
   String value();
 }
+

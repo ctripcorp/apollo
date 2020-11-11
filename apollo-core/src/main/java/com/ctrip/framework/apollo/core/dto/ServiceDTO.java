@@ -1,36 +1,26 @@
 package com.ctrip.framework.apollo.core.dto;
 
+import lombok.Data;
+
+/**
+ * 服务信息 Dto
+ */
+@Data
 public class ServiceDTO {
 
+  /**
+   * 应用名称
+   */
   private String appName;
-
+  /**
+   * 实例id
+   */
   private String instanceId;
-
+  /**
+   * 主页地址。如homePageUrl=http://localhost:8080
+   * <p>一般使用占位符形式配置xxx.homePageUrl = http://${mynamespace.hostname}:7001
+   */
   private String homepageUrl;
-
-  public String getAppName() {
-    return appName;
-  }
-
-  public String getHomepageUrl() {
-    return homepageUrl;
-  }
-
-  public String getInstanceId() {
-    return instanceId;
-  }
-
-  public void setAppName(String appName) {
-    this.appName = appName;
-  }
-
-  public void setHomepageUrl(String homepageUrl) {
-    this.homepageUrl = homepageUrl;
-  }
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
-  }
 
   @Override
   public String toString() {

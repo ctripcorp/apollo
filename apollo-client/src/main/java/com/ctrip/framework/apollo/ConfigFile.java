@@ -4,52 +4,59 @@ import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 
 /**
+ * 配置文件接口.
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public interface ConfigFile {
+
   /**
-   * Get file content of the namespace
-   * @return file content, {@code null} if there is no content
+   * 获取名称空间的文件内容
+   *
+   * @return 文件内容，如果没有内容，返回{@code null}
    */
   String getContent();
 
   /**
-   * Whether the config file has any content
-   * @return true if it has content, false otherwise.
+   * 配置文件是否有任何内容
+   *
+   * @return 如果有内容，true,否则，false.
    */
   boolean hasContent();
 
   /**
-   * Get the namespace of this config file instance
-   * @return the namespace
+   * 获取此配置文件实例的名称空间
+   *
+   * @return 名称空间
    */
   String getNamespace();
 
   /**
-   * Get the file format of this config file instance
-   * @return the config file format enum
+   * 获取此配置文件实例的文件格式
+   *
+   * @return 当前配置文件的格式枚举
    */
   ConfigFileFormat getConfigFileFormat();
 
   /**
-   * Add change listener to this config file instance.
+   * 添加配置文件变更监听器.
    *
-   * @param listener the config file change listener
+   * @param listener 配置文件变更监听器
    */
   void addChangeListener(ConfigFileChangeListener listener);
 
   /**
-   * Remove the change listener
+   * 移除配置文件变更监听器
    *
-   * @param listener the specific config change listener to remove
-   * @return true if the specific config change listener is found and removed
+   * @param listener 要删除的特定配置文件变更监听器
+   * @return 如果找到并删除了特定的配置更改侦听器，则为true
    */
   boolean removeChangeListener(ConfigFileChangeListener listener);
 
   /**
-   * Return the config's source type, i.e. where is the config loaded from
+   * 返回配置源的类型
    *
-   * @return the config's source type
+   * @return 配置源的类型
    */
   ConfigSourceType getSourceType();
 }

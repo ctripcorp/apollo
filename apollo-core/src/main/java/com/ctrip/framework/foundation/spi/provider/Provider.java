@@ -1,22 +1,28 @@
 package com.ctrip.framework.foundation.spi.provider;
 
+/**
+ * 供应器
+ */
 public interface Provider {
+
   /**
-   * @return the current provider's type
+   * 获取当前供应器的类型Class
+   *
+   * @return 当前提供者的类型Class
    */
   Class<? extends Provider> getType();
 
   /**
-   * Return the property value with the given name, or {@code defaultValue} if the name doesn't exist.
+   * 返回具有给定名称的属性值,如果不存在返回 {@code defaultValue}
    *
-   * @param name the property name
-   * @param defaultValue the default value when name is not found or any error occurred
-   * @return the property value
+   * @param name         给定的名称
+   * @param defaultValue 未找到名称或发生任何错误时的默认值
+   * @return 具有给定名称的属性值
    */
   String getProperty(String name, String defaultValue);
 
   /**
-   * Initialize the provider
+   * 初始化供应器
    */
   void initialize();
 }

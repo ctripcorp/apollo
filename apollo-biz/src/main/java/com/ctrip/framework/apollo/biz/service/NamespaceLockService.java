@@ -5,6 +5,9 @@ import com.ctrip.framework.apollo.biz.repository.NamespaceLockRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 名称空间锁 Service
+ */
 @Service
 public class NamespaceLockService {
 
@@ -14,18 +17,34 @@ public class NamespaceLockService {
     this.namespaceLockRepository = namespaceLockRepository;
   }
 
-  public NamespaceLock findLock(Long namespaceId){
+  /**
+   * 通过名称空间id获取名称空间锁对象
+   *
+   * @param namespaceId 名称空间id
+   * @return 名称空间锁对象
+   */
+  public NamespaceLock findLock(Long namespaceId) {
     return namespaceLockRepository.findByNamespaceId(namespaceId);
   }
 
-
-  @Transactional
-  public NamespaceLock tryLock(NamespaceLock lock){
+  /**
+   * 加锁
+   *
+   * @param lock 名称空间锁对象
+   * @return 名称空间锁对象
+   */
+   @Transactional(rollbackFor = Exception.class)
+  public NamespaceLock tryLock(NamespaceLock lock) {
     return namespaceLockRepository.save(lock);
   }
 
-  @Transactional
-  public void unlock(Long namespaceId){
+  /**
+   * 解锁
+   *
+   * @param namespaceId 名称空间锁id
+   */
+   @Transactional(rollbackFor = Exception.class)
+  public void unlock(Long namespaceId) {
     namespaceLockRepository.deleteByNamespaceId(namespaceId);
   }
 }

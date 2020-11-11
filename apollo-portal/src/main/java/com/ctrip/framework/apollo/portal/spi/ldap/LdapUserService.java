@@ -31,9 +31,9 @@ import org.springframework.ldap.support.LdapUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Ldap user spi service
- *
- * Support OpenLdap,ApacheDS,ActiveDirectory use {@link LdapTemplate} as underlying implementation
+ * Ldap用户spi服务
+ * <p>
+ * 支持OpenLdap、ApacheDS、ActiveDirectory使用{@linkldaptemplate}作为底层实现
  *
  * @author xm.lin xm.lin@anxincloud.com
  * @author idefav
@@ -49,61 +49,62 @@ public class LdapUserService implements UserService {
   private LdapExtendProperties ldapExtendProperties;
 
   /**
-   * ldap search base
+   * 指定LDAP树中应开始搜索的根DN。
    */
   @Value("${spring.ldap.base}")
   private String base;
 
   /**
-   * user objectClass
+   * ldap用户objectClass配置
    */
   @Value("${ldap.mapping.objectClass}")
   private String objectClassAttrName;
 
   /**
-   * user LoginId
+   * ldap用户惟一 id，用来作为登录的id
    */
   @Value("${ldap.mapping.loginId}")
   private String loginIdAttrName;
 
   /**
-   * user displayName
+   * ldap用户名，用来作为显示名
    */
   @Value("${ldap.mapping.userDisplayName}")
   private String userDisplayNameAttrName;
 
   /**
-   * email
+   * ldap 邮箱属性
    */
   @Value("${ldap.mapping.email}")
   private String emailAttrName;
 
   /**
-   * rdn
+   * ldap的rdnKey
    */
   @Value("${ldap.mapping.rdnKey:}")
   private String rdnKey;
 
   /**
-   * memberOf
+   * memberOf,需要快速的查询某一个用户是属于哪一个或多个组的（member of）。
+   * <p>memberOf 正是提供了这样的一个功能：如果某个组中通过 member 属性新增了一个用户，OpenLDAP 便会自动在该用户上创建一个 memberOf属性，其值为该组的dn
    */
   @Value("#{'${ldap.filter.memberOf:}'.split('\\|')}")
   private String[] memberOf;
 
   /**
-   * group search base
+   * 组指定LDAP树中应开始搜索的根
    */
   @Value("${ldap.group.groupBase:}")
   private String groupBase;
 
   /**
-   * group filter eg. (&(cn=apollo-admins)(&(member=*)))
+   * 组搜索筛选器,例如：(&(cn=apollo-admins)(&(member=*)))
    */
   @Value("${ldap.group.groupSearch:}")
   private String groupSearch;
 
   /**
-   * group memberShip eg. member
+   * 组成员身份，例如member或memberUid
    */
   @Value("${ldap.group.groupMembership:}")
   private String groupMembershipAttrName;
@@ -111,8 +112,13 @@ public class LdapUserService implements UserService {
 
   @Autowired
   private LdapTemplate ldapTemplate;
-
+  /**
+   * 成员属性名称
+   */
   private static final String MEMBER_OF_ATTR_NAME = "memberOf";
+  /**
+   * 成员Uid属性名称
+   */
   private static final String MEMBER_UID_ATTR_NAME = "memberUid";
 
   /**
@@ -131,10 +137,9 @@ public class LdapUserService implements UserService {
    * 查询条件
    */
   private ContainerCriteria ldapQueryCriteria() {
-    ContainerCriteria criteria = query()
-        .searchScope(SearchScope.SUBTREE)
+    ContainerCriteria criteria = query().searchScope(SearchScope.SUBTREE)
         .where("objectClass").is(objectClassAttrName);
-    if (memberOf.length > 0 && !StringUtils.isEmpty(memberOf[0])) {
+    if (memberOf.length > 0 && StringUtils.isNotBlank(memberOf[0])) {
       ContainerCriteria memberOfFilters = query().where(MEMBER_OF_ATTR_NAME).is(memberOf[0]);
       Arrays.stream(memberOf).skip(1)
           .forEach(filter -> memberOfFilters.or(MEMBER_OF_ATTR_NAME).is(filter));
@@ -146,8 +151,9 @@ public class LdapUserService implements UserService {
   /**
    * 根据entryDN查找用户信息
    *
-   * @param member ldap EntryDN
+   * @param member  ldap EntryDN
    * @param userIds 用户ID列表
+   * @return 返回用户信息
    */
   private UserInfo lookupUser(String member, List<String> userIds) {
     return ldapTemplate.lookup(member, (AttributesMapper<UserInfo>) attributes -> {
@@ -176,6 +182,12 @@ public class LdapUserService implements UserService {
     });
   }
 
+  /**
+   * 通过用户id查询用户信息
+   *
+   * @param userId 用户id
+   * @return 指定用户id的用户信息
+   */
   private UserInfo searchUserById(String userId) {
     return ldapTemplate.searchForObject(query().where(loginIdAttrName).is(userId),
         ctx -> {
@@ -191,20 +203,21 @@ public class LdapUserService implements UserService {
   /**
    * 按照group搜索用户
    *
-   * @param groupBase group search base
-   * @param groupSearch group filter
-   * @param keyword user search keywords
-   * @param userIds user id list
+   * @param groupBase   组指定LDAP树中应开始搜索的根
+   * @param groupSearch 组搜索筛选器
+   * @param keyword     用户查询的关键词
+   * @param userIds     用户id列表
+   * @return 用户信息列表
    */
   private List<UserInfo> searchUserInfoByGroup(String groupBase, String groupSearch,
       String keyword, List<String> userIds) {
 
-    return ldapTemplate
-        .searchForObject(groupBase, groupSearch, ctx -> {
-            List<UserInfo> userInfos = new ArrayList<>();
+    return ldapTemplate.searchForObject(groupBase, groupSearch, ctx -> {
+          List<UserInfo> userInfos = new ArrayList<>();
 
           if (!MEMBER_UID_ATTR_NAME.equals(groupMembershipAttrName)) {
-            String[] members = ((DirContextAdapter) ctx).getStringAttributes(groupMembershipAttrName);
+            String[] members = ((DirContextAdapter) ctx)
+                .getStringAttributes(groupMembershipAttrName);
             for (String item : members) {
               LdapName ldapName = LdapUtils.newLdapName(item);
               LdapName memberRdn = LdapUtils.removeFirst(ldapName, LdapUtils.newLdapName(base));
@@ -298,5 +311,4 @@ public class LdapUserService implements UserService {
     userIds.stream().skip(1).forEach(userId -> criteria.or(loginIdAttrName).is(userId));
     return ldapTemplate.search(ldapQueryCriteria().and(criteria), ldapUserInfoMapper);
   }
-
 }

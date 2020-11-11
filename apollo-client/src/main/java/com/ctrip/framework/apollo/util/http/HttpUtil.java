@@ -15,82 +15,88 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import org.apache.commons.collections4.MapUtils;
 
 /**
+ * http工具类
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class HttpUtil {
+
   private ConfigUtil m_configUtil;
   private static final Gson GSON = new Gson();
 
   /**
-   * Constructor.
+   * 构造HttpUtil.
    */
   public HttpUtil() {
     m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
   }
 
   /**
-   * Do get operation for the http request.
+   * 对http请求执行get操作.
    *
-   * @param httpRequest  the request
-   * @param responseType the response type
-   * @return the response
-   * @throws ApolloConfigException if any error happened or response code is neither 200 nor 304
+   * @param httpRequest  请求对象
+   * @param responseType 响应类型
+   * @return 响应对象
+   * @throws ApolloConfigException 如果发生任何错误或响应代码既不是200也不是304
    */
   public <T> HttpResponse<T> doGet(HttpRequest httpRequest, final Class<T> responseType) {
-    Function<String, T> convertResponse = new Function<String, T>() {
-      @Override
-      public T apply(String input) {
-        return GSON.fromJson(input, responseType);
-      }
-    };
+    Function<String, T> convertResponse = input -> GSON.fromJson(input, responseType);
 
     return doGetWithSerializeFunction(httpRequest, convertResponse);
   }
 
   /**
-   * Do get operation for the http request.
+   * 对http请求执行get操作.
    *
-   * @param httpRequest  the request
-   * @param responseType the response type
-   * @return the response
-   * @throws ApolloConfigException if any error happened or response code is neither 200 nor 304
+   * @param httpRequest  请求对象
+   * @param responseType 响应类型
+   * @return 响应对象
+   * @throws ApolloConfigException 如果发生任何错误或响应代码既不是200也不是304
    */
   public <T> HttpResponse<T> doGet(HttpRequest httpRequest, final Type responseType) {
-    Function<String, T> convertResponse = new Function<String, T>() {
-      @Override
-      public T apply(String input) {
-        return GSON.fromJson(input, responseType);
-      }
-    };
+    Function<String, T> convertResponse = input -> GSON.fromJson(input, responseType);
 
     return doGetWithSerializeFunction(httpRequest, convertResponse);
   }
 
+  /**
+   * 使用序列化函数获取
+   *
+   * @param httpRequest       请求对象
+   * @param serializeFunction 序列化函数
+   * @param <T>               泛型
+   * @return 响应结果对象
+   */
   private <T> HttpResponse<T> doGetWithSerializeFunction(HttpRequest httpRequest,
-                                                         Function<String, T> serializeFunction) {
-    InputStreamReader isr = null;
-    InputStreamReader esr = null;
+      Function<String, T> serializeFunction) {
+    // 状态码
     int statusCode;
     try {
+      // 打开连接
       HttpURLConnection conn = (HttpURLConnection) new URL(httpRequest.getUrl()).openConnection();
 
+      // 请求类型
       conn.setRequestMethod("GET");
 
+      // 设置header
       Map<String, String> headers = httpRequest.getHeaders();
-      if (headers != null && headers.size() > 0) {
+      if (MapUtils.isNotEmpty(headers)) {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
           conn.setRequestProperty(entry.getKey(), entry.getValue());
         }
       }
 
+      // 连接超时时间
       int connectTimeout = httpRequest.getConnectTimeout();
       if (connectTimeout < 0) {
         connectTimeout = m_configUtil.getConnectTimeout();
       }
 
-      int readTimeout = httpRequest.getReadTimeout();
+      // 写入超时时间
+      int readTimeout = httpRequest.getReadTimeout().intValue();
       if (readTimeout < 0) {
         readTimeout = m_configUtil.getReadTimeout();
       }
@@ -100,34 +106,32 @@ public class HttpUtil {
 
       conn.connect();
 
+      // 状态码
       statusCode = conn.getResponseCode();
       String response;
 
-      try {
-        isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+      try (InputStreamReader isr = new InputStreamReader(conn.getInputStream(),
+          StandardCharsets.UTF_8)) {
         response = CharStreams.toString(isr);
       } catch (IOException ex) {
         /**
-         * according to https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html,
-         * we should clean up the connection by reading the response body so that the connection
-         * could be reused.
+         * 根据https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html，我们应该通过读取响应体来清理连接，以便可以重用该连接
          */
         InputStream errorStream = conn.getErrorStream();
 
         if (errorStream != null) {
-          esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8);
-          try {
+          try (InputStreamReader esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8)) {
             CharStreams.toString(esr);
           } catch (IOException ioe) {
             //ignore
           }
         }
 
-        // 200 and 304 should not trigger IOException, thus we must throw the original exception out
+        // 200和304不应该触发IOException，因此我们必须抛出原始异常
         if (statusCode == 200 || statusCode == 304) {
           throw ex;
         }
-        // for status codes like 404, IOException is expected when calling conn.getInputStream()
+        //对于像404这样的状态代码，调用时需要IOException连接getInputStream()
         throw new ApolloConfigStatusCodeException(statusCode, ex);
       }
 
@@ -142,24 +146,7 @@ public class HttpUtil {
       throw ex;
     } catch (Throwable ex) {
       throw new ApolloConfigException("Could not complete get operation", ex);
-    } finally {
-      if (isr != null) {
-        try {
-          isr.close();
-        } catch (IOException ex) {
-          // ignore
-        }
-      }
-
-      if (esr != null) {
-        try {
-          esr.close();
-        } catch (IOException ex) {
-          // ignore
-        }
-      }
     }
-
     throw new ApolloConfigStatusCodeException(statusCode,
         String.format("Get operation failed for %s", httpRequest.getUrl()));
   }

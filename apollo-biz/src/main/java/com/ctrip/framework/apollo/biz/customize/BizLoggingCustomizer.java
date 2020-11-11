@@ -5,6 +5,9 @@ import com.ctrip.framework.apollo.common.customize.LoggingCustomizer;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+/**
+ * 业务日志自定义
+ */
 @Component
 @Profile("ctrip")
 public class BizLoggingCustomizer extends LoggingCustomizer{

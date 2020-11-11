@@ -4,9 +4,12 @@ import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 
 /**
+ * Null消息生产者
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class NullMessageProducer implements MessageProducer {
+
   private static final Transaction NULL_TRANSACTION = new NullTransaction();
 
   @Override

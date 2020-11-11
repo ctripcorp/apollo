@@ -47,7 +47,13 @@ public class AccessKeyServiceWithCache implements InitializingBean {
   private ScheduledExecutorService scheduledExecutorService;
   private Date lastTimeScanned;
 
+  /**
+   * 访问密钥缓存   key,应用id,访问密钥
+   */
   private ListMultimap<String, AccessKey> accessKeyCache;
+  /**
+   * 访问密钥id缓存
+   */
   private ConcurrentMap<Long, AccessKey> accessKeyIdCache;
 
   @Autowired
@@ -69,15 +75,19 @@ public class AccessKeyServiceWithCache implements InitializingBean {
     accessKeyIdCache = Maps.newConcurrentMap();
   }
 
+  /**
+   * 获取可用的密钥列表
+   *
+   * @param appId 应用id
+   * @return 可用的密钥列表
+   */
   public List<String> getAvailableSecrets(String appId) {
+    // 从缓存中获取访问密钥缓存
     List<AccessKey> accessKeys = accessKeyCache.get(appId);
     if (CollectionUtils.isEmpty(accessKeys)) {
       return Collections.emptyList();
     }
-
-    return accessKeys.stream()
-        .filter(AccessKey::isEnabled)
-        .map(AccessKey::getSecret)
+    return accessKeys.stream().filter(AccessKey::isEnabled).map(AccessKey::getSecret)
         .collect(Collectors.toList());
   }
 
@@ -126,7 +136,8 @@ public class AccessKeyServiceWithCache implements InitializingBean {
     while (hasMore && !Thread.currentThread().isInterrupted()) {
       //current batch is 500
       List<AccessKey> accessKeys = accessKeyRepository
-          .findFirst500ByDataChangeLastModifiedTimeGreaterThanOrderByDataChangeLastModifiedTimeAsc(lastTimeScanned);
+          .findFirst500ByDataChangeLastModifiedTimeGreaterThanOrderByDataChangeLastModifiedTimeAsc(
+              lastTimeScanned);
       if (CollectionUtils.isEmpty(accessKeys)) {
         break;
       }
@@ -140,9 +151,11 @@ public class AccessKeyServiceWithCache implements InitializingBean {
 
       // In order to avoid missing some records at the last time, we need to scan records at this time individually
       if (hasMore) {
-        List<AccessKey> lastModifiedTimeAccessKeys = accessKeyRepository.findByDataChangeLastModifiedTime(lastTimeScanned);
+        List<AccessKey> lastModifiedTimeAccessKeys = accessKeyRepository
+            .findByDataChangeLastModifiedTime(lastTimeScanned);
         mergeAccessKeys(lastModifiedTimeAccessKeys);
-        logger.info("Loaded {} new/updated Accesskey at lastModifiedTime {}", scanned, lastTimeScanned);
+        logger.info("Loaded {} new/updated Accesskey at lastModifiedTime {}", scanned,
+            lastTimeScanned);
       }
     }
   }

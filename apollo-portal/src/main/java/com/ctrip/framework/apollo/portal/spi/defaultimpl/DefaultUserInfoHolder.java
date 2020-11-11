@@ -1,17 +1,14 @@
 package com.ctrip.framework.apollo.portal.spi.defaultimpl;
 
-import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
+import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import lombok.NoArgsConstructor;
 
 /**
- * 不是ctrip的公司默认提供一个假用户
+ * 默认用户信息持有器
  */
+@NoArgsConstructor
 public class DefaultUserInfoHolder implements UserInfoHolder {
-
-
-  public DefaultUserInfoHolder() {
-
-  }
 
   @Override
   public UserInfo getUser() {

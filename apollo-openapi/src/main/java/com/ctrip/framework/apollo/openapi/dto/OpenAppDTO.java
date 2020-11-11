@@ -1,66 +1,39 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 开放的应用信息
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class OpenAppDTO extends BaseDTO {
 
+  /**
+   * 应用名
+   */
   private String name;
-
+  /**
+   * 应用Id
+   */
   private String appId;
-
+  /**
+   * 部门Id
+   */
   private String orgId;
-
+  /**
+   * 部门名字
+   */
   private String orgName;
-
+  /**
+   * 所有者的名称
+   */
   private String ownerName;
-
+  /**
+   * 所有者的邮箱
+   */
   private String ownerEmail;
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getOrgId() {
-    return orgId;
-  }
-
-  public String getOrgName() {
-    return orgName;
-  }
-
-  public String getOwnerEmail() {
-    return ownerEmail;
-  }
-
-  public String getOwnerName() {
-    return ownerName;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
-  }
-
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
-  }
-
-  public void setOwnerEmail(String ownerEmail) {
-    this.ownerEmail = ownerEmail;
-  }
-
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
 
   @Override
   public String toString() {

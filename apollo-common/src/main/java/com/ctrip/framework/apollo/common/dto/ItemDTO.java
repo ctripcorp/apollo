@@ -1,23 +1,42 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-public class ItemDTO extends BaseDTO{
 
+/**
+ * 属性的配置项
+ */
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class ItemDTO extends BaseDTO {
+
+  /**
+   * 主键ID
+   */
   private long id;
-
-  private long namespaceId;
-
+  /**
+   * 集群NamespaceId
+   */
+  private Long namespaceId;
+  /**
+   * 配置项Key
+   */
   private String key;
-
+  /**
+   * 配置项值
+   */
   private String value;
-
+  /**
+   * 备注
+   */
   private String comment;
-
-  private int lineNum;
-
-  public ItemDTO() {
-
-  }
+  /**
+   * 行号
+   */
+  private Integer lineNum;
 
   public ItemDTO(String key, String value, String comment, int lineNum) {
     this.key = key;
@@ -25,53 +44,4 @@ public class ItemDTO extends BaseDTO{
     this.comment = comment;
     this.lineNum = lineNum;
   }
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public long getNamespaceId() {
-    return namespaceId;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public void setNamespaceId(long namespaceId) {
-    this.namespaceId = namespaceId;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public int getLineNum() {
-    return lineNum;
-  }
-
-  public void setLineNum(int lineNum) {
-    this.lineNum = lineNum;
-  }
-
 }

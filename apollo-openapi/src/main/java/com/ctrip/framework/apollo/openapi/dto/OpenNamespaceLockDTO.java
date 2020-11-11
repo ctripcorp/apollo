@@ -1,34 +1,25 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
+import lombok.Data;
+
+/**
+ * 开放的名称空间编辑锁
+ */
+@Data
 public class OpenNamespaceLockDTO {
 
+  /**
+   * 名称空间名称
+   */
   private String namespaceName;
-  private boolean isLocked;
+  /**
+   * 是否已经加锁
+   */
+  private Boolean isLocked;
+  /**
+   * 加锁者
+   */
   private String lockedBy;
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public boolean isLocked() {
-    return isLocked;
-  }
-
-  public void setLocked(boolean locked) {
-    isLocked = locked;
-  }
-
-  public String getLockedBy() {
-    return lockedBy;
-  }
-
-  public void setLockedBy(String lockedBy) {
-    this.lockedBy = lockedBy;
-  }
 
   @Override
   public String toString() {

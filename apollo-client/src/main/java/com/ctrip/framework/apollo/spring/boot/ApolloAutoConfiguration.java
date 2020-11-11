@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Apollo自动配置
+ */
 @Configuration
 @ConditionalOnProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED)
 @ConditionalOnMissingBean(PropertySourcesProcessor.class)
@@ -15,6 +18,7 @@ public class ApolloAutoConfiguration {
 
   @Bean
   public ConfigPropertySourcesProcessor configPropertySourcesProcessor() {
+    // 注入ConfigPropertySourcesProcessor bean 对象
     return new ConfigPropertySourcesProcessor();
   }
 }

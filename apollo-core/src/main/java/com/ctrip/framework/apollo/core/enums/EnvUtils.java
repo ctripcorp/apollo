@@ -1,9 +1,18 @@
 package com.ctrip.framework.apollo.core.enums;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * 环境枚举工具类.
+ *
+ * @author Jason Song(song_s@ctrip.com)
+ */
 public final class EnvUtils {
-  
+
+  private EnvUtils() {
+  }
+
   public static Env transformEnv(String envName) {
     if (StringUtils.isBlank(envName)) {
       return Env.UNKNOWN;
@@ -17,7 +26,8 @@ public final class EnvUtils {
       case "UAT":
         return Env.UAT;
       case "PRO":
-      case "PROD": //just in case
+        //just in case
+      case "PROD":
         return Env.PRO;
       case "DEV":
         return Env.DEV;

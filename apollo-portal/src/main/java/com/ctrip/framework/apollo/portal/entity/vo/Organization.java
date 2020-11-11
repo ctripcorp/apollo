@@ -1,25 +1,21 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
+import lombok.Data;
+
 /**
+ * 部门信息.
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class Organization {
+
+  /**
+   * 部门id
+   */
   private String orgId;
+  /**
+   * 部门名称
+   */
   private String orgName;
-
-  public String getOrgId() {
-    return orgId;
-  }
-
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
-  }
-
-  public String getOrgName() {
-    return orgName;
-  }
-
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
-  }
 }

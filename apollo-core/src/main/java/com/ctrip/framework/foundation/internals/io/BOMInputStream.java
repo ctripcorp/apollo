@@ -22,12 +22,12 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * This class is used to wrap a stream that includes an encoded {@link ByteOrderMark} as its first bytes.
+ * 此类用于包装包含编码{@link ByteOrderMark}的流作为其第一个字节。
+ * <p>
+ * 这个类检测这些字节，如果需要，可以自动跳过它们，并将后续字节作为流中的第一个字节返回。
+ * <p>
+ * {@link ByteOrderMark}实现具有以下预定义的bom：
  *
- * This class detects these bytes and, if required, can automatically skip them and return the subsequent byte as the
- * first byte in the stream.
- *
- * The {@link ByteOrderMark} implementation has the following pre-defined BOMs:
  * <ul>
  * <li>UTF-8 - {@link ByteOrderMark#UTF_8}</li>
  * <li>UTF-16BE - {@link ByteOrderMark#UTF_16LE}</li>
@@ -37,7 +37,7 @@ import java.util.List;
  * </ul>
  *
  *
- * <h3>Example 1 - Detect and exclude a UTF-8 BOM</h3>
+ * <h3>示例1-检测并排除UTF-8 BOM</h3>
  *
  * <pre>
  * BOMInputStream bomIn = new BOMInputStream(in);
@@ -46,7 +46,7 @@ import java.util.List;
  * }
  * </pre>
  *
- * <h3>Example 2 - Detect a UTF-8 BOM (but don't exclude it)</h3>
+ * <h3>示例2 - 检测UTF-8 BOM（但不要排除它）</h3>
  *
  * <pre>
  * boolean include = true;
@@ -56,7 +56,7 @@ import java.util.List;
  * }
  * </pre>
  *
- * <h3>Example 3 - Detect Multiple BOMs</h3>
+ * <h3>示例3 - 检测多个BOM表</h3>
  *
  * <pre>
  * BOMInputStream bomIn = new BOMInputStream(in, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_32LE,
@@ -74,79 +74,99 @@ import java.util.List;
  * }
  * </pre>
  *
+ * @version $Id: BOMInputStream.java 1686527 2015-06-20 06:31:39Z krosenvold $
  * @see ByteOrderMark
  * @see <a href="http://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia - Byte Order Mark</a>
- * @version $Id: BOMInputStream.java 1686527 2015-06-20 06:31:39Z krosenvold $
  * @since 2.0
  */
 public class BOMInputStream extends ProxyInputStream {
+
+  /**
+   * 是否包含
+   */
   private final boolean include;
   /**
-   * BOMs are sorted from longest to shortest.
+   * BOM表按最长到最短排序。
    */
   private final List<ByteOrderMark> boms;
+  /**
+   * 字节排序标记
+   */
   private ByteOrderMark byteOrderMark;
+  /**
+   * 第一字节列表
+   */
   private int[] firstBytes;
+  /**
+   * 长度
+   */
   private int fbLength;
+  /**
+   * 下标
+   */
   private int fbIndex;
+  /**
+   * 标记的下标
+   */
   private int markFbIndex;
+  /**
+   * 是否开始标记
+   */
   private boolean markedAtStart;
 
   /**
-   * Constructs a new BOM InputStream that excludes a {@link ByteOrderMark#UTF_8} BOM.
+   * 构造一个新的字节序输入流，它排除{@link ByteOrderMark#UTF_8}字节序。
    *
-   * @param delegate the InputStream to delegate to
+   * @param delegate 要委托给的InputStream
    */
   public BOMInputStream(final InputStream delegate) {
     this(delegate, false, ByteOrderMark.UTF_8);
   }
 
   /**
-   * Constructs a new BOM InputStream that detects a a {@link ByteOrderMark#UTF_8} and optionally includes it.
+   * 构造一个新的字节序输入流来检测{@link ByteOrderMark#UTF_8}并可选地包含它。
    *
-   * @param delegate the InputStream to delegate to
-   * @param include true to include the UTF-8 BOM or false to exclude it
+   * @param delegate 要委托给的InputStream
+   * @param include  如果为true，则包含UTF-8 字节序；如果为false，则排除它
    */
   public BOMInputStream(final InputStream delegate, final boolean include) {
     this(delegate, include, ByteOrderMark.UTF_8);
   }
 
   /**
-   * Constructs a new BOM InputStream that excludes the specified BOMs.
+   * 构造排除指定字节序的新字节序输入流
    *
-   * @param delegate the InputStream to delegate to
-   * @param boms The BOMs to detect and exclude
+   * @param delegate 要委托给的InputStream
+   * @param boms     要发现和排除的字节序列表
    */
   public BOMInputStream(final InputStream delegate, final ByteOrderMark... boms) {
     this(delegate, false, boms);
   }
 
   /**
-   * Compares ByteOrderMark objects in descending length order.
+   * 按长度降序比较字节序标记类对象
    */
-  private static final Comparator<ByteOrderMark> ByteOrderMarkLengthComparator = new Comparator<ByteOrderMark>() {
-
-    public int compare(final ByteOrderMark bom1, final ByteOrderMark bom2) {
-      final int len1 = bom1.length();
-      final int len2 = bom2.length();
-      if (len1 > len2) {
-        return EOF;
-      }
-      if (len2 > len1) {
-        return 1;
-      }
-      return 0;
+  private static final Comparator<ByteOrderMark> ByteOrderMarkLengthComparator = (bom1, bom2) -> {
+    final int len1 = bom1.length();
+    final int len2 = bom2.length();
+    if (len1 > len2) {
+      return EOF;
     }
+    if (len2 > len1) {
+      return 1;
+    }
+    return 0;
   };
 
   /**
-   * Constructs a new BOM InputStream that detects the specified BOMs and optionally includes them.
+   * 构造新的字节序输入流，该输入流检测指定的字节序并选择包含这些字节序.
    *
-   * @param delegate the InputStream to delegate to
-   * @param include true to include the specified BOMs or false to exclude them
-   * @param boms The BOMs to detect and optionally exclude
+   * @param delegate 要委托给的InputStream
+   * @param include  如果为true，则包含指定的字节序；如果为false，则排除这些字节序
+   * @param boms     要发现和排除的字节序列表
    */
-  public BOMInputStream(final InputStream delegate, final boolean include, final ByteOrderMark... boms) {
+  public BOMInputStream(final InputStream delegate, final boolean include,
+      final ByteOrderMark... boms) {
     super(delegate);
     if (boms == null || boms.length == 0) {
       throw new IllegalArgumentException("No BOMs specified");
@@ -159,10 +179,10 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * Indicates whether the stream contains one of the specified BOMs.
+   * 判断流是否包含指定的字节序之一.
    *
-   * @return true if the stream has one of the specified BOMs, otherwise false if it does not
-   * @throws IOException if an error reading the first bytes of the stream occurs
+   * @return 如果流有一个指定的bom，否则返回false
+   * @throws IOException 如果在读取流的第一个字节时发生错误，抛出
    */
   public boolean hasBOM() throws IOException {
     return getBOM() != null;
@@ -174,7 +194,7 @@ public class BOMInputStream extends ProxyInputStream {
    * @param bom The BOM to check for
    * @return true if the stream has the specified BOM, otherwise false if it does not
    * @throws IllegalArgumentException if the BOM is not one the stream is configured to detect
-   * @throws IOException if an error reading the first bytes of the stream occurs
+   * @throws IOException              if an error reading the first bytes of the stream occurs
    */
   public boolean hasBOM(final ByteOrderMark bom) throws IOException {
     if (!boms.contains(bom)) {
@@ -185,10 +205,10 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * Return the BOM (Byte Order Mark).
+   * 返回字节序
    *
-   * @return The BOM or null if none
-   * @throws IOException if an error reading the first bytes of the stream occurs
+   * @return 如果没有，则为空
+   * @throws IOException 如果在读取流的第一个字节时发生错误，抛出
    */
   public ByteOrderMark getBOM() throws IOException {
     if (firstBytes == null) {
@@ -220,11 +240,10 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * Return the BOM charset Name - {@link ByteOrderMark#getCharsetName()}.
+   * 返回字节序字符集名称- {@link ByteOrderMark#getCharsetName()}.
    *
-   * @return The BOM charset Name or null if no BOM found
-   * @throws IOException if an error reading the first bytes of the stream occurs
-   *
+   * @return 字节序字符集名称，如果找不到字节序，则为空
+   * @throws IOException 如果在读取流的第一个字节时发生错误，抛出
    */
   public String getBOMCharsetName() throws IOException {
     getBOM();
@@ -232,12 +251,10 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * This method reads and either preserves or skips the first bytes in the stream. It behaves like the single-byte
-   * <code>read()</code> method, either returning a valid byte or -1 to indicate that the initial bytes have been
-   * processed already.
+   * 此方法读取并保留或跳过流中的第一个字节。它的行为类似于单字节的<code>read()</code>方法，要么返回一个有效的字节，要么返回-1以表示初始字节已经被处理。
    *
-   * @return the byte read (excluding BOM) or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
+   * @return 读取的字节（不包括字节序）,如果流结束，返回-1
+   * @throws IOException 如果发生I/O错误 抛出
    */
   private int readFirstBytes() throws IOException {
     getBOM();
@@ -245,9 +262,9 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * Find a BOM with the specified bytes.
+   * 查找具有指定字节的字节序。
    *
-   * @return The matched BOM or null if none matched
+   * @return 匹配的字节序，如果没有匹配，则为空
    */
   private ByteOrderMark find() {
     for (final ByteOrderMark bom : boms) {
@@ -259,16 +276,16 @@ public class BOMInputStream extends ProxyInputStream {
   }
 
   /**
-   * Check if the bytes match a BOM.
+   * 检查字节是否与字节序匹配
    *
-   * @param bom The BOM
-   * @return true if the bytes match the bom, otherwise false
+   * @param bom 字节序对象
+   * @return 如果字节与字节序匹配，则为true，否则为false
    */
   private boolean matches(final ByteOrderMark bom) {
     // if (bom.length() != fbLength) {
     // return false;
     // }
-    // firstBytes may be bigger than the BOM bytes
+    // 第一个字节可能大于BOM字节
     for (int i = 0; i < bom.length(); i++) {
       if (bom.get(i) != firstBytes[i]) {
         return false;
@@ -281,27 +298,12 @@ public class BOMInputStream extends ProxyInputStream {
   // Implementation of InputStream
   // ----------------------------------------------------------------------------
 
-  /**
-   * Invokes the delegate's <code>read()</code> method, detecting and optionally skipping BOM.
-   *
-   * @return the byte read (excluding BOM) or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
-   */
   @Override
   public int read() throws IOException {
     final int b = readFirstBytes();
     return b >= 0 ? b : in.read();
   }
 
-  /**
-   * Invokes the delegate's <code>read(byte[], int, int)</code> method, detecting and optionally skipping BOM.
-   *
-   * @param buf the buffer to read the bytes into
-   * @param off The start offset
-   * @param len The number of bytes to read (excluding BOM)
-   * @return the number of bytes read or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
-   */
   @Override
   public int read(final byte[] buf, int off, int len) throws IOException {
     int firstCount = 0;
@@ -318,23 +320,11 @@ public class BOMInputStream extends ProxyInputStream {
     return secondCount < 0 ? firstCount > 0 ? firstCount : EOF : firstCount + secondCount;
   }
 
-  /**
-   * Invokes the delegate's <code>read(byte[])</code> method, detecting and optionally skipping BOM.
-   *
-   * @param buf the buffer to read the bytes into
-   * @return the number of bytes read (excluding BOM) or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
-   */
   @Override
   public int read(final byte[] buf) throws IOException {
     return read(buf, 0, buf.length);
   }
 
-  /**
-   * Invokes the delegate's <code>mark(int)</code> method.
-   *
-   * @param readlimit read ahead limit
-   */
   @Override
   public synchronized void mark(final int readlimit) {
     markFbIndex = fbIndex;
@@ -342,11 +332,6 @@ public class BOMInputStream extends ProxyInputStream {
     in.mark(readlimit);
   }
 
-  /**
-   * Invokes the delegate's <code>reset()</code> method.
-   *
-   * @throws IOException if an I/O error occurs
-   */
   @Override
   public synchronized void reset() throws IOException {
     fbIndex = markFbIndex;
@@ -357,13 +342,6 @@ public class BOMInputStream extends ProxyInputStream {
     in.reset();
   }
 
-  /**
-   * Invokes the delegate's <code>skip(long)</code> method, detecting and optionallyskipping BOM.
-   *
-   * @param n the number of bytes to skip
-   * @return the number of bytes to skipped or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
-   */
   @Override
   public long skip(long n) throws IOException {
     int skipped = 0;

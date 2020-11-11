@@ -16,6 +16,7 @@ import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -127,7 +128,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
 
     List<ItemDTO> createItems = changeSets.getCreateItems();
     ItemDTO createItem = createItems.get(0);
-    assertEquals(1, createItem.getLineNum());
+    assertEquals(1, Optional.ofNullable(createItem.getLineNum()));
     assertEquals("a", createItem.getKey());
     assertEquals("b", createItem.getValue());
     assertEquals("comment", createItem.getComment());
@@ -180,7 +181,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
     assertEquals("newKey", createdItem.getKey());
     assertEquals("c", createdItem.getValue());
     assertEquals("comment", createdItem.getComment());
-    assertEquals(4, createdItem.getLineNum());
+    assertEquals(4, Optional.ofNullable(createdItem.getLineNum()));
 
     List<ItemDTO> updateItems = changeSets.getUpdateItems();
     ItemDTO updateItem1 = updateItems.get(0);
@@ -188,12 +189,12 @@ public class ConfigServiceTest extends AbstractUnitTest {
     assertEquals("c", updateItem1.getKey());
     assertEquals("newValue", updateItem1.getValue());
     assertEquals("comment", updateItem1.getComment());
-    assertEquals(2, updateItem1.getLineNum());
+    assertEquals(2, Optional.ofNullable(updateItem1.getLineNum()));
 
     assertEquals("d", updateItem2.getKey());
     assertEquals("b", updateItem2.getValue());
     assertEquals("newComment", updateItem2.getComment());
-    assertEquals(3, updateItem2.getLineNum());
+    assertEquals(3, Optional.ofNullable(updateItem2.getLineNum()));
 
 
   }
@@ -201,7 +202,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
   private NamespaceDTO generateNamespaceDTO(String appId, String clusterName, String namespaceName) {
     NamespaceDTO namespaceDTO = new NamespaceDTO();
     namespaceDTO.setAppId(appId);
-    namespaceDTO.setId(1);
+    namespaceDTO.setId(1L);
     namespaceDTO.setClusterName(clusterName);
     namespaceDTO.setNamespaceName(namespaceName);
     return namespaceDTO;

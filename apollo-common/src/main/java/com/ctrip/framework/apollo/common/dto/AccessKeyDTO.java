@@ -1,45 +1,29 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 访问密钥 dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class AccessKeyDTO extends BaseDTO {
 
+  /**
+   * 主键id
+   */
   private Long id;
-
+  /**
+   * 密钥
+   */
   private String secret;
-
+  /**
+   * 应用id
+   */
   private String appId;
-
+  /**
+   * 是否启用，默认禁用（1:启用 0:禁用）
+   */
   private Boolean enabled;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getSecret() {
-    return secret;
-  }
-
-  public void setSecret(String secret) {
-    this.secret = secret;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(Boolean enabled) {
-    this.enabled = enabled;
-  }
-
 }

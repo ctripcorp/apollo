@@ -1,64 +1,37 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public class AppNamespaceDTO extends BaseDTO{
-  private long id;
+/**
+ * 应用名称空间 dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class AppNamespaceDTO extends BaseDTO {
 
+  /**
+   * 主键id
+   */
+  private Long id;
+  /**
+   * namespace名字，注意，需要全局唯一
+   */
   private String name;
-
+  /**
+   * appId
+   */
   private String appId;
-
+  /**
+   * 备注
+   */
   private String comment;
-
+  /**
+   * namespace的格式（后缀）类型
+   */
   private String format;
-
-  private boolean isPublic = false;
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getFormat() {
-    return format;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
-  }
-
-  public boolean isPublic() {
-    return isPublic;
-  }
-
-  public void setPublic(boolean aPublic) {
-    isPublic = aPublic;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
+  /**
+   * namespace是否为公共
+   */
+  private Boolean isPublic = false;
 }

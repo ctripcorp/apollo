@@ -19,34 +19,29 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A Proxy stream which acts as expected, that is it passes the method calls on to the proxied stream and doesn't change
- * which methods are being called.
- * <p>
- * It is an alternative base class to FilterInputStream to increase reusability, because FilterInputStream changes the
- * methods being called, such as read(byte[]) to read(byte[], int, int).
- * <p>
- * See the protected methods for ways in which a subclass can easily decorate a stream with custom pre-, post- or error
- * processing functionality.
+ * 代理输入流，它按预期的方式运行，即它将方法调用传递到代理流，并且不会更改正在调用的方法。
+ * <p>它是FilterInputStream的另一个基类，以提高可重用性，因为FilterInputStream会更改所调用的方法，例如读取（字节[]），以读取（字节[]、int、int）。
+ * <p>请参阅受保护的方法，以了解子类可以轻松地使用自定义的预处理、后处理或错误处理功能来装饰流的方法。
  *
  * @version $Id: ProxyInputStream.java 1603493 2014-06-18 15:46:07Z ggregory $
  */
 public abstract class ProxyInputStream extends FilterInputStream {
 
   /**
-   * Constructs a new ProxyInputStream.
+   * 构造新的ProxyInputStream.
    *
-   * @param proxy the InputStream to delegate to
+   * @param proxy 被委托的InputStream
    */
   public ProxyInputStream(final InputStream proxy) {
     super(proxy);
-    // the proxy is stored in a protected superclass variable named 'in'
+    // 代理存储在名为“in”的受保护超类变量中
   }
 
   /**
-   * Invokes the delegate's <code>read()</code> method.
-   * 
-   * @return the byte read or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的<code>read（）</code>方法。
+   *
+   * @return 字节读取。或者流结束，返回-1
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public int read() throws IOException {
@@ -62,11 +57,11 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>read(byte[])</code> method.
-   * 
-   * @param bts the buffer to read the bytes into
-   * @return the number of bytes read or EOF if the end of stream
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的<code>read（final byte[] bts）</code>方法。
+   *
+   * @param bts 要将字节读入的缓冲区
+   * @return 如果流结束，则为读取的字节数或者流结束，返回-1
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public int read(final byte[] bts) throws IOException {
@@ -82,13 +77,13 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>read(byte[], int, int)</code> method.
-   * 
-   * @param bts the buffer to read the bytes into
-   * @param off The start offset
-   * @param len The number of bytes to read
-   * @return the number of bytes read or -1 if the end of stream
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的 <code>read(byte[], int, int)</code> 方法.
+   *
+   * @param bts 要将字节读入的缓冲区
+   * @param off 起始偏移量
+   * @param len 要读取的字节数
+   * @return 如果流结束，则为读取的字节数或者流结束，返回-1
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public int read(final byte[] bts, final int off, final int len) throws IOException {
@@ -104,11 +99,11 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>skip(long)</code> method.
-   * 
-   * @param ln the number of bytes to skip
-   * @return the actual number of bytes skipped
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的  <code>skip(long)</code> 方法.
+   *
+   * @param ln 要跳过的字节数
+   * @return 实际跳过的字节数
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public long skip(final long ln) throws IOException {
@@ -121,10 +116,10 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>available()</code> method.
-   * 
-   * @return the number of available bytes
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的  <code>available()</code> 方法.
+   *
+   * @return 可用的字节数
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public int available() throws IOException {
@@ -137,9 +132,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>close()</code> method.
-   * 
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的  <code>close()</code> 方法.
+   *
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public void close() throws IOException {
@@ -151,9 +146,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>mark(int)</code> method.
-   * 
-   * @param readlimit read ahead limit
+   * 调用委托类的 <code>mark(int)</code> 方法.
+   *
+   * @param readlimit 预读限制
    */
   @Override
   public synchronized void mark(final int readlimit) {
@@ -161,9 +156,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>reset()</code> method.
-   * 
-   * @throws IOException if an I/O error occurs
+   * 调用委托类的 <code>reset()</code> 方法.
+   *
+   * @throws IOException 如果发生I/O错误 抛出
    */
   @Override
   public synchronized void reset() throws IOException {
@@ -175,9 +170,9 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invokes the delegate's <code>markSupported()</code> method.
-   * 
-   * @return true if mark is supported, otherwise false
+   * 调用委托类的 <code>markSupported()</code> 方法.
+   *
+   * @return 如果支持标记，则为true，否则为false
    */
   @Override
   public boolean markSupported() {
@@ -185,47 +180,40 @@ public abstract class ProxyInputStream extends FilterInputStream {
   }
 
   /**
-   * Invoked by the read methods before the call is proxied. The number of bytes that the caller wanted to read (1 for
-   * the {@link #read()} method, buffer length for {@link #read(byte[])}, etc.) is given as an argument.
+   * 在代理调用成功返回后由read方法调用。返回给调用者的字节数（如果到达流的末尾，则返回-1）作为参数。
    * <p>
-   * Subclasses can override this method to add common pre-processing functionality without having to override all the
-   * read methods. The default implementation does nothing.
+   * 子类可以重写此方法以添加公共的后处理功能，而不必重写所有的read方法。默认实现什么也不做。
    * <p>
-   * Note this method is <em>not</em> called from {@link #skip(long)} or {@link #reset()}. You need to explicitly
-   * override those methods if you want to add pre-processing steps also to them.
+   * 注意这个方法不是从{@link #skip（long）}或{@link #reset（）}调用的。如果还想向这些方法添加后处理步骤，则需要显式重写这些方法。
    *
+   * @param n 调用方要求读取的字节数
+   * @throws IOException 如果预处理失败，抛出
    * @since 2.0
-   * @param n number of bytes that the caller asked to be read
-   * @throws IOException if the pre-processing fails
    */
   protected void beforeRead(final int n) throws IOException {
     // no-op
   }
 
   /**
-   * Invoked by the read methods after the proxied call has returned successfully. The number of bytes returned to the
-   * caller (or -1 if the end of stream was reached) is given as an argument.
+   * 在代理调用成功返回后由read方法调用。返回给调用者的字节数（如果到达流的末尾，则返回-1）作为参数。
    * <p>
-   * Subclasses can override this method to add common post-processing functionality without having to override all the
-   * read methods. The default implementation does nothing.
+   * 子类可以重写此方法以添加公共的后处理功能，而不必重写所有的read方法。默认实现什么也不做。
    * <p>
-   * Note this method is <em>not</em> called from {@link #skip(long)} or {@link #reset()}. You need to explicitly
-   * override those methods if you want to add post-processing steps also to them.
+   * 注意这个方法不是从{@link #skip（long）}或{@link #reset（）}调用的。如果还想向这些方法添加后处理步骤，则需要显式重写这些方法
    *
+   * @param n 读取的字节数，如果到达流的结尾，则为-1
+   * @throws IOException 如果后置处理失败，抛出
    * @since 2.0
-   * @param n number of bytes read, or -1 if the end of stream was reached
-   * @throws IOException if the post-processing fails
    */
   protected void afterRead(final int n) throws IOException {
     // no-op
   }
 
   /**
-   * Handle any IOExceptions thrown.
+   * 处理引发的任何IOException。
    * <p>
-   * This method provides a point to implement custom exception handling. The default behaviour is to re-throw the
-   * exception.
-   * 
+   * 此方法提供了一个实现自定义异常处理的点。默认行为是重新抛出异常。
+   *
    * @param e The IOException thrown
    * @throws IOException if an I/O error occurs
    * @since 2.0

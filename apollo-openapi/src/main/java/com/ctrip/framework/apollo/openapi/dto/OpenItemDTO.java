@@ -1,36 +1,29 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 开放的属性配置项 Dto
+ *
+ * @author Jason Song(song_s@ctrip.com)
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class OpenItemDTO extends BaseDTO {
 
+  /**
+   * 配置项Key
+   */
   private String key;
-
+  /**
+   * 配置项值
+   */
   private String value;
-
+  /**
+   * 备注
+   */
   private String comment;
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 
   @Override
   public String toString() {

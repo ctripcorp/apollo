@@ -3,16 +3,17 @@ package com.ctrip.framework.apollo;
 import java.util.Properties;
 
 /**
- * Config files that are properties compatible, e.g. yaml
+ * Properties兼容的配置文件，例如yaml
  *
  * @since 1.3.0
  */
 public interface PropertiesCompatibleConfigFile extends ConfigFile {
 
   /**
-   * @return the properties form of the config file
+   * 返回转换后的Propertes对象
    *
-   * @throws RuntimeException if the content could not be transformed to properties
+   * @return 配置文件的Propertes类型
+   * @throws RuntimeException 如果内容无法转换为属性,抛出
    */
   Properties asProperties();
 }

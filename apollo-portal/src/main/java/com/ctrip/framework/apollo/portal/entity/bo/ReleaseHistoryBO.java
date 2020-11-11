@@ -1,172 +1,79 @@
 package com.ctrip.framework.apollo.portal.entity.bo;
 
 import com.ctrip.framework.apollo.common.entity.EntityPair;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
+/**
+ * 发布历史信息 业务对象
+ */
+@Data
 public class ReleaseHistoryBO {
 
-  private long id;
-
+  /**
+   * 主键
+   */
+  private Long id;
+  /**
+   * 应用id
+   */
   private String appId;
-
+  /**
+   * 集群名称
+   */
   private String clusterName;
-
+  /**
+   * 名称空间名称
+   */
   private String namespaceName;
-
+  /**
+   * 分支名称
+   */
   private String branchName;
-
+  /**
+   * 操作者
+   */
   private String operator;
-
+  /**
+   * 发布id
+   */
   private long releaseId;
-
+  /**
+   * 发布标题
+   */
   private String releaseTitle;
-
+  /**
+   * 发布备注
+   */
   private String releaseComment;
-
+  /**
+   * 发布时间
+   */
   private Date releaseTime;
-
+  /**
+   * 发布时间格式
+   */
   private String releaseTimeFormatted;
-
+  /**
+   * 配置信息
+   */
   private List<EntityPair<String>> configuration;
-
+  /**
+   * 是否放弃发布
+   */
   private boolean isReleaseAbandoned;
-
+  /**
+   * 前一个的发布id
+   */
   private long previousReleaseId;
-
+  /**
+   * 操作类型值
+   */
   private int operation;
-
+  /**
+   * 操作类型内容
+   */
   private Map<String, Object> operationContext;
-
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public String getBranchName() {
-    return branchName;
-  }
-
-  public void setBranchName(String branchName) {
-    this.branchName = branchName;
-  }
-
-  public long getReleaseId() {
-    return releaseId;
-  }
-
-  public void setReleaseId(long releaseId) {
-    this.releaseId = releaseId;
-  }
-
-  public long getPreviousReleaseId() {
-    return previousReleaseId;
-  }
-
-  public void setPreviousReleaseId(long previousReleaseId) {
-    this.previousReleaseId = previousReleaseId;
-  }
-
-  public int getOperation() {
-    return operation;
-  }
-
-  public void setOperation(int operation) {
-    this.operation = operation;
-  }
-
-  public Map<String, Object> getOperationContext() {
-    return operationContext;
-  }
-
-  public void setOperationContext(Map<String, Object> operationContext) {
-    this.operationContext = operationContext;
-  }
-
-  public String getOperator() {
-    return operator;
-  }
-
-  public void setOperator(String operator) {
-    this.operator = operator;
-  }
-
-  public String getReleaseTitle() {
-    return releaseTitle;
-  }
-
-  public void setReleaseTitle(String releaseTitle) {
-    this.releaseTitle = releaseTitle;
-  }
-
-  public String getReleaseComment() {
-    return releaseComment;
-  }
-
-  public void setReleaseComment(String releaseComment) {
-    this.releaseComment = releaseComment;
-  }
-
-  public Date getReleaseTime() {
-    return releaseTime;
-  }
-
-  public void setReleaseTime(Date releaseTime) {
-    this.releaseTime = releaseTime;
-  }
-
-  public String getReleaseTimeFormatted() {
-    return releaseTimeFormatted;
-  }
-
-  public void setReleaseTimeFormatted(String releaseTimeFormatted) {
-    this.releaseTimeFormatted = releaseTimeFormatted;
-  }
-
-  public List<EntityPair<String>> getConfiguration() {
-    return configuration;
-  }
-
-  public void setConfiguration(
-      List<EntityPair<String>> configuration) {
-    this.configuration = configuration;
-  }
-
-  public boolean isReleaseAbandoned() {
-    return isReleaseAbandoned;
-  }
-
-  public void setReleaseAbandoned(boolean releaseAbandoned) {
-    isReleaseAbandoned = releaseAbandoned;
-  }
 }

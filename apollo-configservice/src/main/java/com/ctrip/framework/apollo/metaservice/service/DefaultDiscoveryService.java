@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 /**
- * Default discovery service for Eureka
+ * Eureka的默认发现服务.
  */
 @Service
 @ConditionalOnMissingProfile({"kubernetes"})
@@ -28,6 +28,7 @@ public class DefaultDiscoveryService implements DiscoveryService {
 
   @Override
   public List<ServiceDTO> getServiceInstances(String serviceId) {
+    //通过eureka获取应用信息
     Application application = eurekaClient.getApplication(serviceId);
     if (application == null || CollectionUtils.isEmpty(application.getInstances())) {
       Tracer.logEvent("Apollo.Discovery.NotFound", serviceId);
@@ -37,6 +38,9 @@ public class DefaultDiscoveryService implements DiscoveryService {
         .collect(Collectors.toList());
   }
 
+  /**
+   * 实例信息转服务信息DTO 函数.
+   */
   private static final Function<InstanceInfo, ServiceDTO> instanceInfoToServiceDTOFunc = instance -> {
     ServiceDTO service = new ServiceDTO();
     service.setAppName(instance.getAppName());

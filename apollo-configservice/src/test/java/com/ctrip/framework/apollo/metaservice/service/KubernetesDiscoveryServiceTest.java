@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.metaservice.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,11 +25,11 @@ public class KubernetesDiscoveryServiceTest {
   @Mock
   private BizConfig bizConfig;
 
-  private KubernetesDiscoveryService kubernetesDiscoveryService;
+  private KubernetesDiscoveryServiceImpl kubernetesDiscoveryService;
 
   @Before
   public void setUp() throws Exception {
-    kubernetesDiscoveryService = new KubernetesDiscoveryService(bizConfig);
+    kubernetesDiscoveryService = new KubernetesDiscoveryServiceImpl(bizConfig);
   }
 
   @Test
@@ -43,7 +44,7 @@ public class KubernetesDiscoveryServiceTest {
     when(bizConfig.getValue(configServiceConfigName)).thenReturn(null);
 
     assertTrue(
-        kubernetesDiscoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIGSERVICE)
+        kubernetesDiscoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIG_SERVICE)
             .isEmpty());
 
     verify(bizConfig, times(1)).getValue(configServiceConfigName);
@@ -55,13 +56,13 @@ public class KubernetesDiscoveryServiceTest {
     when(bizConfig.getValue(configServiceConfigName)).thenReturn(someUrl);
 
     List<ServiceDTO> serviceDTOList = kubernetesDiscoveryService
-        .getServiceInstances(ServiceNameConsts.APOLLO_CONFIGSERVICE);
+        .getServiceInstances(ServiceNameConsts.APOLLO_CONFIG_SERVICE);
 
     assertEquals(1, serviceDTOList.size());
     ServiceDTO serviceDTO = serviceDTOList.get(0);
 
-    assertEquals(ServiceNameConsts.APOLLO_CONFIGSERVICE, serviceDTO.getAppName());
-    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_CONFIGSERVICE, someUrl),
+    assertEquals(ServiceNameConsts.APOLLO_CONFIG_SERVICE, serviceDTO.getAppName());
+    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_CONFIG_SERVICE, someUrl),
         serviceDTO.getInstanceId());
     assertEquals(someUrl, serviceDTO.getHomepageUrl());
   }
@@ -74,20 +75,20 @@ public class KubernetesDiscoveryServiceTest {
         .thenReturn(String.format("%s,%s", someUrl, anotherUrl));
 
     List<ServiceDTO> serviceDTOList = kubernetesDiscoveryService
-        .getServiceInstances(ServiceNameConsts.APOLLO_ADMINSERVICE);
+        .getServiceInstances(ServiceNameConsts.APOLLO_ADMIN_SERVICE);
 
     assertEquals(2, serviceDTOList.size());
     ServiceDTO serviceDTO = serviceDTOList.get(0);
 
-    assertEquals(ServiceNameConsts.APOLLO_ADMINSERVICE, serviceDTO.getAppName());
-    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_ADMINSERVICE, someUrl),
+    assertEquals(ServiceNameConsts.APOLLO_ADMIN_SERVICE, serviceDTO.getAppName());
+    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_ADMIN_SERVICE, someUrl),
         serviceDTO.getInstanceId());
     assertEquals(someUrl, serviceDTO.getHomepageUrl());
 
     ServiceDTO anotherServiceDTO = serviceDTOList.get(1);
 
-    assertEquals(ServiceNameConsts.APOLLO_ADMINSERVICE, anotherServiceDTO.getAppName());
-    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_ADMINSERVICE, anotherUrl),
+    assertEquals(ServiceNameConsts.APOLLO_ADMIN_SERVICE, anotherServiceDTO.getAppName());
+    assertEquals(String.format("%s:%s", ServiceNameConsts.APOLLO_ADMIN_SERVICE, anotherUrl),
         anotherServiceDTO.getInstanceId());
     assertEquals(anotherUrl, anotherServiceDTO.getHomepageUrl());
 

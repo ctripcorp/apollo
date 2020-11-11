@@ -1,56 +1,63 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.google.common.collect.Maps;
-
 import com.ctrip.framework.apollo.common.config.RefreshablePropertySource;
 import com.ctrip.framework.apollo.portal.entity.po.ServerConfig;
 import com.ctrip.framework.apollo.portal.repository.ServerConfigRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Objects;
-
 
 /**
+ * 界面（门户）数据库属性源
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Slf4j
 @Component
 public class PortalDBPropertySource extends RefreshablePropertySource {
-  private static final Logger logger = LoggerFactory.getLogger(PortalDBPropertySource.class);
+
 
   @Autowired
   private ServerConfigRepository serverConfigRepository;
 
+  /**
+   * 构造界面（门户）数据库属性源对象
+   *
+   * @param name   名称
+   * @param source 数据源
+   */
   public PortalDBPropertySource(String name, Map<String, Object> source) {
     super(name, source);
   }
 
+  /**
+   * 构造界面（门户）数据库属性源对象
+   */
   public PortalDBPropertySource() {
     super("DBConfig", Maps.newConcurrentMap());
   }
 
   @Override
   protected void refresh() {
+    // 所有的配置
     Iterable<ServerConfig> dbConfigs = serverConfigRepository.findAll();
 
-    for (ServerConfig config: dbConfigs) {
+    // 将服务配置放入source当中
+    for (ServerConfig config : dbConfigs) {
       String key = config.getKey();
       Object value = config.getValue();
 
       if (this.source.isEmpty()) {
-        logger.info("Load config from DB : {} = {}", key, value);
+        log.info("Load config from DB : {} = {}", key, value);
       } else if (!Objects.equals(this.source.get(key), value)) {
-        logger.info("Load config from DB : {} = {}. Old value = {}", key,
-                    value, this.source.get(key));
+        log.info("Load config from DB : {} = {}. Old value = {}", key,
+            value, this.source.get(key));
       }
-
       this.source.put(key, value);
     }
   }
-
-
 }

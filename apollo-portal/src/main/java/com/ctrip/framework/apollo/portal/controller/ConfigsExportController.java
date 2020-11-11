@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * jian.tan
+ * 配置导出 Controller
+ *
+ * @author jian.tan
  */
 @RestController
 public class ConfigsExportController {
@@ -46,14 +48,18 @@ public class ConfigsExportController {
   }
 
   /**
-   * export one config as file.
-   * keep compatibility.
-   * file name examples:
+   * 将一个配置导出为文件。保持兼容性。文件名如：
    * <pre>
    *   application.properties
    *   application.yml
    *   application.json
    * </pre>
+   *
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param res           响应对象
    */
   @PreAuthorize(value = "!@permissionValidator.shouldHideConfigToCurrentUser(#appId, #env, #namespaceName)")
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/export")
@@ -62,17 +68,18 @@ public class ConfigsExportController {
       HttpServletResponse res) {
     List<String> fileNameSplit = Splitter.on(".").splitToList(namespaceName);
 
+    // 文件名称
     String fileName = fileNameSplit.size() <= 1 ? Joiner.on(".")
         .join(namespaceName, ConfigFileFormat.Properties.getValue()) : namespaceName;
     NamespaceBO namespaceBO = namespaceService.loadNamespaceBO(appId, Env.valueOf
         (env), clusterName, namespaceName);
 
-    //generate a file.
+    // 生成文件
     res.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName);
-    // file content
+    // 文件内容
     final String configFileContent = NamespaceBOUtils.convert2configFileContent(namespaceBO);
     try {
-      // write content to net
+      // 写入内容至网络
       res.getOutputStream().write(configFileContent.getBytes());
     } catch (Exception e) {
       throw new ServiceException("export items failed:{}", e);
@@ -80,19 +87,24 @@ public class ConfigsExportController {
   }
 
   /**
-   * Export all configs in a compressed file.
-   * Just export namespace which current exists read permission.
-   * The permission check in service.
+   * 导出压缩文件中的所有配置。只导出当前存在的命名空间，读取导出压缩文件中的所有配置。权限检查服务
+   *
+   * @param request  请求对象
+   * @param response 响应对象
+   * @throws IOException 如果发生输入或输出异常
    */
   @GetMapping("/export")
-  public void exportAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // filename must contain the information of time
-    final String filename = "apollo_config_export_" + DateFormatUtils.format(new Date(), "yyyy_MMdd_HH_mm_ss") + ".zip";
-    // log who download the configs
-    logger.info("Download configs, remote addr [{}], remote host [{}]. Filename is [{}]", request.getRemoteAddr(), request.getRemoteHost(), filename);
-    // set downloaded filename
+  public void exportAll(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    // 文件名必须包含时间信息
+    final String filename =
+        "apollo_config_export_" + DateFormatUtils.format(new Date(), "yyyy_MMdd_HH_mm_ss") + ".zip";
+    // 记录谁下载了配置
+    logger.info("Download configs, remote addr [{}], remote host [{}]. Filename is [{}]",
+        request.getRemoteAddr(), request.getRemoteHost(), filename);
+    // 设置下载的文件名
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename);
-
+    // 导出
     try (OutputStream outputStream = response.getOutputStream()) {
       configsExportService.exportAllTo(outputStream);
     }

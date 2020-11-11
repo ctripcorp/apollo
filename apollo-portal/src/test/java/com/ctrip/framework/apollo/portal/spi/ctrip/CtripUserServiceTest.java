@@ -70,9 +70,9 @@ public class CtripUserServiceTest extends AbstractUnitTest{
     CtripUserService.UserServiceRequest request =
         ctripUserService.assembleSearchUserRequest(someKeyword, someOffset, someLimit);
 
-    assertEquals(someUserServiceToken, request.getAccess_token());
+    assertEquals(someUserServiceToken, request.getAccessToken());
 
-    CtripUserService.UserServiceRequestBody requestBody = request.getRequest_body();
+    CtripUserService.UserServiceRequestBody requestBody = request.getRequestBody();
 
     assertEquals("itdb_emloyee", requestBody.getIndexAlias());
 
@@ -93,9 +93,9 @@ public class CtripUserServiceTest extends AbstractUnitTest{
 
     CtripUserService.UserServiceRequest request = ctripUserService.assembleFindUserRequest(userIds);
 
-    assertEquals(someUserServiceToken, request.getAccess_token());
+    assertEquals(someUserServiceToken, request.getAccessToken());
 
-    CtripUserService.UserServiceRequestBody requestBody = request.getRequest_body();
+    CtripUserService.UserServiceRequestBody requestBody = request.getRequestBody();
 
     assertEquals("itdb_emloyee", requestBody.getIndexAlias());
 

@@ -8,6 +8,9 @@ import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,11 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
+/**
+ * 用户信息 Controller
+ */
 @RestController
 public class UserInfoController {
 
@@ -38,6 +39,11 @@ public class UserInfoController {
   }
 
 
+  /**
+   * 创建或更新用户信息
+   *
+   * @param user 用户
+   */
   @PreAuthorize(value = "@permissionValidator.isSuperAdmin()")
   @PostMapping("/users")
   public void createOrUpdateUser(@RequestBody UserPO user) {
@@ -53,23 +59,48 @@ public class UserInfoController {
 
   }
 
+  /**
+   * 获取当前用户信息.
+   *
+   * @return 用户信息
+   */
   @GetMapping("/user")
   public UserInfo getCurrentUserName() {
     return userInfoHolder.getUser();
   }
 
+  /**
+   * 登出
+   *
+   * @param request  request请求实体
+   * @param response response响应实体
+   */
   @GetMapping("/user/logout")
-  public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void logout(HttpServletRequest request, HttpServletResponse response) {
     logoutHandler.logout(request, response);
   }
 
+  /**
+   * 通过密码查询用户信息列表
+   *
+   * @param keyword 密码
+   * @param offset  偏移量
+   * @param limit   限制量
+   * @return 用户信息列表
+   */
   @GetMapping("/users")
   public List<UserInfo> searchUsersByKeyword(@RequestParam(value = "keyword") String keyword,
-                                             @RequestParam(value = "offset", defaultValue = "0") int offset,
-                                             @RequestParam(value = "limit", defaultValue = "10") int limit) {
+      @RequestParam(value = "offset", defaultValue = "0") int offset,
+      @RequestParam(value = "limit", defaultValue = "10") int limit) {
     return userService.searchUsers(keyword, offset, limit);
   }
 
+  /**
+   * 通过用户id获取用户信息
+   *
+   * @param userId 用户id
+   * @return 指定用户id的用户信息
+   */
   @GetMapping("/users/{userId}")
   public UserInfo getUserByUserId(@PathVariable String userId) {
     return userService.findByUserId(userId);

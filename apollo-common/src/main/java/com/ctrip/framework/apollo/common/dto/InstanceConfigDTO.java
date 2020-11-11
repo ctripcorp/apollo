@@ -1,36 +1,26 @@
 package com.ctrip.framework.apollo.common.dto;
 
 import java.util.Date;
+import lombok.Data;
 
 /**
+ * 应用实例配置 Dto
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class InstanceConfigDTO {
+
+  /**
+   * 发布信息
+   */
   private ReleaseDTO release;
+  /**
+   * 创建时间
+   */
   private Date releaseDeliveryTime;
+  /**
+   * 最后修改时间
+   */
   private Date dataChangeLastModifiedTime;
-
-  public ReleaseDTO getRelease() {
-    return release;
-  }
-
-  public void setRelease(ReleaseDTO release) {
-    this.release = release;
-  }
-
-  public Date getDataChangeLastModifiedTime() {
-    return dataChangeLastModifiedTime;
-  }
-
-  public void setDataChangeLastModifiedTime(Date dataChangeLastModifiedTime) {
-    this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
-  }
-
-  public Date getReleaseDeliveryTime() {
-    return releaseDeliveryTime;
-  }
-
-  public void setReleaseDeliveryTime(Date releaseDeliveryTime) {
-    this.releaseDeliveryTime = releaseDeliveryTime;
-  }
 }

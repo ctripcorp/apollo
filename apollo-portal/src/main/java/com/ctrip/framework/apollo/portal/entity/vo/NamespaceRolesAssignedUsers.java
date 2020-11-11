@@ -1,48 +1,29 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-
 import java.util.Set;
+import lombok.Data;
 
+/**
+ * 名称空间分配的角色用户
+ */
+@Data
 public class NamespaceRolesAssignedUsers {
 
+  /**
+   * 应用id
+   */
   private String appId;
+  /**
+   * 名称空间名称
+   */
   private String namespaceName;
-
+  /**
+   * 修改角色的用户
+   */
   private Set<UserInfo> modifyRoleUsers;
+  /**
+   * 发布角色的用户
+   */
   private Set<UserInfo> releaseRoleUsers;
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public Set<UserInfo> getModifyRoleUsers() {
-    return modifyRoleUsers;
-  }
-
-  public void setModifyRoleUsers(
-      Set<UserInfo> modifyRoleUsers) {
-    this.modifyRoleUsers = modifyRoleUsers;
-  }
-
-  public Set<UserInfo> getReleaseRoleUsers() {
-    return releaseRoleUsers;
-  }
-
-  public void setReleaseRoleUsers(
-      Set<UserInfo> releaseRoleUsers) {
-    this.releaseRoleUsers = releaseRoleUsers;
-  }
 }

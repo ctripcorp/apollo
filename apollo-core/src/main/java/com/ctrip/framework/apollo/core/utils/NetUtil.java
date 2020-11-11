@@ -7,16 +7,25 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by gl49 on 2018/6/8.
+ * 网络工具类
+ *
+ * @author gl49
+ * @date 2018/6/8.
  */
 public class NetUtil {
 
-  private static final int DEFAULT_TIMEOUT_IN_SECONDS = 5000;
+  /**
+   * 默认的超时时间
+   */
+  private static final int DEFAULT_TIMEOUT_IN_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
 
   /**
-   * ping the url, return true if ping ok, false otherwise
+   * ping URL
+   *
+   * @return 如果ping确定，返回true，否则,返回false
    */
   public static boolean pingUrl(String address) {
     try {
@@ -35,40 +44,21 @@ public class NetUtil {
   }
 
   /**
-   * according to https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html, we should clean up the
-   * connection by reading the response body so that the connection could be reused.
+   * 清理连接
+   * <p>
+   * 根据https://docs.oracle.com/javase/7/docs/technotes/guides/net/http-keepalive.html，我们应该通过读取响应体来清理连接，以便可以重用该连接。
    */
   private static void cleanUpConnection(HttpURLConnection conn) {
-    InputStreamReader isr = null;
-    InputStreamReader esr = null;
-    try {
-      isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+    try (InputStreamReader isr = new InputStreamReader(conn.getInputStream(),
+        StandardCharsets.UTF_8)) {
       CharStreams.toString(isr);
     } catch (IOException e) {
       InputStream errorStream = conn.getErrorStream();
-
       if (errorStream != null) {
-        esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8);
-        try {
+        try (InputStreamReader esr = new InputStreamReader(errorStream, StandardCharsets.UTF_8)) {
           CharStreams.toString(esr);
         } catch (IOException ioe) {
           //ignore
-        }
-      }
-    } finally {
-      if (isr != null) {
-        try {
-          isr.close();
-        } catch (IOException ex) {
-          // ignore
-        }
-      }
-
-      if (esr != null) {
-        try {
-          esr.close();
-        } catch (IOException ex) {
-          // ignore
         }
       }
     }

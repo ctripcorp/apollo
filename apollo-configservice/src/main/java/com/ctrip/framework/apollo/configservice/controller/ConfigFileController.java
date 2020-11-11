@@ -21,6 +21,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.gson.Gson;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -32,21 +41,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 @RestController
 @RequestMapping("/configfiles")
 public class ConfigFileController implements ReleaseMessageListener {
+
   private static final Logger logger = LoggerFactory.getLogger(ConfigFileController.class);
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
   private static final Splitter X_FORWARDED_FOR_SPLITTER = Splitter.on(",").omitEmptyStrings()
@@ -56,6 +57,9 @@ public class ConfigFileController implements ReleaseMessageListener {
   private final HttpHeaders propertiesResponseHeaders;
   private final HttpHeaders jsonResponseHeaders;
   private final ResponseEntity<String> NOT_FOUND_RESPONSE;
+  /**
+   * 本地配置缓存，<灰色发布id,配置信息>
+   */
   private Cache<String, String> localCache;
   private final Multimap<String, String>
       watchedKeys2CacheKey = Multimaps.synchronizedSetMultimap(HashMultimap.create());
@@ -103,20 +107,31 @@ public class ConfigFileController implements ReleaseMessageListener {
     this.grayReleaseRulesHolder = grayReleaseRulesHolder;
   }
 
+  /**
+   * 查询配置信息
+   *
+   * @param appId       应用id
+   * @param clusterName 集群名称
+   * @param namespace   名称空间名称
+   * @param dataCenter  数据中心
+   * @param clientIp    客户端ip
+   * @param request     请求实体
+   * @param response    响应实体
+   * @return 给定文件格式配置信息
+   * @throws IOException
+   */
   @GetMapping(value = "/{appId}/{clusterName}/{namespace:.+}")
   public ResponseEntity<String> queryConfigAsProperties(@PathVariable String appId,
-                                                        @PathVariable String clusterName,
-                                                        @PathVariable String namespace,
-                                                        @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                        @RequestParam(value = "ip", required = false) String clientIp,
-                                                        HttpServletRequest request,
-                                                        HttpServletResponse response)
+      @PathVariable String clusterName, @PathVariable String namespace,
+      @RequestParam(value = "dataCenter", required = false) String dataCenter,
+      @RequestParam(value = "ip", required = false) String clientIp,
+      HttpServletRequest request, HttpServletResponse response)
       throws IOException {
 
-    String result =
-        queryConfig(ConfigFileOutputFormat.PROPERTIES, appId, clusterName, namespace, dataCenter,
-            clientIp, request, response);
+    String result = queryConfig(ConfigFileOutputFormat.PROPERTIES, appId, clusterName, namespace,
+        dataCenter, clientIp, request, response);
 
+    // 没有找到
     if (result == null) {
       return NOT_FOUND_RESPONSE;
     }
@@ -124,19 +139,32 @@ public class ConfigFileController implements ReleaseMessageListener {
     return new ResponseEntity<>(result, propertiesResponseHeaders, HttpStatus.OK);
   }
 
+  /**
+   * 查询配置JSON对象
+   *
+   * @param appId       应用id
+   * @param clusterName 集群名称
+   * @param namespace   名称空间
+   * @param dataCenter  数据中心
+   * @param clientIp    客户端id
+   * @param request     请求实体
+   * @param response    响应实体
+   * @return JSON文件格式配置信息
+   * @throws IOException 如果发生输入或输出异常,抛出
+   */
   @GetMapping(value = "/json/{appId}/{clusterName}/{namespace:.+}")
   public ResponseEntity<String> queryConfigAsJson(@PathVariable String appId,
-                                                  @PathVariable String clusterName,
-                                                  @PathVariable String namespace,
-                                                  @RequestParam(value = "dataCenter", required = false) String dataCenter,
-                                                  @RequestParam(value = "ip", required = false) String clientIp,
-                                                  HttpServletRequest request,
-                                                  HttpServletResponse response) throws IOException {
+      @PathVariable String clusterName,
+      @PathVariable String namespace,
+      @RequestParam(value = "dataCenter", required = false) String dataCenter,
+      @RequestParam(value = "ip", required = false) String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
 
     String result =
         queryConfig(ConfigFileOutputFormat.JSON, appId, clusterName, namespace, dataCenter,
             clientIp, request, response);
-
+    // 没有找到
     if (result == null) {
       return NOT_FOUND_RESPONSE;
     }
@@ -144,36 +172,52 @@ public class ConfigFileController implements ReleaseMessageListener {
     return new ResponseEntity<>(result, jsonResponseHeaders, HttpStatus.OK);
   }
 
+  /**
+   * 查询配置信息
+   *
+   * @param outputFormat 输出格式
+   * @param appId        应用id
+   * @param clusterName  集群名称
+   * @param namespace    名称空间
+   * @param dataCenter   数据中心
+   * @param clientIp     客户端IP
+   * @param request      请求信息
+   * @param response     响应信息
+   * @return 给定文件格式配置信息
+   * @throws IOException
+   */
   String queryConfig(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                     String namespace, String dataCenter, String clientIp,
-                     HttpServletRequest request,
-                     HttpServletResponse response) throws IOException {
-    //strip out .properties suffix
+      String namespace, String dataCenter, String clientIp,
+      HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
+    // 若 Namespace 名以 .properties 结尾，移除该结尾，并设置到 ApolloConfigNotification 中。例如 application.properties => application 。
     namespace = namespaceUtil.filterNamespaceName(namespace);
+    // 获得标准化的 Namespace 名字。因为，客户端 Namespace 会填写错大小写。
     //fix the character case issue, such as FX.apollo <-> fx.apollo
     namespace = namespaceUtil.normalizeNamespace(appId, namespace);
 
-    if (Strings.isNullOrEmpty(clientIp)) {
+    if (StringUtils.isBlank(clientIp)) {
       clientIp = tryToGetClientIp(request);
     }
 
-    //1. check whether this client has gray release rules
+    //1.检查客户端应用id、客户端ip和名称空间是否存在灰色发布规则
     boolean hasGrayReleaseRule = grayReleaseRulesHolder.hasGrayReleaseRule(appId, clientIp,
         namespace);
 
+    // 缓存的key
     String cacheKey = assembleCacheKey(outputFormat, appId, clusterName, namespace, dataCenter);
 
-    //2. try to load gray release and return
+    //2. 尝试加载灰色发布并返回
     if (hasGrayReleaseRule) {
       Tracer.logEvent("ConfigFile.Cache.GrayRelease", cacheKey);
       return loadConfig(outputFormat, appId, clusterName, namespace, dataCenter, clientIp,
           request, response);
     }
 
-    //3. if not gray release, check weather cache exists, if exists, return
+    //3. 检查本地缓存是否存在，如果存在，则返回
     String result = localCache.getIfPresent(cacheKey);
 
-    //4. if not exists, load from ConfigController
+    //4. 如果不存在，则从ConfigController加载
     if (Strings.isNullOrEmpty(result)) {
       Tracer.logEvent("ConfigFile.Cache.Miss", cacheKey);
       result = loadConfig(outputFormat, appId, clusterName, namespace, dataCenter, clientIp,
@@ -182,8 +226,7 @@ public class ConfigFileController implements ReleaseMessageListener {
       if (result == null) {
         return null;
       }
-      //5. Double check if this client needs to load gray release, if yes, load from db again
-      //This step is mainly to avoid cache pollution
+      //5. 再次检查此客户端是否需要加载灰度发布信息，如果需要，则从db加载.这一步主要是为了避免缓存污染
       if (grayReleaseRulesHolder.hasGrayReleaseRule(appId, clientIp, namespace)) {
         Tracer.logEvent("ConfigFile.Cache.GrayReleaseConflict", cacheKey);
         return loadConfig(outputFormat, appId, clusterName, namespace, dataCenter, clientIp,
@@ -209,19 +252,34 @@ public class ConfigFileController implements ReleaseMessageListener {
     return result;
   }
 
+  /**
+   * 加载配置信息
+   *
+   * @param outputFormat 输出格式
+   * @param appId        应用id
+   * @param clusterName  集群名称
+   * @param namespace    名称空间名称
+   * @param dataCenter   数据中心
+   * @param clientIp     客户端ip
+   * @param request      请求实体
+   * @param response     响应实体
+   * @return 加载的配置信息字符串
+   * @throws IOException 如果发生输入或输出异常，抛出
+   */
   private String loadConfig(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                            String namespace, String dataCenter, String clientIp,
-                            HttpServletRequest request,
-                            HttpServletResponse response) throws IOException {
+      String namespace, String dataCenter, String clientIp, HttpServletRequest request,
+      HttpServletResponse response) throws IOException {
+    // 查询配置
     ApolloConfig apolloConfig = configController.queryConfig(appId, clusterName, namespace,
         dataCenter, "-1", clientIp, null, request, response);
 
+    // 为空直接返回
     if (apolloConfig == null || apolloConfig.getConfigurations() == null) {
       return null;
     }
 
     String result = null;
-
+    // 根据格式转换
     switch (outputFormat) {
       case PROPERTIES:
         Properties properties = new Properties();
@@ -236,12 +294,21 @@ public class ConfigFileController implements ReleaseMessageListener {
     return result;
   }
 
+  /**
+   * 组装发布Key
+   *
+   * @param outputFormat 输出格式
+   * @param appId        应用id
+   * @param clusterName  集群名称
+   * @param namespace    名称空间名称
+   * @param dataCenter   数据中心
+   * @return 组装后的发布key
+   */
   String assembleCacheKey(ConfigFileOutputFormat outputFormat, String appId, String clusterName,
-                          String namespace,
-                          String dataCenter) {
-    List<String> keyParts =
-        Lists.newArrayList(outputFormat.getValue(), appId, clusterName, namespace);
-    if (!Strings.isNullOrEmpty(dataCenter)) {
+      String namespace, String dataCenter) {
+    List<String> keyParts = Lists.newArrayList(outputFormat.getValue(), appId, clusterName,
+        namespace);
+    if (StringUtils.isNotBlank(dataCenter)) {
       keyParts.add(dataCenter);
     }
     return STRING_JOINER.join(keyParts);

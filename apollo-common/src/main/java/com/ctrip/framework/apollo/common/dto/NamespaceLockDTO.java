@@ -1,14 +1,17 @@
 package com.ctrip.framework.apollo.common.dto;
 
-public class NamespaceLockDTO extends BaseDTO{
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-  private long namespaceId;
+/**
+ * 名称空间的编辑锁
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class NamespaceLockDTO extends BaseDTO {
 
-  public long getNamespaceId() {
-    return namespaceId;
-  }
-
-  public void setNamespaceId(long namespaceId) {
-    this.namespaceId = namespaceId;
-  }
+  /**
+   * 集群NamespaceId
+   */
+  private Long namespaceId;
 }

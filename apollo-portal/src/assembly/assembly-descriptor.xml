@@ -28,7 +28,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>src/main/config</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>${file.separator}</outputDirectory>
 			<includes>
 				<include>apollo-portal.conf</include>
 			</includes>
@@ -36,7 +36,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>target/classes</directory>
-			<outputDirectory>/config</outputDirectory>
+			<outputDirectory>${file.separator}config</outputDirectory>
 			<includes>
 				<include>application-github.properties</include>
 				<include>apollo-env.properties</include>
@@ -45,7 +45,7 @@
 		<!--artifact -->
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>${file.separator}</outputDirectory>
 			<includes>
 				<include>${project.artifactId}-*.jar</include>
 			</includes>

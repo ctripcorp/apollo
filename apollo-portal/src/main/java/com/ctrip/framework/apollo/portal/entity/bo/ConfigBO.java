@@ -3,41 +3,51 @@ package com.ctrip.framework.apollo.portal.entity.bo;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * a namespace represent.
+ * 配置 业务对象.
+ *
  * @author wxq
  */
+@AllArgsConstructor
+@Getter
 public class ConfigBO {
 
+  /**
+   * 环境
+   */
   private final Env env;
-
+  /**
+   * 所有者名称
+   */
   private final String ownerName;
-
+  /**
+   * 应用id
+   */
   private final String appId;
-
+  /**
+   * 集群名称
+   */
   private final String clusterName;
-
+  /**
+   * 名称空间名称
+   */
   private final String namespace;
-
+  /**
+   * 配置文件内容
+   */
   private final String configFileContent;
-
+  /**
+   * 配置文件格式
+   */
   private final ConfigFileFormat format;
 
-  public ConfigBO(Env env, String ownerName, String appId, String clusterName,
-      String namespace, String configFileContent, ConfigFileFormat format) {
-    this.env = env;
-    this.ownerName = ownerName;
-    this.appId = appId;
-    this.clusterName = clusterName;
-    this.namespace = namespace;
-    this.configFileContent = configFileContent;
-    this.format = format;
-  }
 
-  public ConfigBO(Env env, String ownerName, String appId, String clusterName, NamespaceBO namespaceBO) {
-    this(env, ownerName, appId, clusterName,
-        namespaceBO.getBaseInfo().getNamespaceName(),
+  public ConfigBO(Env env, String ownerName, String appId, String clusterName,
+      NamespaceBO namespaceBO) {
+    this(env, ownerName, appId, clusterName, namespaceBO.getBaseInfo().getNamespaceName(),
         NamespaceBOUtils.convert2configFileContent(namespaceBO),
         ConfigFileFormat.fromString(namespaceBO.getFormat())
     );
@@ -54,33 +64,5 @@ public class ConfigBO {
         ", configFileContent='" + configFileContent + '\'' +
         ", format=" + format +
         '}';
-  }
-
-  public Env getEnv() {
-    return env;
-  }
-
-  public String getOwnerName() {
-    return ownerName;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public String getNamespace() {
-    return namespace;
-  }
-
-  public String getConfigFileContent() {
-    return configFileContent;
-  }
-
-  public ConfigFileFormat getFormat() {
-    return format;
   }
 }

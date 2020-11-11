@@ -1,16 +1,22 @@
 package com.ctrip.framework.foundation.spi.provider;
 
 /**
- * Provider for network related properties
+ * 网络供应器.
+ * <p>网络相关属性的供应器</p>
  */
 public interface NetworkProvider extends Provider {
+
   /**
-   * @return the host address, i.e. ip
+   * 获取主机地址，即ip.
+   *
+   * @return 主机地址，即ip
    */
   String getHostAddress();
 
   /**
-   * @return the host name
+   * 获取主机名.
+   *
+   * @return 主机名
    */
   String getHostName();
 }
