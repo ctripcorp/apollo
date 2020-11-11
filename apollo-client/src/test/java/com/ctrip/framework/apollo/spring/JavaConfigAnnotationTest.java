@@ -331,20 +331,20 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
 
   @Test
-  public void testResolveExpressionDefault() {
+  public void testApolloConfigResolveExpressionDefault() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
     Config xxx = mock(Config.class);
     Config yamlConfig = mock(Config.class);
     mockConfig("xxx", xxx);
     mockConfig(APPLICATION_YAML_NAMESPACE, yamlConfig);
-    TestResolveExpressionDefaultConfiguration configuration = getSimpleBean(
-        TestResolveExpressionDefaultConfiguration.class);
+    TestApolloConfigResolveExpressionDefaultConfiguration configuration = getSimpleBean(
+        TestApolloConfigResolveExpressionDefaultConfiguration.class);
     assertEquals(xxx, configuration.getXxx());
     assertEquals(yamlConfig, configuration.getYamlConfig());
   }
 
   @Test
-  public void testResolveExpressionFromSystemProperty() {
+  public void testApolloConfigResolveExpressionFromSystemProperty() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
     final String namespaceName = "xxx6";
     final String yamlNamespaceName = "yyy8.yml";
@@ -355,20 +355,20 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     Config yamlConfig = mock(Config.class);
     mockConfig(namespaceName, config);
     mockConfig(yamlNamespaceName, yamlConfig);
-    TestResolveExpressionFromSystemPropertyConfiguration configuration = getSimpleBean(
-        TestResolveExpressionFromSystemPropertyConfiguration.class);
+    TestApolloConfigResolveExpressionFromSystemPropertyConfiguration configuration = getSimpleBean(
+        TestApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
     assertEquals(config, configuration.getConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
   }
 
   @Test(expected = BeanCreationException.class)
-  public void testUnresolvedExpression() {
+  public void testApolloConfigUnresolvedExpression() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
-    getSimpleBean(TestUnresolvedExpressionConfiguration.class);
+    getSimpleBean(TestApolloConfigUnresolvedExpressionConfiguration.class);
   }
 
   @Test
-  public void testResolveExpressionFromApolloConfigNamespaceApplication() {
+  public void testApolloConfigResolveExpressionFromApolloConfigNamespaceApplication() {
 
     final String namespaceName = "xxx6";
     final String yamlNamespaceName = "yyy8.yml";
@@ -383,14 +383,14 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     final Config yamlConfig = mock(Config.class);
     mockConfig(namespaceName, config);
     mockConfig(yamlNamespaceName, yamlConfig);
-    TestResolveExpressionFromApolloConfigNamespaceApplication configuration = getSimpleBean(
-        TestResolveExpressionFromApolloConfigNamespaceApplication.class);
+    TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication configuration = getSimpleBean(
+        TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication.class);
     assertEquals(config, configuration.getConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
   }
 
   @EnableApolloConfig
-  protected static class TestResolveExpressionDefaultConfiguration {
+  protected static class TestApolloConfigResolveExpressionDefaultConfiguration {
 
     @ApolloConfig(value = "${simple.namespace:xxx}")
     private Config xxx;
@@ -408,7 +408,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   @EnableApolloConfig
-  protected static class TestResolveExpressionFromSystemPropertyConfiguration {
+  protected static class TestApolloConfigResolveExpressionFromSystemPropertyConfiguration {
 
     @ApolloConfig(value = "${from.system.namespace}")
     private Config config;
@@ -426,14 +426,14 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   }
 
   @EnableApolloConfig
-  protected static class TestUnresolvedExpressionConfiguration {
+  protected static class TestApolloConfigUnresolvedExpressionConfiguration {
 
     @ApolloConfig(value = "${so.complex.to.resolve}")
     private Config config;
   }
 
   @EnableApolloConfig
-  protected static class TestResolveExpressionFromApolloConfigNamespaceApplication {
+  protected static class TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication {
 
     @ApolloConfig(value = "${from.namespace.application.key}")
     private Config config;
