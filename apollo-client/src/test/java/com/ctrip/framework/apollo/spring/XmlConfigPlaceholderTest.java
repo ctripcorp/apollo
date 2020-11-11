@@ -6,12 +6,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionStoreException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
+import org.junit.Test;
+import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionStoreException;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -128,7 +128,40 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     check("spring/XmlConfigPlaceholderTest5.xml", DEFAULT_TIMEOUT, DEFAULT_BATCH);
   }
 
-  private void check(String xmlLocation, int expectedTimeout, int expectedBatch) {
+
+  @Test
+  public void testResolveNamespacesWithDefaultValue() throws Exception {
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+    this.prepare(someTimeout, anotherTimeout, someBatch);
+
+    check("spring/config.namespace.resolve.to.default.xml", anotherTimeout, someBatch);
+  }
+
+  @Test
+  public void testResolveNamespacesFromSystemProperty() throws Exception {
+    System.setProperty("xxx.from.system.property", ConfigConsts.NAMESPACE_APPLICATION);
+    System.setProperty("yyy.from.system.property", "FX.apollo");
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+    this.prepare(someTimeout, anotherTimeout, someBatch);
+
+    check("spring/config.namespace.resolve.from.system.property.xml", anotherTimeout, someBatch);
+  }
+
+  @Test(expected = FatalBeanException.class)
+  public void testUnresolvedNamespaces() {
+    int someTimeout = 1000;
+    int anotherTimeout = someTimeout + 1;
+    int someBatch = 2000;
+    this.prepare(someTimeout, anotherTimeout, someBatch);
+
+    check("spring/config.namespace.unresolved.xml", anotherTimeout, someBatch);
+  }
+
+  private static void check(String xmlLocation, int expectedTimeout, int expectedBatch) {
     ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(xmlLocation);
 
     TestXmlBean bean = context.getBean(TestXmlBean.class);
