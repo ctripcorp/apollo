@@ -11,15 +11,17 @@ import com.ctrip.framework.apollo.internals.SimpleConfig;
 import com.ctrip.framework.apollo.internals.YamlConfigFile;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesProcessor;
 import com.ctrip.framework.apollo.util.ConfigUtil;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import java.io.File;
+import com.google.common.io.CharStreams;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import java.util.Objects;
 import java.util.Properties;
 import org.junit.After;
 import org.junit.Before;
@@ -75,10 +77,15 @@ public abstract class AbstractSpringIntegrationTest {
     return config;
   }
 
-  protected static Properties readYamlContentAsConfigFileProperties(String caseName) throws IOException {
-    File file = new File("src/test/resources/spring/yaml/" + caseName);
+  protected static Properties readYamlContentAsConfigFileProperties(String caseName)
+      throws IOException {
+    final String filePath = "spring/yaml/" + caseName;
+    ClassLoader classLoader = AbstractSpringIntegrationTest.class.getClassLoader();
 
-    String yamlContent = Files.toString(file, Charsets.UTF_8);
+    InputStream inputStream = classLoader.getResourceAsStream(filePath);
+    Objects.requireNonNull(inputStream, filePath + " may be not exist under src/test/resources/");
+    String yamlContent = CharStreams
+        .toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
     Properties properties = new Properties();
     properties.setProperty(ConfigConsts.CONFIG_FILE_CONTENT_KEY, yamlContent);
