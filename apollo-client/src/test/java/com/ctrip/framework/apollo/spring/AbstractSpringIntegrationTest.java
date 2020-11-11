@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.spring;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -90,7 +91,8 @@ public abstract class AbstractSpringIntegrationTest {
 
     when(configRepository.getConfig()).thenReturn(properties);
 
-    YamlConfigFile configFile = new YamlConfigFile(namespaceNameWithFormat, configRepository);
+    // spy it for testing after
+    YamlConfigFile configFile = spy(new YamlConfigFile(namespaceNameWithFormat, configRepository));
 
     mockConfigFile(namespaceNameWithFormat, configFile);
 
