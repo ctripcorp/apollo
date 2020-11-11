@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,6 +43,10 @@ import static org.mockito.Mockito.verify;
 public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
   private static final String APPLICATION_YAML_NAMESPACE = "application.yaml";
+
+  private static <T> T getSimpleBean(Class<? extends T> clazz) {
+    return new AnnotationConfigApplicationContext(clazz).getBean(clazz);
+  }
 
   @Test
   public void testApolloConfig() throws Exception {
@@ -279,6 +284,127 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertEquals(anotherValue, change.getNewValue());
 
     assertEquals(anotherValue, yamlConfig.getProperty(someKey, null));
+  }
+
+
+  @Test
+  public void testResolveExpressionDefault() {
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
+    Config xxx = mock(Config.class);
+    Config yamlConfig = mock(Config.class);
+    mockConfig("xxx", xxx);
+    mockConfig(APPLICATION_YAML_NAMESPACE, yamlConfig);
+    TestResolveExpressionDefaultConfiguration configuration = getSimpleBean(
+        TestResolveExpressionDefaultConfiguration.class);
+    assertEquals(xxx, configuration.getXxx());
+    assertEquals(yamlConfig, configuration.getYamlConfig());
+  }
+
+  @Test
+  public void testResolveExpressionFromSystemProperty() {
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
+    final String namespaceName = "xxx6";
+    final String yamlNamespaceName = "yyy8.yml";
+
+    System.setProperty("from.system.namespace", namespaceName);
+    System.setProperty("from.system.yaml.namespace", yamlNamespaceName);
+    Config config = mock(Config.class);
+    Config yamlConfig = mock(Config.class);
+    mockConfig(namespaceName, config);
+    mockConfig(yamlNamespaceName, yamlConfig);
+    TestResolveExpressionFromSystemPropertyConfiguration configuration = getSimpleBean(
+        TestResolveExpressionFromSystemPropertyConfiguration.class);
+    assertEquals(config, configuration.getConfig());
+    assertEquals(yamlConfig, configuration.getYamlConfig());
+  }
+
+  @Test(expected = BeanCreationException.class)
+  public void testUnresolvedExpression() {
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
+    getSimpleBean(TestUnresolvedExpressionConfiguration.class);
+  }
+
+  @Test
+  public void testResolveExpressionFromApolloConfigNamespaceApplication() {
+
+    final String namespaceName = "xxx6";
+    final String yamlNamespaceName = "yyy8.yml";
+    {
+      // hide variable scope
+      Properties properties = new Properties();
+      properties.setProperty("from.namespace.application.key", namespaceName);
+      properties.setProperty("from.namespace.application.key.yaml", yamlNamespaceName);
+      this.prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
+    }
+    final Config config = mock(Config.class);
+    final Config yamlConfig = mock(Config.class);
+    mockConfig(namespaceName, config);
+    mockConfig(yamlNamespaceName, yamlConfig);
+    TestResolveExpressionFromApolloConfigNamespaceApplication configuration = getSimpleBean(
+        TestResolveExpressionFromApolloConfigNamespaceApplication.class);
+    assertEquals(config, configuration.getConfig());
+    assertEquals(yamlConfig, configuration.getYamlConfig());
+  }
+
+  @EnableApolloConfig
+  protected static class TestResolveExpressionDefaultConfiguration {
+
+    @ApolloConfig(value = "${simple.namespace:xxx}")
+    private Config xxx;
+
+    @ApolloConfig(value = "${simple.yaml.namespace:" + APPLICATION_YAML_NAMESPACE + "}")
+    private Config yamlConfig;
+
+    public Config getXxx() {
+      return xxx;
+    }
+
+    public Config getYamlConfig() {
+      return yamlConfig;
+    }
+  }
+
+  @EnableApolloConfig
+  protected static class TestResolveExpressionFromSystemPropertyConfiguration {
+
+    @ApolloConfig(value = "${from.system.namespace}")
+    private Config config;
+
+    @ApolloConfig(value = "${from.system.yaml.namespace}")
+    private Config yamlConfig;
+
+    public Config getConfig() {
+      return config;
+    }
+
+    public Config getYamlConfig() {
+      return yamlConfig;
+    }
+  }
+
+  @EnableApolloConfig
+  protected static class TestUnresolvedExpressionConfiguration {
+
+    @ApolloConfig(value = "${so.complex.to.resolve}")
+    private Config config;
+  }
+
+  @EnableApolloConfig
+  protected static class TestResolveExpressionFromApolloConfigNamespaceApplication {
+
+    @ApolloConfig(value = "${from.namespace.application.key}")
+    private Config config;
+
+    @ApolloConfig(value = "${from.namespace.application.key.yaml}")
+    private Config yamlConfig;
+
+    public Config getConfig() {
+      return config;
+    }
+
+    public Config getYamlConfig() {
+      return yamlConfig;
+    }
   }
 
   private <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
