@@ -27,6 +27,8 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
  * <pre class="code">
  * // The namespace could also be specified as a placeholder, e.g. ${redis.namespace:xxx},
  * // which will use the value of the key "redis.namespace" or "xxx" if this key is not configured.
+ * // Be careful that just key in {@link System#getProperty(String)} or {@link System#getenv(String)} can be resolved.
+ * // You can't put the value in remote(apollo) and resolve it!
  * &#064;Configuration
  * &#064;EnableApolloConfig({"${redis.namespace:xxx}"})
  * public class AppConfig {
