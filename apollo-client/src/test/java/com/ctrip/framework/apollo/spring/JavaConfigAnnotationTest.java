@@ -44,8 +44,13 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
   private static final String APPLICATION_YAML_NAMESPACE = "application.yaml";
 
+  private static <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
+    return context.getBean(beanClass);
+  }
+
   private static <T> T getSimpleBean(Class<? extends T> clazz) {
-    return new AnnotationConfigApplicationContext(clazz).getBean(clazz);
+    return getBean(clazz, clazz);
   }
 
   @Test
@@ -94,6 +99,44 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertEquals(applicationConfig, bean.getAnotherConfig());
     assertEquals(fxApolloConfig, bean.getYetAnotherConfig());
     assertEquals(applicationConfig, bean.getSomeConfig());
+  }
+
+
+  @Test
+  public void testEnableApolloConfigResolveExpressionSimple() {
+    mockConfig("application", mock(Config.class));
+    mockConfig("xxx", mock(Config.class));
+    getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
+  }
+
+  @Test
+  public void testEnableApolloConfigResolveExpressionFromSystemProperty() {
+    mockConfig("application", mock(Config.class));
+
+    final String resolvedNamespaceName = "yyy";
+    System.setProperty("from.system.property", resolvedNamespaceName);
+    mockConfig(resolvedNamespaceName, mock(Config.class));
+    getSimpleBean(TestEnableApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEnableApolloConfigUnresolvable() {
+    getSimpleBean(TestEnableApolloConfigUnresolvableConfiguration.class);
+  }
+
+  /**
+   * Could not resolve placeholder.
+   * Unfortunately, when use {@link EnableApolloConfig},
+   * only key in {@link System#getenv(String)} or {@link System#getProperty(String)} can be resolved.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testEnableApolloConfigResolveFromNamespaceApplication() {
+    {
+      Properties properties = new Properties();
+      properties.setProperty("from.namespace.application.key", "abc");
+      this.prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
+    }
+    getSimpleBean(TestEnableApolloConfigResolveFromNamespaceApplicationConfiguration.class);
   }
 
   @Test
@@ -407,10 +450,28 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     }
   }
 
-  private <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
+  @Configuration
+  @EnableApolloConfig(value = {ConfigConsts.NAMESPACE_APPLICATION, "${simple.namespace:xxx}"})
+  protected static class TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration {
 
-    return context.getBean(beanClass);
+  }
+
+  @Configuration
+  @EnableApolloConfig(value = {ConfigConsts.NAMESPACE_APPLICATION, "${from.system.property}"})
+  static class TestEnableApolloConfigResolveExpressionFromSystemPropertyConfiguration {
+
+  }
+
+  @Configuration
+  @EnableApolloConfig(value = "${unresolvable.property}")
+  static class TestEnableApolloConfigUnresolvableConfiguration {
+
+  }
+
+  @Configuration
+  @EnableApolloConfig(value = "${from.namespace.application.key}")
+  static class TestEnableApolloConfigResolveFromNamespaceApplicationConfiguration {
+
   }
 
   @Configuration
