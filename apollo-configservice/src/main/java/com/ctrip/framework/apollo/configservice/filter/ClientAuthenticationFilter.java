@@ -59,7 +59,7 @@ public class ClientAuthenticationFilter implements Filter {
       // check timestamp, valid within 1 minute
       if (!checkTimestamp(timestamp)) {
         logger.warn("Invalid timestamp. appId={},timestamp={}", appId, timestamp);
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "RequestTimeTooSkewed");
+        response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, "RequestTimeTooSkewed");
         return;
       }
 
