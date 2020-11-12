@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 配置项变化集合 Controller层
+ */
 @RestController
 public class ItemSetController {
 
@@ -19,13 +22,22 @@ public class ItemSetController {
     this.itemSetService = itemSetService;
   }
 
+  /**
+   * 更新配置项
+   *
+   * @param appId         应用id
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @param changeSet     改变的配置项
+   * @return 配置项创建、更新、删除的列表数据
+   */
   @PreAcquireNamespaceLock
   @PostMapping("/apps/{appId}/clusters/{clusterName}/namespaces/{namespaceName}/itemset")
   public ResponseEntity<Void> create(@PathVariable String appId, @PathVariable String clusterName,
-                                     @PathVariable String namespaceName, @RequestBody ItemChangeSets changeSet) {
+      @PathVariable String namespaceName, @RequestBody ItemChangeSets changeSet) {
 
+    // 更新配置项
     itemSetService.updateSet(appId, clusterName, namespaceName, changeSet);
-
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 

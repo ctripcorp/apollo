@@ -1,7 +1,6 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.SsoHeartbeatHandler;
@@ -21,6 +20,12 @@ import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
 import com.google.common.collect.Maps;
+import java.util.Collections;
+import java.util.EventListener;
+import java.util.Map;
+import javax.servlet.Filter;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -47,12 +52,9 @@ import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopul
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-import javax.servlet.Filter;
-import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.EventListener;
-import java.util.Map;
-
+/**
+ * 认证配置
+ */
 @Configuration
 public class AuthConfiguration {
 
@@ -61,7 +63,7 @@ public class AuthConfiguration {
       "/health"};
 
   /**
-   * spring.profiles.active = ctrip
+   * Ctrip认证配置， spring.profiles.active = ctrip
    */
   @Configuration
   @Profile("ctrip")
@@ -202,30 +204,53 @@ public class AuthConfiguration {
   }
 
   /**
-   * spring.profiles.active = auth
+   * Spring Security 认证配置， spring.profiles.active = auth
    */
   @Configuration
   @Profile("auth")
   static class SpringSecurityAuthAutoConfiguration {
 
+    /**
+     * SSO心跳处理器
+     *
+     * @return SSO心跳处理器bean
+     */
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
     public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
       return new DefaultSsoHeartbeatHandler();
     }
 
+    /**
+     * 用户信息持有器
+     *
+     * @return 用户信息持有器bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
     public UserInfoHolder springSecurityUserInfoHolder() {
       return new SpringSecurityUserInfoHolder();
     }
 
+    /**
+     * 登出处理器
+     *
+     * @return 登出处理器对象bean
+     */
     @Bean
     @ConditionalOnMissingBean(LogoutHandler.class)
     public LogoutHandler logoutHandler() {
       return new DefaultLogoutHandler();
     }
 
+    /**
+     * 用户明细管理器
+     *
+     * @param auth       认证管理构建器
+     * @param datasource 数据源
+     * @return 用户明细管理器bean
+     * @throws Exception 如果在添加JDBC身份验证时发生错误，抛出
+     */
     @Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager(AuthenticationManagerBuilder auth,
         DataSource datasource) throws Exception {
@@ -240,18 +265,27 @@ public class AuthConfiguration {
       jdbcUserDetailsManager
           .setCreateUserSql("insert into `Users` (Username, Password, Enabled) values (?,?,?)");
       jdbcUserDetailsManager
-          .setUpdateUserSql("update `Users` set Password = ?, Enabled = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
-      jdbcUserDetailsManager.setDeleteUserSql("delete from `Users` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+          .setUpdateUserSql(
+              "update `Users` set Password = ?, Enabled = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+      jdbcUserDetailsManager.setDeleteUserSql(
+          "delete from `Users` where id = (select u.id from (select id from `Users` where Username = ?) as u)");
       jdbcUserDetailsManager
           .setCreateAuthoritySql("insert into `Authorities` (Username, Authority) values (?,?)");
       jdbcUserDetailsManager
-          .setDeleteUserAuthoritiesSql("delete from `Authorities` where id in (select a.id from (select id from `Authorities` where Username = ?) as a)");
+          .setDeleteUserAuthoritiesSql(
+              "delete from `Authorities` where id in (select a.id from (select id from `Authorities` where Username = ?) as a)");
       jdbcUserDetailsManager
-          .setChangePasswordSql("update `Users` set Password = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
+          .setChangePasswordSql(
+              "update `Users` set Password = ? where id = (select u.id from (select id from `Users` where Username = ?) as u)");
 
       return jdbcUserDetailsManager;
     }
 
+    /**
+     * 用户服务
+     *
+     * @return 用户服务bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserService.class)
     public UserService springSecurityUserService() {
@@ -260,6 +294,9 @@ public class AuthConfiguration {
 
   }
 
+  /**
+   * Spring Security配置
+   */
   @Order(99)
   @Profile("auth")
   @Configuration
@@ -269,6 +306,12 @@ public class AuthConfiguration {
 
     public static final String USER_ROLE = "user";
 
+    /**
+     * 配置规则
+     *
+     * @param http httpSecurity对象
+     * @throws Exception 出现错误，抛出
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable();
@@ -276,62 +319,90 @@ public class AuthConfiguration {
       http.authorizeRequests()
           .antMatchers(BY_PASS_URLS).permitAll()
           .antMatchers("/**").hasAnyRole(USER_ROLE);
-      http.formLogin().loginPage("/signin").defaultSuccessUrl("/", true).permitAll().failureUrl("/signin?#/error").and()
+      http.formLogin().loginPage("/signin").defaultSuccessUrl("/", true).permitAll()
+          .failureUrl("/signin?#/error").and()
           .httpBasic();
       http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
           .logoutSuccessUrl("/signin?#/logout");
-      http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
+      http.exceptionHandling()
+          .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
     }
 
   }
 
   /**
-   * spring.profiles.active = ldap
+   * Spring Ldap认证配置， spring.profiles.active = ldap
    */
   @Configuration
   @Profile("ldap")
-  @EnableConfigurationProperties({LdapProperties.class,LdapExtendProperties.class})
+  @EnableConfigurationProperties({LdapProperties.class, LdapExtendProperties.class})
   static class SpringSecurityLDAPAuthAutoConfiguration {
 
     private final LdapProperties properties;
     private final Environment environment;
 
-    public SpringSecurityLDAPAuthAutoConfiguration(final LdapProperties properties, final Environment environment) {
+    public SpringSecurityLDAPAuthAutoConfiguration(final LdapProperties properties,
+        final Environment environment) {
       this.properties = properties;
       this.environment = environment;
     }
 
+    /**
+     * SSO心跳处理器
+     *
+     * @return SSO心跳处理器bean
+     */
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
     public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
       return new DefaultSsoHeartbeatHandler();
     }
 
+    /**
+     * 用户信息持有器
+     *
+     * @return 用户信息持有器bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
     public UserInfoHolder springSecurityUserInfoHolder() {
       return new SpringSecurityUserInfoHolder();
     }
 
+    /**
+     * 登出处理器
+     *
+     * @return 登出处理器对象bean
+     */
     @Bean
     @ConditionalOnMissingBean(LogoutHandler.class)
     public LogoutHandler logoutHandler() {
       return new DefaultLogoutHandler();
     }
 
+    /**
+     * 用户服务
+     *
+     * @return 用户服务bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserService.class)
     public UserService springSecurityUserService() {
       return new LdapUserService();
     }
 
+    /**
+     * 构建LdapContextSource
+     *
+     * @return LdapContextSource Bean
+     */
     @Bean
     @ConditionalOnMissingBean
     public ContextSource ldapContextSource() {
       LdapContextSource source = new LdapContextSource();
       source.setUserDn(this.properties.getUsername());
       source.setPassword(this.properties.getPassword());
-      source.setAnonymousReadOnly(this.properties.getAnonymousReadOnly());
+      source.setAnonymousReadOnly(this.properties.isAnonymousReadOnly());
       source.setBase(this.properties.getBase());
       source.setUrls(this.properties.determineUrls(this.environment));
       source.setBaseEnvironmentProperties(
@@ -339,6 +410,12 @@ public class AuthConfiguration {
       return source;
     }
 
+    /**
+     * 构建LADP模板
+     *
+     * @param contextSource LdapContextSource对象
+     * @return LADP模板bean
+     */
     @Bean
     @ConditionalOnMissingBean(LdapOperations.class)
     public LdapTemplate ldapTemplate(ContextSource contextSource) {
@@ -348,6 +425,9 @@ public class AuthConfiguration {
     }
   }
 
+  /**
+   * Spring Security Ladp配置
+   */
   @Order(99)
   @Profile("ldap")
   @Configuration
@@ -362,12 +442,17 @@ public class AuthConfiguration {
 
     public SpringSecurityLDAPConfigurer(final LdapProperties ldapProperties,
         final LdapContextSource ldapContextSource,
-       final LdapExtendProperties ldapExtendProperties) {
+        final LdapExtendProperties ldapExtendProperties) {
       this.ldapProperties = ldapProperties;
       this.ldapContextSource = ldapContextSource;
       this.ldapExtendProperties = ldapExtendProperties;
     }
 
+    /**
+     * Ldap用户搜索过滤器
+     *
+     * @return Ldap用户搜索过滤器Bean
+     */
     @Bean
     public FilterBasedLdapUserSearch userSearch() {
       if (ldapExtendProperties.getGroup() == null || StringUtils
@@ -379,14 +464,21 @@ public class AuthConfiguration {
       }
 
       FilterLdapByGroupUserSearch filterLdapByGroupUserSearch = new FilterLdapByGroupUserSearch(
-          ldapProperties.getBase(), ldapProperties.getSearchFilter(), ldapExtendProperties.getGroup().getGroupBase(),
+          ldapProperties.getBase(), ldapProperties.getSearchFilter(),
+          ldapExtendProperties.getGroup().getGroupBase(),
           ldapContextSource, ldapExtendProperties.getGroup().getGroupSearch(),
           ldapExtendProperties.getMapping().getRdnKey(),
-          ldapExtendProperties.getGroup().getGroupMembership(),ldapExtendProperties.getMapping().getLoginId());
+          ldapExtendProperties.getGroup().getGroupMembership(),
+          ldapExtendProperties.getMapping().getLoginId());
       filterLdapByGroupUserSearch.setSearchSubtree(true);
       return filterLdapByGroupUserSearch;
     }
 
+    /**
+     * Ladp认证供应器
+     *
+     * @return Ladp认证供应器bean
+     */
     @Bean
     public LdapAuthenticationProvider ldapAuthProvider() {
       BindAuthenticator bindAuthenticator = new BindAuthenticator(ldapContextSource);
@@ -401,6 +493,12 @@ public class AuthConfiguration {
           bindAuthenticator, defaultAuthAutoConfiguration, ldapExtendProperties);
     }
 
+    /**
+     * 配置规则
+     *
+     * @param http httpSecurity对象
+     * @throws Exception 出现错误，抛出
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http.csrf().disable();
@@ -408,13 +506,21 @@ public class AuthConfiguration {
       http.authorizeRequests()
           .antMatchers(BY_PASS_URLS).permitAll()
           .antMatchers("/**").authenticated();
-      http.formLogin().loginPage("/signin").defaultSuccessUrl("/", true).permitAll().failureUrl("/signin?#/error").and()
-              .httpBasic();
+      http.formLogin().loginPage("/signin").defaultSuccessUrl("/", true).permitAll()
+          .failureUrl("/signin?#/error").and()
+          .httpBasic();
       http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
-              .logoutSuccessUrl("/signin?#/logout");
-      http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
+          .logoutSuccessUrl("/signin?#/logout");
+      http.exceptionHandling()
+          .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
     }
 
+    /**
+     * 配置认证供应器
+     *
+     * @param auth 认证管理构建器
+     * @throws Exception 出现错误，抛出
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
       auth.authenticationProvider(ldapAuthProvider());
@@ -422,30 +528,50 @@ public class AuthConfiguration {
   }
 
   /**
-   * default profile
+   * 默认的认证配置
    */
   @Configuration
   @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
   static class DefaultAuthAutoConfiguration {
 
+    /**
+     * SSO心跳处理器
+     *
+     * @return SSO心跳处理器bean
+     */
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
     public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
       return new DefaultSsoHeartbeatHandler();
     }
 
+    /**
+     * 用户信息持有器
+     *
+     * @return 用户信息持有器bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
     public DefaultUserInfoHolder defaultUserInfoHolder() {
       return new DefaultUserInfoHolder();
     }
 
+    /**
+     * 登出处理器
+     *
+     * @return 登出处理器对象bean
+     */
     @Bean
     @ConditionalOnMissingBean(LogoutHandler.class)
     public DefaultLogoutHandler logoutHandler() {
       return new DefaultLogoutHandler();
     }
 
+    /**
+     * 用户服务
+     *
+     * @return 用户服务bean
+     */
     @Bean
     @ConditionalOnMissingBean(UserService.class)
     public UserService defaultUserService() {
@@ -453,6 +579,9 @@ public class AuthConfiguration {
     }
   }
 
+  /**
+   * 默认的Web安全配置
+   */
   @ConditionalOnMissingProfile({"auth", "ldap"})
   @Configuration
   @EnableWebSecurity

@@ -4,13 +4,19 @@ import com.ctrip.framework.foundation.internals.NetworkInterfaceManager;
 import com.ctrip.framework.foundation.spi.provider.NetworkProvider;
 import com.ctrip.framework.foundation.spi.provider.Provider;
 
+/**
+ * 默认的网络供应器.
+ */
 public class DefaultNetworkProvider implements NetworkProvider {
+
   @Override
   public String getProperty(String name, String defaultValue) {
+    // 获取主机地址，即ip.
     if ("host.address".equalsIgnoreCase(name)) {
       String val = getHostAddress();
       return val == null ? defaultValue : val;
     }
+    // 获取主机名
     if ("host.name".equalsIgnoreCase(name)) {
       String val = getHostName();
       return val == null ? defaultValue : val;
@@ -40,6 +46,7 @@ public class DefaultNetworkProvider implements NetworkProvider {
 
   @Override
   public String toString() {
-    return "hostName [" + getHostName() + "] hostIP [" + getHostAddress() + "] (DefaultNetworkProvider)";
+    return "hostName [" + getHostName() + "] hostIP [" + getHostAddress()
+        + "] (DefaultNetworkProvider)";
   }
 }

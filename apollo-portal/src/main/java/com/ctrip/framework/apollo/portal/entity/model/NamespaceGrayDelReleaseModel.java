@@ -1,15 +1,16 @@
 package com.ctrip.framework.apollo.portal.entity.model;
 
 import java.util.Set;
+import lombok.Data;
 
+/**
+ * 名称空间灰度待删除发布信息 Model
+ */
+@Data
 public class NamespaceGrayDelReleaseModel extends NamespaceReleaseModel implements Verifiable {
-    private Set<String> grayDelKeys;
 
-    public Set<String> getGrayDelKeys() {
-        return grayDelKeys;
-    }
-
-    public void setGrayDelKeys(Set<String> grayDelKeys) {
-        this.grayDelKeys = grayDelKeys;
-    }
+  /**
+   * 灰度待删除Key列表
+   */
+  private Set<String> grayDelKeys;
 }

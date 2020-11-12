@@ -1,19 +1,42 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import java.util.List;
+import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
+ * 分页 DTo
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Getter
 public class PageDTO<T> {
-  private final long total;
-  private final List<T> content;
-  private final int page;
-  private final int size;
 
+  /**
+   * 分页列表数据总数
+   */
+  private final Long total;
+  /**
+   * 分页列表数据
+   */
+  private final List<T> content;
+  /**
+   * 当前页码
+   */
+  private final Integer page;
+  /**
+   * 总页码
+   */
+  private final Integer size;
+
+  /**
+   * 构造分页Dto
+   *
+   * @param content  分页列表数据
+   * @param pageable 分页对象
+   * @param total    分页列表数据总数
+   */
   public PageDTO(List<T> content, Pageable pageable, long total) {
     this.total = total;
     this.content = content;
@@ -21,24 +44,12 @@ public class PageDTO<T> {
     this.size = pageable.getPageSize();
   }
 
-
-  public long getTotal() {
-    return total;
-  }
-
-  public List<T> getContent() {
-    return Collections.unmodifiableList(content);
-  }
-
-  public int getPage() {
-    return page;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public boolean hasContent(){
-    return content != null && content.size() > 0;
+  /**
+   * 是否存在分页数据
+   *
+   * @return true, 存在分页数据.false 不存在
+   */
+  public boolean hasContent() {
+    return CollectionUtils.isNotEmpty(content);
   }
 }

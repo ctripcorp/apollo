@@ -4,17 +4,15 @@ import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.portal.spi.EmailService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-
+import java.lang.reflect.Method;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.reflect.Method;
-
-import javax.annotation.PostConstruct;
-
-
+/**
+ * Ctrip邮件服务
+ */
 public class CtripEmailService implements EmailService {
 
   private static final Logger logger = LoggerFactory.getLogger(CtripEmailService.class);
@@ -28,19 +26,22 @@ public class CtripEmailService implements EmailService {
   @Autowired
   private PortalConfig portalConfig;
 
+  /**
+   * 初始化
+   */
   @PostConstruct
   public void init() {
     try {
       initServiceClientConfig();
 
       Class emailServiceClientClazz =
-              Class.forName("com.ctrip.framework.apolloctripservice.emailservice.EmailServiceClient");
+          Class.forName("com.ctrip.framework.apolloctripservice.emailservice.EmailServiceClient");
 
       Method getInstanceMethod = emailServiceClientClazz.getMethod("getInstance");
       emailServiceClient = getInstanceMethod.invoke(null);
 
       Class sendEmailRequestClazz =
-              Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
+          Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
       sendEmailAsync = emailServiceClientClazz.getMethod("sendEmailAsync", sendEmailRequestClazz);
       sendEmail = emailServiceClientClazz.getMethod("sendEmail", sendEmailRequestClazz);
     } catch (Throwable e) {
@@ -49,16 +50,24 @@ public class CtripEmailService implements EmailService {
     }
   }
 
+  /**
+   * 初始化服务客户端配置
+   *
+   * @throws Exception
+   */
   private void initServiceClientConfig() throws Exception {
 
-    Class serviceClientConfigClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientConfig");
+    Class serviceClientConfigClazz = Class
+        .forName("com.ctriposs.baiji.rpc.client.ServiceClientConfig");
     Object serviceClientConfig = serviceClientConfigClazz.newInstance();
-    Method setFxConfigServiceUrlMethod = serviceClientConfigClazz.getMethod("setFxConfigServiceUrl", String.class);
+    Method setFxConfigServiceUrlMethod = serviceClientConfigClazz
+        .getMethod("setFxConfigServiceUrl", String.class);
 
     setFxConfigServiceUrlMethod.invoke(serviceClientConfig, portalConfig.soaServerAddress());
 
     Class serviceClientBaseClazz = Class.forName("com.ctriposs.baiji.rpc.client.ServiceClientBase");
-    Method initializeMethod = serviceClientBaseClazz.getMethod("initialize", serviceClientConfigClazz);
+    Method initializeMethod = serviceClientBaseClazz
+        .getMethod("initialize", serviceClientConfigClazz);
     initializeMethod.invoke(null, serviceClientConfig);
   }
 
@@ -66,11 +75,13 @@ public class CtripEmailService implements EmailService {
   public void send(Email email) {
 
     try {
+      // l构建请求对象
       Object emailRequest = emailRequestBuilder.buildEmailRequest(email);
 
+      // 异步还是同步发送
       Object sendResponse = portalConfig.isSendEmailAsync() ?
-              sendEmailAsync.invoke(emailServiceClient, emailRequest) :
-              sendEmail.invoke(emailServiceClient, emailRequest);
+          sendEmailAsync.invoke(emailServiceClient, emailRequest) :
+          sendEmail.invoke(emailServiceClient, emailRequest);
 
       logger.info("Email server response: " + sendResponse);
 

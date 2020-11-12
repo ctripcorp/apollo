@@ -1,43 +1,43 @@
 package com.ctrip.framework.apollo.core.dto;
 
+import lombok.Data;
+
 /**
+ * apollo配置通知 dto
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Data
 public class ApolloConfigNotification {
-  private String namespaceName;
-  private long notificationId;
-  private volatile ApolloNotificationMessages messages;
 
-  //for json converter
-  public ApolloConfigNotification() {
-  }
+  /**
+   * 名称空间名称
+   */
+
+  private String namespaceName;
+  /**
+   * 通知id
+   */
+
+  private long notificationId;
+  /**
+   * apollo通知消息集
+   */
+  private volatile ApolloNotificationMessages messages;
 
   public ApolloConfigNotification(String namespaceName, long notificationId) {
     this.namespaceName = namespaceName;
     this.notificationId = notificationId;
   }
 
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public long getNotificationId() {
-    return notificationId;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public ApolloNotificationMessages getMessages() {
-    return messages;
-  }
-
-  public void setMessages(ApolloNotificationMessages messages) {
-    this.messages = messages;
-  }
-
+  /**
+   * 添加通知消息
+   *
+   * @param key            指定的key
+   * @param notificationId 通知消息id
+   */
   public void addMessage(String key, long notificationId) {
+    // 创建 ApolloNotificationMessages 对象
     if (this.messages == null) {
       synchronized (this) {
         if (this.messages == null) {
@@ -45,6 +45,7 @@ public class ApolloConfigNotification {
         }
       }
     }
+    // 添加到 `messages` 中
     this.messages.put(key, notificationId);
   }
 

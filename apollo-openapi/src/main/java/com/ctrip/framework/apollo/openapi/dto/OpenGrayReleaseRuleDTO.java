@@ -1,55 +1,34 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
 import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public class OpenGrayReleaseRuleDTO extends BaseDTO{
-    private String appId;
+/**
+ * 开发的灰度发布规则 Dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class OpenGrayReleaseRuleDTO extends BaseDTO {
 
-    private String clusterName;
-
-    private String namespaceName;
-
-    private String branchName;
-
-    private Set<OpenGrayReleaseRuleItemDTO> ruleItems;
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getClusterName() {
-        return clusterName;
-    }
-
-    public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
-    }
-
-    public String getNamespaceName() {
-        return namespaceName;
-    }
-
-    public void setNamespaceName(String namespaceName) {
-        this.namespaceName = namespaceName;
-    }
-
-    public String getBranchName() {
-        return branchName;
-    }
-
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
-
-    public Set<OpenGrayReleaseRuleItemDTO> getRuleItems() {
-        return ruleItems;
-    }
-
-    public void setRuleItems(Set<OpenGrayReleaseRuleItemDTO> ruleItems) {
-        this.ruleItems = ruleItems;
-    }
+  /**
+   * 应用Id
+   */
+  private String appId;
+  /**
+   * 集群的名称
+   */
+  private String clusterName;
+  /**
+   * 名称空间名称
+   */
+  private String namespaceName;
+  /**
+   * 分支名称
+   */
+  private String branchName;
+  /**
+   * 灰度规则列表
+   */
+  private Set<OpenGrayReleaseRuleItemDTO> ruleItems;
 }

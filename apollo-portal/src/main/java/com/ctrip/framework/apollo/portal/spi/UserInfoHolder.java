@@ -3,11 +3,17 @@ package com.ctrip.framework.apollo.portal.spi;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 
 /**
- * Get access to the user's information,
- * different companies should have a different implementation
+ * 用户信息持有器
+ * <p>获取用户的信息，不同的公司应该有不同的实现方式
+ *
+ * @author Jason Song(song_s@ctrip.com)
  */
 public interface UserInfoHolder {
 
+  /**
+   * 获取用户信息
+   *
+   * @return 用户信息, 其实只包含了个用户名
+   */
   UserInfo getUser();
-
 }

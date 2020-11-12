@@ -2,236 +2,219 @@ package com.ctrip.framework.apollo;
 
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.google.common.base.Function;
-
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
 /**
+ * 配置接口
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public interface Config {
+
   /**
-   * Return the property value with the given key, or {@code defaultValue} if the key doesn't exist.
+   * 使用给定的键返回属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return 属性值
    */
   String getProperty(String key, String defaultValue);
 
   /**
-   * Return the integer property value with the given key, or {@code defaultValue} if the key
-   * doesn't exist.
+   * 使用给定的键返回整型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as integer
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return integer属性值
    */
   Integer getIntProperty(String key, Integer defaultValue);
 
   /**
-   * Return the long property value with the given key, or {@code defaultValue} if the key doesn't
-   * exist.
+   * 使用给定的键返回长整型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as long
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return long属性值
    */
   Long getLongProperty(String key, Long defaultValue);
 
   /**
-   * Return the short property value with the given key, or {@code defaultValue} if the key doesn't
-   * exist.
+   * 使用给定的键返回短整型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as short
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return short属性值
    */
   Short getShortProperty(String key, Short defaultValue);
 
   /**
-   * Return the float property value with the given key, or {@code defaultValue} if the key doesn't
-   * exist.
+   * 使用给定的键返回浮点型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as float
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return float属性值
    */
   Float getFloatProperty(String key, Float defaultValue);
 
   /**
-   * Return the double property value with the given key, or {@code defaultValue} if the key doesn't
-   * exist.
+   * 使用给定的键返回双精度浮点型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as double
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return double属性值
    */
   Double getDoubleProperty(String key, Double defaultValue);
 
   /**
-   * Return the byte property value with the given key, or {@code defaultValue} if the key doesn't
-   * exist.
+   * 使用给定的键返回字节型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as byte
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return byte属性值
    */
   Byte getByteProperty(String key, Byte defaultValue);
 
   /**
-   * Return the boolean property value with the given key, or {@code defaultValue} if the key
-   * doesn't exist.
+   * 使用给定的键返回布尔型属性值，如果键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @return the property value as boolean
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return boolean属性值
    */
   Boolean getBooleanProperty(String key, Boolean defaultValue);
 
   /**
-   * Return the array property value with the given key, or {@code defaultValue} if the key doesn't exist.
+   * 使用给定的键返回数组类型属性值，如果键不存在，则返回{@code defaultValue}。.
    *
-   * @param key          the property name
+   * @param key          属性名称
    * @param delimiter    the delimiter regex
-   * @param defaultValue the default value when key is not found or any error occurred
+   * @param defaultValue 找不到键或发生任何错误时的默认值
    */
   String[] getArrayProperty(String key, String delimiter, String[] defaultValue);
 
   /**
-   * Return the Date property value with the given name, or {@code defaultValue} if the name doesn't exist.
-   * Will try to parse the date with Locale.US and formats as follows: yyyy-MM-dd HH:mm:ss.SSS,
-   * yyyy-MM-dd HH:mm:ss and yyyy-MM-dd
+   * 返回具有给定名称的日期属性值，如果名称不存在，则返回{@code defaultValue}。将尝试用语言环境.US格式如下： yyyy-MM-dd HH:MM:ss
+   * SSS，年-月-日HH:MM:ssyyyy-MM-dd
    *
-   * @param key          the property name
-   * @param defaultValue the default value when name is not found or any error occurred
-   * @return the property value
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return date属性值
    */
   Date getDateProperty(String key, Date defaultValue);
 
   /**
-   * Return the Date property value with the given name, or {@code defaultValue} if the name doesn't exist.
-   * Will parse the date with the format specified and Locale.US
+   * 返回具有给定名称的日期属性值，如果名称不存在，则返回{@code defaultValue}。将使用指定的格式分析日期语言环境.US
    *
-   * @param key          the property name
-   * @param format       the date format, see {@link java.text.SimpleDateFormat} for more
-   *                     information
-   * @param defaultValue the default value when name is not found or any error occurred
-   * @return the property value
+   * @param key          属性名称
+   * @param format       日期格式，更多信息请参见{@linkjava.text.SimpleDateFormat}
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return date属性值
    */
   Date getDateProperty(String key, String format, Date defaultValue);
 
   /**
-   * Return the Date property value with the given name, or {@code defaultValue} if the name doesn't exist.
+   * 返回具有给定名称的日期属性值，如果名称不返回，则返回{@code defaultValue}存在。
    *
-   * @param key          the property name
-   * @param format       the date format, see {@link java.text.SimpleDateFormat} for more
-   *                     information
-   * @param locale       the locale to use
-   * @param defaultValue the default value when name is not found or any error occurred
-   * @return the property value
+   * @param key          属性名称
+   * @param format       日期格式，更多信息请参见{@linkjava.text.SimpleDateFormat}
+   * @param locale       要使用的区域设置
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @return date属性值
    */
   Date getDateProperty(String key, String format, Locale locale, Date defaultValue);
 
   /**
-   * Return the Enum property value with the given key, or {@code defaultValue} if the key doesn't exist.
+   * 返回具有给定键的枚举属性值，如果该键不存在，则返回{@code defaultValue}。
    *
-   * @param key          the property name
+   * @param key          属性名称
    * @param enumType     the enum class
-   * @param defaultValue the default value when key is not found or any error occurred
-   * @param <T>          the enum
-   * @return the property value
+   * @param defaultValue 找不到键或发生任何错误时的默认值
+   * @param <T>          枚举泛型
+   * @return 枚举属性值
    */
   <T extends Enum<T>> T getEnumProperty(String key, Class<T> enumType, T defaultValue);
 
   /**
-   * Return the duration property value(in milliseconds) with the given name, or {@code
-   * defaultValue} if the name doesn't exist. Please note the format should comply with the follow
-   * example (case insensitive). Examples:
+   * 返回具有给定名称的duration属性值（以毫秒为单位），如果名称不存在，则返回{@code defaultValue}。 请注意，格式应符合以下示例（不区分大小写）。示例：
    * <pre>
-   *    "123MS"          -- parses as "123 milliseconds"
-   *    "20S"            -- parses as "20 seconds"
-   *    "15M"            -- parses as "15 minutes" (where a minute is 60 seconds)
-   *    "10H"            -- parses as "10 hours" (where an hour is 3600 seconds)
-   *    "2D"             -- parses as "2 days" (where a day is 24 hours or 86400 seconds)
-   *    "2D3H4M5S123MS"  -- parses as "2 days, 3 hours, 4 minutes, 5 seconds and 123 milliseconds"
-   * </pre>
+   *   “123MS”--解析为“123毫秒”
+   *   “20S”--解析为“20秒”
+   *   “15M”--解析为“15分钟”（其中一分钟为60秒）
+   *   “10H”--解析为“10小时”（其中一小时为3600秒）
+   *   “2D”--解析为“2天”（其中一天24小时或86400秒）
+   *   “2D3H4M5S123MS”--解析为“2天、3小时、4分钟、5秒和123毫秒”
+   *  </pre>
    *
-   * @param key          the property name
-   * @param defaultValue the default value when name is not found or any error occurred
+   * @param key          属性名称
+   * @param defaultValue 找不到键或发生任何错误时的默认值
    * @return the parsed property value(in milliseconds)
    */
   long getDurationProperty(String key, long defaultValue);
 
   /**
-   * Add change listener to this config instance, will be notified when any key is changed in this namespace.
+   * 将配置变更的监听器添加到此配置实例，当此名称空间中的任何键发生更改时，将收到通知。
    *
-   * @param listener the config change listener
+   * @param listener 配置变更的监听器
    */
   void addChangeListener(ConfigChangeListener listener);
 
   /**
-   * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this namespace.
+   * 将配置变更的监听器添加到此配置实例中，仅当此名称空间中的任何感兴趣的键发生更改时才会收到通知。
    *
-   * @param listener the config change listener
+   * @param listener       配置变更的监听器
    * @param interestedKeys the keys interested by the listener
-   *
    * @since 1.0.0
    */
   void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys);
 
   /**
-   * Add change listener to this config instance, will only be notified when any of the interested keys is changed in this namespace.
+   * 将配置变更的监听器添加到此配置实例中，仅当此名称空间中的任何感兴趣的键发生更改时才会收到通知
    *
-   * @param listener the config change listener
-   * @param interestedKeys the keys that the listener is interested in
-   * @param interestedKeyPrefixes the key prefixes that the listener is interested in,
-   *                              e.g. "spring." means that {@code listener} is interested in keys that starts with "spring.", such as "spring.banner", "spring.jpa", etc.
-   *                              and "application" means that {@code listener} is interested in keys that starts with "application", such as "applicationName", "application.port", etc.
-   *                              For more details, see {@link com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener#interestedKeyPrefixes()}
+   * @param listener              配置变更的监听器
+   * @param interestedKeys        配置变更的监听器感兴趣的键
+   * @param interestedKeyPrefixes 配置变更的监听器感兴趣的键前缀，例如“spring.”表示{@code listener}对以“spring”开头的键感兴趣，例如"spring.banner",
+   *                              "spring.jpa",“application”表示{@code listener}对以“application”开头的键感兴趣，例如“applicationName”application.port“，等等。
+   *                              更多细节， see {@link com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener#interestedKeyPrefixes()}
    *                              and {@link java.lang.String#startsWith(String)}
-   *
    * @since 1.3.0
    */
   void addChangeListener(ConfigChangeListener listener, Set<String> interestedKeys,
       Set<String> interestedKeyPrefixes);
 
   /**
-   * Remove the change listener
+   * 移除配置变更的监听器
    *
-   * @param listener the specific config change listener to remove
-   * @return true if the specific config change listener is found and removed
-   *
+   * @param listener 待移除的指定配置变更的监听器
+   * @return 如果找到并删除了特定的配置更改侦听器，则为true
    * @since 1.1.0
    */
   boolean removeChangeListener(ConfigChangeListener listener);
 
   /**
-   * Return a set of the property names
+   * 获取属性名称列表
    *
-   * @return the property names
+   * @return 属性名称列表
    */
   Set<String> getPropertyNames();
 
   /**
-   * Return the user-defined property value with the given key, or {@code defaultValue} if the key doesn't exist.
+   * 使用给定的键返回用户定义的属性值，如果键不存在，则返回defaultValue
    *
-   * @param key          the property name
-   * @param function     the transform {@link Function}. from String to user-defined type
-   * @param defaultValue the default value when key is not found or any error occurred
+   * @param key          属性名称
+   * @param function     转换{@link Function}。从字符串到用户定义类型 the transform {@link Function}.,w,
+   * @param defaultValue 找不到键或发生任何错误时的默认值
    * @param <T>          user-defined type
-   * @return the property value
-   *
+   * @return 属性值
    * @since 1.1.0
    */
   <T> T getProperty(String key, Function<String, T> function, T defaultValue);
 
   /**
-   * Return the config's source type, i.e. where is the config loaded from
+   * 返回配置的源类型，即从哪里加载配置
    *
-   * @return the config's source type
-   *
+   * @return 配置源的类型
    * @since 1.1.0
    */
   ConfigSourceType getSourceType();

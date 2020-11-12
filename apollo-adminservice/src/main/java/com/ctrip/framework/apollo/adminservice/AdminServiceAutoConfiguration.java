@@ -6,6 +6,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 管理服务自动配置（注册自定义的系统服务权限过滤器）
+ */
 @Configuration
 public class AdminServiceAutoConfiguration {
 
@@ -15,11 +18,17 @@ public class AdminServiceAutoConfiguration {
     this.bizConfig = bizConfig;
   }
 
+  /**
+   * 注册自定义过滤器
+   *
+   * @return 自定义的系统服务权限过滤器
+   */
   @Bean
   public FilterRegistrationBean<AdminServiceAuthenticationFilter> adminServiceAuthenticationFilter() {
     FilterRegistrationBean<AdminServiceAuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-
+    // 注册自定义过滤器
     filterRegistrationBean.setFilter(new AdminServiceAuthenticationFilter(bizConfig));
+    // 过滤路径
     filterRegistrationBean.addUrlPatterns("/apps/*");
     filterRegistrationBean.addUrlPatterns("/appnamespaces/*");
     filterRegistrationBean.addUrlPatterns("/instances/*");

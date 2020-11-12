@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 服务 Controller.
+ */
 @RestController
 @RequestMapping("/services")
 public class ServiceController {
@@ -20,7 +23,7 @@ public class ServiceController {
   }
 
   /**
-   * This method always return an empty list as meta service is not used at all
+   * 此方法始终返回空列表，因为根本没有使用元服务.
    */
   @Deprecated
   @RequestMapping("/meta")
@@ -28,15 +31,27 @@ public class ServiceController {
     return Collections.emptyList();
   }
 
+  /**
+   * 获取配置服务列表信息.
+   *
+   * @param appId    应用id
+   * @param clientIp 客户端ip
+   * @return 配置服务列表信息
+   */
   @RequestMapping("/config")
   public List<ServiceDTO> getConfigService(
       @RequestParam(value = "appId", defaultValue = "") String appId,
       @RequestParam(value = "ip", required = false) String clientIp) {
-    return discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIGSERVICE);
+    return discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIG_SERVICE);
   }
 
+  /**
+   * 获取系统服务列表信息.
+   *
+   * @return 系统服务列表信息
+   */
   @RequestMapping("/admin")
   public List<ServiceDTO> getAdminService() {
-    return discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMINSERVICE);
+    return discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMIN_SERVICE);
   }
 }

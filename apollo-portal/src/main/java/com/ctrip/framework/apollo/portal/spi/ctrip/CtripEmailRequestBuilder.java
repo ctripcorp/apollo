@@ -3,22 +3,21 @@ package com.ctrip.framework.apollo.portal.spi.ctrip;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.Email;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Ctrip 邮件请求构建器
+ */
+@Slf4j
 public class CtripEmailRequestBuilder {
 
-  private static final Logger logger = LoggerFactory.getLogger(CtripEmailRequestBuilder.class);
 
   private static Class sendEmailRequestClazz;
   private static Method setBodyContent;
@@ -35,11 +34,14 @@ public class CtripEmailRequestBuilder {
   @Autowired
   private PortalConfig portalConfig;
 
-
+  /**
+   * 获取反射的对象，方法
+   */
   @PostConstruct
   public void init() {
     try {
-      sendEmailRequestClazz = Class.forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
+      sendEmailRequestClazz = Class
+          .forName("com.ctrip.framework.apolloctripservice.emailservice.SendEmailRequest");
 
       setSendCode = sendEmailRequestClazz.getMethod("setSendCode", String.class);
       setBodyTemplateID = sendEmailRequestClazz.getMethod("setBodyTemplateID", Integer.class);
@@ -53,30 +55,44 @@ public class CtripEmailRequestBuilder {
       setAppID = sendEmailRequestClazz.getMethod("setAppID", Integer.class);
 
     } catch (Throwable e) {
-      logger.error("init email request build failed", e);
+      log.error("init email request build failed", e);
       Tracer.logError("init email request build failed", e);
     }
   }
 
-
+  /**
+   * 构建邮件请求对象
+   *
+   * @param email 邮件对象信息
+   * @return 构建的邮件请求对象
+   * @throws Exception
+   */
   public Object buildEmailRequest(Email email) throws Exception {
 
     Object emailRequest = createBasicEmailRequest();
 
+    // 设置值
     setSender.invoke(emailRequest, email.getSenderEmailAddress());
     setSubject.invoke(emailRequest, email.getSubject());
     String emailBodyBuilder = "<entry><content><![CDATA[<!DOCTYPE html>" +
-            email.getBody() +
-            "]]></content></entry>";
+        email.getBody() +
+        "]]></content></entry>";
     setBodyContent.invoke(emailRequest, emailBodyBuilder);
     setRecipient.invoke(emailRequest, email.getRecipients());
 
     return emailRequest;
   }
 
+  /**
+   * 创建基本的邮件请求信息
+   *
+   * @return 邮件请求信息
+   * @throws Exception 如果反射出错，抛出
+   */
   private Object createBasicEmailRequest() throws Exception {
     Object request = sendEmailRequestClazz.newInstance();
 
+    // 设置值
     setSendCode.invoke(request, portalConfig.sendCode());
     setBodyTemplateID.invoke(request, portalConfig.templateId());
     setIsBodyHtml.invoke(request, true);
@@ -87,7 +103,11 @@ public class CtripEmailRequestBuilder {
     return request;
   }
 
-
+  /**
+   * 计算过期时间
+   *
+   * @return 日历对象
+   */
   private Calendar calExpiredTime() {
 
     Calendar calendar = Calendar.getInstance();

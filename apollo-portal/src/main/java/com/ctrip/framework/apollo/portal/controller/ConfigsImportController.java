@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Import the configs from file.
- * First version: move code from {@link ConfigsExportController}
+ * 配置导入 Controller, 从文件中导入配置.第一个版本：从{@link ConfigsExportController}中移动代码
+ *
  * @author wxq
  */
 @RestController
@@ -21,28 +21,33 @@ public class ConfigsImportController {
 
   private final ConfigsImportService configsImportService;
 
-  public ConfigsImportController(
-      final ConfigsImportService configsImportService
-  ) {
+  public ConfigsImportController(final ConfigsImportService configsImportService) {
     this.configsImportService = configsImportService;
   }
 
   /**
-   * copy from old {@link ConfigsExportController}.
-   * @param file Yml file's name must ends with {@code .yml}.
-   *             Properties file's name must ends with {@code .properties}.
-   *             etc.
-   * @throws IOException
+   * 导入配置文件， 从旧的{@link ConfigsExportController}拷贝.
+   *
+   * @param file          Yml文件名必须以{@code .Yml}结尾。属性文件名必须以{@code.Properties}结尾等。
+   * @param appId         应用id
+   * @param env           环境
+   * @param clusterName   集群名称
+   * @param namespaceName 名称空间名称
+   * @throws IOException 如果出现访问错误（如果临时存储失败）
    */
   @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
   @PostMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/items/import")
   public void importConfigFile(@PathVariable String appId, @PathVariable String env,
       @PathVariable String clusterName, @PathVariable String namespaceName,
       @RequestParam("file") MultipartFile file) throws IOException {
-    // check file
+    // 检查文件
     ConfigFileUtils.check(file);
+    // 获取文件格式类型
     final String format = ConfigFileUtils.getFormat(file.getOriginalFilename());
-    final String standardFilename = ConfigFileUtils.toFilename(appId, clusterName, namespaceName, ConfigFileFormat.fromString(format));
+    // 标准化文件名称
+    final String standardFilename = ConfigFileUtils.toFilename(appId, clusterName, namespaceName,
+        ConfigFileFormat.fromString(format));
+    //从文件中导入配置
     configsImportService.importOneConfigFromFile(env, standardFilename, file.getInputStream());
   }
 }

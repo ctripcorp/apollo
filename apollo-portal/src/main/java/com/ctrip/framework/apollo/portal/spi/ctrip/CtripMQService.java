@@ -1,16 +1,17 @@
 package com.ctrip.framework.apollo.portal.spi.ctrip;
 
-import com.google.gson.Gson;
-
 import com.ctrip.framework.apollo.common.entity.App;
-import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
 import com.ctrip.framework.apollo.portal.spi.MQService;
 import com.ctrip.framework.apollo.tracer.Tracer;
-
+import com.google.gson.Gson;
+import java.util.Arrays;
+import javax.annotation.PostConstruct;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,15 +21,20 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-
-import javax.annotation.PostConstruct;
-
-
+/**
+ * Ctrip 队列 Service
+ */
 public class CtripMQService implements MQService {
 
+  /**
+   * 日期格式
+   */
   private static final org.apache.commons.lang.time.FastDateFormat
-      TIMESTAMP_FORMAT = org.apache.commons.lang.time.FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss");
+      TIMESTAMP_FORMAT = org.apache.commons.lang.time.FastDateFormat
+      .getInstance("yyyy-MM-dd hh:mm:ss");
+  /**
+   * 配置发布通知至NOC的Topic
+   */
   private static final String CONFIG_PUBLISH_NOTIFY_TO_NOC_TOPIC = "ops.noc.record.created";
 
   private static final Gson GSON = new Gson();
@@ -42,11 +48,15 @@ public class CtripMQService implements MQService {
 
   private RestTemplate restTemplate;
 
+  /**
+   * 初始化RestTemplate
+   */
   @PostConstruct
   public void init() {
     restTemplate = new RestTemplate();
 
-    SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
+    SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate
+        .getRequestFactory();
     rf.setReadTimeout(portalConfig.readTimeout());
     rf.setConnectTimeout(portalConfig.connectTimeout());
 
@@ -64,13 +74,22 @@ public class CtripMQService implements MQService {
       return;
     }
 
+    // 发布消息
     PublishMsg msg = buildPublishMsg(env, releaseHistory);
 
     sendMsg(portalConfig.hermesServerAddress(), CONFIG_PUBLISH_NOTIFY_TO_NOC_TOPIC, msg);
   }
 
+  /**
+   * 构建发布消息
+   *
+   * @param env            环境
+   * @param releaseHistory 发布历史
+   * @return 构建的发布消息
+   */
   private PublishMsg buildPublishMsg(Env env, ReleaseHistoryBO releaseHistory) {
 
+    // 构建发布消息
     PublishMsg msg = new PublishMsg();
 
     msg.setPriority("中");
@@ -83,18 +102,26 @@ public class CtripMQService implements MQService {
     msg.setAssginee(releaseHistory.getOperator());
     msg.setOperation_time(TIMESTAMP_FORMAT.format(releaseHistory.getReleaseTime()));
     msg.setDesc(GSON.toJson(releaseService.compare(env, releaseHistory.getPreviousReleaseId(),
-                                                   releaseHistory.getReleaseId())));
+        releaseHistory.getReleaseId())));
 
     return msg;
   }
 
+  /**
+   * 发送消息
+   *
+   * @param serverAddress 服务地址
+   * @param topic         队列的topic
+   * @param msg           消息对象
+   */
   private void sendMsg(String serverAddress, String topic, Object msg) {
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM + ";charset=UTF-8"));
+    headers.setContentType(
+        MediaType.parseMediaType(MediaType.APPLICATION_OCTET_STREAM + ";charset=UTF-8"));
     HttpEntity<Object> request = new HttpEntity<>(msg, headers);
 
     try {
-      //send msg by hermes RestAPI
+      // 通过restApi 发送消息
       restTemplate.postForObject(serverAddress + "/topics/" + topic, request, Object.class);
 
     } catch (Exception e) {
@@ -103,72 +130,41 @@ public class CtripMQService implements MQService {
 
   }
 
+  /**
+   * 发布消息对象
+   */
+  @Data
   private static class PublishMsg {
 
+    /**
+     * 分配人
+     */
     private String assginee;
+    /**
+     * 描述
+     */
     private String desc;
+    /**
+     * 操作时间
+     */
     private String operation_time;
+    /**
+     * 工具源
+     */
     private String tool_origin;
+    /**
+     * 优先级
+     */
     private String priority;
+    /**
+     * 部门名字
+     */
     private String influence_bu;
+    /**
+     * 应用id
+     */
     private String appid;
 
-
-    public String getAssginee() {
-      return assginee;
-    }
-
-    public void setAssginee(String assginee) {
-      this.assginee = assginee;
-    }
-
-    public String getDesc() {
-      return desc;
-    }
-
-    public void setDesc(String desc) {
-      this.desc = desc;
-    }
-
-    public String getOperation_time() {
-      return operation_time;
-    }
-
-    public void setOperation_time(String operation_time) {
-      this.operation_time = operation_time;
-    }
-
-    public String getTool_origin() {
-      return tool_origin;
-    }
-
-    public void setTool_origin(String tool_origin) {
-      this.tool_origin = tool_origin;
-    }
-
-    public String getPriority() {
-      return priority;
-    }
-
-    public void setPriority(String priority) {
-      this.priority = priority;
-    }
-
-    public String getInfluence_bu() {
-      return influence_bu;
-    }
-
-    public void setInfluence_bu(String influence_bu) {
-      this.influence_bu = influence_bu;
-    }
-
-    public String getAppid() {
-      return appid;
-    }
-
-    public void setAppid(String appid) {
-      this.appid = appid;
-    }
   }
 
 }

@@ -1,47 +1,34 @@
 package com.ctrip.framework.apollo.model;
 
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
+ * 配置文件更改事件 Model
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Getter
+@AllArgsConstructor
 public class ConfigFileChangeEvent {
-  private final String namespace;
-  private final String oldValue;
-  private final String newValue;
-  private final PropertyChangeType changeType;
 
   /**
-   * Constructor.
-   *
-   * @param namespace the namespace of the config file change event
-   * @param oldValue the value before change
-   * @param newValue the value after change
-   * @param changeType the change type
+   * 名称空间
    */
-  public ConfigFileChangeEvent(String namespace, String oldValue, String newValue,
-      PropertyChangeType changeType) {
-    this.namespace = namespace;
-    this.oldValue = oldValue;
-    this.newValue = newValue;
-    this.changeType = changeType;
-  }
-
-  public String getNamespace() {
-    return namespace;
-  }
-
-  public String getOldValue() {
-    return oldValue;
-  }
-
-  public String getNewValue() {
-    return newValue;
-  }
-
-  public PropertyChangeType getChangeType() {
-    return changeType;
-  }
+  private final String namespace;
+  /**
+   * 旧值
+   */
+  private final String oldValue;
+  /**
+   * 新值
+   */
+  private final String newValue;
+  /**
+   * 改变的属性类型
+   */
+  private final PropertyChangeType changeType;
 
   @Override
   public String toString() {

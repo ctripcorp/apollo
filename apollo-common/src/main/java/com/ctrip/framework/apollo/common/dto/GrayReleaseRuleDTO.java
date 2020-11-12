@@ -2,24 +2,47 @@ package com.ctrip.framework.apollo.common.dto;
 
 
 import com.google.common.collect.Sets;
-
 import java.util.Set;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * 灰度发布 dto
+ */
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class GrayReleaseRuleDTO extends BaseDTO {
 
+  /**
+   * appId
+   */
   private String appId;
-
+  /**
+   * 集群的名称
+   */
   private String clusterName;
-
+  /**
+   * 命名空间的名称
+   */
   private String namespaceName;
-
+  /**
+   * 分支名称
+   */
   private String branchName;
-
+  /**
+   * 灰度规则
+   */
+  @Setter
   private Set<GrayReleaseRuleItemDTO> ruleItems;
-
+  /**
+   * 灰度对应的release
+   */
+  @Setter
   private Long releaseId;
 
-  public GrayReleaseRuleDTO(String appId, String clusterName, String namespaceName, String branchName) {
+  public GrayReleaseRuleDTO(String appId, String clusterName, String namespaceName,
+      String branchName) {
     this.appId = appId;
     this.clusterName = clusterName;
     this.namespaceName = namespaceName;
@@ -27,40 +50,8 @@ public class GrayReleaseRuleDTO extends BaseDTO {
     this.ruleItems = Sets.newHashSet();
   }
 
-  public String getAppId() {
-    return appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public String getBranchName() {
-    return branchName;
-  }
-
-  public Set<GrayReleaseRuleItemDTO> getRuleItems() {
-    return ruleItems;
-  }
-
-  public void setRuleItems(Set<GrayReleaseRuleItemDTO> ruleItems) {
-    this.ruleItems = ruleItems;
-  }
-
   public void addRuleItem(GrayReleaseRuleItemDTO ruleItem) {
     this.ruleItems.add(ruleItem);
-  }
-
-  public Long getReleaseId() {
-    return releaseId;
-  }
-
-  public void setReleaseId(Long releaseId) {
-    this.releaseId = releaseId;
   }
 }
 

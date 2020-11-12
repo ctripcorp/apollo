@@ -1,28 +1,23 @@
 package com.ctrip.framework.apollo.common.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+/**
+ * 实体对
+ *
+ * @author Jason Song(song_s@ctrip.com)
+ */
+@Data
+@AllArgsConstructor
 public class EntityPair<E> {
 
+  /**
+   * 第一个实体
+   */
   private E firstEntity;
+  /**
+   * 第二个实体
+   */
   private E secondEntity;
-
-  public EntityPair(E firstEntity, E secondEntity){
-    this.firstEntity = firstEntity;
-    this.secondEntity = secondEntity;
-  }
-
-  public E getFirstEntity() {
-    return firstEntity;
-  }
-
-  public void setFirstEntity(E firstEntity) {
-    this.firstEntity = firstEntity;
-  }
-
-  public E getSecondEntity() {
-    return secondEntity;
-  }
-
-  public void setSecondEntity(E secondEntity) {
-    this.secondEntity = secondEntity;
-  }
 }

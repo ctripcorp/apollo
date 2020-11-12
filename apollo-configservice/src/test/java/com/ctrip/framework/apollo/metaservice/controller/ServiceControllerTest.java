@@ -39,7 +39,7 @@ public class ServiceControllerTest {
     String someAppId = "someAppId";
     String someClientIp = "someClientIp";
 
-    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIGSERVICE))
+    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_CONFIG_SERVICE))
         .thenReturn(someServices);
 
     assertEquals(someServices, serviceController.getConfigService(someAppId, someClientIp));
@@ -47,7 +47,7 @@ public class ServiceControllerTest {
 
   @Test
   public void testGetAdminService() {
-    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMINSERVICE))
+    when(discoveryService.getServiceInstances(ServiceNameConsts.APOLLO_ADMIN_SERVICE))
         .thenReturn(someServices);
 
     assertEquals(someServices, serviceController.getAdminService());

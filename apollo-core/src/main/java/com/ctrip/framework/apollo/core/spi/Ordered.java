@@ -1,37 +1,38 @@
 package com.ctrip.framework.apollo.core.spi;
 
 /**
- * {@code Ordered} is an interface that can be implemented by objects that
- * should be <em>orderable</em>, for example in a {@code Collection}.
+ * {@code Ordered}是一个接口，可以由应该是 <em>orderable</em>的对象实现，例如 {@code Collection}.
  *
- * <p>The actual {@link #getOrder() order} can be interpreted as prioritization,
- * with the first object (with the lowest order value) having the highest
- * priority.
+ * <p>实际{@link #getOrder() order}可以解释为优先级排序，第一个对象（具有最低的顺序值）具有最高优先级。
  *
+ * <p>
+ *
+ * @author Jason Song(song_s@ctrip.com)
  * @since 1.0.0
  */
 public interface Ordered {
+
   /**
-   * Useful constant for the highest precedence value.
+   * 用于最高优先级值的有用常量.
+   *
    * @see java.lang.Integer#MIN_VALUE
    */
   int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
 
   /**
-   * Useful constant for the lowest precedence value.
+   * 最小优先级值的有用常量.
+   *
    * @see java.lang.Integer#MAX_VALUE
    */
   int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
 
 
   /**
-   * Get the order value of this object.
-   * <p>Higher values are interpreted as lower priority. As a consequence,
-   * the object with the lowest value has the highest priority (somewhat
-   * analogous to Servlet {@code load-on-startup} values).
-   * <p>Same order values will result in arbitrary sort positions for the
-   * affected objects.
-   * @return the order value
+   * 获取此对象的优先级值。
+   * <p>值越高，优先级越低。因此，值最小的对象具有最高的优先级（有点类似于{@code load-on-startup}Servlet值）。
+   * <p>相同的顺序值将导致受影响对象的任意排序位置。
+   *
+   * @return order值
    * @see #HIGHEST_PRECEDENCE
    * @see #LOWEST_PRECEDENCE
    */

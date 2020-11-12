@@ -67,13 +67,13 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     AppNamespace hermesAppNamespace = mock(AppNamespace.class);
 
     NamespaceDTO application = new NamespaceDTO();
-    application.setId(1);
+    application.setId(1L);
     application.setClusterName(testClusterName);
     application.setAppId(testAppId);
     application.setNamespaceName(testNamespaceName);
 
     NamespaceDTO hermes = new NamespaceDTO();
-    hermes.setId(2);
+    hermes.setId(2L);
     hermes.setClusterName("default");
     hermes.setAppId(testAppId);
     hermes.setNamespaceName("hermes");

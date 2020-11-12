@@ -1,27 +1,22 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
 import java.util.Set;
+import lombok.Data;
 
+/**
+ * 开放的环境集群 Dto
+ */
+@Data
 public class OpenEnvClusterDTO {
 
+  /**
+   * 环境
+   */
   private String env;
+  /**
+   * 集群列表
+   */
   private Set<String> clusters;
-
-  public String getEnv() {
-    return env;
-  }
-
-  public void setEnv(String env) {
-    this.env = env;
-  }
-
-  public Set<String> getClusters() {
-    return clusters;
-  }
-
-  public void setClusters(Set<String> clusters) {
-    this.clusters = clusters;
-  }
 
   @Override
   public String toString() {

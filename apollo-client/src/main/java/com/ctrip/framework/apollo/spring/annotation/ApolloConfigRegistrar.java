@@ -7,14 +7,21 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
+ * Apollo配置注册器，实现bean的动态注入
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ApolloConfigRegistrar implements ImportBeanDefinitionRegistrar {
 
-  private ApolloConfigRegistrarHelper helper = ServiceBootstrap.loadPrimary(ApolloConfigRegistrarHelper.class);
+  /**
+   * Apollo配置注册器帮助器
+   */
+  private ApolloConfigRegistrarHelper helper = ServiceBootstrap
+      .loadPrimary(ApolloConfigRegistrarHelper.class);
 
   @Override
-  public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+  public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
+      BeanDefinitionRegistry registry) {
     helper.registerBeanDefinitions(importingClassMetadata, registry);
   }
 }

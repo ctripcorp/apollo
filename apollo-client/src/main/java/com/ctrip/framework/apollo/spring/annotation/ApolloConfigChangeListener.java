@@ -8,17 +8,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to register Apollo ConfigChangeListener.
+ * 使用此注释注册Apollo配置变更监听器
  *
- * <p>Usage example:</p>
+ * <p>使用示例:</p>
  * <pre class="code">
- * //Listener on namespaces of "someNamespace" and "anotherNamespace", will be notified when any key is changed
+ * // “someNamespace”和“anotherNamespace”名称空间上的配置变更侦听器将在任何key更改时得到通知
  * &#064;ApolloConfigChangeListener({"someNamespace","anotherNamespace"})
  * private void onChange(ConfigChangeEvent changeEvent) {
  *     //handle change event
  * }
  * <br />
- * //Listener on namespaces of "someNamespace" and "anotherNamespace", will only be notified when "someKey" or "anotherKey" is changed
+ * // “someNamespace”和“anotherNamespace”名称空间上的配置变更侦听器仅在“someKey”或“anotherKey”更改时才会收到通知
  * &#064;ApolloConfigChangeListener(value = {"someNamespace","anotherNamespace"}, interestedKeys = {"someKey", "anotherKey"})
  * private void onChange(ConfigChangeEvent changeEvent) {
  *     //handle change event
@@ -31,25 +31,25 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Documented
 public @interface ApolloConfigChangeListener {
+
   /**
-   * Apollo namespace for the config, if not specified then default to application
+   * 配置的Apollo命名空间，如果未指定，则默认为application
    */
   String[] value() default {ConfigConsts.NAMESPACE_APPLICATION};
 
   /**
-   * The keys interested by the listener, will only be notified if any of the interested keys is changed.
-   * <br />
-   * If neither of {@code interestedKeys} and {@code interestedKeyPrefixes} is specified then the {@code listener} will be notified when any key is changed.
+   * 配置变更监听器感兴趣的key只在任何感兴趣的键发生更改时才会得到通知。
+   * <p>如果{@code interestedKeys}和{@code interestedKeyPrefixes}都没有指定，那么当任何键被更改时，将通知{@code listener}
    */
   String[] interestedKeys() default {};
 
   /**
-   * The key prefixes that the listener is interested in, will be notified if and only if the changed keys start with anyone of the prefixes.
-   * The prefixes will simply be used to determine whether the {@code listener} should be notified or not using {@code changedKey.startsWith(prefix)}.
-   * e.g. "spring." means that {@code listener} is interested in keys that starts with "spring.", such as "spring.banner", "spring.jpa", etc.
-   * and "application" means that {@code listener} is interested in keys that starts with "application", such as "applicationName", "application.port", etc.
-   * <br />
-   * If neither of {@code interestedKeys} and {@code interestedKeyPrefixes} is specified then the {@code listener} will be notified when whatever key is changed.
+   * 当且仅当更改的key以任何前缀开头时，配置变更监听器感兴趣的密钥前缀才会被通知。
+   * <p>前缀将简单地用于确定是否应该通知{@code listener}使用{@code changedKey.startsWith(prefix)}。
+   * <p>例如: “spring.”表示{@code listener}对以“spring”开头的key感兴趣，例如"spring.banner",
+   * "spring.jpa,“application”表示 {@code listener}对以“application”开头的键感兴趣，例如“applicationName”
+   * ,"application.port"，等等。
+   * <p>如果没有指定{@code interestedKeys}和{@code interestedKeyPrefixes}，则当任何键被更改时，{@code listener}都会收到通知
    */
   String[] interestedKeyPrefixes() default {};
 }

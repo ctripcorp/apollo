@@ -1,14 +1,5 @@
 package com.ctrip.framework.apollo.biz.grayReleaseRule;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-
 import com.ctrip.framework.apollo.biz.config.BizConfig;
 import com.ctrip.framework.apollo.biz.entity.GrayReleaseRule;
 import com.ctrip.framework.apollo.biz.entity.ReleaseMessage;
@@ -22,44 +13,75 @@ import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 /**
+ * 灰度发布规则持有者（灰度规则变化监听器）
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Slf4j
 public class GrayReleaseRulesHolder implements ReleaseMessageListener, InitializingBean {
-  private static final Logger logger = LoggerFactory.getLogger(GrayReleaseRulesHolder.class);
+
+  /**
+   * 字符串追加器
+   */
   private static final Joiner STRING_JOINER = Joiner.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR);
-  private static final Splitter STRING_SPLITTER =
-      Splitter.on(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
+  /**
+   * 字符串分割器
+   */
+  private static final Splitter STRING_SPLITTER = Splitter.on(ConfigConsts
+      .CLUSTER_NAMESPACE_SEPARATOR).omitEmptyStrings();
 
   @Autowired
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
   @Autowired
   private BizConfig bizConfig;
 
+  /**
+   * 灰度发布规则扫描间隔值
+   */
+  @Getter
   private int databaseScanInterval;
   private ScheduledExecutorService executorService;
-  //store configAppId+configCluster+configNamespace -> GrayReleaseRuleCache map
+
+  /**
+   * 组装灰度发布规则缓存<灰度发布规则id,灰度发布规则缓存>（存储configAppId + configCluster + configNamespace ->
+   * GrayReleaseRuleCache)
+   */
   private Multimap<String, GrayReleaseRuleCache> grayReleaseRuleCache;
-  //store clientAppId+clientNamespace+ip -> ruleId map
+
+  /**
+   * 灰度发布规则缓存<灰度发布规则key，规则id>(规则id逆序)<(clientAppId+clientNamespace+ip) -> ruleId>
+   */
   private Multimap<String, Long> reversedGrayReleaseRuleCache;
-  //an auto increment version to indicate the age of rules
+  /**
+   * 自动递增的版本号，表示示规则的年龄
+   */
   private AtomicLong loadVersion;
 
+  /**
+   * 初始化
+   */
   public GrayReleaseRulesHolder() {
     loadVersion = new AtomicLong();
     grayReleaseRuleCache = Multimaps.synchronizedSetMultimap(
@@ -71,66 +93,86 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
+    // 填充灰度发布规则扫描间隔值
     populateDataBaseInterval();
-    //force sync load for the first time
+    //定期扫描规则,第一次强制同步加载
     periodicScanRules();
     executorService.scheduleWithFixedDelay(this::periodicScanRules,
-        getDatabaseScanIntervalSecond(), getDatabaseScanIntervalSecond(), getDatabaseScanTimeUnit()
+        getDatabaseScanInterval(), getDatabaseScanInterval(), getDatabaseScanTimeUnit()
     );
   }
 
   @Override
   public void handleMessage(ReleaseMessage message, String channel) {
-    logger.info("message received - channel: {}, message: {}", channel, message);
+    log.info("message received - channel: {}, message: {}", channel, message);
     String releaseMessage = message.getMessage();
+    // topic不匹配或者发布信息为空，退出
     if (!Topics.APOLLO_RELEASE_TOPIC.equals(channel) || Strings.isNullOrEmpty(releaseMessage)) {
       return;
     }
     List<String> keys = STRING_SPLITTER.splitToList(releaseMessage);
-    //message should be appId+cluster+namespace
+    // key由appId+cluster+namespace组成，不为3表示key非法
     if (keys.size() != 3) {
-      logger.error("message format invalid - {}", releaseMessage);
+      log.error("message format invalid - {}", releaseMessage);
       return;
     }
     String appId = keys.get(0);
     String cluster = keys.get(1);
     String namespace = keys.get(2);
 
+    // 灰度发布规则列表
     List<GrayReleaseRule> rules = grayReleaseRuleRepository
         .findByAppIdAndClusterNameAndNamespaceName(appId, cluster, namespace);
-
+    // 合并灰度发布规则
     mergeGrayReleaseRules(rules);
   }
 
+  /**
+   * 定期扫描规则
+   */
   private void periodicScanRules() {
     Transaction transaction = Tracer.newTransaction("Apollo.GrayReleaseRulesScanner",
         "scanGrayReleaseRules");
     try {
+      // 增加版本
       loadVersion.incrementAndGet();
+      // 扫描灰度发布规则
       scanGrayReleaseRules();
       transaction.setStatus(Transaction.SUCCESS);
     } catch (Throwable ex) {
       transaction.setStatus(ex);
-      logger.error("Scan gray release rule failed", ex);
+      log.error("Scan gray release rule failed", ex);
     } finally {
       transaction.complete();
     }
   }
 
+  /**
+   * 获取灰度release id,从应用的缓存中获取规则
+   *
+   * @param clientAppId         客户端应用id
+   * @param clientIp            客户端ip
+   * @param configAppId         配置应用id
+   * @param configCluster       配置集群
+   * @param configNamespaceName 配置名称空间名称
+   * @return 灰度发布id
+   */
   public Long findReleaseIdFromGrayReleaseRule(String clientAppId, String clientIp, String
       configAppId, String configCluster, String configNamespaceName) {
+    // 灰度发布规则key
     String key = assembleGrayReleaseRuleKey(configAppId, configCluster, configNamespaceName);
     if (!grayReleaseRuleCache.containsKey(key)) {
       return null;
     }
-    //create a new list to avoid ConcurrentModificationException
+    // 创建一个新的列表以避免ConcurrentModificationException
     List<GrayReleaseRuleCache> rules = Lists.newArrayList(grayReleaseRuleCache.get(key));
     for (GrayReleaseRuleCache rule : rules) {
-      //check branch status
+      //如果判断不为活跃的，跳过
       if (rule.getBranchStatus() != NamespaceBranchStatus.ACTIVE) {
         continue;
       }
+      // 如果客户端应用id和客户端IP匹配，返回发布id
       if (rule.matches(clientAppId, clientIp)) {
         return rule.getReleaseId();
       }
@@ -139,9 +181,13 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
   }
 
   /**
-   * Check whether there are gray release rules for the clientAppId, clientIp, namespace
-   * combination. Please note that even there are gray release rules, it doesn't mean it will always
-   * load gray releases. Because gray release rules actually apply to one more dimension - cluster.
+   * 检查客户端应用id、客户端ip和名称空间是否存在灰色发布规则。
+   * <p>请注意，即使有灰色发布规则，这并不意味着它将总是加载灰色发布。因为灰色发布规则实际上适用于另一个维度——集群。</p>
+   *
+   * @param clientAppId   客户端应用id
+   * @param clientIp      客户端ip
+   * @param namespaceName 名称空间名称
+   * @return 存在灰色发布规则，true,否则，false
    */
   public boolean hasGrayReleaseRule(String clientAppId, String clientIp, String namespaceName) {
     return reversedGrayReleaseRuleCache.containsKey(assembleReversedGrayReleaseRuleKey(clientAppId,
@@ -150,36 +196,51 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
             .ALL_IP));
   }
 
+  /**
+   * 扫描灰度发布规则
+   */
   private void scanGrayReleaseRules() {
+    // 扫描最大的id
     long maxIdScanned = 0;
+    // 有没有更多的元素
     boolean hasMore = true;
 
     while (hasMore && !Thread.currentThread().isInterrupted()) {
+      // 灰度规则信息列表
       List<GrayReleaseRule> grayReleaseRules = grayReleaseRuleRepository
           .findFirst500ByIdGreaterThanOrderByIdAsc(maxIdScanned);
       if (CollectionUtils.isEmpty(grayReleaseRules)) {
         break;
       }
+      // 合并灰度发布规则
       mergeGrayReleaseRules(grayReleaseRules);
+      // 已经扫描的规则大小
       int rulesScanned = grayReleaseRules.size();
       maxIdScanned = grayReleaseRules.get(rulesScanned - 1).getId();
-      //batch is 500
+      // 只要批量大小为500就表示有更多的元素
       hasMore = rulesScanned == 500;
     }
   }
 
+  /**
+   * 合并灰度发布规则列表
+   *
+   * @param grayReleaseRules 灰度发布规则列表
+   */
   private void mergeGrayReleaseRules(List<GrayReleaseRule> grayReleaseRules) {
     if (CollectionUtils.isEmpty(grayReleaseRules)) {
       return;
     }
     for (GrayReleaseRule grayReleaseRule : grayReleaseRules) {
       if (grayReleaseRule.getReleaseId() == null || grayReleaseRule.getReleaseId() == 0) {
-        //filter rules with no release id, i.e. never released
+        // 过滤规则没有发布id，即从未发布
         continue;
       }
+      // 组装灰度发布规则key
       String key = assembleGrayReleaseRuleKey(grayReleaseRule.getAppId(), grayReleaseRule
           .getClusterName(), grayReleaseRule.getNamespaceName());
-      //create a new list to avoid ConcurrentModificationException
+      // 创建一个新的列表以避免ConcurrentModificationException
+      // 灰度发布规则列表
       List<GrayReleaseRuleCache> rules = Lists.newArrayList(grayReleaseRuleCache.get(key));
       GrayReleaseRuleCache oldRule = null;
       for (GrayReleaseRuleCache ruleCache : rules) {
@@ -189,29 +250,38 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
         }
       }
 
-      //if old rule is null and new rule's branch status is not active, ignore
+      //如果旧规则为null，而新规则的分支状态为不活动，则忽略
       if (oldRule == null && grayReleaseRule.getBranchStatus() != NamespaceBranchStatus.ACTIVE) {
         continue;
       }
 
-      //use id comparison to avoid synchronization
+      // 使用id比较来避免同步
       if (oldRule == null || grayReleaseRule.getId() > oldRule.getRuleId()) {
+        // 添加缓存
         addCache(key, transformRuleToRuleCache(grayReleaseRule));
+        // 旧规则不为空就删除
         if (oldRule != null) {
           removeCache(key, oldRule);
         }
       } else {
+        // 分支状态为活跃时
         if (oldRule.getBranchStatus() == NamespaceBranchStatus.ACTIVE) {
-          //update load version
+          //更新加载的版本
           oldRule.setLoadVersion(loadVersion.get());
         } else if ((loadVersion.get() - oldRule.getLoadVersion()) > 1) {
-          //remove outdated inactive branch rule after 2 update cycles
+          // 在2个更新周期后删除过时的非活动分支规则
           removeCache(key, oldRule);
         }
       }
     }
   }
 
+  /**
+   * 添加缓存
+   *
+   * @param key       灰度发布规则缓存Key
+   * @param ruleCache 灰度发布规则缓存
+   */
   private void addCache(String key, GrayReleaseRuleCache ruleCache) {
     if (ruleCache.getBranchStatus() == NamespaceBranchStatus.ACTIVE) {
       for (GrayReleaseRuleItemDTO ruleItemDTO : ruleCache.getRuleItems()) {
@@ -224,8 +294,16 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     grayReleaseRuleCache.put(key, ruleCache);
   }
 
+  /**
+   * 移除缓存
+   *
+   * @param key       灰度发布规则key
+   * @param ruleCache 灰度发布规则缓存
+   */
   private void removeCache(String key, GrayReleaseRuleCache ruleCache) {
+    // 灰度发布规则缓存移除key
     grayReleaseRuleCache.remove(key, ruleCache);
+    // 移除灰度发布规则缓存
     for (GrayReleaseRuleItemDTO ruleItemDTO : ruleCache.getRuleItems()) {
       for (String clientIp : ruleItemDTO.getClientIpList()) {
         reversedGrayReleaseRuleCache.remove(assembleReversedGrayReleaseRuleKey(ruleItemDTO
@@ -234,40 +312,67 @@ public class GrayReleaseRulesHolder implements ReleaseMessageListener, Initializ
     }
   }
 
+  /**
+   * grayReleaseRule转换为 GrayReleaseRuleCache
+   *
+   * @param grayReleaseRule 灰度发布规则信息
+   * @return 规则发布规则缓存
+   */
   private GrayReleaseRuleCache transformRuleToRuleCache(GrayReleaseRule grayReleaseRule) {
+    //将grayReleaseRule转换为 GrayReleaseRuleItemDTO
     Set<GrayReleaseRuleItemDTO> ruleItems;
     try {
       ruleItems = GrayReleaseRuleItemTransformer.batchTransformFromJSON(grayReleaseRule.getRules());
     } catch (Throwable ex) {
       ruleItems = Sets.newHashSet();
       Tracer.logError(ex);
-      logger.error("parse rule for gray release rule {} failed", grayReleaseRule.getId(), ex);
+      log.error("parse rule for gray release rule {} failed", grayReleaseRule.getId(), ex);
     }
 
     GrayReleaseRuleCache ruleCache = new GrayReleaseRuleCache(grayReleaseRule.getId(),
         grayReleaseRule.getBranchName(), grayReleaseRule.getNamespaceName(), grayReleaseRule
-        .getReleaseId(), grayReleaseRule.getBranchStatus(), loadVersion.get(), ruleItems);
-
+        .getReleaseId(), loadVersion.get(), grayReleaseRule.getBranchStatus(), ruleItems);
+    // 返回灰度发布规则缓存
     return ruleCache;
   }
 
+  /**
+   * 填充灰度发布规则扫描间隔值
+   */
   private void populateDataBaseInterval() {
     databaseScanInterval = bizConfig.grayReleaseRuleScanInterval();
   }
 
-  private int getDatabaseScanIntervalSecond() {
-    return databaseScanInterval;
-  }
-
+  /**
+   * 灰度发布规则扫描间隔值时间单位
+   *
+   * @return 灰度发布规则扫描间隔值时间单位（秒）
+   */
   private TimeUnit getDatabaseScanTimeUnit() {
     return TimeUnit.SECONDS;
   }
 
+  /**
+   * 组装灰度发布规则key
+   *
+   * @param configAppId         配置应用id
+   * @param configCluster       配置集群
+   * @param configNamespaceName 配置名称空间名称
+   * @return 灰度发布规则key
+   */
   private String assembleGrayReleaseRuleKey(String configAppId, String configCluster, String
       configNamespaceName) {
     return STRING_JOINER.join(configAppId, configCluster, configNamespaceName);
   }
 
+  /**
+   * 组装灰度发布规则key
+   *
+   * @param clientAppId         客户端应用id
+   * @param clientNamespaceName 客户端名称空间名称
+   * @param clientIp            客户端id
+   * @return 灰度发布规则key
+   */
   private String assembleReversedGrayReleaseRuleKey(String clientAppId, String
       clientNamespaceName, String clientIp) {
     return STRING_JOINER.join(clientAppId, clientNamespaceName, clientIp);

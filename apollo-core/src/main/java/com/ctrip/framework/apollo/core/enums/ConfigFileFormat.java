@@ -1,25 +1,48 @@
 package com.ctrip.framework.apollo.core.enums;
 
-import com.ctrip.framework.apollo.core.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang.StringUtils;
 
 /**
+ * 配置文件格式枚举.
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Getter
+@AllArgsConstructor
 public enum ConfigFileFormat {
-  Properties("properties"), XML("xml"), JSON("json"), YML("yml"), YAML("yaml"), TXT("txt");
-
+  /**
+   * properties文件
+   */
+  Properties("properties"),
+  /**
+   * xml文件
+   */
+  XML("xml"),
+  /**
+   * json文件
+   */
+  JSON("json"),
+  /**
+   * yml文件
+   */
+  YML("yml"),
+  /**
+   * yaml文件
+   */
+  YAML("yaml"),
+  /**
+   * txt文件
+   */
+  TXT("txt");
+  /**
+   * 文件格式字符串
+   */
   private String value;
 
-  ConfigFileFormat(String value) {
-    this.value = value;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
   public static ConfigFileFormat fromString(String value) {
-    if (StringUtils.isEmpty(value)) {
+    if (StringUtils.isBlank(value)) {
       throw new IllegalArgumentException("value can not be empty");
     }
     switch (value.toLowerCase()) {
@@ -39,6 +62,12 @@ public enum ConfigFileFormat {
     throw new IllegalArgumentException(value + " can not map enum");
   }
 
+  /**
+   * 验证是否为可用的文件格式
+   *
+   * @param value 文件格式字符串
+   * @return 如果是可用的文件格式, 返回true.否则, 返回false
+   */
   public static boolean isValidFormat(String value) {
     try {
       fromString(value);
@@ -48,6 +77,12 @@ public enum ConfigFileFormat {
     }
   }
 
+  /**
+   * 属性文件是否兼容
+   *
+   * @param format 格式枚举
+   * @return 如果为YAML或者YML，返回true,否则，false
+   */
   public static boolean isPropertiesCompatible(ConfigFileFormat format) {
     return format == YAML || format == YML;
   }

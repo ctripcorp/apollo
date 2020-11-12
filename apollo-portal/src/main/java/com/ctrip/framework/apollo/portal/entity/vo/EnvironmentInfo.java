@@ -1,64 +1,36 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
 import com.ctrip.framework.apollo.core.dto.ServiceDTO;
-import com.ctrip.framework.apollo.portal.environment.Env;
+import lombok.Data;
 
+/**
+ * 环境信息
+ */
+@Data
 public class EnvironmentInfo {
 
+  /**
+   * 环境
+   */
   private String env;
+  /**
+   * 是否活跃
+   */
   private boolean active;
+  /**
+   * 元服务器地址
+   */
   private String metaServerAddress;
-
+  /**
+   * 配置服务信息
+   */
   private ServiceDTO[] configServices;
+  /**
+   * 系统服务信息
+   */
   private ServiceDTO[] adminServices;
-
+  /**
+   * 错误消息
+   */
   private String errorMessage;
-
-  public Env getEnv() {
-    return Env.valueOf(env);
-  }
-
-  public void setEnv(Env env) {
-    this.env = env.toString();
-  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
-
-  public String getMetaServerAddress() {
-    return metaServerAddress;
-  }
-
-  public void setMetaServerAddress(String metaServerAddress) {
-    this.metaServerAddress = metaServerAddress;
-  }
-
-  public ServiceDTO[] getConfigServices() {
-    return configServices;
-  }
-
-  public void setConfigServices(ServiceDTO[] configServices) {
-    this.configServices = configServices;
-  }
-
-  public ServiceDTO[] getAdminServices() {
-    return adminServices;
-  }
-
-  public void setAdminServices(ServiceDTO[] adminServices) {
-    this.adminServices = adminServices;
-  }
-
-  public String getErrorMessage() {
-    return errorMessage;
-  }
-
-  public void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
-  }
 }

@@ -6,21 +6,28 @@ import com.ctrip.framework.apollo.util.OrderedProperties;
 import java.util.Properties;
 
 /**
- * Default PropertiesFactory implementation.
+ * 默认PropertiesFactory实现
  *
  * @author songdragon@zts.io
  */
 public class DefaultPropertiesFactory implements PropertiesFactory {
 
-  private ConfigUtil m_configUtil;
+  /**
+   * 配置工具类
+   */
+  private ConfigUtil configUtil;
 
+  /**
+   * 构建DefaultPropertiesFactory对象，并注入属性类
+   */
   public DefaultPropertiesFactory() {
-    m_configUtil = ApolloInjector.getInstance(ConfigUtil.class);
+    configUtil = ApolloInjector.getInstance(ConfigUtil.class);
   }
 
   @Override
   public Properties getPropertiesInstance() {
-    if (m_configUtil.isPropertiesOrderEnabled()) {
+    // 配置项保持有序，返回有序的Properties对象，否则，返回无序的Properties对象
+    if (configUtil.isPropertiesOrderEnabled()) {
       return new OrderedProperties();
     } else {
       return new Properties();

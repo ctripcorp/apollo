@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 /**
+ * 自动配置配置Service
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 @Configuration
@@ -29,24 +31,47 @@ public class ConfigServiceAutoConfiguration {
     this.bizConfig = bizConfig;
   }
 
+  /**
+   * 灰度发布规则持有者Bean
+   *
+   * @return 灰度发布规则持有者Bean
+   */
   @Bean
   public GrayReleaseRulesHolder grayReleaseRulesHolder() {
     return new GrayReleaseRulesHolder();
   }
 
+  /**
+   * 配置服务bean
+   *
+   * @return 配置服务bean
+   */
   @Bean
   public ConfigService configService() {
+    // 开启缓存，使用 ConfigServiceWithCache
     if (bizConfig.isConfigServiceCacheEnabled()) {
       return new ConfigServiceWithCache();
     }
+    // 不开启缓存，使用 DefaultConfigService
     return new DefaultConfigService();
   }
 
+  /**
+   * 密码编码器bean
+   *
+   * @return 密码编码器bean
+   */
   @Bean
   public static NoOpPasswordEncoder passwordEncoder() {
     return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
   }
 
+  /**
+   * 客户端认证过滤器bean
+   *
+   * @param accessKeyUtil 访问密钥工具类
+   * @return 过滤器注册Bean
+   */
   @Bean
   public FilterRegistrationBean clientAuthenticationFilter(AccessKeyUtil accessKeyUtil) {
     FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -59,8 +84,12 @@ public class ConfigServiceAutoConfiguration {
     return filterRegistrationBean;
   }
 
+  /**
+   * 消息扫描配置
+   */
   @Configuration
   static class MessageScannerConfiguration {
+
     private final NotificationController notificationController;
     private final ConfigFileController configFileController;
     private final NotificationControllerV2 notificationControllerV2;
@@ -83,17 +112,22 @@ public class ConfigServiceAutoConfiguration {
       this.configService = configService;
     }
 
+    /**
+     * 发布消息扫描器
+     *
+     * @return 发布消息扫描器
+     */
     @Bean
     public ReleaseMessageScanner releaseMessageScanner() {
       ReleaseMessageScanner releaseMessageScanner = new ReleaseMessageScanner();
-      //0. handle release message cache
+      //0. 处理发布消息缓存
       releaseMessageScanner.addMessageListener(releaseMessageServiceWithCache);
-      //1. handle gray release rule
+      //1. 处理灰度消息规则
       releaseMessageScanner.addMessageListener(grayReleaseRulesHolder);
-      //2. handle server cache
+      //2. 处理服务缓存
       releaseMessageScanner.addMessageListener(configService);
       releaseMessageScanner.addMessageListener(configFileController);
-      //3. notify clients
+      //3. 通知客户端
       releaseMessageScanner.addMessageListener(notificationControllerV2);
       releaseMessageScanner.addMessageListener(notificationController);
       return releaseMessageScanner;

@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * 界面入口
+ */
 @EnableAspectJAutoProxy
 @Configuration
 @EnableAutoConfiguration

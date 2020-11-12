@@ -1,22 +1,23 @@
 package com.ctrip.framework.apollo.util.http;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
+ * 响应实体
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@AllArgsConstructor
+@Getter
 public class HttpResponse<T> {
-  private final int m_statusCode;
-  private final T m_body;
 
-  public HttpResponse(int statusCode, T body) {
-    this.m_statusCode = statusCode;
-    this.m_body = body;
-  }
-
-  public int getStatusCode() {
-    return m_statusCode;
-  }
-
-  public T getBody() {
-    return m_body;
-  }
+  /**
+   * 状态码
+   */
+  private final int statusCode;
+  /**
+   * 返回实体
+   */
+  private final T body;
 }

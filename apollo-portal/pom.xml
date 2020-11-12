@@ -56,6 +56,7 @@
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
+
 		<!-- end of JDK 11+ -->
 
 		<!-- test -->

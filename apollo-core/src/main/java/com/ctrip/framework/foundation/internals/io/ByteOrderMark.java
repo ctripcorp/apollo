@@ -15,60 +15,73 @@ package com.ctrip.framework.foundation.internals.io;
 import java.io.Serializable;
 
 /**
- * Byte Order Mark (BOM) representation - see {@link BOMInputStream}.
+ * 字节序标记类（BOM）- 详情请查阅 {@link BOMInputStream}.
  *
+ * @version $Id: ByteOrderMark.java 1586504 2014-04-10 23:34:37Z ggregory $
  * @see BOMInputStream
  * @see <a href="http://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia: Byte Order Mark</a>
- * @see <a href="http://www.w3.org/TR/2006/REC-xml-20060816/#sec-guessing">W3C: Autodetection of Character Encodings
- *      (Non-Normative)</a>
- * @version $Id: ByteOrderMark.java 1586504 2014-04-10 23:34:37Z ggregory $
+ * @see <a href="http://www.w3.org/TR/2006/REC-xml-20060816/#sec-guessing">W3C: Autodetection of
+ * Character Encodings (Non-Normative)</a>
  * @since 2.0
  */
 public class ByteOrderMark implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  /** UTF-8 BOM */
+  /**
+   * UTF-8字节序
+   */
   public static final ByteOrderMark UTF_8 = new ByteOrderMark("UTF-8", 0xEF, 0xBB, 0xBF);
 
-  /** UTF-16BE BOM (Big-Endian) */
+  /**
+   * UTF-16BE 字节序 (大端)
+   */
   public static final ByteOrderMark UTF_16BE = new ByteOrderMark("UTF-16BE", 0xFE, 0xFF);
 
-  /** UTF-16LE BOM (Little-Endian) */
+  /**
+   * UTF-16LE 字节序 (小端)
+   */
   public static final ByteOrderMark UTF_16LE = new ByteOrderMark("UTF-16LE", 0xFF, 0xFE);
 
   /**
-   * UTF-32BE BOM (Big-Endian)
-   * 
+   * UTF-32BE 字节序(大端)
+   *
    * @since 2.2
    */
-  public static final ByteOrderMark UTF_32BE = new ByteOrderMark("UTF-32BE", 0x00, 0x00, 0xFE, 0xFF);
+  public static final ByteOrderMark UTF_32BE = new ByteOrderMark("UTF-32BE", 0x00, 0x00, 0xFE,
+      0xFF);
 
   /**
-   * UTF-32LE BOM (Little-Endian)
-   * 
+   * UTF-32LE 字节序(小端)
+   *
    * @since 2.2
    */
-  public static final ByteOrderMark UTF_32LE = new ByteOrderMark("UTF-32LE", 0xFF, 0xFE, 0x00, 0x00);
+  public static final ByteOrderMark UTF_32LE = new ByteOrderMark("UTF-32LE", 0xFF, 0xFE, 0x00,
+      0x00);
 
   /**
-   * Unicode BOM character; external form depends on the encoding.
-   * 
+   * Unicode字节序字符；外部形式取决于编码
+   *
    * @see <a href="http://unicode.org/faq/utf_bom.html#BOM">Byte Order Mark (BOM) FAQ</a>
    * @since 2.5
    */
   public static final char UTF_BOM = '\uFEFF';
-
+  /**
+   * 字符集名称
+   */
   private final String charsetName;
+  /**
+   * 字节数组
+   */
   private final int[] bytes;
 
   /**
-   * Construct a new BOM.
+   * 构建新的字节序
    *
-   * @param charsetName The name of the charset the BOM represents
-   * @param bytes The BOM's bytes
-   * @throws IllegalArgumentException if the charsetName is null or zero length
-   * @throws IllegalArgumentException if the bytes are null or zero length
+   * @param charsetName 字节序所代表的字符集名称
+   * @param bytes       字节序字节数组
+   * @throws IllegalArgumentException 如果charsetName为null或长度为零，抛出
+   * @throws IllegalArgumentException 如果字节为空或零长度，抛出
    */
   public ByteOrderMark(final String charsetName, final int... bytes) {
     if (charsetName == null || charsetName.isEmpty()) {
@@ -83,37 +96,37 @@ public class ByteOrderMark implements Serializable {
   }
 
   /**
-   * Return the name of the {@link java.nio.charset.Charset} the BOM represents.
+   * 返回字节序所代表的{@link java.nio.charset.Charset}名称。
    *
-   * @return the character set name
+   * @return 字符集名称
    */
   public String getCharsetName() {
     return charsetName;
   }
 
   /**
-   * Return the length of the BOM's bytes.
+   * 返回字节序的字节长度
    *
-   * @return the length of the BOM's bytes
+   * @return 字节序的字节长度
    */
   public int length() {
     return bytes.length;
   }
 
   /**
-   * The byte at the specified position.
+   * 指定位置的字节
    *
-   * @param pos The position
-   * @return The specified byte
+   * @param pos 指定位置
+   * @return 指定位置的字节
    */
   public int get(final int pos) {
     return bytes[pos];
   }
 
   /**
-   * Return a copy of the BOM's bytes.
+   * 返回字节序字节的副本
    *
-   * @return a copy of the BOM's bytes
+   * @return 字节序字节的副本
    */
   public byte[] getBytes() {
     final byte[] copy = new byte[bytes.length];
@@ -123,12 +136,6 @@ public class ByteOrderMark implements Serializable {
     return copy;
   }
 
-  /**
-   * Indicates if this BOM's bytes equals another.
-   *
-   * @param obj The object to compare to
-   * @return true if the bom's bytes are equal, otherwise false
-   */
   @Override
   public boolean equals(final Object obj) {
     if (!(obj instanceof ByteOrderMark)) {
@@ -146,12 +153,6 @@ public class ByteOrderMark implements Serializable {
     return true;
   }
 
-  /**
-   * Return the hashcode for this BOM.
-   *
-   * @return the hashcode for this BOM.
-   * @see Object#hashCode()
-   */
   @Override
   public int hashCode() {
     int hashCode = getClass().hashCode();
@@ -161,11 +162,6 @@ public class ByteOrderMark implements Serializable {
     return hashCode;
   }
 
-  /**
-   * Provide a String representation of the BOM.
-   *
-   * @return the length of the BOM's bytes
-   */
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder();

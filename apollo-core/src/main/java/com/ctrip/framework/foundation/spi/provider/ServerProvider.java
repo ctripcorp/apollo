@@ -4,33 +4,44 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Provider for server related properties
+ * 服务器供应器
+ * <p>服务器相关属性的供应器
  */
 public interface ServerProvider extends Provider {
+
   /**
-   * @return current environment or {@code null} if not set
+   * 获取当前环境，如果没有设置返回{@code null}
+   *
+   * @return 当前环境，如果没有设置返回{@code null}
    */
   String getEnvType();
 
   /**
-   * @return whether current environment is set or not
+   * 当前环境是否已经设置
+   *
+   * @return true, 当前环境已经设置, 否则，false
    */
   boolean isEnvTypeSet();
 
   /**
-   * @return current data center or {@code null} if not set
+   * 获取当前数据中心，如果没有设置返回null
+   *
+   * @return 当前数据中心，如果没有设置返回{@code null}
    */
   String getDataCenter();
 
   /**
-   * @return whether data center is set or not
+   * 数据中心是否设置
+   *
+   * @return true, 数据中心已经设置，否则，false
    */
   boolean isDataCenterSet();
 
   /**
-   * Initialize server provider with the specified input stream
+   * 使用指定的输入流初始化服务器提供程序
    *
-   * @throws IOException
+   * @param in 指定的输入流
+   * @throws IOException 读写数据出现异常，抛出.
    */
   void initialize(InputStream in) throws IOException;
 }

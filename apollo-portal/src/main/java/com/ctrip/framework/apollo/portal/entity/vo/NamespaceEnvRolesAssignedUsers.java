@@ -1,15 +1,17 @@
 package com.ctrip.framework.apollo.portal.entity.vo;
 
-import com.ctrip.framework.apollo.portal.environment.Env;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+/**
+ * 名称空间环境分配的角色用户
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class NamespaceEnvRolesAssignedUsers extends NamespaceRolesAssignedUsers {
-    private String env;
 
-    public Env getEnv() {
-        return Env.valueOf(env);
-    }
-
-    public void setEnv(Env env) {
-        this.env = env.toString();
-    }
+  /**
+   * 环境
+   */
+  private String env;
 }

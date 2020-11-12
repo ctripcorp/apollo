@@ -2,14 +2,23 @@ package com.ctrip.framework.apollo.portal.entity.model;
 
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
-
+import java.util.List;
+import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-
+/**
+ * 名称空间同步 Model
+ */
+@Data
 public class NamespaceSyncModel implements Verifiable {
 
+  /**
+   * 同步至名称空间的信息
+   */
   private List<NamespaceIdentifier> syncToNamespaces;
+  /**
+   * 同步的配置项列表
+   */
   private List<ItemDTO> syncItems;
 
   @Override
@@ -23,21 +32,5 @@ public class NamespaceSyncModel implements Verifiable {
       }
     }
     return false;
-  }
-
-  public List<NamespaceIdentifier> getSyncToNamespaces() {
-    return syncToNamespaces;
-  }
-
-  public void setSyncToNamespaces(List<NamespaceIdentifier> syncToNamespaces) {
-    this.syncToNamespaces = syncToNamespaces;
-  }
-
-  public List<ItemDTO> getSyncItems() {
-    return syncItems;
-  }
-
-  public void setSyncItems(List<ItemDTO> syncItems) {
-    this.syncItems = syncItems;
   }
 }

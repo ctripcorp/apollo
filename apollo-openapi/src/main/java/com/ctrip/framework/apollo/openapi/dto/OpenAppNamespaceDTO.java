@@ -1,80 +1,54 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 开发的应用名称空间 Dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class OpenAppNamespaceDTO extends BaseDTO {
-    private String name;
 
-    private String appId;
+  /**
+   * 名称空间名称
+   */
+  private String name;
+  /**
+   * 应用Id
+   */
+  private String appId;
+  /**
+   * namespace的格式（后缀）类型
+   */
+  private String format;
+  /**
+   * 名称空间是否为公共
+   */
+  private Boolean isPublic;
 
-    private String format;
+  /**
+   * 是否为公共命名空间名称附加命名空间前缀
+   */
+  private Boolean appendNamespacePrefix = true;
+  /**
+   * 备注
+   */
+  private String comment;
 
-    private boolean isPublic;
-
-    // whether to append namespace prefix for public namespace name
-    private boolean appendNamespacePrefix = true;
-
-    private String comment;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public boolean isPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
-    }
-
-    public boolean isAppendNamespacePrefix() {
-        return appendNamespacePrefix;
-    }
-
-    public void setAppendNamespacePrefix(boolean appendNamespacePrefix) {
-        this.appendNamespacePrefix = appendNamespacePrefix;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    @Override
-    public String toString() {
-        return "OpenAppNamespaceDTO{" +
-            "name='" + name + '\'' +
-            ", appId='" + appId + '\'' +
-            ", format='" + format + '\'' +
-            ", isPublic=" + isPublic +
-            ", appendNamespacePrefix=" + appendNamespacePrefix +
-            ", comment='" + comment + '\'' +
-            ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
-            ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
-            ", dataChangeCreatedTime=" + dataChangeCreatedTime +
-            ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
-            '}';
-    }
+  @Override
+  public String toString() {
+    return "OpenAppNamespaceDTO{" +
+        "name='" + name + '\'' +
+        ", appId='" + appId + '\'' +
+        ", format='" + format + '\'' +
+        ", isPublic=" + isPublic +
+        ", appendNamespacePrefix=" + appendNamespacePrefix +
+        ", comment='" + comment + '\'' +
+        ", dataChangeCreatedBy='" + dataChangeCreatedBy + '\'' +
+        ", dataChangeLastModifiedBy='" + dataChangeLastModifiedBy + '\'' +
+        ", dataChangeCreatedTime=" + dataChangeCreatedTime +
+        ", dataChangeLastModifiedTime=" + dataChangeLastModifiedTime +
+        '}';
+  }
 }

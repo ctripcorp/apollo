@@ -23,7 +23,7 @@ public class AnnotatedBean {
    * <br />
    * jsonBeanProperty=[{"someString":"hello","someInt":100},{"someString":"world!","someInt":200}]
    */
-  @ApolloJsonValue("${jsonBeanProperty:[]}")
+  @ApolloJsonValue("${jsonBeanProperty:[{'someString':'hello','someInt':100},{'someString':'world!','someInt':200}]}")
   private List<JsonBean> anotherJsonBeans;
 
   @Value("${batch:100}")
@@ -43,7 +43,7 @@ public class AnnotatedBean {
    * <br />
    * jsonBeanProperty=[{"someString":"hello","someInt":100},{"someString":"world!","someInt":200}]
    */
-  @ApolloJsonValue("${jsonBeanProperty:[]}")
+  @ApolloJsonValue("${jsonBeanProperty:[{'someString':'hello','someInt':100},{'someString':'world!','someInt':200}]}}")
   public void setJsonBeans(List<JsonBean> jsonBeans) {
     logger.info("updating json beans, old value: {}, new value: {}", this.jsonBeans, jsonBeans);
     this.jsonBeans = jsonBeans;

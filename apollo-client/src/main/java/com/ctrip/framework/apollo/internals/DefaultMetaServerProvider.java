@@ -3,43 +3,59 @@ package com.ctrip.framework.apollo.internals;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.foundation.Foundation;
-import com.google.common.base.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 默认的元服务器提供者
+ */
+@Slf4j
 public class DefaultMetaServerProvider implements MetaServerProvider {
 
+  /**
+   * 排序值.
+   */
   public static final int ORDER = 0;
-  private static final Logger logger = LoggerFactory.getLogger(DefaultMetaServerProvider.class);
-
+  /**
+   * 元服务器地址.
+   */
   private final String metaServerAddress;
 
+  /**
+   * 初始化默认的元服务器提供者
+   */
   public DefaultMetaServerProvider() {
     metaServerAddress = initMetaServerAddress();
   }
 
+  /**
+   * 元服务器初始化
+   *
+   * @return 元服务器地址
+   */
   private String initMetaServerAddress() {
-    // 1. Get from System Property
+    // 1. 从系统属性中获取
     String metaAddress = System.getProperty(ConfigConsts.APOLLO_META_KEY);
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      // 2. Get from OS environment variable, which could not contain dot and is normally in UPPER case
+    if (StringUtils.isBlank(metaAddress)) {
+      // 2. 从操作系统环境变量获取，该变量不能包含点且通常为大写
       metaAddress = System.getenv("APOLLO_META");
     }
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      // 3. Get from server.properties
+    if (StringUtils.isBlank(metaAddress)) {
+      // 3.从server.properties获取
       metaAddress = Foundation.server().getProperty(ConfigConsts.APOLLO_META_KEY, null);
     }
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      // 4. Get from app.properties
+    if (StringUtils.isBlank(metaAddress)) {
+      // 4. 从app.properties获取
       metaAddress = Foundation.app().getProperty(ConfigConsts.APOLLO_META_KEY, null);
     }
 
-    if (Strings.isNullOrEmpty(metaAddress)) {
-      logger.warn("Could not find meta server address, because it is not available in neither (1) JVM system property 'apollo.meta', (2) OS env variable 'APOLLO_META' (3) property 'apollo.meta' from server.properties nor (4) property 'apollo.meta' from app.properties");
+    if (StringUtils.isBlank(metaAddress)) {
+      log.warn(
+          "Could not find meta server address, because it is not available in neither (1) JVM system property 'apollo.meta', (2) OS env variable 'APOLLO_META' (3) property 'apollo.meta' from server.properties nor (4) property 'apollo.meta' from app.properties");
     } else {
       metaAddress = metaAddress.trim();
-      logger.info("Located meta services from apollo.meta configuration: {}!", metaAddress);
+      log.info("Located meta services from apollo.meta configuration: {}!", metaAddress);
     }
 
     return metaAddress;
@@ -47,7 +63,7 @@ public class DefaultMetaServerProvider implements MetaServerProvider {
 
   @Override
   public String getMetaServerAddress(Env targetEnv) {
-    //for default meta server provider, we don't care the actual environment
+    // 对于默认的元服务器供应器，不关心实际的环境
     return metaServerAddress;
   }
 

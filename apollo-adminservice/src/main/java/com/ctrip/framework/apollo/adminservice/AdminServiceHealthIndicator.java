@@ -6,6 +6,9 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * 系统服务的自定义健康指示器
+ */
 @Component
 public class AdminServiceHealthIndicator implements HealthIndicator {
 
@@ -17,10 +20,14 @@ public class AdminServiceHealthIndicator implements HealthIndicator {
 
   @Override
   public Health health() {
+    // 自定义健康检查逻辑
     check();
     return Health.up().build();
   }
 
+  /**
+   * 检查应用是否存在，不存在会抛出空指针
+   */
   private void check() {
     PageRequest pageable = PageRequest.of(0, 1);
     appService.findAll(pageable);

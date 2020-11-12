@@ -1,78 +1,44 @@
 package com.ctrip.framework.apollo.openapi.dto;
 
 import java.util.Map;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+/**
+ * 开发的发布信息 Dto
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class OpenReleaseDTO extends BaseDTO {
 
+  /**
+   * 主键id
+   */
   private long id;
-
+  /**
+   * 应用id
+   */
   private String appId;
-
+  /**
+   * 集群名称
+   */
   private String clusterName;
-
+  /**
+   * 名称空间名称
+   */
   private String namespaceName;
-
+  /**
+   * 发布名字
+   */
   private String name;
-
+  /**
+   * 发布配置
+   */
   private Map<String, String> configurations;
-
+  /**
+   * 发布说明
+   */
   private String comment;
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public Map<String, String> getConfigurations() {
-    return configurations;
-  }
-
-  public void setConfigurations(Map<String, String> configurations) {
-    this.configurations = configurations;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 
   @Override
   public String toString() {

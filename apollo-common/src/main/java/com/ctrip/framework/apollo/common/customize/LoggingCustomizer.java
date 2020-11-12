@@ -1,25 +1,27 @@
 package com.ctrip.framework.apollo.common.customize;
 
-import com.google.common.base.Strings;
-
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.foundation.Foundation;
-
-import org.slf4j.Logger;
+import com.google.common.base.Strings;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Appender;
-
 /**
- * clogging config.only used in ctrip
+ * clogging-agent 配置.仅在ctrip使用
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Slf4j
 public abstract class LoggingCustomizer implements InitializingBean {
-  private static final Logger logger = LoggerFactory.getLogger(LoggingCustomizer.class);
+
+  /**
+   * cLogging追加器类全路径
+   */
   private static final String cLoggingAppenderClass =
       "com.ctrip.framework.clogging.agent.appender.CLoggingAppender";
   private static boolean cLoggingAppenderPresent =
@@ -34,24 +36,31 @@ public abstract class LoggingCustomizer implements InitializingBean {
     try {
       tryConfigCLogging();
     } catch (Throwable ex) {
-      logger.error("Config CLogging failed", ex);
+      log.error("Config CLogging failed", ex);
       Tracer.logError(ex);
     }
 
   }
 
+  /**
+   * 初始化配置
+   *
+   * @throws Exception
+   */
   private void tryConfigCLogging() throws Exception {
+    //应用id
     String appId = Foundation.app().getAppId();
     if (Strings.isNullOrEmpty(appId)) {
-      logger.warn("App id is null or empty!");
+      log.warn("App id is null or empty!");
       return;
     }
 
-
     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     Class clazz = Class.forName(cLoggingAppenderClass);
+    //追加器
     Appender cLoggingAppender = (Appender) clazz.newInstance();
 
+    // 通过反射构建追加器
     ReflectionUtils.findMethod(clazz, "setAppId", String.class).invoke(cLoggingAppender, appId);
     ReflectionUtils.findMethod(clazz, "setServerIp", String.class)
         .invoke(cLoggingAppender, cloggingUrl());
@@ -69,14 +78,16 @@ public abstract class LoggingCustomizer implements InitializingBean {
   }
 
   /**
-   * clogging server url
-   * @return
+   * clogging 服务的Url
+   *
+   * @return clogging 服务的Url
    */
   protected abstract String cloggingUrl();
 
   /**
-   * clogging server port
-   * @return
+   * clogging 服务的端口
+   *
+   * @return clogging 服务的端口
    */
   protected abstract String cloggingPort();
 

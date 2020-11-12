@@ -5,6 +5,8 @@ import com.ctrip.framework.apollo.biz.entity.Namespace;
 import com.ctrip.framework.apollo.common.utils.UniqueKeyGenerator;
 
 /**
+ * 发布id生成器
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ReleaseKeyGenerator extends UniqueKeyGenerator {

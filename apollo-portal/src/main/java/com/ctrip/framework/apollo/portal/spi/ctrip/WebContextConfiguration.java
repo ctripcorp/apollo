@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * Web上下文配置
+ */
 @Configuration
 @Profile("ctrip")
 public class WebContextConfiguration {
@@ -17,11 +20,17 @@ public class WebContextConfiguration {
   private final PortalConfig portalConfig;
   private final UserInfoHolder userInfoHolder;
 
-  public WebContextConfiguration(final PortalConfig portalConfig, final UserInfoHolder userInfoHolder) {
+  public WebContextConfiguration(final PortalConfig portalConfig,
+      final UserInfoHolder userInfoHolder) {
     this.portalConfig = portalConfig;
     this.userInfoHolder = userInfoHolder;
   }
 
+  /**
+   * 注入ServletContextInitializer Bean
+   *
+   * @return ServletContextInitializer
+   */
   @Bean
   public ServletContextInitializer servletContextInitializer() {
     return servletContext -> {
@@ -38,6 +47,11 @@ public class WebContextConfiguration {
     };
   }
 
+  /**
+   * 注入FilterRegistrationBean Bean
+   *
+   * @return ServletContextInitializer bean
+   */
   @Bean
   public FilterRegistrationBean userAccessFilter() {
     FilterRegistrationBean filter = new FilterRegistrationBean();

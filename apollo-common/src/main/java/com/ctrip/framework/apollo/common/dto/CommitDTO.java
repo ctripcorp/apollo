@@ -1,54 +1,37 @@
 package com.ctrip.framework.apollo.common.dto;
 
-public class CommitDTO extends BaseDTO{
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+/**
+ * 提交记录 dto
+ *
+ * @author Jason Song(song_s@ctrip.com)
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class CommitDTO extends BaseDTO {
+
+  /**
+   * 修改变更集
+   */
   private String changeSets;
-
+  /**
+   * AppId
+   */
   private String appId;
-
+  /**
+   * 集群的名称
+   */
   private String clusterName;
-
+  /**
+   * 命名空间的名称
+   */
   private String namespaceName;
-
+  /**
+   * 发布说明
+   */
   private String comment;
 
-  public String getChangeSets() {
-    return changeSets;
-  }
 
-  public void setChangeSets(String changeSets) {
-    this.changeSets = changeSets;
-  }
-
-  public String getAppId() {
-    return appId;
-  }
-
-  public void setAppId(String appId) {
-    this.appId = appId;
-  }
-
-  public String getClusterName() {
-    return clusterName;
-  }
-
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
-
-  public String getNamespaceName() {
-    return namespaceName;
-  }
-
-  public void setNamespaceName(String namespaceName) {
-    this.namespaceName = namespaceName;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 }

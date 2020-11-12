@@ -11,11 +11,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
-
+/**
+ * restTemplate工厂
+ */
 @Component
 public class RestTemplateFactory implements FactoryBean<RestTemplate>, InitializingBean {
 
+  /**
+   * http消息转换类
+   */
   @Autowired
   private HttpMessageConverters httpMessageConverters;
   @Autowired
@@ -23,21 +27,40 @@ public class RestTemplateFactory implements FactoryBean<RestTemplate>, Initializ
 
   private RestTemplate restTemplate;
 
+  /**
+   * 获取对象实例
+   *
+   * @return RestTemplate对象实例
+   */
+  @Override
   public RestTemplate getObject() {
     return restTemplate;
   }
 
+  /**
+   * 获取Bean的类型
+   *
+   * @return Bean的类型
+   */
+  @Override
   public Class<RestTemplate> getObjectType() {
     return RestTemplate.class;
   }
 
+  /**
+   * 是否单例
+   *
+   * @return true是单例，false是非单例
+   */
+  @Override
   public boolean isSingleton() {
     return true;
   }
 
-  public void afterPropertiesSet() throws UnsupportedEncodingException {
+  @Override
+  public void afterPropertiesSet() {
+    //设置restTemplate的属性
     CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
     restTemplate = new RestTemplate(httpMessageConverters.getConverters());
     HttpComponentsClientHttpRequestFactory requestFactory =
         new HttpComponentsClientHttpRequestFactory(httpClient);

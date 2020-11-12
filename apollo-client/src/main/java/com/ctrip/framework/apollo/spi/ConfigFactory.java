@@ -5,21 +5,25 @@ import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 
 /**
+ * 配置工厂
+ *
  * @author Jason Song(song_s@ctrip.com)
  */
 public interface ConfigFactory {
+
   /**
-   * Create the config instance for the namespace.
+   * 为名称空间创建配置实例
    *
-   * @param namespace the namespace
-   * @return the newly created config instance
+   * @param namespace 指定的名称空间
+   * @return 新创建的配置实例
    */
   Config create(String namespace);
 
   /**
-   * Create the config file instance for the namespace
-   * @param namespace the namespace
-   * @return the newly created config file instance
+   * 为名称空间创建配置文件实例
+   *
+   * @param namespace 指定的名称空间
+   * @return 新创建的配置文件实例
    */
   ConfigFile createConfigFile(String namespace, ConfigFileFormat configFileFormat);
 }
