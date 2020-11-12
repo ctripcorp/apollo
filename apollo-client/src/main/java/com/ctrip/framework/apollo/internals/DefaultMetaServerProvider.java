@@ -3,9 +3,9 @@ package com.ctrip.framework.apollo.internals;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.foundation.Foundation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 默认的元服务器提供者

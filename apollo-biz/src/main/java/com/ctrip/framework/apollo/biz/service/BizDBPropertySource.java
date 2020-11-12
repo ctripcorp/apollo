@@ -9,8 +9,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +18,9 @@ import org.springframework.stereotype.Component;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
+@Slf4j
 @Component
 public class BizDBPropertySource extends RefreshablePropertySource {
-
-  private static final Logger log = LoggerFactory.getLogger(BizDBPropertySource.class);
 
   @Autowired
   private ServerConfigRepository serverConfigRepository;

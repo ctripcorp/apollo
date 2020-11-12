@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.configservice.filter;
 
 import com.ctrip.framework.apollo.configservice.util.AccessKeyUtil;
 import com.ctrip.framework.apollo.core.signature.Signature;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.google.common.net.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 
 /**
  * 客户端认证过滤器
@@ -71,7 +71,7 @@ public class ClientAuthenticationFilter implements Filter {
         return;
       }
 
-        // 检查签名
+      // 检查签名
       String uri = request.getRequestURI();
       String query = request.getQueryString();
       if (!checkAuthorization(authorization, availableSecrets, timestamp, uri, query)) {
