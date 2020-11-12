@@ -80,7 +80,7 @@ public class ClientAuthenticationFilterTest {
 
     clientAuthenticationFilter.doFilter(request, response, filterChain);
 
-    verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "RequestTimeTooSkewed");
+    verify(response).sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, "RequestTimeTooSkewed");
     verify(filterChain, never()).doFilter(request, response);
   }
 
