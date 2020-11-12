@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.configservice.filter;
 
 import com.ctrip.framework.apollo.configservice.util.AccessKeyUtil;
 import com.ctrip.framework.apollo.core.signature.Signature;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.google.common.net.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +51,6 @@ public class ClientAuthenticationFilter implements Filter {
 
     // 从请求中提取的应用id
     String appId = accessKeyUtil.extractAppIdFromRequest(request);
-    // 应用id不能为空
     if (StringUtils.isBlank(appId)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "InvalidAppId");
       return;

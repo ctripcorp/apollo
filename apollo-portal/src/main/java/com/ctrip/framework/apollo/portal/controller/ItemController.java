@@ -52,7 +52,7 @@ public class ItemController {
   private final PermissionValidator permissionValidator;
 
   public ItemController(final ItemService configService, final UserInfoHolder userInfoHolder,
-      final PermissionValidator permissionValidator, final NamespaceService namespaceService) {
+                        final PermissionValidator permissionValidator, final NamespaceService namespaceService) {
     this.configService = configService;
     this.userInfoHolder = userInfoHolder;
     this.permissionValidator = permissionValidator;
