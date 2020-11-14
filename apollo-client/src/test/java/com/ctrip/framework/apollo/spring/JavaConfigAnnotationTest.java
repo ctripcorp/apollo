@@ -16,6 +16,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -109,8 +110,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
   @Test
   public void testEnableApolloConfigResolveExpressionSimple() {
-    String someKey = "someKey";
-    String someValue = "someValue";
+    String someKey = "someKey-2020-11-14-1750";
+    String someValue = UUID.randomUUID().toString();
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
     Config xxxConfig = mock(Config.class);
     when(xxxConfig.getProperty(eq(someKey), anyString())).thenReturn(someValue);
@@ -127,8 +128,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @Test
   public void testEnableApolloConfigResolveExpressionFromSystemProperty() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
-    final String someKey = "someKey";
-    final String someValue = "someValue";
+    final String someKey = "someKey-2020-11-14-1750";
+    final String someValue = UUID.randomUUID().toString();
 
     final String propertyKey = "simple.namespace";
     final String resolvedNamespaceName = "yyy";
@@ -627,7 +628,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @EnableApolloConfig(value = {ConfigConsts.NAMESPACE_APPLICATION, "${simple.namespace:xxx}"})
   static class TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration {
 
-    @Value("${someKey}")
+    @Value("${someKey-2020-11-14-1750}")
     private String someKey;
 
     public String getSomeKey() {
