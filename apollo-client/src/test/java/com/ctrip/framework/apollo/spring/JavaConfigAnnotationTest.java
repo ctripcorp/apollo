@@ -15,11 +15,12 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.BeanCreationException;
@@ -31,7 +32,6 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
@@ -52,6 +52,18 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
   private static final String APPLICATION_YAML_NAMESPACE = "application.yaml";
 
+  /**
+   * for reset system property after test case finished.
+   *
+   * @see #after()
+   */
+  private static final Set<String> originSystemPropertiesKeys;
+
+  static {
+    originSystemPropertiesKeys = Collections
+        .unmodifiableSet(System.getProperties().stringPropertyNames());
+  }
+
   private static <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
     return context.getBean(beanClass);
@@ -59,6 +71,21 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
   private static <T> T getSimpleBean(Class<? extends T> clazz) {
     return getBean(clazz, clazz);
+  }
+
+  @After
+  public void after() {
+    // reset system property
+    Set<String> keysNeedToClear = new HashSet<>();
+    for (String key : System.getProperties().stringPropertyNames()) {
+      if (!originSystemPropertiesKeys.contains(key)) {
+        keysNeedToClear.add(key);
+      }
+    }
+    // clear them
+    for (String key : keysNeedToClear) {
+      System.clearProperty(key);
+    }
   }
 
   @Test
@@ -134,7 +161,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
     final String propertyKey = "simple.namespace";
     final String resolvedNamespaceName = "yyy";
-    // set property to system, remember to clear it after the testing
     System.setProperty(propertyKey, resolvedNamespaceName);
 
     Config yyyConfig = mock(Config.class);
@@ -147,9 +173,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     // check
     assertEquals(someValue, configuration.getSomeKey());
     verify(yyyConfig, times(1)).getProperty(eq(someKey), anyString());
-
-    // remember to clear property after the testing
-    System.clearProperty(propertyKey);
   }
 
   @Test(expected = IllegalArgumentException.class)
