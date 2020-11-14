@@ -52,18 +52,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
   private static final String APPLICATION_YAML_NAMESPACE = "application.yaml";
 
-  /**
-   * for reset system property after test case finished.
-   *
-   * @see #after()
-   */
-  private static final Set<String> originSystemPropertiesKeys;
-
-  static {
-    originSystemPropertiesKeys = Collections
-        .unmodifiableSet(System.getProperties().stringPropertyNames());
-  }
-
   private static <T> T getBean(Class<T> beanClass, Class<?>... annotatedClasses) {
     AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(annotatedClasses);
     return context.getBean(beanClass);
@@ -71,21 +59,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
   private static <T> T getSimpleBean(Class<? extends T> clazz) {
     return getBean(clazz, clazz);
-  }
-
-  @After
-  public void after() {
-    // reset system property
-    Set<String> keysNeedToClear = new HashSet<>();
-    for (String key : System.getProperties().stringPropertyNames()) {
-      if (!originSystemPropertiesKeys.contains(key)) {
-        keysNeedToClear.add(key);
-      }
-    }
-    // clear them
-    for (String key : keysNeedToClear) {
-      System.clearProperty(key);
-    }
   }
 
   @Test
@@ -173,6 +146,23 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     // check
     assertEquals(someValue, configuration.getSomeKey());
     verify(yyyConfig, times(1)).getProperty(eq(someKey), anyString());
+
+    System.clearProperty(propertyKey);
+  }
+
+  @Test(expected = BeanCreationException.class)
+  public void testEnableApolloConfigUnresolvedValueInField() {
+    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
+
+    final String resolvedNamespaceName = "yyy";
+    final String SystemPropertyKey = "simple.namespace";
+    System.setProperty(SystemPropertyKey, resolvedNamespaceName);
+    Config yyyConfig = mock(Config.class);
+    mockConfig(resolvedNamespaceName, yyyConfig);
+
+    getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
+
+    System.clearProperty(SystemPropertyKey);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -412,13 +402,17 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationConfig);
 
     final String namespaceName = "magicRedis";
-    System.setProperty("redis.namespace", namespaceName);
+    final String systemPropertyKey = "redis.namespace";
+    System.setProperty(systemPropertyKey, namespaceName);
     Config redisConfig = mock(Config.class);
     mockConfig(namespaceName, redisConfig);
-    getSimpleBean(TestApolloConfigChangeListenerResolveExpressionFromSystemPropertyConfiguration.class);
+    getSimpleBean(
+        TestApolloConfigChangeListenerResolveExpressionFromSystemPropertyConfiguration.class);
 
     // if config was used, it must be invoked on method addChangeListener 1 time
     verify(redisConfig, times(1)).addChangeListener(any(ConfigChangeListener.class));
+
+    System.clearProperty(systemPropertyKey);
   }
 
   /**
@@ -483,8 +477,10 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     final String namespaceName = "xxx6";
     final String yamlNamespaceName = "yyy8.yml";
 
-    System.setProperty("from.system.namespace", namespaceName);
-    System.setProperty("from.system.yaml.namespace", yamlNamespaceName);
+    final String systemPropertyKey = "from.system.namespace";
+    final String systemPropertyKeyYaml = "from.system.yaml.namespace";
+    System.setProperty(systemPropertyKey, namespaceName);
+    System.setProperty(systemPropertyKeyYaml, yamlNamespaceName);
     Config config = mock(Config.class);
     Config yamlConfig = mock(Config.class);
     mockConfig(namespaceName, config);
@@ -493,6 +489,9 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
         TestApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
     assertEquals(config, configuration.getConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
+
+    System.clearProperty(systemPropertyKey);
+    System.clearProperty(systemPropertyKeyYaml);
   }
 
   @Test(expected = BeanCreationException.class)
