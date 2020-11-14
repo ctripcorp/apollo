@@ -15,10 +15,8 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
@@ -153,16 +151,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @Test(expected = BeanCreationException.class)
   public void testEnableApolloConfigUnresolvedValueInField() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
-
-    final String resolvedNamespaceName = "yyy";
-    final String SystemPropertyKey = "simple.namespace";
-    System.setProperty(SystemPropertyKey, resolvedNamespaceName);
-    Config yyyConfig = mock(Config.class);
-    mockConfig(resolvedNamespaceName, yyyConfig);
-
+    mockConfig("xxx", mock(Config.class));
     getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
-
-    System.clearProperty(SystemPropertyKey);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -461,13 +451,13 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @Test
   public void testApolloConfigResolveExpressionDefault() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
-    Config xxx = mock(Config.class);
+    Config defaultConfig = mock(Config.class);
     Config yamlConfig = mock(Config.class);
-    mockConfig("xxx", xxx);
+    mockConfig("default-2020-11-14-1733", defaultConfig);
     mockConfig(APPLICATION_YAML_NAMESPACE, yamlConfig);
     TestApolloConfigResolveExpressionDefaultConfiguration configuration = getSimpleBean(
         TestApolloConfigResolveExpressionDefaultConfiguration.class);
-    assertEquals(xxx, configuration.getXxx());
+    assertEquals(defaultConfig, configuration.getDefaultConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
   }
 
@@ -525,14 +515,14 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @EnableApolloConfig
   protected static class TestApolloConfigResolveExpressionDefaultConfiguration {
 
-    @ApolloConfig(value = "${simple.namespace:xxx}")
-    private Config xxx;
+    @ApolloConfig(value = "${simple.namespace:default-2020-11-14-1733}")
+    private Config defaultConfig;
 
     @ApolloConfig(value = "${simple.yaml.namespace:" + APPLICATION_YAML_NAMESPACE + "}")
     private Config yamlConfig;
 
-    public Config getXxx() {
-      return xxx;
+    public Config getDefaultConfig() {
+      return defaultConfig;
     }
 
     public Config getYamlConfig() {
