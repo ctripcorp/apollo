@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,11 +36,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -105,12 +109,21 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertEquals(applicationConfig, bean.getSomeConfig());
   }
 
-
   @Test
   public void testEnableApolloConfigResolveExpressionSimple() {
+    String someKey = "someKey";
+    String someValue = "someValue";
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
-    mockConfig("xxx", mock(Config.class));
-    getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
+    Config xxxConfig = mock(Config.class);
+    when(xxxConfig.getProperty(eq(someKey), anyString())).thenReturn(someValue);
+    mockConfig("xxx", xxxConfig);
+
+    TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration configuration =
+        getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
+
+    // check
+    assertEquals(someValue, configuration.getSomeKey());
+    verify(xxxConfig, times(1)).getProperty(eq(someKey), anyString());
   }
 
   @Test
@@ -584,8 +597,14 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
   @Configuration
   @EnableApolloConfig(value = {ConfigConsts.NAMESPACE_APPLICATION, "${simple.namespace:xxx}"})
-  protected static class TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration {
+  static class TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration {
 
+    @Value("${someKey}")
+    private String someKey;
+
+    public String getSomeKey() {
+      return this.someKey;
+    }
   }
 
   @Configuration
