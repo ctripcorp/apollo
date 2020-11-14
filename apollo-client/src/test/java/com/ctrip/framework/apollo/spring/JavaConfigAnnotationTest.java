@@ -129,11 +129,27 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @Test
   public void testEnableApolloConfigResolveExpressionFromSystemProperty() {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, mock(Config.class));
+    final String someKey = "someKey";
+    final String someValue = "someValue";
 
+    final String propertyKey = "simple.namespace";
     final String resolvedNamespaceName = "yyy";
-    System.setProperty("from.system.property", resolvedNamespaceName);
-    mockConfig(resolvedNamespaceName, mock(Config.class));
-    getSimpleBean(TestEnableApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
+    // set property to system, remember to clear it after the testing
+    System.setProperty(propertyKey, resolvedNamespaceName);
+
+    Config yyyConfig = mock(Config.class);
+    when(yyyConfig.getProperty(eq(someKey), anyString())).thenReturn(someValue);
+    mockConfig(resolvedNamespaceName, yyyConfig);
+
+    TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration configuration =
+        getSimpleBean(TestEnableApolloConfigResolveExpressionWithDefaultValueConfiguration.class);
+
+    // check
+    assertEquals(someValue, configuration.getSomeKey());
+    verify(yyyConfig, times(1)).getProperty(eq(someKey), anyString());
+
+    // remember to clear property after the testing
+    System.clearProperty(propertyKey);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -605,12 +621,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     public String getSomeKey() {
       return this.someKey;
     }
-  }
-
-  @Configuration
-  @EnableApolloConfig(value = {ConfigConsts.NAMESPACE_APPLICATION, "${from.system.property}"})
-  static class TestEnableApolloConfigResolveExpressionFromSystemPropertyConfiguration {
-
   }
 
   @Configuration
