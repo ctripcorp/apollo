@@ -377,7 +377,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     // no using
     verify(ignoreConfig, never()).addChangeListener(any(ConfigChangeListener.class));
 
-    // strange, it invoke 2 times
+    // one invocation for spring value auto update and another for the @ApolloConfigChangeListener annotation
     verify(applicationConfig, times(2)).addChangeListener(any(ConfigChangeListener.class));
   }
 
