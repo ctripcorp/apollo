@@ -34,6 +34,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
@@ -444,8 +445,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(APPLICATION_YAML_NAMESPACE, yamlConfig);
     TestApolloConfigResolveExpressionDefaultConfiguration configuration = getSimpleBean(
         TestApolloConfigResolveExpressionDefaultConfiguration.class);
-    assertEquals(defaultConfig, configuration.getDefaultConfig());
-    assertEquals(yamlConfig, configuration.getYamlConfig());
+    assertSame(defaultConfig, configuration.getDefaultConfig());
+    assertSame(yamlConfig, configuration.getYamlConfig());
   }
 
   @Test
@@ -462,8 +463,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(yamlNamespaceName, yamlConfig);
     TestApolloConfigResolveExpressionFromSystemPropertyConfiguration configuration = getSimpleBean(
         TestApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
-    assertEquals(config, configuration.getConfig());
-    assertEquals(yamlConfig, configuration.getYamlConfig());
+    assertSame(config, configuration.getConfig());
+    assertSame(yamlConfig, configuration.getYamlConfig());
   }
 
   @Test(expected = BeanCreationException.class)
@@ -490,8 +491,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(yamlNamespaceName, yamlConfig);
     TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication configuration = getSimpleBean(
         TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication.class);
-    assertEquals(config, configuration.getConfig());
-    assertEquals(yamlConfig, configuration.getYamlConfig());
+    assertSame(config, configuration.getConfig());
+    assertSame(yamlConfig, configuration.getYamlConfig());
   }
 
   protected static class SystemPropertyKeyConstants {
