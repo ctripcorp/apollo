@@ -401,9 +401,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
    */
   @Test
   public void testApolloConfigChangeListenerResolveExpressionFromApplicationNamespace() {
-    Config applicationConfig = mock(Config.class);
-    mockConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationConfig);
-
     final String namespaceKey = "mysql.namespace";
     final String namespaceName = "magicMysqlNamespaceApplication";
 
