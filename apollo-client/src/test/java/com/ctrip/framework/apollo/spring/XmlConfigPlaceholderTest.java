@@ -143,7 +143,7 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
     this.prepare(someTimeout, anotherTimeout, someBatch);
 
-    check("spring/config.namespace.resolve.to.default.xml", anotherTimeout, someBatch);
+    check("spring/config.namespace.placeholder.with.default.value.xml", anotherTimeout, someBatch);
   }
 
   @Test
@@ -155,7 +155,7 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
     this.prepare(someTimeout, anotherTimeout, someBatch);
 
-    check("spring/config.namespace.resolve.from.system.property.xml", anotherTimeout, someBatch);
+    check("spring/config.namespace.placeholder.xml", anotherTimeout, someBatch);
   }
 
   @Test(expected = FatalBeanException.class)
@@ -165,7 +165,7 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
     int someBatch = 2000;
     this.prepare(someTimeout, anotherTimeout, someBatch);
 
-    check("spring/config.namespace.unresolved.xml", anotherTimeout, someBatch);
+    check("spring/config.namespace.placeholder.xml", anotherTimeout, someBatch);
   }
 
   private static void check(String xmlLocation, int expectedTimeout, int expectedBatch) {
