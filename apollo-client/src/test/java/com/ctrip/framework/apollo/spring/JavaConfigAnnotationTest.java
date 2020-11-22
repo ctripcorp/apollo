@@ -62,11 +62,9 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     return getBean(clazz, clazz);
   }
 
-  /**
-   * forbidden to override the method {@link super#tearDown()}.
-   */
+  @Override
   @After
-  public void javaConfigAnnotationTestTearDown() {
+  public void tearDown() throws Exception {
     // clear the system properties
     System.clearProperty(SystemPropertyKeyConstants.SIMPLE_NAMESPACE);
     System.clearProperty(SystemPropertyKeyConstants.REDIS_NAMESPACE);
@@ -74,6 +72,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     System.clearProperty(SystemPropertyKeyConstants.FROM_SYSTEM_YAML_NAMESPACE);
     System.clearProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY);
     System.clearProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY_YAML);
+    super.tearDown();
   }
 
   @Test
