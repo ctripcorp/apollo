@@ -168,21 +168,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     getSimpleBean(TestEnableApolloConfigUnresolvableConfiguration.class);
   }
 
-  /**
-   * Could not resolve placeholder.
-   * Unfortunately, when use {@link EnableApolloConfig},
-   * only key in {@link System#getenv(String)} or {@link System#getProperty(String)} can be resolved.
-   */
-  @Test(expected = IllegalArgumentException.class)
-  public void testEnableApolloConfigResolveFromNamespaceApplication() {
-    {
-      Properties properties = new Properties();
-      properties.setProperty("from.namespace.application.key", "abc");
-      this.prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
-    }
-    getSimpleBean(TestEnableApolloConfigResolveFromNamespaceApplicationConfiguration.class);
-  }
-
   @Test
   public void testApolloConfigChangeListener() throws Exception {
     Config applicationConfig = mock(Config.class);
@@ -648,12 +633,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
   @Configuration
   @EnableApolloConfig(value = "${unresolvable.property}")
   static class TestEnableApolloConfigUnresolvableConfiguration {
-
-  }
-
-  @Configuration
-  @EnableApolloConfig(value = "${from.namespace.application.key}")
-  static class TestEnableApolloConfigResolveFromNamespaceApplicationConfiguration {
 
   }
 
