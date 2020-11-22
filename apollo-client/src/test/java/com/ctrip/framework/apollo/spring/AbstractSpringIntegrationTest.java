@@ -15,7 +15,9 @@ import com.google.common.io.CharStreams;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +36,8 @@ import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.internals.ConfigManager;
 import com.google.common.collect.Maps;
+import org.springframework.util.ReflectionUtils.FieldCallback;
+import org.springframework.util.ReflectionUtils.FieldFilter;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -147,6 +151,33 @@ public abstract class AbstractSpringIntegrationTest {
 
   protected static void mockConfigFile(String namespaceNameWithFormat, ConfigFile configFile) {
     CONFIG_FILE_REGISTRY.put(namespaceNameWithFormat, configFile);
+  }
+
+  /**
+   * Clear the system property after each test case. The key is declared in a class's field, and it
+   * should be a static string.
+   */
+  protected static void clearSystemPropertiesDefineWithStaticStringField(Class<?> clazz) {
+    // filter static string
+    FieldFilter isStaticString = new FieldFilter() {
+      @Override
+      public boolean matches(Field field) {
+        int modifiers = field.getModifiers();
+        return Modifier.isStatic(modifiers) && field.getType().isAssignableFrom(String.class);
+      }
+    };
+
+    // clear system property by field's value
+    FieldCallback clearSystemProperty = new FieldCallback() {
+      @Override
+      public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        ReflectionUtils.makeAccessible(field);
+        String systemPropertyKey = (String) field.get(null);
+        System.clearProperty(systemPropertyKey);
+      }
+    };
+
+    ReflectionUtils.doWithFields(clazz, clearSystemProperty, isStaticString);
   }
 
   protected static void doSetUp() {

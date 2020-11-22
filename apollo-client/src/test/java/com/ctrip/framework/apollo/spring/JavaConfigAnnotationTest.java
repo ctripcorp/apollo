@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
@@ -58,6 +59,15 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
   private static <T> T getSimpleBean(Class<? extends T> clazz) {
     return getBean(clazz, clazz);
+  }
+
+  /**
+   * forbidden to override the method {@link super#tearDown()}.
+   */
+  @After
+  public void javaConfigAnnotationTestTearDown() {
+    // clear the system property
+    clearSystemPropertiesDefineWithStaticStringField(SystemPropertyKeyConstants.class);
   }
 
   @Test
@@ -131,9 +141,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     final String someKey = "someKey-2020-11-14-1750";
     final String someValue = UUID.randomUUID().toString();
 
-    final String propertyKey = "simple.namespace";
     final String resolvedNamespaceName = "yyy";
-    System.setProperty(propertyKey, resolvedNamespaceName);
+    System.setProperty(SystemPropertyKeyConstants.SIMPLE_NAMESPACE, resolvedNamespaceName);
 
     Config yyyConfig = mock(Config.class);
     when(yyyConfig.getProperty(eq(someKey), anyString())).thenReturn(someValue);
@@ -145,8 +154,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     // check
     assertEquals(someValue, configuration.getSomeKey());
     verify(yyyConfig, times(1)).getProperty(eq(someKey), anyString());
-
-    System.clearProperty(propertyKey);
   }
 
   @Test(expected = BeanCreationException.class)
@@ -393,8 +400,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     mockConfig(ConfigConsts.NAMESPACE_APPLICATION, applicationConfig);
 
     final String namespaceName = "magicRedis";
-    final String systemPropertyKey = "redis.namespace";
-    System.setProperty(systemPropertyKey, namespaceName);
+    System.setProperty(SystemPropertyKeyConstants.REDIS_NAMESPACE, namespaceName);
     Config redisConfig = mock(Config.class);
     mockConfig(namespaceName, redisConfig);
     getSimpleBean(
@@ -402,8 +408,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
 
     // if config was used, it must be invoked on method addChangeListener 1 time
     verify(redisConfig, times(1)).addChangeListener(any(ConfigChangeListener.class));
-
-    System.clearProperty(systemPropertyKey);
   }
 
   /**
@@ -468,10 +472,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     final String namespaceName = "xxx6";
     final String yamlNamespaceName = "yyy8.yml";
 
-    final String systemPropertyKey = "from.system.namespace";
-    final String systemPropertyKeyYaml = "from.system.yaml.namespace";
-    System.setProperty(systemPropertyKey, namespaceName);
-    System.setProperty(systemPropertyKeyYaml, yamlNamespaceName);
+    System.setProperty(SystemPropertyKeyConstants.FROM_SYSTEM_NAMESPACE, namespaceName);
+    System.setProperty(SystemPropertyKeyConstants.FROM_SYSTEM_YAML_NAMESPACE, yamlNamespaceName);
     Config config = mock(Config.class);
     Config yamlConfig = mock(Config.class);
     mockConfig(namespaceName, config);
@@ -480,9 +482,6 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
         TestApolloConfigResolveExpressionFromSystemPropertyConfiguration.class);
     assertEquals(config, configuration.getConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
-
-    System.clearProperty(systemPropertyKey);
-    System.clearProperty(systemPropertyKeyYaml);
   }
 
   @Test(expected = BeanCreationException.class)
@@ -499,8 +498,8 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     {
       // hide variable scope
       Properties properties = new Properties();
-      properties.setProperty("from.namespace.application.key", namespaceName);
-      properties.setProperty("from.namespace.application.key.yaml", yamlNamespaceName);
+      properties.setProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY, namespaceName);
+      properties.setProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY_YAML, yamlNamespaceName);
       this.prepareConfig(ConfigConsts.NAMESPACE_APPLICATION, properties);
     }
     final Config config = mock(Config.class);
@@ -511,6 +510,16 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
         TestApolloConfigResolveExpressionFromApolloConfigNamespaceApplication.class);
     assertEquals(config, configuration.getConfig());
     assertEquals(yamlConfig, configuration.getYamlConfig());
+  }
+
+  protected static class SystemPropertyKeyConstants {
+
+    static final String SIMPLE_NAMESPACE = "simple.namespace";
+    static final String REDIS_NAMESPACE = "redis.namespace";
+    static final String FROM_SYSTEM_NAMESPACE = "from.system.namespace";
+    static final String FROM_SYSTEM_YAML_NAMESPACE = "from.system.yaml.namespace";
+    static final String FROM_NAMESPACE_APPLICATION_KEY = "from.namespace.application.key";
+    static final String FROM_NAMESPACE_APPLICATION_KEY_YAML = "from.namespace.application.key.yaml";
   }
 
   @EnableApolloConfig
