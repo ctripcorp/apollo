@@ -153,33 +153,6 @@ public abstract class AbstractSpringIntegrationTest {
     CONFIG_FILE_REGISTRY.put(namespaceNameWithFormat, configFile);
   }
 
-  /**
-   * Clear the system property after each test case. The key is declared in a class's field, and it
-   * should be a static string.
-   */
-  protected static void clearSystemPropertiesDefineWithStaticStringField(Class<?> clazz) {
-    // filter static string
-    FieldFilter isStaticString = new FieldFilter() {
-      @Override
-      public boolean matches(Field field) {
-        int modifiers = field.getModifiers();
-        return Modifier.isStatic(modifiers) && field.getType().isAssignableFrom(String.class);
-      }
-    };
-
-    // clear system property by field's value
-    FieldCallback clearSystemProperty = new FieldCallback() {
-      @Override
-      public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-        ReflectionUtils.makeAccessible(field);
-        String systemPropertyKey = (String) field.get(null);
-        System.clearProperty(systemPropertyKey);
-      }
-    };
-
-    ReflectionUtils.doWithFields(clazz, clearSystemProperty, isStaticString);
-  }
-
   protected static void doSetUp() {
     //as ConfigService is singleton, so we must manually clear its container
     ReflectionUtils.invokeMethod(CONFIG_SERVICE_RESET, null);

@@ -67,8 +67,13 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
    */
   @After
   public void javaConfigAnnotationTestTearDown() {
-    // clear the system property
-    clearSystemPropertiesDefineWithStaticStringField(SystemPropertyKeyConstants.class);
+    // clear the system properties
+    System.clearProperty(SystemPropertyKeyConstants.SIMPLE_NAMESPACE);
+    System.clearProperty(SystemPropertyKeyConstants.REDIS_NAMESPACE);
+    System.clearProperty(SystemPropertyKeyConstants.FROM_SYSTEM_NAMESPACE);
+    System.clearProperty(SystemPropertyKeyConstants.FROM_SYSTEM_YAML_NAMESPACE);
+    System.clearProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY);
+    System.clearProperty(SystemPropertyKeyConstants.FROM_NAMESPACE_APPLICATION_KEY_YAML);
   }
 
   @Test

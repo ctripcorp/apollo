@@ -25,10 +25,14 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   private static final int DEFAULT_BATCH = 200;
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
 
+  /**
+   * forbidden to override the method {@link super#tearDown()}.
+   */
   @After
   public void XmlConfigPlaceholderTestTearDown() {
-    // clear the system property
-    clearSystemPropertiesDefineWithStaticStringField(SystemPropertyKeyConstants.class);
+    // clear the system properties
+    System.clearProperty(SystemPropertyKeyConstants.XXX_FROM_SYSTEM_PROPERTY);
+    System.clearProperty(SystemPropertyKeyConstants.YYY_FROM_SYSTEM_PROPERTY);
   }
 
   @Test
