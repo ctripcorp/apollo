@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.core.ConfigConsts;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionStoreException;
@@ -23,6 +24,12 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
   private static final String BATCH_PROPERTY = "batch";
   private static final int DEFAULT_BATCH = 200;
   private static final String FX_APOLLO_NAMESPACE = "FX.apollo";
+
+  @After
+  public void XmlConfigPlaceholderTestTearDown() {
+    // clear the system property
+    clearSystemPropertiesDefineWithStaticStringField(SystemPropertyKeyConstants.class);
+  }
 
   @Test
   public void testPropertySourceWithNoNamespace() throws Exception {
@@ -141,8 +148,8 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
   @Test
   public void testResolveNamespacesFromSystemProperty() throws Exception {
-    System.setProperty("xxx.from.system.property", ConfigConsts.NAMESPACE_APPLICATION);
-    System.setProperty("yyy.from.system.property", "FX.apollo");
+    System.setProperty(SystemPropertyKeyConstants.XXX_FROM_SYSTEM_PROPERTY, ConfigConsts.NAMESPACE_APPLICATION);
+    System.setProperty(SystemPropertyKeyConstants.YYY_FROM_SYSTEM_PROPERTY, "FX.apollo");
     int someTimeout = 1000;
     int anotherTimeout = someTimeout + 1;
     int someBatch = 2000;
@@ -168,6 +175,12 @@ public class XmlConfigPlaceholderTest extends AbstractSpringIntegrationTest {
 
     assertEquals(expectedTimeout, bean.getTimeout());
     assertEquals(expectedBatch, bean.getBatch());
+  }
+
+  private static class SystemPropertyKeyConstants {
+
+    static final String XXX_FROM_SYSTEM_PROPERTY = "xxx.from.system.property";
+    static final String YYY_FROM_SYSTEM_PROPERTY = "yyy.from.system.property";
   }
 
   public static class TestXmlBean {

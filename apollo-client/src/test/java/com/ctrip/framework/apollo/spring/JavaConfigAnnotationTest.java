@@ -495,7 +495,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     assertSame(yamlConfig, configuration.getYamlConfig());
   }
 
-  protected static class SystemPropertyKeyConstants {
+  private static class SystemPropertyKeyConstants {
 
     static final String SIMPLE_NAMESPACE = "simple.namespace";
     static final String REDIS_NAMESPACE = "redis.namespace";
