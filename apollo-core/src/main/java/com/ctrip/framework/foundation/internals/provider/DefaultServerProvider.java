@@ -18,7 +18,7 @@
 
 package com.ctrip.framework.foundation.internals.provider;
 
-import com.ctrip.framework.foundation.internals.constant.PathConstants.ResolvedPaths;
+import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -36,15 +36,46 @@ import org.slf4j.LoggerFactory;
 public class DefaultServerProvider implements ServerProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultServerProvider.class);
 
+  static final String DEFAULT_SERVER_PROPERTIES_PATH_ON_LINUX = "/opt/settings/server.properties";
+  static final String DEFAULT_SERVER_PROPERTIES_PATH_ON_WINDOWS = "C:/opt/settings/server.properties";
   private String m_env;
   private String m_dc;
 
   private final Properties m_serverProperties = new Properties();
 
+  String getServerPropertiesPath() {
+    final String serverPropertiesPath = getCustomizedServerPropertiesPath();
+
+    if (!Strings.isNullOrEmpty(serverPropertiesPath)) {
+      return serverPropertiesPath;
+    }
+
+    return Utils.isOSWindows() ? DEFAULT_SERVER_PROPERTIES_PATH_ON_WINDOWS : DEFAULT_SERVER_PROPERTIES_PATH_ON_LINUX;
+  }
+
+  private String getCustomizedServerPropertiesPath() {
+    // 1. Get from System Property
+    final String serverPropertiesPathFromSystemProperty = System
+        .getProperty("apollo.path.server.properties");
+    if (!Strings.isNullOrEmpty(serverPropertiesPathFromSystemProperty)) {
+      return serverPropertiesPathFromSystemProperty;
+    }
+
+    // 2. Get from OS environment variable
+    final String serverPropertiesPathFromEnvironment = System
+        .getenv("APOLLO_PATH_SERVER_PROPERTIES");
+    if (!Strings.isNullOrEmpty(serverPropertiesPathFromEnvironment)) {
+      return serverPropertiesPathFromEnvironment;
+    }
+
+    // last, return null if there is no custom value
+    return null;
+  }
+
   @Override
   public void initialize() {
     try {
-      File file = ResolvedPaths.SERVER_PROPERTIES.toFile();
+      File file = new File(this.getServerPropertiesPath());
       if (file.exists() && file.canRead()) {
         logger.info("Loading {}", file.getAbsolutePath());
         FileInputStream fis = new FileInputStream(file);
