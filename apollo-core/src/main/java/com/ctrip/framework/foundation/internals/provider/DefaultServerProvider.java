@@ -1,5 +1,6 @@
 package com.ctrip.framework.foundation.internals.provider;
 
+import com.ctrip.framework.foundation.internals.constant.PathConstants.ResolvedPaths;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -16,20 +17,16 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultServerProvider implements ServerProvider {
   private static final Logger logger = LoggerFactory.getLogger(DefaultServerProvider.class);
-  private static final String SERVER_PROPERTIES_LINUX = "/opt/settings/server.properties";
-  private static final String SERVER_PROPERTIES_WINDOWS = "C:/opt/settings/server.properties";
 
   private String m_env;
   private String m_dc;
 
-  private Properties m_serverProperties = new Properties();
+  private final Properties m_serverProperties = new Properties();
 
   @Override
   public void initialize() {
     try {
-      String path = Utils.isOSWindows() ? SERVER_PROPERTIES_WINDOWS : SERVER_PROPERTIES_LINUX;
-
-      File file = new File(path);
+      File file = ResolvedPaths.SERVER_PROPERTIES.toFile();
       if (file.exists() && file.canRead()) {
         logger.info("Loading {}", file.getAbsolutePath());
         FileInputStream fis = new FileInputStream(file);
