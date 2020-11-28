@@ -1,3 +1,21 @@
+portaldb:
+  name: apollo-portaldb
+  # apolloportaldb host
+  host:
+  port: 3306
+  dbName: ApolloPortalDB
+  # apolloportaldb user name
+  userName:
+  # apolloportaldb password
+  password:
+  connectionStringProperties: characterEncoding=utf8
+  service:
+    # whether to create a Service for this host or not
+    enabled: false
+    fullNameOverride: ""
+    port: 3306
+    type: ClusterIP
+
 name: apollo-portal
 fullNameOverride: ""
 replicaCount: 1
@@ -47,21 +65,3 @@ config:
   contextPath: ""
   # extra config files for apollo-portal, e.g. application-ldap.yml
   files: {}
-
-portaldb:
-  name: apollo-portaldb
-  # apolloportaldb host
-  host:
-  port: 3306
-  dbName: ApolloPortalDB
-  # apolloportaldb user name
-  userName:
-  # apolloportaldb password
-  password:
-  connectionStringProperties: characterEncoding=utf8
-  service:
-    # whether to create a Service for this host or not
-    enabled: false
-    fullNameOverride: ""
-    port: 3306
-    type: ClusterIP
