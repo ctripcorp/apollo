@@ -20,7 +20,6 @@ import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
 import com.google.common.collect.Maps;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -453,7 +452,6 @@ public class AuthConfiguration {
     }
   }
 
-  @ConditionalOnBean(DefaultAuthAutoConfiguration.class)
   @ConditionalOnMissingBean(WebSecurityConfigurerAdapter.class)
   @Configuration
   @EnableWebSecurity
