@@ -1,6 +1,5 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
-import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
 import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.spi.LogoutHandler;
@@ -21,6 +20,7 @@ import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserService;
 import com.google.common.collect.Maps;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -65,7 +65,7 @@ public class AuthConfiguration {
    */
   @Configuration
   @Profile("ctrip")
-  static class CtripAuthAutoConfiguration {
+  static class CtripAuthAutoConfiguration implements AuthAutoConfiguration {
 
     private final PortalConfig portalConfig;
 
@@ -206,7 +206,7 @@ public class AuthConfiguration {
    */
   @Configuration
   @Profile("auth")
-  static class SpringSecurityAuthAutoConfiguration {
+  static class SpringSecurityAuthAutoConfiguration implements AuthAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
@@ -291,7 +291,7 @@ public class AuthConfiguration {
   @Configuration
   @Profile("ldap")
   @EnableConfigurationProperties({LdapProperties.class,LdapExtendProperties.class})
-  static class SpringSecurityLDAPAuthAutoConfiguration {
+  static class SpringSecurityLDAPAuthAutoConfiguration implements AuthAutoConfiguration {
 
     private final LdapProperties properties;
     private final Environment environment;
@@ -425,8 +425,8 @@ public class AuthConfiguration {
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth", "ldap"})
-  static class DefaultAuthAutoConfiguration {
+  @ConditionalOnMissingBean(AuthAutoConfiguration.class)
+  static class DefaultAuthAutoConfiguration implements AuthAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
@@ -453,7 +453,8 @@ public class AuthConfiguration {
     }
   }
 
-  @ConditionalOnMissingProfile({"auth", "ldap"})
+  @ConditionalOnBean(DefaultAuthAutoConfiguration.class)
+  @ConditionalOnMissingBean(WebSecurityConfigurerAdapter.class)
   @Configuration
   @EnableWebSecurity
   @EnableGlobalMethodSecurity(prePostEnabled = true)
