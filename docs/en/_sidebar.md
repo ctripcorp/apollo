@@ -1,5 +1,5 @@
 - Getting started
 
-  - [Quick start](en/Quick-Start.md)
+  - [Quick start](en/quick-start.md)
 
 - [Releases](https://github.com/ctripcorp/apollo/releases)

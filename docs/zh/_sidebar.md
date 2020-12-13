@@ -1,41 +1,41 @@
 - [HOME](zh/README.md)
 
-- 设计文档
+- 设计
 
-  - [Apollo配置中心设计](zh/设计文档/Apollo配置中心设计.md)
-  - [Apollo配置中心介绍](zh/设计文档/Apollo配置中心介绍.md)
-  - [Apollo核心概念之“Namespace”](zh/设计文档/Apollo核心概念之“Namespace”.md)
+  - [Apollo配置中心设计](zh/design/apollo-design.md)
+  - [Apollo配置中心介绍](zh/design/apollo-introduction.md)
+  - [Apollo核心概念之“Namespace”](zh/design/apollo-core-concept-namespace.md)
 
-- 部署文档
-  - [Quick Start](zh/部署文档/Quick-Start.md)
-  - [Docker方式部署Quick Start](zh/部署文档/Apollo-Quick-Start-Docker部署.md)
-  - [分布式部署指南](zh/部署文档/分布式部署指南.md)
+- 部署
+  - [Quick Start](zh/deployment/quick-start.md)
+  - [Docker方式部署Quick Start](zh/deployment/quick-start-docker.md)
+  - [分布式部署指南](zh/deployment/distributed-deployment-guide.md)
   - [Apollo源码解析（全）](http://www.iocoder.cn/categories/Apollo/)
 
-- 开发文档
-  - [Apollo开发指南](zh/开发文档/Apollo开发指南.md)
+- 开发
+  - [Apollo开发指南](zh/development/apollo-development-guide.md)
   - Code Styles
     - [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
     - [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
-  - [Portal实现用户登录功能](zh/开发文档/Portal-实现用户登录功能.md)
-  - [邮件模板样例](zh/开发文档/邮件模板样例.md)
+  - [Portal实现用户登录功能](zh/development/portal-how-to-implement-user-login-function.md)
+  - [邮件模板样例](zh/development/email-template-samples.md)
 
-* 系统使用文档
-    * [Apollo使用指南](zh/系统使用文档/Apollo使用指南.md)
-    * [Java客户端使用指南](zh/系统使用文档/Java客户端使用指南.md)
-    * [.Net客户端使用指南](zh/系统使用文档/dot-net客户端使用指南.md)
-    * [Go、Python、NodeJS、PHP等客户端使用指南](zh/系统使用文档/Go、Python、NodeJS、PHP等客户端使用指南.md)
-    * [其它语言客户端接入指南](zh/系统使用文档/其它语言客户端接入指南.md)
-    * [Apollo开放平台接入指南](zh/系统使用文档/Apollo开放平台.md)
+* 系统使用
+    * [Apollo使用指南](zh/usage/apollo-user-guide.md)
+    * [Java客户端使用指南](zh/usage/java-sdk-user-guide.md)
+    * [.Net客户端使用指南](zh/usage/dotnet-sdk-user-guide.md)
+    * [Go、Python、NodeJS、PHP等客户端使用指南](zh/usage/other-language-client-user-guide.md)
+    * [其它语言客户端接入指南](zh/usage/third-party-sdks-user-guide.md)
+    * [Apollo开放平台接入指南](zh/usage/apollo-open-api-platform.md)
     * [Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)
-    * [Apollo实践案例](zh/系统使用文档/Apollo-实践案例.md)
-    * [Apollo安全相关最佳实践](zh/系统使用文档/Apollo使用指南?id=_71-安全相关)
+    * [Apollo实践案例](zh/usage/apollo-user-practices.md)
+    * [Apollo安全相关最佳实践](zh/usage/apollo-user-guide?id=_71-安全相关)
 
 * FAQ
-    * [常见问题回答](zh/FAQ/FAQ.md)
-    * [部署&开发遇到的常见问题](zh/FAQ/部署&开发遇到的常见问题.md)
+    * [常见问题回答](zh/faq/faq.md)
+    * [部署&开发遇到的常见问题](zh/faq/common-issues-in-deployment-and-development-phase.md)
 
 * 其它
-   * [Apollo性能测试报告](zh/其它/Apollo性能测试.md)
+   * [Apollo性能测试报告](zh/misc/apollo-benchmark.md)
 
 - [Releases](https://github.com/ctripcorp/apollo/releases)

@@ -10,5 +10,5 @@
 - Gray publish
 
 [GitHub](https://github.com/ctripcorp/apollo/)
-[快速开始](zh/部署文档/Quick-Start.md)
-[Quick Start](en/Quick-Start.md)
+[快速开始](zh/deployment/quick-start.md)
+[Quick Start](en/quick-start.md)
