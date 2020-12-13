@@ -278,9 +278,7 @@ DEV,FAT,UAT,PRO
 
 修改完需要重启生效。
 
-<!-- TODO, link cannot be resoved in followed links -->
-
->注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](#_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)，另外如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](#_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化。
+>注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](#_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](#_2132-调整apolloconfigdb配置)，[2.2.1.1.2 配置数据库连接信息](#_22112-配置数据库连接信息)，另外如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](#_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化。
 
 >注2：只在数据库添加环境是不起作用的，还需要为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide#_122-apollo-meta-server)。
 
@@ -306,7 +304,7 @@ Apollo Portal需要在不同的环境访问不同的meta service(apollo-configse
 
 修改完需要重启生效。
 
-> 该配置优先级高于其它方式设置的Meta Service地址，更多信息可以参考[2.2.1.1.2.4 配置apollo-portal的meta service信息](#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。
+> 该配置优先级高于其它方式设置的Meta Service地址，更多信息可以参考[2.2.1.1.2.4 配置apollo-portal的meta service信息](#_221124-配置apollo-portal的meta-service信息)。
 
 ##### 3. organizations - 部门列表
 
@@ -367,7 +365,7 @@ portal上“帮助”链接的地址，默认是Apollo github的wiki首页，可
 
 > 适用于1.7.1及以上版本
 
-如果对应环境的apollo-adminservice开启了[访问控制](#6-admin-serviceaccesscontrolenabled---%E9%85%8D%E7%BD%AEapollo-adminservice%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6)，那么需要在此配置apollo-portal访问该环境apollo-adminservice所需的access token，否则会访问失败
+如果对应环境的apollo-adminservice开启了[访问控制](#_6-admin-serviceaccesscontrolenabled-配置apollo-adminservice是否开启访问控制)，那么需要在此配置apollo-portal访问该环境apollo-adminservice所需的access token，否则会访问失败
 
 格式为json，如下所示：
 
@@ -443,7 +441,6 @@ http://5.5.5.5:8080/eureka/,http://6.6.6.6:8080/eureka/
 
 > 适用于1.7.1及以上版本
 
-<!-- TODO, link cannot be resoved in followed links -->
 默认为false，如果配置为true，那么apollo-portal就需要[正确配置](#_12-admin-serviceaccesstokens-设置apollo-portal访问各环境apollo-adminservice所需的access-token)访问该环境的access token，否则访问会被拒绝
 
 ##### 7. admin-service.access.tokens - 配置允许访问apollo-adminservice的access token列表
@@ -527,7 +524,7 @@ spring.datasource.password = somepwd
 
 Apollo Portal需要在不同的环境访问不同的meta service(apollo-configservice)地址，所以我们需要在配置中提供这些信息。默认情况下，meta service和config service是部署在同一个JVM进程，所以meta service的地址就是config service的地址。
 
-> 对于1.6.0及以上版本，可以通过ApolloPortalDB.ServerConfig中的配置项来配置Meta Service地址，详见[apollo.portal.meta.servers - 各环境Meta Service列表](#2-apolloportalmetaservers---%E5%90%84%E7%8E%AF%E5%A2%83meta-service%E5%88%97%E8%A1%A8)
+> 对于1.6.0及以上版本，可以通过ApolloPortalDB.ServerConfig中的配置项来配置Meta Service地址，详见[apollo.portal.meta.servers - 各环境Meta Service列表](#_2-apolloportalmetaservers-各环境meta-service列表)
 
 使用程序员专用编辑器（如vim，notepad++，sublime等）打开`apollo-portal-x.x.x-github.zip`中`config`目录下的`apollo-env.properties`文件。
 
@@ -759,8 +756,8 @@ docker run -p 8070:8070 \
 * SPRING_DATASOURCE_URL: 对应环境ApolloPortalDB的地址
 * SPRING_DATASOURCE_USERNAME: 对应环境ApolloPortalDB的用户名
 * SPRING_DATASOURCE_PASSWORD: 对应环境ApolloPortalDB的密码
-* APOLLO_PORTAL_ENVS(可选): 对应ApolloPortalDB中的[apollo.portal.envs](#1-apolloportalenvs---%E5%8F%AF%E6%94%AF%E6%8C%81%E7%9A%84%E7%8E%AF%E5%A2%83%E5%88%97%E8%A1%A8)配置项，如果没有在数据库中配置的话，可以通过此环境参数配置
-* DEV_META/PRO_META(可选): 配置对应环境的Meta Service地址，以${ENV}_META命名，需要注意的是如果配置了ApolloPortalDB中的[apollo.portal.meta.servers](#2-apolloportalmetaservers---%E5%90%84%E7%8E%AF%E5%A2%83meta-service%E5%88%97%E8%A1%A8)配置，则以apollo.portal.meta.servers中的配置为准
+* APOLLO_PORTAL_ENVS(可选): 对应ApolloPortalDB中的[apollo.portal.envs](#_1-apolloportalenvs-可支持的环境列表)配置项，如果没有在数据库中配置的话，可以通过此环境参数配置
+* DEV_META/PRO_META(可选): 配置对应环境的Meta Service地址，以${ENV}_META命名，需要注意的是如果配置了ApolloPortalDB中的[apollo.portal.meta.servers](#_2-apolloportalmetaservers-各环境meta-service列表)配置，则以apollo.portal.meta.servers中的配置为准
 
 ### 2.3.2 
 
@@ -824,7 +821,7 @@ Get meta service url for current release by running these commands:
   echo http://apollo-service-dev-apollo-configservice:8080
 ```
 
-> 更多配置项说明可以参考[2.4.1.3.3 配置项说明](#24133-%E9%85%8D%E7%BD%AE%E9%A1%B9%E8%AF%B4%E6%98%8E)
+> 更多配置项说明可以参考[2.4.1.3.3 配置项说明](#_24143-配置项说明)
 
 ##### 2.4.1.3.2 卸载apollo-configservice和apollo-adminservice
 
@@ -1022,7 +1019,7 @@ $ helm install apollo-portal \
 $ helm install apollo-portal -f values.yaml -n your-namespace apollo/apollo-portal 
 ```
 
-> 更多配置项说明可以参考[2.4.1.4.3 配置项说明](#24143-%E9%85%8D%E7%BD%AE%E9%A1%B9%E8%AF%B4%E6%98%8E)
+> 更多配置项说明可以参考[2.4.1.4.3 配置项说明](#_24143-配置项说明)
 
 ##### 2.4.1.4.2 卸载apollo-portal
 
