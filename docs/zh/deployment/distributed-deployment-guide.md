@@ -19,7 +19,7 @@
 
 本文档介绍了如何按照分布式部署的方式编译、打包、部署Apollo配置中心，从而可以在开发、测试、生产等环境分别部署运行。
 
-> 如果只是需要在本地快速部署试用Apollo的话，可以参考[Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
+> 如果只是需要在本地快速部署试用Apollo的话，可以参考[Quick Start](zh/deployment/quick-start)
 
 # 一、准备工作
 
@@ -86,7 +86,7 @@ Apollo目前支持以下环境：
 * PRO
     * 生产环境
 
-> 如果希望添加自定义的环境名称，具体步骤可以参考[部署&开发遇到的常见问题#42-添加自定义的环境](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#42-%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E7%8E%AF%E5%A2%83)
+> 如果希望添加自定义的环境名称，具体步骤可以参考[部署&开发遇到的常见问题#42-添加自定义的环境](zh/faq/common-issues-in-deployment-and-development-phase?id=_4-portal如何增加环境？)
 
 以ctrip为例，我们的部署策略如下：
 ![Deployment](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/apollo-deployment.png)
@@ -145,7 +145,7 @@ eureka:
 
 做完上述修改并重启后，可以查看Eureka页面（http://${config-service-url:port}）检查注册上来的IP信息是否正确。
 
-如果Apollo部署在公有云上，本地开发环境无法连接，但又需要做开发测试的话，客户端可以升级到0.11.0版本及以上，然后配置[跳过Apollo Meta Server服务发现](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#1222-%E8%B7%B3%E8%BF%87apollo-meta-server%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0)
+如果Apollo部署在公有云上，本地开发环境无法连接，但又需要做开发测试的话，客户端可以升级到0.11.0版本及以上，然后配置[跳过Apollo Meta Server服务发现](zh/usage/java-sdk-user-guide#_1222-跳过apollo-meta-server服务发现)
 
 # 二、部署步骤
 
@@ -163,7 +163,7 @@ eureka:
 
 > [@lingjiaju](https://github.com/lingjiaju)录制了一系列Apollo快速上手视频，如果看文档觉得略繁琐的话，不妨可以先看一下他的[视频教程](https://pan.baidu.com/s/1blv87EOZS77NWT8Amkijkw#list/path=%2F)。
 
-> 如果部署过程中遇到了问题，可以参考[部署&开发遇到的常见问题](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)，一般都能找到答案。
+> 如果部署过程中遇到了问题，可以参考[部署&开发遇到的常见问题](zh/faq/common-issues-in-deployment-and-development-phase)，一般都能找到答案。
 
 ## 2.1 创建数据库
 Apollo服务端共需要两个数据库：`ApolloPortalDB`和`ApolloConfigDB`，我们把数据库、表的创建和样例数据都分别准备了sql文件，只需要导入数据库即可。
@@ -278,11 +278,13 @@ DEV,FAT,UAT,PRO
 
 修改完需要重启生效。
 
->注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#212-%E5%88%9B%E5%BB%BAapolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)，另外如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2121-%E4%BB%8E%E5%88%AB%E7%9A%84%E7%8E%AF%E5%A2%83%E5%AF%BC%E5%85%A5apolloconfigdb%E7%9A%84%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE)对新的环境做初始化。
+<!-- TODO, link cannot be resoved in followed links -->
 
->注2：只在数据库添加环境是不起作用的，还需要为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)。
+>注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](#_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)，另外如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](#_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化。
 
->注3：如果希望添加自定义的环境名称，具体步骤可以参考[Portal如何增加环境](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#4-portal%E5%A6%82%E4%BD%95%E5%A2%9E%E5%8A%A0%E7%8E%AF%E5%A2%83)。
+>注2：只在数据库添加环境是不起作用的，还需要为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide#_122-apollo-meta-server)。
+
+>注3：如果希望添加自定义的环境名称，具体步骤可以参考[Portal如何增加环境](zh/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#4-portal%E5%A6%82%E4%BD%95%E5%A2%9E%E5%8A%A0%E7%8E%AF%E5%A2%83)。
 
 >注4：1.1.0版本增加了系统信息页面（`管理员工具` -> `系统信息`），可以通过该页面检查配置是否正确
 
@@ -329,7 +331,7 @@ portal上“帮助”链接的地址，默认是Apollo github的wiki首页，可
 
 ##### 7. admin.createPrivateNamespace.switch
 
-是否允许项目管理员创建private namespace。设置为`true`允许创建，设置为`false`则项目管理员在页面上看不到创建private namespace的选项。[了解更多Namespace](https://github.com/ctripcorp/apollo/wiki/Apollo%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B9%8B%E2%80%9CNamespace%E2%80%9D)
+是否允许项目管理员创建private namespace。设置为`true`允许创建，设置为`false`则项目管理员在页面上看不到创建private namespace的选项。[了解更多Namespace](zh/design/apollo-core-concept-namespace)
 
 ##### 8. emergencyPublish.supported.envs
 
@@ -405,7 +407,7 @@ http://5.5.5.5:8080/eureka/,http://6.6.6.6:8080/eureka/
 
 >注1：这里需要填写本环境中全部的eureka服务地址，因为eureka需要互相复制注册信息
 
->注2：如果希望将Config Service和Admin Service注册到公司统一的Eureka上，可以参考[部署&开发遇到的常见问题 - 将Config Service和Admin Service注册到单独的Eureka Server上](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98#8-%E5%B0%86config-service%E5%92%8Cadmin-service%E6%B3%A8%E5%86%8C%E5%88%B0%E5%8D%95%E7%8B%AC%E7%9A%84eureka-server%E4%B8%8A)章节
+>注2：如果希望将Config Service和Admin Service注册到公司统一的Eureka上，可以参考[部署&开发遇到的常见问题 - 将Config Service和Admin Service注册到单独的Eureka Server上](zh/faq/common-issues-in-deployment-and-development-phase#_8-将config-service和admin-service注册到单独的eureka-server上)章节
 
 >注3：在多机房部署时，往往希望config service和admin service只向同机房的eureka注册，要实现这个效果，需要利用`ServerConfig`表中的cluster字段，config service和admin service会读取所在机器的`/opt/settings/server.properties`（Mac/Linux）或`C:\opt\settings\server.properties`（Windows）中的idc属性，如果该idc有对应的eureka.service.url配置，那么就只会向该机房的eureka注册。比如config service和admin service会部署到`SHAOY`和`SHAJQ`两个IDC，那么为了实现这两个机房中的服务只向该机房注册，那么可以在`ServerConfig`表中新增两条记录，分别填入`SHAOY`和`SHAJQ`两个机房的eureka地址即可，`default` cluster的记录可以保留，如果有config service和admin service不是部署在`SHAOY`和`SHAJQ`这两个机房的，就会使用这条默认配置。
 
@@ -441,7 +443,8 @@ http://5.5.5.5:8080/eureka/,http://6.6.6.6:8080/eureka/
 
 > 适用于1.7.1及以上版本
 
-默认为false，如果配置为true，那么apollo-portal就需要[正确配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#12-admin-serviceaccesstokens---%E8%AE%BE%E7%BD%AEapollo-portal%E8%AE%BF%E9%97%AE%E5%90%84%E7%8E%AF%E5%A2%83apollo-adminservice%E6%89%80%E9%9C%80%E7%9A%84access-token)访问该环境的access token，否则访问会被拒绝
+<!-- TODO, link cannot be resoved in followed links -->
+默认为false，如果配置为true，那么apollo-portal就需要[正确配置](#_12-admin-serviceaccesstokens-设置apollo-portal访问各环境apollo-adminservice所需的access-token)访问该环境的access token，否则访问会被拒绝
 
 ##### 7. admin-service.access.tokens - 配置允许访问apollo-adminservice的access token列表
 
@@ -645,7 +648,7 @@ export JAVA_OPTS="-server -Xms6144m -Xmx6144m -Xss256k -XX:MetaspaceSize=128m -X
 
 > 注2：如要调整服务的日志输出路径，可以修改scripts/startup.sh和apollo-configservice.conf中的`LOG_DIR`。
 
-> 注3：如要调整服务的监听端口，可以修改scripts/startup.sh中的`SERVER_PORT`。另外apollo-configservice同时承担meta server职责，如果要修改端口，注意要同时ApolloConfigDB.ServerConfig表中的`eureka.service.url`配置项以及apollo-portal和apollo-client中的使用到的meta server信息，详见：[2.2.1.1.2.4 配置apollo-portal的meta service信息](#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)和[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)。
+> 注3：如要调整服务的监听端口，可以修改scripts/startup.sh中的`SERVER_PORT`。另外apollo-configservice同时承担meta server职责，如果要修改端口，注意要同时ApolloConfigDB.ServerConfig表中的`eureka.service.url`配置项以及apollo-portal和apollo-client中的使用到的meta server信息，详见：[2.2.1.1.2.4 配置apollo-portal的meta service信息](#_221124-配置apollo-portal的meta-service信息)和[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide#_122-apollo-meta-server)。
 
 > 注4：如果ApolloConfigDB.ServerConfig的eureka.service.url只配了当前正在启动的机器的话，在启动apollo-configservice的过程中会在日志中输出eureka注册失败的信息，如`com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused`。需要注意的是，这个是预期的情况，因为apollo-configservice需要向Meta Server（它自己）注册服务，但是因为在启动过程中，自己还没起来，所以会报这个错。后面会进行重试的动作，所以等自己服务起来后就会注册正常了。
 
@@ -759,8 +762,11 @@ docker run -p 8070:8070 \
 * APOLLO_PORTAL_ENVS(可选): 对应ApolloPortalDB中的[apollo.portal.envs](#1-apolloportalenvs---%E5%8F%AF%E6%94%AF%E6%8C%81%E7%9A%84%E7%8E%AF%E5%A2%83%E5%88%97%E8%A1%A8)配置项，如果没有在数据库中配置的话，可以通过此环境参数配置
 * DEV_META/PRO_META(可选): 配置对应环境的Meta Service地址，以${ENV}_META命名，需要注意的是如果配置了ApolloPortalDB中的[apollo.portal.meta.servers](#2-apolloportalmetaservers---%E5%90%84%E7%8E%AF%E5%A2%83meta-service%E5%88%97%E8%A1%A8)配置，则以apollo.portal.meta.servers中的配置为准
 
-### 2.3.2 1.7.0之前的版本
-Apollo项目已经自带了Docker file，可以参照[2.2 获取安装包](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#22-%E8%8E%B7%E5%8F%96%E5%AE%89%E8%A3%85%E5%8C%85)配置好安装包后通过下面的文件来打Docker镜像：
+### 2.3.2 
+
+> 1.7.0之前的版本
+
+Apollo项目已经自带了Docker file，可以参照[2.2.1 获取安装包](#_221-获取安装包)配置好安装包后通过下面的文件来打Docker镜像：
 
 1. [apollo-configservice](https://github.com/ctripcorp/apollo/blob/master/apollo-configservice/src/main/docker/Dockerfile)
 2. [apollo-adminservice](https://github.com/ctripcorp/apollo/blob/master/apollo-adminservice/src/main/docker/Dockerfile)
@@ -1209,4 +1215,4 @@ config:
 
 # 三、Portal 实现用户登录功能
 
-请参考[Portal 实现用户登录功能](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
+请参考[Portal 实现用户登录功能](zh/development/portal-how-to-implement-user-login-function)
