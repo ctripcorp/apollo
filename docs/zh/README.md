@@ -10,9 +10,9 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 
 .Net客户端不依赖任何框架，能够运行于所有.Net运行时环境。
 
-更多产品介绍参见[Apollo配置中心介绍](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E4%BB%8B%E7%BB%8D)
+更多产品介绍参见[Apollo配置中心介绍](zh/design/apollo-introduction)
 
-本地快速部署请参见[Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
+本地快速部署请参见[Quick Start](zh/deployment/quick-start)
 
 演示环境（Demo）:
 - [106.54.227.205](http://106.54.227.205/)
@@ -64,37 +64,41 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
   * Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数
 
 # Usage
-  1. [应用接入指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  2. [Java客户端使用指南](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  3. [.Net客户端使用指南](https://github.com/ctripcorp/apollo/wiki/.Net%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  4. [其它语言客户端接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
-  5. [Apollo开放平台接入指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0)
+  1. [应用接入指南](zh/usage/apollo-user-guide)
+  2. [Java客户端使用指南](zh/usage/java-sdk-user-guide)
+  3. [.Net客户端使用指南](zh/usage/dotnet-sdk-user-guide)
+  4. [其它语言客户端接入指南](zh/usage/other-language-client-user-guide)
+  5. [Apollo开放平台接入指南](zh/usage/apollo-open-api-platform)
   6. [Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)
-  7. [Apollo实践案例](https://github.com/ctripcorp/apollo/wiki/Apollo-%E5%AE%9E%E8%B7%B5%E6%A1%88%E4%BE%8B)
-  8. [Apollo安全相关最佳实践](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#71-%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3)
+  7. [Apollo实践案例](zh/usage/apollo-user-practices)
+  8. [Apollo安全相关最佳实践](zh/usage/apollo-user-guide?id=_71-安全相关)
 
 # Design
-  * [Apollo配置中心设计](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1)
-  * [Apollo核心概念之“Namespace”](https://github.com/ctripcorp/apollo/wiki/Apollo%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B9%8B%E2%80%9CNamespace%E2%80%9D)
-  * [Apollo配置中心架构剖析](https://mp.weixin.qq.com/s/-hUaQPzfsl9Lm3IqQW3VDQ)
+  - [Apollo配置中心设计](zh/design/apollo-design.md)
+  - [Apollo配置中心介绍](zh/design/apollo-introduction.md)
+  - [Apollo核心概念之“Namespace”](zh/design/apollo-core-concept-namespace.md)
   * [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)（据说Apollo非常适合作为初学者第一个通读源码学习的分布式中间件产品）
 
 # Development
-  * [Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
-  * Code Styles
-    * [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
-    * [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
+  - [Apollo开发指南](zh/development/apollo-development-guide.md)
+  - Code Styles
+    - [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
+    - [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
+  - [Portal实现用户登录功能](zh/development/portal-how-to-implement-user-login-function.md)
+  - [邮件模板样例](zh/development/email-template-samples.md)
 
 # Deployment
-  * [Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
-  * [分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
+  - [Quick Start](zh/deployment/quick-start.md)
+  - [Docker方式部署Quick Start](zh/deployment/quick-start-docker.md)
+  - [分布式部署指南](zh/deployment/distributed-deployment-guide.md)
+  - [Apollo源码解析（全）](http://www.iocoder.cn/categories/Apollo/)
 
 # Release Notes
   * [版本发布历史](https://github.com/ctripcorp/apollo/releases)
 
 # FAQ
-  * [常见问题回答](https://github.com/ctripcorp/apollo/wiki/FAQ)
-  * [部署&开发遇到的常见问题](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  * [常见问题回答](zh/faq/faq.md)
+  * [部署&开发遇到的常见问题](zh/faq/common-issues-in-deployment-and-development-phase.md)
 
 # Presentation
   * [携程开源配置中心Apollo的设计与实现](http://www.itdks.com/dakalive/detail/3420)
