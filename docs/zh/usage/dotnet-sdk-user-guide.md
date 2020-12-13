@@ -1,4 +1,4 @@
->注意：本文档适用对象是Apollo系统的使用者，如果你是公司内Apollo系统的开发者/维护人员，建议先参考[Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)。
+>注意：本文档适用对象是Apollo系统的使用者，如果你是公司内Apollo系统的开发者/维护人员，建议先参考[Apollo开发指南](zh/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)。
 
 # 一、准备工作
 
@@ -157,7 +157,7 @@ string value = config.GetProperty(someKey, someDefaultValue);
 ```
 
 ## 3.4 Demo
-apollo.net项目中有一个样例客户端的项目：`ApolloDemo`，具体信息可以参考[Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)中的[2.4 .Net样例客户端启动](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#24-net%E6%A0%B7%E4%BE%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8)部分。
+apollo.net项目中有一个样例客户端的项目：`ApolloDemo`，具体信息可以参考[Apollo开发指南](zh/development/apollo-development-guide)中的[2.4 .Net样例客户端启动](zh/development/apollo-development-guide?id=_24-net样例客户端启动)部分。
 
 >注：Apollo .Net客户端开源版目前默认会把日志直接输出到Console，大家可以自己实现Logging相关功能。
 >

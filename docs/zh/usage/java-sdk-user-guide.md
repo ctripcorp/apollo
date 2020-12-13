@@ -19,7 +19,7 @@
 * [五、本地开发模式](#%E4%BA%94%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F)
 * [六、测试模式](#%E5%85%AD%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F)
 
->注意：本文档适用对象是Apollo系统的使用者，如果你是公司内Apollo系统的开发者/维护人员，建议先参考[Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)。
+>注意：本文档适用对象是Apollo系统的使用者，如果你是公司内Apollo系统的开发者/维护人员，建议先参考[Apollo开发指南](zh/development/apollo-development-guide)。
 
 # 一、准备工作
 ## 1.1 环境要求
@@ -78,7 +78,7 @@ app.id=YOUR-APP-ID
 
 ### 1.2.2 Apollo Meta Server
 
-Apollo支持应用在不同的环境有不同的配置，所以需要在运行提供给Apollo客户端当前环境的[Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1#133-meta-server)信息。默认情况下，meta server和config service是部署在同一个JVM进程，所以meta server的地址就是config service的地址。
+Apollo支持应用在不同的环境有不同的配置，所以需要在运行提供给Apollo客户端当前环境的[Apollo Meta Server](zh/design/apollo-design?id=_133-meta-server)信息。默认情况下，meta server和config service是部署在同一个JVM进程，所以meta server的地址就是config service的地址。
 
 为了实现meta server的高可用，推荐通过SLB（Software Load Balancer）做动态负载均衡。Meta server地址也可以填入IP，如`http://1.1.1.1:8080,http://2.2.2.2:8080`，不过生产环境还是建议使用域名（走slb），因为机器扩容、缩容等都可能导致IP列表的变化。
 
@@ -835,7 +835,7 @@ eureka.instance.preferIpAddress = true
 ![text-mode-spring-boot-config-sample](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/text-mode-spring-boot-config-sample.png)
 
 ## 3.3 Demo
-项目中有一个样例客户端的项目：`apollo-demo`，具体信息可以参考[Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)中的[2.3 Java样例客户端启动](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#23-java%E6%A0%B7%E4%BE%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8)部分。
+项目中有一个样例客户端的项目：`apollo-demo`，具体信息可以参考[Apollo开发指南](zh/development/apollo-development-guide)中的[2.3 Java样例客户端启动](zh/development/apollo-development-guide?id=_23-java样例客户端启动)部分。
 
 更多使用案例Demo可以参考[Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)。
 

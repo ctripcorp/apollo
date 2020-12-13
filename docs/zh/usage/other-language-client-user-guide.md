@@ -2,10 +2,10 @@
 
 另外，如果有团队/个人有兴趣的话，也欢迎帮助我们来实现其它语言的客户端，具体细节可以联系@nobodyiam和@lepdou。
 
->注：目前已有热心用户贡献了Go、Python、NodeJS、PHP、C++的客户端，更多信息可以参考[Go、Python、NodeJS、PHP等客户端使用指南](https://github.com/ctripcorp/apollo/wiki/Go%E3%80%81Python%E3%80%81NodeJS%E3%80%81PHP%E7%AD%89%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
+>注：目前已有热心用户贡献了Go、Python、NodeJS、PHP、C++的客户端，更多信息可以参考[Go、Python、NodeJS、PHP等客户端使用指南](zh/usage/third-party-sdks-user-guide)
 
 ## 1.1 应用接入Apollo
-首先需要在Apollo中接入你的应用，具体步骤可以参考[应用接入文档](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)。
+首先需要在Apollo中接入你的应用，具体步骤可以参考[应用接入文档](zh/usage/apollo-user-guide?id=一、普通应用接入指南)。
 
 ## 1.2 通过带缓存的Http接口从Apollo读取配置
 
@@ -24,7 +24,7 @@
 |-------------------|----------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | config_server_url | 是       | Apollo配置服务的地址 |                                                                                                                                                                                                                                                                                                             |
 | appId             | 是       | 应用的appId          |                                                                                                                                                                                                                                                                                                             |
-| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#%E4%B8%89%E9%9B%86%E7%BE%A4%E7%8B%AC%E7%AB%8B%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E)做相关配置，然后在这里填入对应的集群名。 |
+| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](zh/usage/apollo-user-guide?id=三、集群独立配置说明)做相关配置，然后在这里填入对应的集群名。 |
 | namespaceName     | 是       | Namespace的名字      | 如果没有新建过Namespace的话，传入application即可。 如果创建了Namespace，并且需要使用该Namespace的配置，则传入对应的Namespace名字。**需要注意的是对于properties类型的namespace，只需要传入namespace的名字即可，如application。对于其它类型的namespace，需要传入namespace的名字加上后缀名，如datasources.json**                                                                                                                                                                        |
 | ip                | 否       | 应用部署的机器ip     | 这个参数是可选的，用来实现灰度发布。 如果不想传这个参数，请注意URL中从?号开始的query parameters整个都不要出现。                                                                                                                                                                                             |
 
@@ -59,7 +59,7 @@
 |-------------------|----------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | config_server_url | 是       | Apollo配置服务的地址 |                                                                                                                                                                                                                                                                                                             |
 | appId             | 是       | 应用的appId          |                                                                                                                                                                                                                                                                                                             |
-| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#%E4%B8%89%E9%9B%86%E7%BE%A4%E7%8B%AC%E7%AB%8B%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E)做相关配置，然后在这里填入对应的集群名。 |
+| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](zh/usage/apollo-user-guide?id=三、集群独立配置说明)做相关配置，然后在这里填入对应的集群名。 |
 | namespaceName     | 是       | Namespace的名字      | 如果没有新建过Namespace的话，传入application即可。 如果创建了Namespace，并且需要使用该Namespace的配置，则传入对应的Namespace名字。**需要注意的是对于properties类型的namespace，只需要传入namespace的名字即可，如application。对于其它类型的namespace，需要传入namespace的名字加上后缀名，如datasources.json**  |
 | releaseKey       | 否        | 上一次的releaseKey       | 将上一次返回对象中的releaseKey传入即可，用来给服务端比较版本，如果版本比下来没有变化，则服务端直接返回304以节省流量和运算 |
 | ip                | 否       | 应用部署的机器ip     | 这个参数是可选的，用来实现灰度发布。                                                                                                                                                                                              |
@@ -129,7 +129,7 @@ Apollo提供了基于Http long polling的配置更新推送通知，第三方客
 |-------------------|----------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | config_server_url | 是       | Apollo配置服务的地址 |                                                                                                                                                                                                                                                                                                             |
 | appId             | 是       | 应用的appId          |                                                                                                                                                                                                                                                                                                             |
-| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#%E4%B8%89%E9%9B%86%E7%BE%A4%E7%8B%AC%E7%AB%8B%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E)做相关配置，然后在这里填入对应的集群名。 |
+| clusterName       | 是       | 集群名               | 一般情况下传入 default 即可。 如果希望配置按集群划分，可以参考[集群独立配置说明](zh/usage/apollo-user-guide?id=三、集群独立配置说明)做相关配置，然后在这里填入对应的集群名。 |
 | notifications     | 是       | notifications信息    | 传入本地的notifications信息，注意这里需要以array形式转为json传入，如：[{"namespaceName": "application", "notificationId": 100}, {"namespaceName": "FX.apollo", "notificationId": 200}]。**需要注意的是对于properties类型的namespace，只需要传入namespace的名字即可，如application。对于其它类型的namespace，需要传入namespace的名字加上后缀名，如datasources.json**                                                                                                                                                                        |
 
 > 注1：由于服务端会hold住请求60秒，所以请确保客户端访问服务端的超时时间要大于60秒。

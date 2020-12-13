@@ -122,9 +122,9 @@ Apollo除了支持表格模式，逐个添加、修改配置外，还提供文�
 ## 1.5 应用读取配置
 配置发布成功后，应用就可以通过Apollo客户端读取到配置了。
 
-Apollo目前提供Java客户端，具体信息请点击[Java客户端使用文档](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)：
+Apollo目前提供Java客户端，具体信息请点击[Java客户端使用文档](zh/usage/java-sdk-user-guide)：
 
-如果应用使用了其它语言，也可以通过直接访问Http接口获取配置，具体可以参考[其它语言客户端接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
+如果应用使用了其它语言，也可以通过直接访问Http接口获取配置，具体可以参考[其它语言客户端接入指南](zh/usage/other-language-client-user-guide)
 
 ## 1.6 回滚已发布配置
 
@@ -214,9 +214,9 @@ Apollo中的回滚也是类似的机制，点击回滚后是将发布到客户�
 
 配置发布成功后，应用就可以通过Apollo客户端读取到配置了。
 
-Apollo目前提供Java客户端，具体信息请点击[Java客户端使用文档](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)：
+Apollo目前提供Java客户端，具体信息请点击[Java客户端使用文档](zh/usage/java-sdk-user-guide)：
 
-如果应用使用了其它语言，也可以通过直接访问Http接口获取配置，具体可以参考[其它语言客户端接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
+如果应用使用了其它语言，也可以通过直接访问Http接口获取配置，具体可以参考[其它语言客户端接入指南](zh/usage/other-language-client-user-guide)
 
 对于公共组件的配置读取，可以参考上述文档中的“获取公共Namespace的配置”部分。
 
@@ -442,7 +442,7 @@ Apollo从1.6.0版本开始增加访问密钥机制，从而只有经过身份验
 2. 为项目的每个环境生成访问密钥，注意默认是禁用的，建议在客户端都配置完成后再开启
 ![密钥配置页面](https://user-images.githubusercontent.com/837658/94990150-788dba00-05ac-11eb-9a12-727fdb872e42.png)
 
-3. 客户端侧[配置访问密钥](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#1244-%E9%85%8D%E7%BD%AE%E8%AE%BF%E9%97%AE%E5%AF%86%E9%92%A5)
+3. 客户端侧[配置访问密钥](zh/usage/java-sdk-user-guide#_1244-配置访问密钥)
 
 # 七、最佳实践
 
@@ -452,19 +452,19 @@ Apollo从1.6.0版本开始增加访问密钥机制，从而只有经过身份验
 
 ### 7.1.1 认证
 
-建议接入公司统一的身份认证系统，如 SSO、LDAP 等，接入方式可以参考[Portal 实现用户登录功能](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
+建议接入公司统一的身份认证系统，如 SSO、LDAP 等，接入方式可以参考[Portal 实现用户登录功能](zh/development/portal-how-to-implement-user-login-function)
 
 > 如果使用Apollo提供的Spring Security简单认证，务必记得要修改超级管理员apollo的密码
 
 ### 7.1.2 授权
 
 Apollo 支持细粒度的权限控制，请务必根据实际情况做好权限控制：
-1. [项目管理员权限](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#121-%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90)
-    * Apollo 默认允许所有登录用户创建项目，如果只允许部分用户创建项目，可以开启[创建项目权限控制](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#10-rolecreate-applicationenabled---%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6)
-2. [配置编辑、发布权限](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-%E9%85%8D%E7%BD%AE%E7%BC%96%E8%BE%91%E5%8F%91%E5%B8%83%E6%9D%83%E9%99%90)
+1. [项目管理员权限](#_121-项目管理员权限)
+    * Apollo 默认允许所有登录用户创建项目，如果只允许部分用户创建项目，可以开启[创建项目权限控制](zh/deployment/distributed-deployment-guide?id=_10-rolecreate-applicationenabled-是否开启创建项目权限控制)
+2. [配置编辑、发布权限](#_122-配置编辑、发布权限)
     * 配置编辑、发布权限支持按环境配置，比如开发环境开发人员可以自行完成配置编辑和发布的过程，但是生产环境发布权限交由测试或运维人员
-    * 生产环境建议同时开启[发布审核](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2-namespacelockswitch---%E4%B8%80%E6%AC%A1%E5%8F%91%E5%B8%83%E5%8F%AA%E8%83%BD%E6%9C%89%E4%B8%80%E4%B8%AA%E4%BA%BA%E4%BF%AE%E6%94%B9%E5%BC%80%E5%85%B3%E7%94%A8%E4%BA%8E%E5%8F%91%E5%B8%83%E5%AE%A1%E6%A0%B8)，从而控制一次配置发布只能由一个人修改，另一个人发布，确保配置修改得到充分检查
-3. [配置查看权限](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#61-%E9%85%8D%E7%BD%AE%E6%9F%A5%E7%9C%8B%E6%9D%83%E9%99%90)
+    * 生产环境建议同时开启[发布审核](zh/deployment/distributed-deployment-guide?id=_2-namespacelockswitch-一次发布只能有一个人修改开关，用于发布审核)，从而控制一次配置发布只能由一个人修改，另一个人发布，确保配置修改得到充分检查
+3. [配置查看权限](#_61-配置查看权限)
     * 可以指定某个环境只允许项目成员查看私有Namespace的配置，从而避免敏感配置泄露，如生产环境
 
 ### 7.1.3 系统访问
@@ -473,4 +473,4 @@ Apollo 支持细粒度的权限控制，请务必根据实际情况做好权限�
 
 1. `apollo-configservice`和`apollo-adminservice`是基于内网可信网络设计的，所以出于安全考虑，禁止`apollo-configservice`和`apollo-adminservice`直接暴露在公网
 2. 对敏感配置可以考虑开启[访问秘钥](#62-%E9%85%8D%E7%BD%AE%E8%AE%BF%E9%97%AE%E7%A7%98%E9%92%A5)，从而只有经过身份验证的客户端才能访问敏感配置
-3. 1.7.1及以上版本可以考虑为`apollo-adminservice`开启[访问控制](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#6-admin-serviceaccesscontrolenabled---%E9%85%8D%E7%BD%AEapollo-adminservice%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6)，从而只有合法的`apollo-portal`才能访问对应接口，增强安全性
+3. 1.7.1及以上版本可以考虑为`apollo-adminservice`开启[访问控制](zh/deployment/distributed-deployment-guide?id=_6-admin-serviceaccesscontrolenabled-配置apollo-adminservice是否开启访问控制)，从而只有合法的`apollo-portal`才能访问对应接口，增强安全性
