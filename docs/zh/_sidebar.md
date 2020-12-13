@@ -5,12 +5,12 @@
   - [Apollo配置中心设计](zh/design/apollo-design.md)
   - [Apollo配置中心介绍](zh/design/apollo-introduction.md)
   - [Apollo核心概念之“Namespace”](zh/design/apollo-core-concept-namespace.md)
+  - [Apollo源码解析（全）](http://www.iocoder.cn/categories/Apollo/)
 
 - 部署
   - [Quick Start](zh/deployment/quick-start.md)
   - [Docker方式部署Quick Start](zh/deployment/quick-start-docker.md)
   - [分布式部署指南](zh/deployment/distributed-deployment-guide.md)
-  - [Apollo源码解析（全）](http://www.iocoder.cn/categories/Apollo/)
 
 - 开发
   - [Apollo开发指南](zh/development/apollo-development-guide.md)
