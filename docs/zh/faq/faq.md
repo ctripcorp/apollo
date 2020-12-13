@@ -1,23 +1,23 @@
 ## 1. Apollo是什么？
 Apollo（阿波罗）是携程框架部门研发的配置管理平台，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性。
 
-更多介绍，可以参考[Apollo配置中心介绍](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E4%BB%8B%E7%BB%8D)
+更多介绍，可以参考[Apollo配置中心介绍](zh/design/apollo-introduction)
 
 ## 2. Cluster是什么？
 一个应用下不同实例的分组，比如典型的可以按照数据中心分，把A机房的应用实例分为一个集群，把B机房的应用实例分为另一个集群。
 
 ## 3. Namespace是什么？
 一个应用下不同配置的分组。
-请参考[Apollo核心概念之“Namespace”](https://github.com/ctripcorp/apollo/wiki/Apollo%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B9%8B%E2%80%9CNamespace%E2%80%9D)
+请参考[Apollo核心概念之“Namespace”](zh/design/apollo-core-concept-namespace)
 
 ## 4. 我想要接入Apollo，该如何操作？
-请参考[Apollo使用指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
+请参考[Apollo使用指南](zh/usage/apollo-user-guide)
 
 ## 5. 我的应用需要不同机房的配置不一样，Apollo是否能支持？
-Apollo是支持的。请参考[Apollo使用指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#%E4%B8%89%E9%9B%86%E7%BE%A4%E7%8B%AC%E7%AB%8B%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E)中的`三、集群独立配置说明`
+Apollo是支持的。请参考[Apollo使用指南](zh/usage/apollo-user-guide)中的`三、集群独立配置说明`
 
 ## 6. 我有多个应用需要使用同一份配置，Apollo是否能支持？
-Apollo是支持的。请参考[Apollo使用指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#%E5%9B%9B%E5%A4%9A%E4%B8%AAappid%E4%BD%BF%E7%94%A8%E5%90%8C%E4%B8%80%E4%BB%BD%E9%85%8D%E7%BD%AE)中的`四、多个AppId使用同一份配置`
+Apollo是支持的。请参考[Apollo使用指南](zh/usage/apollo-user-guide)中的`四、多个AppId使用同一份配置`
 
 ## 7. Apollo是否支持查看权限控制或者配置加密？
 从1.1.0版本开始，apollo-portal增加了查看权限的支持，可以支持配置某个环境只允许项目成员查看私有Namespace的配置。

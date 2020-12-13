@@ -81,15 +81,15 @@ Apollo支持应用在不同的环境有不同的配置，所以需要在运行�
 5. 通过`app.properties`配置文件
     * 可以在`classpath:/META-INF/app.properties`指定`apollo.meta=http://config-service-url`
 6. 通过Java system property `${env}_meta`
-    * 如果当前[env](#1241-environment)是`dev`，那么用户可以配置`-Ddev_meta=http://config-service-url`
-    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#1241-environment)
+    * 如果当前[env](#_1241-environment)是`dev`，那么用户可以配置`-Ddev_meta=http://config-service-url`
+    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#_1241-environment)
 7. 通过操作系统的System Environment `${ENV}_META` (1.2.0版本开始支持)
-    * 如果当前[env](#1241-environment)是`dev`，那么用户可以配置操作系统的System Environment `DEV_META=http://config-service-url`
+    * 如果当前[env](#_1241-environment)是`dev`，那么用户可以配置操作系统的System Environment `DEV_META=http://config-service-url`
     * 注意key为全大写
-    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#1241-environment)
+    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#_1241-environment)
 8. 通过`apollo-env.properties`文件
     * 用户也可以创建一个`apollo-env.properties`，放在程序的classpath下，或者放在spring boot应用的config目录下
-    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#1241-environment)
+    * 使用该配置方式，那么就必须要正确配置Environment，详见[1.2.4.1 Environment](#_1241-environment)
     * 文件内容形如：
     
 ```properties
@@ -322,7 +322,7 @@ Apollo支持API方式和Spring整合方式，该怎么选择用哪一种方式�
         * 配置文件中使用替换placeholder，如：`spring.datasource.url: ${someKeyFromApollo:someDefaultValue}`
         * 直接托管spring的配置，如在apollo中直接配置`spring.datasource.url=jdbc:mysql://localhost:3306/somedb?characterEncoding=utf8`
     * Spring boot的[@ConfigurationProperties](http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/ConfigurationProperties.html)方式
-    * 从v0.10.0开始的版本支持placeholder在运行时自动更新，具体参见[PR #972](https://github.com/ctripcorp/apollo/pull/972)。（v0.10.0之前的版本在配置变化后不会重新注入，需要重启才会更新，如果需要配置值实时更新，可以参考后续[3.2.2 Spring Placeholder的使用](#322-spring-placeholder%E7%9A%84%E4%BD%BF%E7%94%A8)的说明）
+    * 从v0.10.0开始的版本支持placeholder在运行时自动更新，具体参见[PR #972](https://github.com/ctripcorp/apollo/pull/972)。（v0.10.0之前的版本在配置变化后不会重新注入，需要重启才会更新，如果需要配置值实时更新，可以参考后续[3.2.2 Spring Placeholder的使用](#_322-spring-placeholder的使用)的说明）
 * Spring方式也可以结合API方式使用，如注入Apollo的Config对象，就可以照常通过API方式获取配置了：
     ```java
     @ApolloConfig
@@ -401,7 +401,7 @@ Apollo也支持和Spring整合（Spring 3.1.1+），只需要做一些简单的�
 
 Apollo目前既支持比较传统的`基于XML`的配置，也支持目前比较流行的`基于Java（推荐）`的配置。
 
-如果是Spring Boot环境，建议参照[3.2.1.3 Spring Boot集成方式（推荐）](#3213-spring-boot%E9%9B%86%E6%88%90%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90)配置。
+如果是Spring Boot环境，建议参照[3.2.1.3 Spring Boot集成方式（推荐）](#_3213-spring-boot集成方式（推荐）)配置。
 
 需要注意的是，如果之前有使用`org.springframework.beans.factory.config.PropertyPlaceholderConfigurer`的，请替换成`org.springframework.context.support.PropertySourcesPlaceholderConfigurer`。Spring 3.1以后就不建议使用PropertyPlaceholderConfigurer了，要改用PropertySourcesPlaceholderConfigurer。
 

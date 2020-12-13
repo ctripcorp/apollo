@@ -67,23 +67,23 @@ eureka:
 
 1.6.0版本增加了自定义环境的功能，可以在不修改代码的情况增加环境
 
-1. protaldb增加环境，参考[分布式部署指南 2.1.3.1一节](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2131-%E8%B0%83%E6%95%B4apolloportaldb%E9%85%8D%E7%BD%AE)
-2. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)。
+1. protaldb增加环境，参考[分布式部署指南 2.1.3.1一节](zh/deployment/distributed-deployment-guide?id=_2131-调整apolloportaldb配置)
+2. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](zh/deployment/distributed-deployment-guide?id=_221124-配置apollo-portal的meta-service信息)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide?id=_122-apollo-meta-server)。
 
->注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#212-%E5%88%9B%E5%BB%BAapolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)
+>注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](zh/deployment/distributed-deployment-guide?id=_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](zh/deployment/distributed-deployment-guide?id=_2132-调整apolloconfigdb配置)，[2.2.1.1.2 配置数据库连接信息](zh/deployment/distributed-deployment-guide?id=_22112-配置数据库连接信息)
 
-> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2121-%E4%BB%8E%E5%88%AB%E7%9A%84%E7%8E%AF%E5%A2%83%E5%AF%BC%E5%85%A5apolloconfigdb%E7%9A%84%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE)对新的环境做初始化
+> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](zh/deployment/distributed-deployment-guide?id=_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化
 
 #### 4.2 1.5.1及之前的版本
 ##### 4.2.1 添加Apollo预先定义好的环境
 
 如果需要添加的环境是Apollo预先定义的环境（DEV, FAT, UAT, PRO），需要两步操作：
-1. protaldb增加环境，参考[分布式部署指南 2.1.3.1一节](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2131-%E8%B0%83%E6%95%B4apolloportaldb%E9%85%8D%E7%BD%AE)
-2. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)。
+1. protaldb增加环境，参考[分布式部署指南 2.1.3.1一节](zh/deployment/distributed-deployment-guide?id=_2131-调整apolloportaldb配置)
+2. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](zh/deployment/distributed-deployment-guide?id=_221124-配置apollo-portal的meta-service信息)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide?id=_122-apollo-meta-server)。
 
->注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#212-%E5%88%9B%E5%BB%BAapolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)
+>注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](zh/deployment/distributed-deployment-guide?id=_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](zh/deployment/distributed-deployment-guide?id=_2132-调整apolloconfigdb配置)，[2.2.1.1.2 配置数据库连接信息](zh/deployment/distributed-deployment-guide?id=_22112-配置数据库连接信息)
 
-> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2121-%E4%BB%8E%E5%88%AB%E7%9A%84%E7%8E%AF%E5%A2%83%E5%AF%BC%E5%85%A5apolloconfigdb%E7%9A%84%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE)对新的环境做初始化
+> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](zh/deployment/distributed-deployment-guide?id=_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化
 
 ##### 4.2.2 添加自定义的环境
 
@@ -134,12 +134,12 @@ public class LegacyMetaServerProvider {
     ...
 }
 ```
-6. protaldb增加`BETA`环境，参考[分布式部署指南 2.1.3.1一节](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2131-%E8%B0%83%E6%95%B4apolloportaldb%E9%85%8D%E7%BD%AE)
-7. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#221124-%E9%85%8D%E7%BD%AEapollo-portal%E7%9A%84meta-service%E4%BF%A1%E6%81%AF)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)。
+6. protaldb增加`BETA`环境，参考[分布式部署指南 2.1.3.1一节](zh/deployment/distributed-deployment-guide?id=_2131-调整apolloportaldb配置)
+7. 为apollo-portal添加新增环境对应的meta server地址，具体参考：[2.2.1.1.2.4 配置apollo-portal的meta service信息](zh/deployment/distributed-deployment-guide?id=_221124-配置apollo-portal的meta-service信息)。apollo-client在新的环境下使用时也需要做好相应的配置，具体参考：[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide?id=_122-apollo-meta-server)。
 
->注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#212-%E5%88%9B%E5%BB%BAapolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2132-%E8%B0%83%E6%95%B4apolloconfigdb%E9%85%8D%E7%BD%AE)，[2.2.1.1.2 配置数据库连接信息](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#22112-%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF)
+>注1：一套Portal可以管理多个环境，但是每个环境都需要独立部署一套Config Service、Admin Service和ApolloConfigDB，具体请参考：[2.1.2 创建ApolloConfigDB](zh/deployment/distributed-deployment-guide?id=_212-创建apolloconfigdb)，[2.1.3.2 调整ApolloConfigDB配置](zh/deployment/distributed-deployment-guide?id=_2132-调整apolloconfigdb配置)，[2.2.1.1.2 配置数据库连接信息](zh/deployment/distributed-deployment-guide?id=_22112-配置数据库连接信息)
 
-> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#2121-%E4%BB%8E%E5%88%AB%E7%9A%84%E7%8E%AF%E5%A2%83%E5%AF%BC%E5%85%A5apolloconfigdb%E7%9A%84%E9%A1%B9%E7%9B%AE%E6%95%B0%E6%8D%AE)对新的环境做初始化
+> 注2：如果是为已经运行了一段时间的Apollo配置中心增加环境，别忘了参考[2.1.2.1 从别的环境导入ApolloConfigDB的项目数据](zh/deployment/distributed-deployment-guide?id=_2121-从别的环境导入apolloconfigdb的项目数据)对新的环境做初始化
 
 ### 5. 如何删除应用、集群、Namespace？
 
@@ -225,7 +225,7 @@ http://1.1.1.1:8761/eureka/,http://2.2.2.2:8761/eureka/
 
 ### 9. Spring Boot中使用`ConditionalOnProperty`读取不到配置
 
-`@ConditionalOnProperty`功能从0.10.0版本开始支持，具体可以参考 [3.2.1.3 在Spring Boot初始bootstrap阶段注入配置](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#322-spring-placeholder%E7%9A%84%E4%BD%BF%E7%94%A8)
+`@ConditionalOnProperty`功能从0.10.0版本开始支持，具体可以参考 [3.2.1.3 在Spring Boot初始bootstrap阶段注入配置](zh/usage/java-sdk-user-guide?id=_322-spring-placeholder的使用)
 
 ### 10. 多机房如何实现A机房的客户端就近读取A机房的config service，B机房的客户端就近读取B机房的config service？
 
