@@ -248,7 +248,7 @@ Spring从3.1版本开始增加了`ConfigurableEnvironment`和`PropertySource`：
 <tr>
 <td>所有Config Service下线</td>
 <td>客户端无法读取最新配置，Portal无影响</td>
-<td>客户端重启时，可以读取本地缓存配置文件。如果是新扩容的机器，可以从其它机器上获取已缓存的配置文件，具体信息可以参考<a href="https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#123-%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98%E8%B7%AF%E5%BE%84">Java客户端使用指南 - 1.2.3 本地缓存路径</a>
+<td>客户端重启时，可以读取本地缓存配置文件。如果是新扩容的机器，可以从其它机器上获取已缓存的配置文件，具体信息可以参考<a href='/#/zh/usage/java-sdk-user-guide?id=_123-本地缓存路径'>Java客户端使用指南 - 1.2.3 本地缓存路径</a>
 </td>
 <td></td>
 </tr>
@@ -285,7 +285,7 @@ Spring从3.1版本开始增加了`ConfigurableEnvironment`和`PropertySource`：
 <tr>
 <td>数据库宕机</td>
 <td>客户端无影响，Portal无法更新配置</td>
-<td>Config Service开启<a href="https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#3config-servicecacheenabled---%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E9%85%8D%E7%BD%AE%E7%BC%93%E5%AD%98">配置缓存</a>后，对配置的读取不受数据库宕机影响</td>
+<td>Config Service开启<a href="/#/zh/deployment/distributed-deployment-guide?id=_3-config-servicecacheenabled-是否开启配置缓存">配置缓存</a>后，对配置的读取不受数据库宕机影响</td>
 <td></td>
 </tr>
 </tbody>

@@ -19,7 +19,7 @@ Apollo在创建项目的时候，都会默认创建一个“application”的Nam
 ### 3. Namespace的格式有哪些？
 配置文件有多种格式，例如：properties、xml、yml、yaml、json等。同样Namespace也具有这些格式。在Portal UI中可以看到“application”的Namespace上有一个“properties”标签，表明“application”是properties格式的。
 
->注1：非properties格式的namespace，在客户端使用时需要调用`ConfigService.getConfigFile(String namespace, ConfigFileFormat configFileFormat)`来获取，如果使用[Http接口直接调用](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#12-%E9%80%9A%E8%BF%87http%E6%8E%A5%E5%8F%A3%E4%BB%8Eapollo%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE)时，对应的namespace参数需要传入namespace的名字加上后缀名，如datasources.json。
+>注1：非properties格式的namespace，在客户端使用时需要调用`ConfigService.getConfigFile(String namespace, ConfigFileFormat configFileFormat)`来获取，如果使用[Http接口直接调用](zh/usage/other-language-client-user-guide#_12-通过带缓存的http接口从apollo读取配置)时，对应的namespace参数需要传入namespace的名字加上后缀名，如datasources.json。
 
 >注2：apollo-client 1.3.0版本开始对yaml/yml做了更好的支持，使用起来和properties格式一致：`Config config = ConfigService.getConfig("application.yml");`，Spring的注入方式也和properties一致。
 
