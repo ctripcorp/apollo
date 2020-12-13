@@ -1,4 +1,4 @@
-在配置发布时候，可以发布信息邮件通知到相关的负责人，具体接入方式请参考[Apollo开发指南-3.2 Portal接入邮件服务](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97#32-portal%E6%8E%A5%E5%85%A5%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1)。
+在配置发布时候，可以发布信息邮件通知到相关的负责人，具体接入方式请参考[Apollo开发指南-3.2 Portal接入邮件服务](zh/development/apollo-development-guide#_32-portal接入邮件服务)。
 
 以下为发布邮件和回滚邮件的模板内容样式，邮件模板为html格式，发送html格式的邮件时，可能需要做一些额外的处理，取决于每个公司的邮件服务实现。为了减少字符数，模板经过了压缩处理，可自行格式化提高可读性。
 

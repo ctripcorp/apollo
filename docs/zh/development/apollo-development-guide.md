@@ -19,13 +19,13 @@ Apollo本地开发需要以下组件：
 3. IDE: 没有特殊要求
 
 其中MySQL需要创建Apollo数据库并导入基础数据。
-具体步骤请参考[分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)中的以下部分：
+具体步骤请参考[分布式部署指南](zh/deployment/distributed-deployment-guide)中的以下部分：
 
-1. [一、准备工作](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#%E4%B8%80%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C)
-2. [2.1 创建数据库](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#21-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93)
+1. [一、准备工作](zh/deployment/distributed-deployment-guide#一、准备工作)
+2. [2.1 创建数据库](zh/deployment/distributed-deployment-guide#_21-创建数据库)
 
 ## 1.2 Apollo总体设计
-具体请参考[Apollo配置中心设计](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1)
+具体请参考[Apollo配置中心设计](zh/design/apollo-design)
 
 # 二、本地启动
 ## 2.1 Apollo Config Service和Apollo Admin Service
@@ -93,7 +93,7 @@ Apollo本地开发需要以下组件：
 	-Dspring.datasource.username=root
 	-Dspring.datasource.password=
 
->注1：这里指定了apollo_profile是`github`和`auth`，其中`github`是Apollo必须的一个profile，用于数据库的配置，`auth`是从0.9.0新增的，用来支持使用apollo提供的Spring Security简单认证，更多信息可以参考[Portal-实现用户登录功能](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
+>注1：这里指定了apollo_profile是`github`和`auth`，其中`github`是Apollo必须的一个profile，用于数据库的配置，`auth`是从0.9.0新增的，用来支持使用apollo提供的Spring Security简单认证，更多信息可以参考[Portal-实现用户登录功能](zh/development/portal-how-to-implement-user-login-function)
 >
 >注2：spring.datasource相关配置替换成你自己的数据库连接信息，注意数据库是`ApolloPortalDB `。
 >
@@ -120,7 +120,7 @@ Apollo本地开发需要以下组件：
 
 为了更好的开发和调试，一般我们都会自己创建一个demo项目给自己使用。
 
-可以参考[应用接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)中的[一、普通应用接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97#%E4%B8%80%E6%99%AE%E9%80%9A%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)创建自己的demo项目。
+可以参考[一、普通应用接入指南](zh/usage/apollo-user-guide#一、普通应用接入指南)创建自己的demo项目。
 
 ## 2.3 Java样例客户端启动
 
@@ -139,7 +139,7 @@ Apollo本地开发需要以下组件：
 
 > 对于公共Namespace的配置，没有AppId也可以获取到配置，但是就失去了应用覆盖公共Namespace配置的能力。
 
-> 更多配置AppId的方式可以参考[1.2.1 AppId](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#121-appid)
+> 更多配置AppId的方式可以参考[1.2.1 AppId](zh/usage/java-sdk-user-guide#_121-appid)
 
 ### 2.3.2 新建运行配置
 ![NewConfiguration-Application](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/local-development/NewConfiguration-Application.png)
@@ -154,7 +154,7 @@ Apollo本地开发需要以下组件：
 
 > 注：这里当前环境的meta server地址为`http://localhost:8080`，也就是`apollo-configservice`的地址。
 
-> 更多配置Apollo Meta Server的方式可以参考[1.2.2 Apollo Meta Server](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#122-apollo-meta-server)
+> 更多配置Apollo Meta Server的方式可以参考[1.2.2 Apollo Meta Server](zh/usage/java-sdk-user-guide#_122-apollo-meta-server)
 
 ### 2.3.5 概览
 
@@ -228,7 +228,7 @@ Apollo客户端针对不同的环境会从不同的服务器获取配置，所�
 
 ## 3.1 Portal 实现用户登录功能
 
-请参考[Portal 实现用户登录功能](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
+请参考[Portal 实现用户登录功能](zh/development/portal-how-to-implement-user-login-function)
 
 ## 3.2 Portal接入邮件服务
 
@@ -247,7 +247,7 @@ Apollo客户端针对不同的环境会从不同的服务器获取配置，所�
   * **email.template.release.module.diff** 发布邮件的diff模块。
   * **email.template.rollback.module.diff** 回滚邮件的diff模块。
   * **email.template.release.module.rules** 灰度发布的灰度规则模块。
-   我们提供了以上[邮件模板样例](https://github.com/ctripcorp/apollo/wiki/%E9%82%AE%E4%BB%B6%E6%A8%A1%E6%9D%BF%E6%A0%B7%E4%BE%8B)，方便大家使用。
+   我们提供了以上[邮件模板样例](zh/development/email-template-samples)，方便大家使用。
 
 >注：运行时使用不同的实现是通过[Profiles](http://docs.spring.io/autorepo/docs/spring-boot/current/reference/html/boot-features-profiles.html)实现的，比如你自己的Email实现是在`custom` profile中的话，在打包脚本中可以指定-Dapollo_profile=github,custom。其中`github`是Apollo必须的一个profile，用于数据库的配置，`custom`是你自己实现的profile。同时需要注意在[EmailConfiguration](https://github.com/ctripcorp/apollo/blob/master/apollo-portal/src/main/java/com/ctrip/framework/apollo/portal/spi/configuration/EmailConfiguration.java)中修改默认实现的条件`@Profile({"!custom"})`。
 
