@@ -1,22 +1,3 @@
-* [一、准备工作](#%E4%B8%80%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C)
-    * [1.1 运行时环境](#11-%E8%BF%90%E8%A1%8C%E6%97%B6%E7%8E%AF%E5%A2%83)
-    * [1.2 MySQL](#12-mysql)
-    * [1.3 环境](#13-%E7%8E%AF%E5%A2%83)
-    * [1.4 网络策略](#14-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)
-* [二、部署步骤](#%E4%BA%8C%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4)
-    * [2.1 创建数据库](#21-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93)
-        * [2.1.1 创建ApolloPortalDB](#211-%E5%88%9B%E5%BB%BAapolloportaldb)
-        * [2.1.2 创建ApolloConfigDB](#212-%E5%88%9B%E5%BB%BAapolloconfigdb)
-        * [2.1.3 调整服务端配置](#213-%E8%B0%83%E6%95%B4%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE)
-    * [2.2 虚拟机/物理机部署](#22-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%89%A9%E7%90%86%E6%9C%BA%E9%83%A8%E7%BD%B2)
-        * [2.2.1 获取安装包](#221-%E8%8E%B7%E5%8F%96%E5%AE%89%E8%A3%85%E5%8C%85)
-        * [2.2.2 部署Apollo服务端](#222-%E9%83%A8%E7%BD%B2apollo%E6%9C%8D%E5%8A%A1%E7%AB%AF)
-    * [2.3 Docker部署](#23-docker%E9%83%A8%E7%BD%B2)
-    * [2.4 Kubernetes部署](#24-kubernetes%E9%83%A8%E7%BD%B2)
-        * [2.4.1 基于Kubernetes原生服务发现](#241-%E5%9F%BA%E4%BA%8Ekubernetes%E5%8E%9F%E7%94%9F%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0)
-        * [2.4.2 基于内置的Eureka服务发现](#242-%E5%9F%BA%E4%BA%8E%E5%86%85%E7%BD%AE%E7%9A%84eureka%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0)
-* [三、Portal 实现用户登录功能](#%E4%B8%89portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
-
 本文档介绍了如何按照分布式部署的方式编译、打包、部署Apollo配置中心，从而可以在开发、测试、生产等环境分别部署运行。
 
 > 如果只是需要在本地快速部署试用Apollo的话，可以参考[Quick Start](zh/deployment/quick-start)
@@ -150,16 +131,6 @@ eureka:
 # 二、部署步骤
 
 部署步骤总体还是比较简单的，Apollo的唯一依赖是数据库，所以需要首先把数据库准备好，然后根据实际情况，选择不同的部署方式：
-
-* [2.1 创建数据库](#21-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93)
-    * [2.1.1 创建ApolloPortalDB](#211-%E5%88%9B%E5%BB%BAapolloportaldb)
-    * [2.1.2 创建ApolloConfigDB](#212-%E5%88%9B%E5%BB%BAapolloconfigdb)
-    * [2.1.3 调整服务端配置](#213-%E8%B0%83%E6%95%B4%E6%9C%8D%E5%8A%A1%E7%AB%AF%E9%85%8D%E7%BD%AE)
-* [2.2 虚拟机/物理机部署](#22-%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%89%A9%E7%90%86%E6%9C%BA%E9%83%A8%E7%BD%B2)
-    * [2.2.1 获取安装包](#221-%E8%8E%B7%E5%8F%96%E5%AE%89%E8%A3%85%E5%8C%85)
-    * [2.2.2 部署Apollo服务端](#222-%E9%83%A8%E7%BD%B2apollo%E6%9C%8D%E5%8A%A1%E7%AB%AF)
-* [2.3 Docker部署](#23-docker%E9%83%A8%E7%BD%B2)
-* [2.4 Kubernetes部署](#24-kubernetes%E9%83%A8%E7%BD%B2)
 
 > [@lingjiaju](https://github.com/lingjiaju)录制了一系列Apollo快速上手视频，如果看文档觉得略繁琐的话，不妨可以先看一下他的[视频教程](https://pan.baidu.com/s/1blv87EOZS77NWT8Amkijkw#list/path=%2F)。
 

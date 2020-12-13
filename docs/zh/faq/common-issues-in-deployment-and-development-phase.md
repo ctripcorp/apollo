@@ -1,20 +1,3 @@
-* [1. windows怎么执行build.sh?](#1-windows%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8Cbuildsh)
-* [2. 本地运行时Portal一直报Env is down.](#2-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E6%97%B6portal%E4%B8%80%E7%9B%B4%E6%8A%A5env-is-down)
-* [3. admin server 或者 config server 注册了内网IP，导致portal或者client访问不了admin server或config server](#3-admin-server-%E6%88%96%E8%80%85-config-server-%E6%B3%A8%E5%86%8C%E4%BA%86%E5%86%85%E7%BD%91ip%E5%AF%BC%E8%87%B4portal%E6%88%96%E8%80%85client%E8%AE%BF%E9%97%AE%E4%B8%8D%E4%BA%86admin-server%E6%88%96config-server)
-* [4. Portal如何增加环境？](#4-portal%E5%A6%82%E4%BD%95%E5%A2%9E%E5%8A%A0%E7%8E%AF%E5%A2%83)
-* [5. 如何删除应用、集群、Namespace？](#5-%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%BA%94%E7%94%A8%E9%9B%86%E7%BE%A4namespace)
-* [6. 客户端多块网卡造成获取IP不准，如何解决？](#6-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A4%9A%E5%9D%97%E7%BD%91%E5%8D%A1%E9%80%A0%E6%88%90%E8%8E%B7%E5%8F%96ip%E4%B8%8D%E5%87%86%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3)
-* [7. 通过Apollo动态调整Spring Boot的Logging level](#7-%E9%80%9A%E8%BF%87apollo%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4spring-boot%E7%9A%84logging-level)
-* [8. 将Config Service和Admin Service注册到单独的Eureka Server上](#8-%E5%B0%86config-service%E5%92%8Cadmin-service%E6%B3%A8%E5%86%8C%E5%88%B0%E5%8D%95%E7%8B%AC%E7%9A%84eureka-server%E4%B8%8A)
-* [9. Spring Boot中使用`ConditionalOnProperty`读取不到配置](#9-spring-boot%E4%B8%AD%E4%BD%BF%E7%94%A8conditionalonproperty%E8%AF%BB%E5%8F%96%E4%B8%8D%E5%88%B0%E9%85%8D%E7%BD%AE)
-* [10. 多机房如何实现A机房的客户端就近读取A机房的config service，B机房的客户端就近读取B机房的config service？](#10-%E5%A4%9A%E6%9C%BA%E6%88%BF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0a%E6%9C%BA%E6%88%BF%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B0%B1%E8%BF%91%E8%AF%BB%E5%8F%96a%E6%9C%BA%E6%88%BF%E7%9A%84config-serviceb%E6%9C%BA%E6%88%BF%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B0%B1%E8%BF%91%E8%AF%BB%E5%8F%96b%E6%9C%BA%E6%88%BF%E7%9A%84config-service)
-* [11. apollo是否有支持HEAD请求的页面？阿里云slb配置健康检查只支持HEAD请求](#11-apollo%E6%98%AF%E5%90%A6%E6%9C%89%E6%94%AF%E6%8C%81head%E8%AF%B7%E6%B1%82%E7%9A%84%E9%A1%B5%E9%9D%A2%E9%98%BF%E9%87%8C%E4%BA%91slb%E9%85%8D%E7%BD%AE%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E5%8F%AA%E6%94%AF%E6%8C%81head%E8%AF%B7%E6%B1%82)
-* [12. apollo如何配置查看权限?](#12-apollo%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE%E6%9F%A5%E7%9C%8B%E6%9D%83%E9%99%90)
-* [13. apollo如何放在独立的tomcat中跑？](#13-apollo%E5%A6%82%E4%BD%95%E6%94%BE%E5%9C%A8%E7%8B%AC%E7%AB%8B%E7%9A%84tomcat%E4%B8%AD%E8%B7%91)
-* [14. 注册中心Eureka如何替换为zookeeper？](#14-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83eureka%E5%A6%82%E4%BD%95%E6%9B%BF%E6%8D%A2%E4%B8%BAzookeeper)
-* [15. 本地多人同时开发，如何实现配置不一样且互不影响？](#15-%E6%9C%AC%E5%9C%B0%E5%A4%9A%E4%BA%BA%E5%90%8C%E6%97%B6%E5%BC%80%E5%8F%91%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE%E4%B8%8D%E4%B8%80%E6%A0%B7%E4%B8%94%E4%BA%92%E4%B8%8D%E5%BD%B1%E5%93%8D)
-* [16. Portal挂载到nginx/slb后如何设置相对路径？](#16-portal%E6%8C%82%E8%BD%BD%E5%88%B0nginxslb%E5%90%8E%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84)
-
 ### 1. windows怎么执行build.sh?
 安装[Git Bash](https://git-for-windows.github.io/)，然后运行 “./build.sh” 注意前面 “./”
 

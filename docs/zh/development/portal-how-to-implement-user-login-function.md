@@ -1,10 +1,3 @@
-* [实现方式一：使用Apollo提供的Spring Security简单认证](#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80%E4%BD%BF%E7%94%A8apollo%E6%8F%90%E4%BE%9B%E7%9A%84spring-security%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%81)
-* [实现方式二： 接入LDAP](#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%BA%8C-%E6%8E%A5%E5%85%A5ldap)
-  * [OpenLDAP接入方式](#1-openldap%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F)
-  * [Active Directory接入方式](#2-active-directory%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F)
-  * [ApacheDS接入方式](#3-apacheds%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F)
-* [实现方式三： 接入公司的统一登录认证系统](#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%89-%E6%8E%A5%E5%85%A5%E5%85%AC%E5%8F%B8%E7%9A%84%E7%BB%9F%E4%B8%80%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F)
-
 Apollo是配置管理系统，会提供权限管理（Authorization），理论上是不负责用户登录认证功能的实现（Authentication）。
 
 所以Apollo定义了一些SPI用来解耦，Apollo接入登录的关键就是实现这些SPI。

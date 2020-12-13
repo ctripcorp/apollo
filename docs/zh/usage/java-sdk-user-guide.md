@@ -1,24 +1,3 @@
-* [一、准备工作](#%E4%B8%80%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C)
-* [二、Maven Dependency](#%E4%BA%8Cmaven-dependency)
-* [三、客户端用法](#%E4%B8%89%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%94%A8%E6%B3%95)
-    * [3.1 API使用方式](#31-api%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
-        * [3.1.1 获取默认namespace的配置](#311-%E8%8E%B7%E5%8F%96%E9%BB%98%E8%AE%A4namespace%E7%9A%84%E9%85%8D%E7%BD%AEapplication)
-        * [3.1.2 监听配置变化事件](#312-%E7%9B%91%E5%90%AC%E9%85%8D%E7%BD%AE%E5%8F%98%E5%8C%96%E4%BA%8B%E4%BB%B6)
-        * [3.1.3 获取公共Namespace的配置](#313-%E8%8E%B7%E5%8F%96%E5%85%AC%E5%85%B1namespace%E7%9A%84%E9%85%8D%E7%BD%AE)
-        * [3.1.4 获取非properties格式namespace的配置](#314-%E8%8E%B7%E5%8F%96%E9%9D%9Eproperties%E6%A0%BC%E5%BC%8Fnamespace%E7%9A%84%E9%85%8D%E7%BD%AE)
-    * [3.2 Spring整合方式](#32-spring%E6%95%B4%E5%90%88%E6%96%B9%E5%BC%8F)
-        * [3.2.1 配置](#321-%E9%85%8D%E7%BD%AE)
-            * [3.2.1.1 基于XML的配置](#3211-%E5%9F%BA%E4%BA%8Exml%E7%9A%84%E9%85%8D%E7%BD%AE)
-            * [3.2.1.2 基于Java的配置（推荐）](#3212-%E5%9F%BA%E4%BA%8Ejava%E7%9A%84%E9%85%8D%E7%BD%AE%E6%8E%A8%E8%8D%90)
-            * [3.2.1.3 Spring Boot集成方式（推荐）](#3213-spring-boot%E9%9B%86%E6%88%90%E6%96%B9%E5%BC%8F%E6%8E%A8%E8%8D%90)
-        * [3.2.2 Spring Placeholder的使用](#322-spring-placeholder%E7%9A%84%E4%BD%BF%E7%94%A8)
-        * [3.2.3 Spring Annotation支持](#323-spring-annotation%E6%94%AF%E6%8C%81)
-        * [3.2.4 已有配置迁移](#324-%E5%B7%B2%E6%9C%89%E9%85%8D%E7%BD%AE%E8%BF%81%E7%A7%BB)
-    * [3.3 Demo](#33-demo)
-* [四、客户端设计](#%E5%9B%9B%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E8%AE%A1)
-* [五、本地开发模式](#%E4%BA%94%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F)
-* [六、测试模式](#%E5%85%AD%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F)
-
 >注意：本文档适用对象是Apollo系统的使用者，如果你是公司内Apollo系统的开发者/维护人员，建议先参考[Apollo开发指南](zh/development/apollo-development-guide)。
 
 # 一、准备工作

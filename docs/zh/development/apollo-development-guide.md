@@ -1,13 +1,3 @@
-* [一、准备工作](#%E4%B8%80%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C)
-* [二、本地启动](#%E4%BA%8C%E6%9C%AC%E5%9C%B0%E5%90%AF%E5%8A%A8)
-    * [2.1 Apollo Config Service和Apollo Admin Service](#21-apollo-config-service%E5%92%8Capollo-admin-service)
-    * [2.2 Apollo-Portal](#22-apollo-portal)
-    * [2.3 Java样例客户端启动](#23-java%E6%A0%B7%E4%BE%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8)
-    * [2.4 .Net样例客户端启动](#24-net%E6%A0%B7%E4%BE%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8)
-* [三、开发](#%E4%B8%89%E5%BC%80%E5%8F%91)
-    * [3.1 Portal 实现用户登录功能](#31-portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
-    * [3.2 Portal接入邮件服务](#32-portal%E6%8E%A5%E5%85%A5%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1)
-
 本文档介绍了如何在本地使用IDE编译、运行Apollo，从而可以帮助大家了解Apollo的内在运行机制，同时也为自定义开发做好准备。
 
 # 一、准备工作

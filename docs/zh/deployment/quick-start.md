@@ -1,8 +1,3 @@
-* [一、准备工作](#%E4%B8%80%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C)
-* [二、安装步骤](#%E4%BA%8C%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4)
-* [三、启动Apollo配置中心](#%E4%B8%89%E5%90%AF%E5%8A%A8apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83)
-* [四、使用Apollo配置中心](#%E5%9B%9B%E4%BD%BF%E7%94%A8apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83)
-
 为了让大家更快的上手了解Apollo配置中心，我们这里准备了一个Quick Start，能够在几分钟内在本地环境部署、启动Apollo配置中心。
 
 考虑到Docker的便捷性，我们还提供了Quick Start的Docker版本，如果你对Docker比较熟悉的话，可以参考[Apollo Quick Start Docker部署](zh/deployment/quick-start-docker)通过Docker快速部署Apollo。
