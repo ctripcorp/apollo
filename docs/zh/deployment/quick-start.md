@@ -5,11 +5,11 @@
 
 为了让大家更快的上手了解Apollo配置中心，我们这里准备了一个Quick Start，能够在几分钟内在本地环境部署、启动Apollo配置中心。
 
-考虑到Docker的便捷性，我们还提供了Quick Start的Docker版本，如果你对Docker比较熟悉的话，可以参考[Apollo Quick Start Docker部署](https://github.com/ctripcorp/apollo/wiki/Apollo-Quick-Start-Docker%E9%83%A8%E7%BD%B2)通过Docker快速部署Apollo。
+考虑到Docker的便捷性，我们还提供了Quick Start的Docker版本，如果你对Docker比较熟悉的话，可以参考[Apollo Quick Start Docker部署](zh/deployment/quick-start-docker)通过Docker快速部署Apollo。
 
-不过这里需要注意的是，Quick Start只针对本地测试使用，如果要部署到生产环境，还请另行参考[分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
+不过这里需要注意的是，Quick Start只针对本地测试使用，如果要部署到生产环境，还请另行参考[分布式部署指南](zh/deployment/distributed-deployment-guide)。
 
-> 注：Quick Start需要有bash环境，Windows用户请安装[Git Bash](https://git-for-windows.github.io/)，建议使用最新版本，老版本可能会遇到未知问题。也可以直接通过IDE环境启动，详见[Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)。
+> 注：Quick Start需要有bash环境，Windows用户请安装[Git Bash](https://git-for-windows.github.io/)，建议使用最新版本，老版本可能会遇到未知问题。也可以直接通过IDE环境启动，详见[Apollo开发指南](zh/development/apollo-development-guide)。
 
 # 一、准备工作
 ## 1.1 Java
@@ -165,9 +165,9 @@ Portal started. You can visit http://localhost:8070 now!
 > 注：在启动apollo-configservice的过程中会在日志中输出eureka注册失败的信息，如`com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused`。需要注意的是，这个是预期的情况，因为apollo-configservice需要向Meta Server（它自己）注册服务，但是因为在启动过程中，自己还没起来，所以会报这个错。后面会进行重试的动作，所以等自己服务起来后就会注册正常了。
 
 ## 3.4 注意
-Quick Start只是用来帮助大家快速体验Apollo项目，具体实际使用时请参考：[分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
+Quick Start只是用来帮助大家快速体验Apollo项目，具体实际使用时请参考：[分布式部署指南](zh/deployment/distributed-deployment-guide)。
 
-另外需要注意的是Quick Start不支持增加环境，只有通过分布式部署才可以新增环境，同样请参考：[分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
+另外需要注意的是Quick Start不支持增加环境，只有通过分布式部署才可以新增环境，同样请参考：[分布式部署指南](zh/deployment/distributed-deployment-guide)
 
 # 四、使用Apollo配置中心
 ## 4.1 使用样例项目
@@ -175,7 +175,7 @@ Quick Start只是用来帮助大家快速体验Apollo项目，具体实际使用
 ### 4.1.1 查看样例配置
 1. 打开http://localhost:8070
 
-> Quick Start集成了[Spring Security简单认证](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E4%B8%80%E4%BD%BF%E7%94%A8apollo%E6%8F%90%E4%BE%9B%E7%9A%84spring-security%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%81)，更多信息可以参考[Portal 实现用户登录功能](https://github.com/ctripcorp/apollo/wiki/Portal-%E5%AE%9E%E7%8E%B0%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD)
+> Quick Start集成了[Spring Security简单认证](zh/development/portal-how-to-implement-user-login-function#实现方式一：使用apollo提供的spring-security简单认证)，更多信息可以参考[Portal 实现用户登录功能](zh/development/portal-how-to-implement-user-login-function)
 
 <img src="https://github.com/nobodyiam/apollo-build-scripts/raw/master/images/apollo-login.png" alt="登录" width="640px">
 
@@ -243,7 +243,7 @@ Apollo Config Demo. Please input key to get the value. Input quit to exit.
 
 ## 4.2 使用新的项目
 ### 4.2.1 应用接入Apollo
-这部分可以参考[Java应用接入指南](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
+这部分可以参考[Java应用接入指南](zh/usage/java-sdk-user-guide)
 
 ### 4.2.2 运行客户端程序
 由于使用了新的项目，所以客户端需要修改appId信息。
