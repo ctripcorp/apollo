@@ -34,7 +34,7 @@ QPS: 160
 
 999线响应时间: 2.5ms
 
->注：config service开启了配置缓存，更多信息可以参考[分布式部署指南中的缓存配置](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97#3config-servicecacheenabled---%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E9%85%8D%E7%BD%AE%E7%BC%93%E5%AD%98)
+>注：config service开启了配置缓存，更多信息可以参考[分布式部署指南中的缓存配置](zh/deployment/distributed-deployment-guide#_3-config-servicecacheenabled-是否开启配置缓存)
 
 #### 2.2 Config Server GC情况
 
