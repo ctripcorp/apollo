@@ -89,7 +89,6 @@ public class NamespaceController {
                                           @PathVariable String clusterName) {
 
     List<NamespaceBO> namespaceBOs = namespaceService.findNamespaceBOs(appId, Env.valueOf(env), clusterName);
-
     for (NamespaceBO namespaceBO : namespaceBOs) {
       if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceBO.getBaseInfo().getNamespaceName())) {
         namespaceBO.hideItems();
