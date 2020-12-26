@@ -211,55 +211,6 @@ public class NamespaceService {
     return result;
   }
 
-  private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) {
-    NamespaceBO namespaceBO = new NamespaceBO();
-    namespaceBO.setBaseInfo(namespace);
-
-    String appId = namespace.getAppId();
-    String clusterName = namespace.getClusterName();
-    String namespaceName = namespace.getNamespaceName();
-
-    fillAppNamespaceProperties(namespaceBO);
-
-    List<ItemBO> itemBOs = new LinkedList<>();
-    namespaceBO.setItems(itemBOs);
-
-    //latest Release
-    ReleaseDTO latestRelease;
-    Map<String, String> releaseItems = new HashMap<>();
-    Map<String, ItemDTO> deletedItemDTOs = new HashMap<>();
-    latestRelease = releaseService.loadLatestRelease(appId, env, clusterName, namespaceName);
-    if (latestRelease != null) {
-      releaseItems = GSON.fromJson(latestRelease.getConfigurations(), GsonType.CONFIG);
-    }
-
-    //not Release config items
-    List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
-    int modifiedItemCnt = 0;
-    for (ItemDTO itemDTO : items) {
-
-      ItemBO itemBO = transformItem2BO(itemDTO, releaseItems);
-
-      if (itemBO.isModified()) {
-        modifiedItemCnt++;
-      }
-
-      itemBOs.add(itemBO);
-    }
-
-    //deleted items
-    itemService.findDeletedItems(appId, env, clusterName, namespaceName).forEach(item -> {
-      deletedItemDTOs.put(item.getKey(),item);
-    });
-
-    List<ItemBO> deletedItems = parseDeletedItems(items, releaseItems, deletedItemDTOs);
-    itemBOs.addAll(deletedItems);
-    modifiedItemCnt += deletedItems.size();
-
-    namespaceBO.setItemModifiedCnt(modifiedItemCnt);
-
-    return namespaceBO;
-  }
     private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) {
         NamespaceBO namespaceBO = new NamespaceBO();
         try {
