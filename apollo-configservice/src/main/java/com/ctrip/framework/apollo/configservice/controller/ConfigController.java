@@ -177,7 +177,7 @@ public class ConfigController {
    * Release in lower index override those in higher index
    */
   Map<String, String> mergeReleaseConfigurations(List<Release> releases) {
-    Map<String, String> result = Maps.newHashMap();
+    Map<String, String> result = Maps.newLinkedHashMap();
     for (Release release : Lists.reverse(releases)) {
       result.putAll(gson.fromJson(release.getConfigurations(), configurationTypeReference));
     }
@@ -189,7 +189,7 @@ public class ConfigController {
     if (!Strings.isNullOrEmpty(dataCenter)) {
       keyParts.add(dataCenter);
     }
-    return keyParts.stream().collect(Collectors.joining(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR));
+    return String.join(ConfigConsts.CLUSTER_NAMESPACE_SEPARATOR, keyParts);
   }
 
   private void auditReleases(String appId, String cluster, String dataCenter, String clientIp,

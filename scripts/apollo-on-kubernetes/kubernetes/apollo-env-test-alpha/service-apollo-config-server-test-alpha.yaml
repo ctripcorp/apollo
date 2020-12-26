@@ -53,7 +53,7 @@ spec:
 
 ---
 kind: StatefulSet
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 metadata:
   namespace: sre
   name: statefulset-apollo-config-server-test-alpha

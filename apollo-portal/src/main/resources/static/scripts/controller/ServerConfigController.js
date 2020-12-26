@@ -1,9 +1,18 @@
 server_config_module.controller('ServerConfigController',
-    ['$scope', '$window', '$translate', 'toastr', 'ServerConfigService', 'AppUtil',
-        function ($scope, $window, $translate, toastr, ServerConfigService, AppUtil) {
+    ['$scope', '$window', '$translate', 'toastr', 'ServerConfigService', 'AppUtil', 'PermissionService',
+        function ($scope, $window, $translate, toastr, ServerConfigService, AppUtil, PermissionService) {
 
             $scope.serverConfig = {};
             $scope.saveBtnDisabled = true;
+
+            initPermission();
+
+            function initPermission() {
+                PermissionService.has_root_permission()
+                .then(function (result) {
+                    $scope.isRootUser = result.hasPermission;
+                })
+            }
 
             $scope.create = function () {
                 ServerConfigService.create($scope.serverConfig).then(function (result) {

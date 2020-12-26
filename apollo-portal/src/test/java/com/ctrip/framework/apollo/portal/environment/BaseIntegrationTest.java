@@ -1,24 +1,16 @@
 package com.ctrip.framework.apollo.portal.environment;
 
-import com.ctrip.framework.apollo.tracer.spi.MessageProducer;
-import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.junit.After;
-import org.junit.Before;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.ServerSocket;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class BaseIntegrationTest {
   protected static final int PORT = findFreePort();
@@ -40,15 +32,6 @@ public abstract class BaseIntegrationTest {
   }
 
 
-  @Before
-  public void setUp() throws Exception {
-    MessageProducer someProducer = mock(MessageProducer.class);
-
-    Transaction someTransaction = mock(Transaction.class);
-
-    when(someProducer.newTransaction(anyString(), anyString())).thenReturn(someTransaction);
-  }
-
   @After
   public void tearDown() throws Exception {
     if (server != null && server.isStarted()) {
@@ -56,7 +39,7 @@ public abstract class BaseIntegrationTest {
     }
   }
 
-  protected ContextHandler mockServerHandler(final int statusCode, final String response) {
+  ContextHandler mockServerHandler(final int statusCode, final String response) {
     ContextHandler context = new ContextHandler("/");
     context.setHandler(new AbstractHandler() {
 
@@ -82,7 +65,7 @@ public abstract class BaseIntegrationTest {
    * @return a free port number on localhost
    * @throws IllegalStateException if unable to find a free port
    */
-  protected static int findFreePort() {
+  static int findFreePort() {
     ServerSocket socket = null;
     try {
       socket = new ServerSocket(0);

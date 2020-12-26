@@ -49,7 +49,11 @@ appService.service("ConfigService", ['$resource', '$q', 'AppUtil', function ($re
         syntax_check_text: {
             method: 'POST',
             url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/syntax-check'
-        }
+        },
+        revoke_item: {
+            method: 'PUT',
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/clusters/:clusterName/namespaces/:namespaceName/revoke-items'
+        },
     });
 
     return {
@@ -212,6 +216,22 @@ appService.service("ConfigService", ['$resource', '$q', 'AppUtil', function ($re
 
                 }, function (result) {
                     d.reject(result);
+                });
+            return d.promise;
+        },
+
+        revoke_item:  function (appId, env, clusterName, namespaceName) {
+            var d = $q.defer();
+            config_source.revoke_item({
+                  appId: appId,
+                  env: env,
+                  clusterName: clusterName,
+                  namespaceName: namespaceName
+                },{}, function (result) {
+                  d.resolve(result);
+
+                }, function (result) {
+                  d.reject(result);
                 });
             return d.promise;
         }

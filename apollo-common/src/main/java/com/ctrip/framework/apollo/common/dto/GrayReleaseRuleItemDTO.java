@@ -37,7 +37,7 @@ public class GrayReleaseRuleItemDTO {
   }
 
   private boolean appIdMatches(String clientAppId) {
-    return this.clientAppId.equals(clientAppId);
+    return this.clientAppId.equalsIgnoreCase(clientAppId);
   }
 
   private boolean ipMatches(String clientIp) {

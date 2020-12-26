@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigFile;
-import com.ctrip.framework.apollo.build.MockInjector;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 
 /**
@@ -20,7 +19,6 @@ public class DefaultConfigRegistryTest {
 
   @Before
   public void setUp() throws Exception {
-    MockInjector.reset();
     defaultConfigRegistry = new DefaultConfigRegistry();
   }
 

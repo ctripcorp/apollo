@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.util.yaml;
 
+import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.parser.ParserException;
 
@@ -25,12 +27,14 @@ import com.ctrip.framework.apollo.core.utils.StringUtils;
 public class YamlParser {
   private static final Logger logger = LoggerFactory.getLogger(YamlParser.class);
 
+  private PropertiesFactory propertiesFactory = ApolloInjector.getInstance(PropertiesFactory.class);
+
   /**
    * Transform yaml content to properties
    */
   public Properties yamlToProperties(String yamlContent) {
     Yaml yaml = createYaml();
-    final Properties result = new Properties();
+    final Properties result = propertiesFactory.getPropertiesInstance();
     process(new MatchCallback() {
       @Override
       public void process(Properties properties, Map<String, Object> map) {
@@ -91,7 +95,7 @@ public class YamlParser {
   }
 
   private boolean process(Map<String, Object> map, MatchCallback callback) {
-    Properties properties = new Properties();
+    Properties properties = propertiesFactory.getPropertiesInstance();
     properties.putAll(getFlattenedMap(map));
 
     if (logger.isDebugEnabled()) {
@@ -143,7 +147,10 @@ public class YamlParser {
     void process(Properties properties, Map<String, Object> map);
   }
 
-  private static class StrictMapAppenderConstructor extends Constructor {
+  /**
+   * A specialized {@link SafeConstructor} that checks for duplicate keys.
+   */
+  private static class StrictMapAppenderConstructor extends SafeConstructor {
 
     // Declared as public for use in subclasses
     StrictMapAppenderConstructor() {

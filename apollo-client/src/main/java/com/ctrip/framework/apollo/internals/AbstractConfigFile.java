@@ -1,6 +1,8 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +32,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
   protected final String m_namespace;
   protected final AtomicReference<Properties> m_configProperties;
   private final List<ConfigFileChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
+  protected final PropertiesFactory propertiesFactory;
 
   private volatile ConfigSourceType m_sourceType = ConfigSourceType.NONE;
 
@@ -42,6 +45,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
     m_configRepository = configRepository;
     m_namespace = namespace;
     m_configProperties = new AtomicReference<>();
+    propertiesFactory = ApolloInjector.getInstance(PropertiesFactory.class);
     initialize();
   }
 
@@ -72,7 +76,7 @@ public abstract class AbstractConfigFile implements ConfigFile, RepositoryChange
     if (newProperties.equals(m_configProperties.get())) {
       return;
     }
-    Properties newConfigProperties = new Properties();
+    Properties newConfigProperties = propertiesFactory.getPropertiesInstance();
     newConfigProperties.putAll(newProperties);
 
     String oldValue = getContent();

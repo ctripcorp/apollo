@@ -8,6 +8,7 @@ import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.google.common.base.Strings;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,9 +36,9 @@ public class PropertyResolver implements ConfigTextResolver {
     oldKeyMapItem.remove("");
 
     String[] newItems = configText.split(ITEM_SEPARATOR);
-
-    if (isHasRepeatKey(newItems)) {
-      throw new BadRequestException("config text has repeat key please check.");
+    Set<String> repeatKeys = new HashSet<>();
+    if (isHasRepeatKey(newItems, repeatKeys)) {
+      throw new BadRequestException(String.format("Config text has repeated keys: %s, please check your input.", repeatKeys.toString()));
     }
 
     ItemChangeSets changeSets = new ItemChangeSets();
@@ -72,24 +73,24 @@ public class PropertyResolver implements ConfigTextResolver {
     return changeSets;
   }
 
-  private boolean isHasRepeatKey(String[] newItems) {
+  private boolean isHasRepeatKey(String[] newItems, @NotNull Set<String> repeatKeys) {
     Set<String> keys = new HashSet<>();
     int lineCounter = 1;
-    int keyCount = 0;
     for (String item : newItems) {
       if (!isCommentItem(item) && !isBlankItem(item)) {
-        keyCount++;
         String[] kv = parseKeyValueFromItem(item);
         if (kv != null) {
-          keys.add(kv[0].toLowerCase());
+          String key = kv[0].toLowerCase();
+          if(!keys.add(key)){
+            repeatKeys.add(key);
+          }
         } else {
           throw new BadRequestException("line:" + lineCounter + " key value must separate by '='");
         }
       }
       lineCounter++;
     }
-
-    return keyCount > keys.size();
+    return !repeatKeys.isEmpty();
   }
 
   private String[] parseKeyValueFromItem(String item) {
@@ -100,7 +101,7 @@ public class PropertyResolver implements ConfigTextResolver {
 
     String[] kv = new String[2];
     kv[0] = item.substring(0, kvSeparator).trim();
-    kv[1] = item.substring(kvSeparator + 1, item.length()).trim();
+    kv[1] = item.substring(kvSeparator + 1).trim();
     return kv;
   }
 
@@ -108,13 +109,13 @@ public class PropertyResolver implements ConfigTextResolver {
     String oldComment = oldItemByLine == null ? "" : oldItemByLine.getComment();
     //create comment. implement update comment by delete old comment and create new comment
     if (!(isCommentItem(oldItemByLine) && newItem.equals(oldComment))) {
-      changeSets.addCreateItem(buildCommentItem(0l, namespaceId, newItem, lineCounter));
+      changeSets.addCreateItem(buildCommentItem(0L, namespaceId, newItem, lineCounter));
     }
   }
 
   private void handleBlankLine(Long namespaceId, ItemDTO oldItem, int lineCounter, ItemChangeSets changeSets) {
     if (!isBlankItem(oldItem)) {
-      changeSets.addCreateItem(buildBlankItem(0l, namespaceId, lineCounter));
+      changeSets.addCreateItem(buildBlankItem(0L, namespaceId, lineCounter));
     }
   }
 
@@ -133,7 +134,7 @@ public class PropertyResolver implements ConfigTextResolver {
     ItemDTO oldItem = keyMapOldItem.get(newKey);
 
     if (oldItem == null) {//new item
-      changeSets.addCreateItem(buildNormalItem(0l, namespaceId, newKey, newValue, "", lineCounter));
+      changeSets.addCreateItem(buildNormalItem(0L, namespaceId, newKey, newValue, "", lineCounter));
     } else if (!newValue.equals(oldItem.getValue()) || lineCounter != oldItem.getLineNum()) {//update item
       changeSets.addUpdateItem(
           buildNormalItem(oldItem.getId(), namespaceId, newKey, newValue, oldItem.getComment(),

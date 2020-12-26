@@ -43,7 +43,7 @@ public class GrayReleaseRulesHolderTest {
   private BizConfig bizConfig;
   @Mock
   private GrayReleaseRuleRepository grayReleaseRuleRepository;
-  private Gson gson = new Gson();
+  private static final Gson GSON = new Gson();
   private AtomicLong idCounter;
 
   @Before
@@ -84,6 +84,8 @@ public class GrayReleaseRulesHolderTest {
 
     assertEquals(someReleaseId, grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule
         (someClientAppId, someClientIp, someAppId, someClusterName, someNamespaceName));
+    assertEquals(someReleaseId, grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule
+        (someClientAppId.toUpperCase(), someClientIp, someAppId.toUpperCase(), someClusterName, someNamespaceName.toUpperCase()));
     assertNull(grayReleaseRulesHolder.findReleaseIdFromGrayReleaseRule(someClientAppId,
         anotherClientIp, someAppId, someClusterName, someNamespaceName));
 
@@ -94,6 +96,8 @@ public class GrayReleaseRulesHolderTest {
 
     assertTrue(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, someClientIp,
         someNamespaceName));
+    assertTrue(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId.toUpperCase(), someClientIp,
+        someNamespaceName.toUpperCase()));
     assertFalse(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, anotherClientIp,
         someNamespaceName));
     assertFalse(grayReleaseRulesHolder.hasGrayReleaseRule(someClientAppId, someClientIp,
@@ -141,7 +145,7 @@ public class GrayReleaseRulesHolderTest {
     rule.setClusterName(clusterName);
     rule.setNamespaceName(namespaceName);
     rule.setBranchName("someBranch");
-    rule.setRules(gson.toJson(ruleItems));
+    rule.setRules(GSON.toJson(ruleItems));
     rule.setReleaseId(releaseId);
     rule.setBranchStatus(branchStatus);
 

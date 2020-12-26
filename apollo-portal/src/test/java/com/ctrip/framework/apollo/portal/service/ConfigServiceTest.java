@@ -15,6 +15,7 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceTextModel;
 import com.ctrip.framework.apollo.portal.entity.vo.ItemDiffs;
 import com.ctrip.framework.apollo.portal.entity.vo.NamespaceIdentifier;
 
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConfigServiceTest extends AbstractUnitTest {
@@ -54,6 +56,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
     String appId = "6666";
     String clusterName = "default";
     String namespaceName = "application";
+    long someNamespaceId = 123L;
 
     NamespaceTextModel model = new NamespaceTextModel();
     model.setEnv("DEV");
@@ -66,8 +69,12 @@ public class ConfigServiceTest extends AbstractUnitTest {
     ItemChangeSets changeSets = new ItemChangeSets();
     changeSets.addCreateItem(new ItemDTO("d", "c", "", 4));
 
+    NamespaceDTO someNamespaceDto = mock(NamespaceDTO.class);
+    when(someNamespaceDto.getId()).thenReturn(someNamespaceId);
+    when(namespaceAPI.loadNamespace(appId, model.getEnv(), clusterName, namespaceName))
+        .thenReturn(someNamespaceDto);
     when(itemAPI.findItems(appId, Env.DEV, clusterName, namespaceName)).thenReturn(itemDTOs);
-    when(resolver.resolve(0, model.getConfigText(), itemDTOs)).thenReturn(changeSets);
+    when(resolver.resolve(someNamespaceId, model.getConfigText(), itemDTOs)).thenReturn(changeSets);
 
     UserInfo userInfo = new UserInfo();
     userInfo.setUserId("test");
@@ -94,7 +101,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
   @Test
   public void testCompareTargetNamespaceHasNoItems() {
     ItemDTO sourceItem1 = new ItemDTO("a", "b", "comment", 1);
-    List<ItemDTO> sourceItems = Arrays.asList(sourceItem1);
+    List<ItemDTO> sourceItems = Collections.singletonList(sourceItem1);
 
     String appId = "6666", env = "LOCAL", clusterName = ConfigConsts.CLUSTER_NAME_DEFAULT,
         namespaceName = ConfigConsts.NAMESPACE_APPLICATION;
@@ -207,7 +214,7 @@ public class ConfigServiceTest extends AbstractUnitTest {
     targetNamespace.setEnv(env);
     targetNamespace.setClusterName(clusterName);
     targetNamespace.setNamespaceName(namespaceName);
-    return Arrays.asList(targetNamespace);
+    return Collections.singletonList(targetNamespace);
   }
 
 }

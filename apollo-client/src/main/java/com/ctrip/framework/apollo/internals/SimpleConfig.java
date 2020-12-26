@@ -81,7 +81,7 @@ public class SimpleConfig extends AbstractConfig implements RepositoryChangeList
     if (newProperties.equals(m_configProperties)) {
       return;
     }
-    Properties newConfigProperties = new Properties();
+    Properties newConfigProperties = propertiesFactory.getPropertiesInstance();
     newConfigProperties.putAll(newProperties);
 
     List<ConfigChange> changes = calcPropertyChanges(namespace, m_configProperties, newConfigProperties);

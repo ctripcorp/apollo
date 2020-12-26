@@ -33,6 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
 
@@ -104,11 +109,11 @@ public class ItemController {
   public void deleteItem(@PathVariable String appId, @PathVariable String env,
                          @PathVariable String clusterName, @PathVariable String namespaceName,
                          @PathVariable long itemId) {
-    ItemDTO item = configService.loadItemById(Env.fromString(env), itemId);
-    NamespaceDTO namespace = namespaceService.loadNamespaceBaseInfo(appId, Env.fromString(env), clusterName, namespaceName);
+    ItemDTO item = configService.loadItemById(Env.valueOf(env), itemId);
+    NamespaceDTO namespace = namespaceService.loadNamespaceBaseInfo(appId, Env.valueOf(env), clusterName, namespaceName);
 
     // In case someone constructs an attack scenario
-    if (item.getNamespaceId() != namespace.getId()) {
+    if (namespace == null || item.getNamespaceId() != namespace.getId()) {
       throw new BadRequestException("Invalid request, item and namespace do not match!");
     }
 
@@ -208,7 +213,14 @@ public class ItemController {
     return ResponseEntity.ok().build();
   }
 
-  private void doSyntaxCheck(NamespaceTextModel model) {
+  @PreAuthorize(value = "@permissionValidator.hasModifyNamespacePermission(#appId, #namespaceName, #env)")
+  @PutMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/revoke-items")
+  public void revokeItems(@PathVariable String appId, @PathVariable String env, @PathVariable String clusterName,
+      @PathVariable String namespaceName) {
+    configService.revokeItem(appId, Env.valueOf(env), clusterName, namespaceName);
+  }
+
+  void doSyntaxCheck(NamespaceTextModel model) {
     if (StringUtils.isBlank(model.getConfigText())) {
       return;
     }
@@ -219,7 +231,7 @@ public class ItemController {
     }
 
     // use YamlPropertiesFactoryBean to check the yaml syntax
-    YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+    TypeLimitedYamlPropertiesFactoryBean yamlPropertiesFactoryBean = new TypeLimitedYamlPropertiesFactoryBean();
     yamlPropertiesFactoryBean.setResources(new ByteArrayResource(model.getConfigText().getBytes()));
     // this call converts yaml to properties and will throw exception if the conversion fails
     yamlPropertiesFactoryBean.getObject();
@@ -229,5 +241,14 @@ public class ItemController {
     return Objects.nonNull(item) && !StringUtils.isContainEmpty(item.getKey());
   }
 
+  private static class TypeLimitedYamlPropertiesFactoryBean extends YamlPropertiesFactoryBean {
+    @Override
+    protected Yaml createYaml() {
+      LoaderOptions loaderOptions = new LoaderOptions();
+      loaderOptions.setAllowDuplicateKeys(false);
+      return new Yaml(new SafeConstructor(), new Representer(),
+          new DumperOptions(), loaderOptions);
+    }
+  }
 
 }

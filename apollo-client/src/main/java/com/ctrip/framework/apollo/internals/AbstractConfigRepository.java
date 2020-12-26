@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import java.util.List;
 import java.util.Properties;
 
@@ -16,6 +18,7 @@ import com.google.common.collect.Lists;
 public abstract class AbstractConfigRepository implements ConfigRepository {
   private static final Logger logger = LoggerFactory.getLogger(AbstractConfigRepository.class);
   private List<RepositoryChangeListener> m_listeners = Lists.newCopyOnWriteArrayList();
+  protected PropertiesFactory propertiesFactory = ApolloInjector.getInstance(PropertiesFactory.class);
 
   protected boolean trySync() {
     try {

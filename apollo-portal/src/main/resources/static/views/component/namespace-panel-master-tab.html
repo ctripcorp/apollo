@@ -4,7 +4,13 @@
     <header class="panel-heading">
         <div class="row">
             <div class="col-md-6 col-sm-6 header-namespace">
-                <b class="namespace-name" ng-bind="namespace.viewName"></b>
+                <b class="namespace-name" ng-bind="namespace.viewName"
+                   data-tooltip="tooltip" data-placement="bottom" title="{{namespace.comment}}"></b>
+                <span class="label label-warning no-radius namespace-label modify-tip"
+                      ng-show="namespace.itemModifiedCnt > 0">
+                    {{'Component.Namespace.Master.Items.Changed' | translate }}
+                    <span class="badge label badge-white namespace-label" ng-bind="namespace.itemModifiedCnt"></span>
+                </span>
             </div>
 
             <div class="col-md-6 col-sm-6 text-right header-buttons">
@@ -27,7 +33,8 @@
     <header class="panel-heading">
         <div class="row">
             <div class="col-md-6 col-sm-6 header-namespace">
-                <b class="namespace-name" ng-bind="namespace.viewName"></b>
+                <b class="namespace-name" ng-bind="namespace.viewName"
+                   data-tooltip="tooltip" data-placement="bottom" title="{{namespace.comment}}"></b>
                 <span class="label label-warning no-radius namespace-label modify-tip"
                     ng-show="namespace.itemModifiedCnt > 0">
                     {{'Component.Namespace.Master.Items.Changed' | translate }}
@@ -181,6 +188,14 @@
                              && namespace.hasModifyPermission && namespace.isPropertiesFormat">
                         <img src="img/sync.png">
                         {{'Component.Namespace.Master.Items.SyncItem' | translate }}
+                    </button>
+
+                    <button type="button" class="btn btn-default btn-sm J_tableview_btn" data-tooltip="tooltip"
+                            data-placement="bottom" title="{{'Component.Namespace.Master.Items.RevokeItemTips' | translate }}"
+                            ng-click="preRevokeItem(namespace)" ng-show="namespace.viewType == 'table' && namespace.displayControl.currentOperateBranch == 'master'
+                            && namespace.hasModifyPermission && namespace.isPropertiesFormat">
+                        <img src="img/rollback.png">
+                        {{'Component.Namespace.Master.Items.RevokeItem' | translate }}
                     </button>
 
                     <button type="button" class="btn btn-default btn-sm J_tableview_btn" data-tooltip="tooltip"
@@ -592,13 +607,13 @@
 
                                     </th>
                                     <th>
-                                        {{'Component.Namespace.Master.Items.Body.ItemComment' | translate }}
-                                    </th>
-                                    <th>
                                         {{'Component.Namespace.Master.Items.Body.NoPublished.PublishedValue' | translate }}
                                     </th>
                                     <th>
                                         {{'Component.Namespace.Master.Items.Body.NoPublished.NoPublishedValue' | translate }}
+                                    </th>
+                                    <th>
+                                        {{'Component.Namespace.Master.Items.Body.ItemComment' | translate }}
                                     </th>
                                     <th class="hover"
                                         title="{{'Component.Namespace.Master.Items.Body.Sort' | translate }}"

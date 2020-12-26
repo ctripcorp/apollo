@@ -1,5 +1,7 @@
 package com.ctrip.framework.apollo.util;
 
+import static com.ctrip.framework.apollo.util.factory.PropertiesFactory.APOLLO_PROPERTY_ORDER_ENABLE;
+
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +20,7 @@ import com.google.common.base.Strings;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigUtil {
+
   private static final Logger logger = LoggerFactory.getLogger(ConfigUtil.class);
   private int refreshInterval = 5;
   private TimeUnit refreshIntervalTimeUnit = TimeUnit.MINUTES;
@@ -36,6 +39,7 @@ public class ConfigUtil {
   private long longPollingInitialDelayInMills = 2000;//2 seconds
   private boolean autoUpdateInjectedSpringProperties = true;
   private final RateLimiter warnLogRateLimiter;
+  private boolean propertiesOrdered = false;
 
   public ConfigUtil() {
     warnLogRateLimiter = RateLimiter.create(0.017); // 1 warning log output per minute
@@ -47,6 +51,7 @@ public class ConfigUtil {
     initMaxConfigCacheSize();
     initLongPollingInitialDelayInMills();
     initAutoUpdateInjectedSpringProperties();
+    initPropertiesOrdered();
   }
 
   /**
@@ -281,12 +286,14 @@ public class ConfigUtil {
   }
 
   private void initLongPollingInitialDelayInMills() {
-    String customizedLongPollingInitialDelay = System.getProperty("apollo.longPollingInitialDelayInMills");
+    String customizedLongPollingInitialDelay = System
+        .getProperty("apollo.longPollingInitialDelayInMills");
     if (!Strings.isNullOrEmpty(customizedLongPollingInitialDelay)) {
       try {
         longPollingInitialDelayInMills = Long.parseLong(customizedLongPollingInitialDelay);
       } catch (Throwable ex) {
-        logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}", customizedLongPollingInitialDelay);
+        logger.error("Config for apollo.longPollingInitialDelayInMills is invalid: {}",
+            customizedLongPollingInitialDelay);
       }
     }
   }
@@ -300,7 +307,8 @@ public class ConfigUtil {
     String enableAutoUpdate = System.getProperty("apollo.autoUpdateInjectedSpringProperties");
     if (Strings.isNullOrEmpty(enableAutoUpdate)) {
       // 2. Get from app.properties
-      enableAutoUpdate = Foundation.app().getProperty("apollo.autoUpdateInjectedSpringProperties", null);
+      enableAutoUpdate = Foundation.app()
+          .getProperty("apollo.autoUpdateInjectedSpringProperties", null);
     }
     if (!Strings.isNullOrEmpty(enableAutoUpdate)) {
       autoUpdateInjectedSpringProperties = Boolean.parseBoolean(enableAutoUpdate.trim());
@@ -309,5 +317,26 @@ public class ConfigUtil {
 
   public boolean isAutoUpdateInjectedSpringPropertiesEnabled() {
     return autoUpdateInjectedSpringProperties;
+  }
+
+  private void initPropertiesOrdered() {
+    String enablePropertiesOrdered = System.getProperty(APOLLO_PROPERTY_ORDER_ENABLE);
+
+    if (Strings.isNullOrEmpty(enablePropertiesOrdered)) {
+      enablePropertiesOrdered = Foundation.app().getProperty(APOLLO_PROPERTY_ORDER_ENABLE, "false");
+    }
+
+    if (!Strings.isNullOrEmpty(enablePropertiesOrdered)) {
+      try {
+        propertiesOrdered = Boolean.parseBoolean(enablePropertiesOrdered);
+      } catch (Throwable ex) {
+        logger.warn("Config for {} is invalid: {}, set default value: false",
+            APOLLO_PROPERTY_ORDER_ENABLE, enablePropertiesOrdered);
+      }
+    }
+  }
+
+  public boolean isPropertiesOrderEnabled() {
+    return propertiesOrdered;
   }
 }

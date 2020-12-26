@@ -2,6 +2,7 @@ package com.ctrip.framework.apollo.util;
 
 import com.ctrip.framework.apollo.core.ConfigConsts;
 
+import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import java.io.File;
 import org.junit.After;
 import org.junit.Test;
@@ -9,12 +10,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
 public class ConfigUtilTest {
+
   @After
   public void tearDown() throws Exception {
     System.clearProperty(ConfigConsts.APOLLO_CLUSTER_KEY);
@@ -27,6 +28,7 @@ public class ConfigUtilTest {
     System.clearProperty("apollo.longPollingInitialDelayInMills");
     System.clearProperty("apollo.autoUpdateInjectedSpringProperties");
     System.clearProperty("apollo.cacheDir");
+    System.clearProperty(PropertiesFactory.APOLLO_PROPERTY_ORDER_ENABLE);
   }
 
   @Test
@@ -162,7 +164,8 @@ public class ConfigUtilTest {
   @Test
   public void testCustomizeLongPollingInitialDelayInMills() throws Exception {
     long someLongPollingDelayInMills = 1;
-    System.setProperty("apollo.longPollingInitialDelayInMills", String.valueOf(someLongPollingDelayInMills));
+    System.setProperty("apollo.longPollingInitialDelayInMills",
+        String.valueOf(someLongPollingDelayInMills));
 
     ConfigUtil configUtil = new ConfigUtil();
 
@@ -220,5 +223,17 @@ public class ConfigUtilTest {
     doReturn(false).when(configUtil).isOSWindows();
 
     assertEquals("/opt/data/" + someAppId, configUtil.getDefaultLocalCacheDir());
+  }
+
+  @Test
+  public void testCustomizePropertiesOrdered() {
+    boolean propertiesOrdered = true;
+    System.setProperty(PropertiesFactory.APOLLO_PROPERTY_ORDER_ENABLE,
+        String.valueOf(propertiesOrdered));
+
+    ConfigUtil configUtil = new ConfigUtil();
+
+    assertEquals(propertiesOrdered,
+        configUtil.isPropertiesOrderEnabled());
   }
 }

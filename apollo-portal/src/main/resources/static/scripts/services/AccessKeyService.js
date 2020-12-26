@@ -1,25 +1,25 @@
-appService.service('AccessKeyService', ['$resource', '$q', function ($resource, $q) {
+appService.service('AccessKeyService', ['$resource', '$q', 'AppUtil', function ($resource, $q, AppUtil) {
     var access_key_resource = $resource('', {}, {
         load_access_keys: {
             method: 'GET',
             isArray: true,
-            url: '/apps/:appId/envs/:env/accesskeys'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/accesskeys'
         },
         create_access_key: {
             method: 'POST',
-            url: '/apps/:appId/envs/:env/accesskeys'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/accesskeys'
         },
         remove_access_key: {
             method: 'DELETE',
-            url: '/apps/:appId/envs/:env/accesskeys/:id'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/accesskeys/:id'
         },
         enable_access_key: {
             method: 'PUT',
-            url: '/apps/:appId/envs/:env/accesskeys/:id/enable'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/accesskeys/:id/enable'
         },
         disable_access_key: {
             method: 'PUT',
-            url: '/apps/:appId/envs/:env/accesskeys/:id/disable'
+            url: AppUtil.prefixPath() + '/apps/:appId/envs/:env/accesskeys/:id/disable'
         }
     });
     return {

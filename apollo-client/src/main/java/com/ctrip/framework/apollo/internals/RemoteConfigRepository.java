@@ -63,7 +63,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   private final RateLimiter m_loadConfigRateLimiter;
   private final AtomicBoolean m_configNeedForceRefresh;
   private final SchedulePolicy m_loadConfigFailSchedulePolicy;
-  private final Gson gson;
+  private static final Gson GSON = new Gson();
 
   static {
     m_executorService = Executors.newScheduledThreadPool(1,
@@ -88,7 +88,6 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     m_configNeedForceRefresh = new AtomicBoolean(true);
     m_loadConfigFailSchedulePolicy = new ExponentialSchedulePolicy(m_configUtil.getOnErrorRetryInterval(),
         m_configUtil.getOnErrorRetryInterval() * 8);
-    gson = new Gson();
     this.trySync();
     this.schedulePeriodicRefresh();
     this.scheduleLongPollingRefresh();
@@ -158,7 +157,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
   }
 
   private Properties transformApolloConfigToProperties(ApolloConfig apolloConfig) {
-    Properties result = new Properties();
+    Properties result = propertiesFactory.getPropertiesInstance();
     result.putAll(apolloConfig.getConfigurations());
     return result;
   }
@@ -182,6 +181,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     List<ServiceDTO> configServices = getConfigServices();
     String url = null;
+    retryLoopLabel:
     for (int i = 0; i < maxRetries; i++) {
       List<ServiceDTO> randomConfigServices = Lists.newLinkedList(configServices);
       Collections.shuffle(randomConfigServices);
@@ -249,6 +249,9 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(statusCodeException));
           transaction.setStatus(statusCodeException);
           exception = statusCodeException;
+          if(ex.getStatusCode() == 404) {
+            break retryLoopLabel;
+          }
         } catch (Throwable ex) {
           Tracer.logEvent("ApolloConfigException", ExceptionUtil.getDetailMessage(ex));
           transaction.setStatus(ex);
@@ -292,7 +295,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     }
 
     if (remoteMessages != null) {
-      queryParams.put("messages", queryParamEscaper.escape(gson.toJson(remoteMessages)));
+      queryParams.put("messages", queryParamEscaper.escape(GSON.toJson(remoteMessages)));
     }
 
     String pathExpanded = String.format(path, pathParams.toArray());

@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.core.signature;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -17,6 +17,6 @@ public class HmacSha1UtilsTest {
     String actualSignature = HmacSha1Utils.signString(stringToSign, accessKeySecret);
 
     String expectedSignature = "EoKyziXvKqzHgwx+ijDJwgVTDgE=";
-    assertThat(actualSignature).isEqualTo(expectedSignature);
+    assertEquals(expectedSignature, actualSignature);
   }
 }
