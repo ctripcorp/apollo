@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.portal.service;
 
+import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
@@ -14,14 +15,18 @@ import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
+import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -46,6 +51,8 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   @Mock
   private NamespaceBranchService branchService;
   @Mock
+  private NamespaceBoAsyncService namespaceBoAsyncService;
+  @Mock
   private UserInfoHolder userInfoHolder;
 
   @InjectMocks
@@ -55,7 +62,7 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   private String testClusterName = "default";
   private String testNamespaceName = "application";
   private Env testEnv = Env.DEV;
-
+  private Gson GSON = new Gson();
   @Before
   public void setup() {
   }
@@ -87,6 +94,9 @@ public class NamespaceServiceTest extends AbstractUnitTest {
     ItemDTO i3 = new ItemDTO("", "", "#dddd", 3);
     ItemDTO i4 = new ItemDTO("c", "1", "", 4);
     List<ItemDTO> someItems = Arrays.asList(i1, i2, i3, i4);
+    Map<String,String> releaseMap = GSON.fromJson(someRelease.getConfigurations(), GsonType.CONFIG);
+    AsyncResult<List<ItemDTO>> someAsyncItem = new AsyncResult<>(someItems);
+    AsyncResult<Map<String, String>> someAsyncMap = new AsyncResult<>(releaseMap);
 
     when(applicationAppNamespace.getFormat()).thenReturn(ConfigFileFormat.Properties.getValue());
     when(hermesAppNamespace.getFormat()).thenReturn(ConfigFileFormat.XML.getValue());
@@ -98,6 +108,10 @@ public class NamespaceServiceTest extends AbstractUnitTest {
                                           testNamespaceName)).thenReturn(someRelease);
     when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someRelease);
     when(itemService.findItems(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someItems);
+    when(namespaceBoAsyncService.getItemsAsync(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someAsyncItem);
+    when(namespaceBoAsyncService.getLatestReleaseAsync(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someAsyncMap);
+    when(namespaceBoAsyncService.getItemsAsync(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someAsyncItem);
+    when(namespaceBoAsyncService.getLatestReleaseAsync(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someAsyncMap);
 
     List<NamespaceBO> namespaceVOs = namespaceService.findNamespaceBOs(testAppId, Env.DEV, testClusterName);
     assertEquals(2, namespaceVOs.size());
