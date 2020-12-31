@@ -118,7 +118,7 @@ fi
 
 # For Docker environment, start in foreground mode
 if [[ -n "$APOLLO_RUN_MODE" ]] && [[ "$APOLLO_RUN_MODE" == "Docker" ]]; then
-    $javaexe -Dsun.misc.URLClassPath.disableJarChecking=true $JAVA_OPTS -jar $PATH_TO_JAR
+    exec $javaexe -Dsun.misc.URLClassPath.disableJarChecking=true $JAVA_OPTS -jar $PATH_TO_JAR
 else
     if [[ -f $SERVICE_NAME".jar" ]]; then
         rm -rf $SERVICE_NAME".jar"
