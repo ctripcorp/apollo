@@ -480,7 +480,11 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>1.3.5.RELEASE</version>
+					<version>${spring-boot.version}</version>
+					<configuration>
+						<executable>true</executable>
+						<attach>false</attach>
+					</configuration>
 					<executions>
 						<execution>
 							<goals>

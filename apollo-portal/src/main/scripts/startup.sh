@@ -25,12 +25,13 @@ then
     export SPRING_DATASOURCE_PASSWORD=$DS_PASSWORD
 fi
 export JAVA_OPTS="$JAVA_OPTS -Dserver.port=$SERVER_PORT -Dlogging.file=$LOG_DIR/$SERVICE_NAME.log -XX:HeapDumpPath=$LOG_DIR/HeapDumpOnOutOfMemoryError/"
+export APP_NAME=$SERVICE_NAME
 
 PATH_TO_JAR=$SERVICE_NAME".jar"
 SERVER_URL="http://localhost:$SERVER_PORT"
 
 function checkPidAlive {
-    for i in `ls -t $SERVICE_NAME*.pid 2>/dev/null`
+    for i in `ls -t $APP_NAME/$APP_NAME.pid 2>/dev/null`
     do
         read pid < $i
 
