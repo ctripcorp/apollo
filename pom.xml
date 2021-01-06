@@ -83,6 +83,7 @@
 		<javax.activation.version>1.1.1</javax.activation.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
 		<javassist.version>3.23.1-GA</javassist.version>
+		<nacos-discovery-api.version>1.4.0</nacos-discovery-api.version>
 		<!-- Plugins Version -->
 		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
@@ -814,6 +815,27 @@
 					<artifactId>tomcat-embed-core</artifactId>
 				</dependency>
 			</dependencies>
+		</profile>
+		<profile>
+			<id>nacos-discovery</id>
+			<properties>
+				<nacos.discovery.version>0.2.7</nacos.discovery.version>
+				<fastjson.version>1.2.75</fastjson.version>
+			</properties>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>com.alibaba.boot</groupId>
+						<artifactId>nacos-discovery-spring-boot-starter</artifactId>
+						<version>${nacos.discovery.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.alibaba</groupId>
+						<artifactId>fastjson</artifactId>
+						<version>${fastjson.version}</version>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
 		</profile>
 		<profile>
 			<!-- for ctrip development with logging capability -->

@@ -66,6 +66,11 @@
 		</dependency>
 		<!-- end of eureka -->
 		<dependency>
+			<groupId>com.alibaba.nacos</groupId>
+			<artifactId>nacos-api</artifactId>
+			<version>${nacos-discovery-api.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
@@ -145,4 +150,21 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>nacos-discovery</id>
+			<dependencies>
+				<dependency>
+					<groupId>com.alibaba.boot</groupId>
+					<artifactId>nacos-discovery-spring-boot-starter</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>com.alibaba</groupId>
+					<artifactId>fastjson</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
 </project>
