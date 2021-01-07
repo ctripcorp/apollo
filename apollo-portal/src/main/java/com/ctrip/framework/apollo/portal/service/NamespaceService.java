@@ -231,10 +231,7 @@ public class NamespaceService {
             Map<String, ItemDTO> deletedItemsMap = new HashMap<>();
             //Convert list to map
             if (!CollectionUtils.isEmpty(deletedItems)) {
-                Map<String, ItemDTO> collect = deletedItems
-                        .parallelStream()
-                        .collect(toMap(ItemDTO::getKey, itemDTO -> itemDTO));
-                deletedItemsMap.putAll(collect);
+                deletedItems.forEach(itemDTO -> deletedItemsMap.put(itemDTO.getKey(), itemDTO));
             }
             List<ItemDTO> list = itemsAsync.get();
             if (!CollectionUtils.isEmpty(list)) {
