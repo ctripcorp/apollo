@@ -1,9 +1,7 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.ctrip.framework.apollo.common.constants.GsonType;
 import com.ctrip.framework.apollo.common.dto.ItemDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
-import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
 import com.ctrip.framework.apollo.common.exception.BadRequestException;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
@@ -35,8 +33,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toMap;
 
 @Service
 public class NamespaceService {
