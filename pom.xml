@@ -76,9 +76,8 @@
 		<revision>1.8.0-SNAPSHOT</revision>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<platform-bom.version>Cairo-SR4</platform-bom.version>
-		<spring-boot.version>2.0.5.RELEASE</spring-boot.version>
-		<spring-cloud.version>Finchley.SR1</spring-cloud.version>
+		<spring-boot.version>2.4.2</spring-boot.version>
+		<spring-cloud.version>2020.0.1</spring-cloud.version>
 		<jaxb.version>2.3.0</jaxb.version>
 		<javax.activation.version>1.1.1</javax.activation.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
@@ -289,6 +288,11 @@
 				<artifactId>guice</artifactId>
 				<version>4.1.0</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
 			<!--for test -->
 			<dependency>
 				<groupId>com.h2database</groupId>
@@ -302,11 +306,17 @@
 				<version>4.0.3</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.vintage</groupId>
+				<artifactId>junit-vintage-engine</artifactId>
+				<version>5.7.0</version>
+				<scope>test</scope>
+			</dependency>
 			<!-- declare Spring BOMs in order -->
 			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
-				<version>${platform-bom.version}</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -316,6 +326,12 @@
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<!-- required by eureka -->
+			<dependency>
+				<groupId>com.sun.jersey.contribs</groupId>
+				<artifactId>jersey-apache-client4</artifactId>
+				<version>1.19.4</version>
 			</dependency>
 			<!-- ctrip modified -->
 			<!-- removed duplicated javax/persistence classes -->
@@ -382,6 +398,18 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<!-- for junit 4 -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

@@ -24,7 +24,7 @@ then
     export SPRING_DATASOURCE_USERNAME=$DS_USERNAME
     export SPRING_DATASOURCE_PASSWORD=$DS_PASSWORD
 fi
-export JAVA_OPTS="$JAVA_OPTS -Dserver.port=$SERVER_PORT -Dlogging.file=$LOG_DIR/$SERVICE_NAME.log -XX:HeapDumpPath=$LOG_DIR/HeapDumpOnOutOfMemoryError/"
+export JAVA_OPTS="$JAVA_OPTS -Dserver.port=$SERVER_PORT -Dlogging.file.name=$LOG_DIR/$SERVICE_NAME.log -XX:HeapDumpPath=$LOG_DIR/HeapDumpOnOutOfMemoryError/"
 export APP_NAME=$SERVICE_NAME
 
 PATH_TO_JAR=$SERVICE_NAME".jar"

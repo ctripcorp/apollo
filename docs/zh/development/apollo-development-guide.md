@@ -46,9 +46,9 @@ Apollo本地开发需要以下组件：
 
 >注1：spring.datasource相关配置替换成你自己的数据库连接信息，注意数据库是`ApolloConfigDB`
 >
->注2：程序默认日志输出为/opt/logs/100003171/apollo-assembly.log，如果需要修改日志文件路径，可以增加`logging.file`参数，如下：
+>注2：程序默认日志输出为/opt/logs/100003171/apollo-assembly.log，如果需要修改日志文件路径，可以增加`logging.file.name`参数，如下：
 >
->-Dlogging.file=/your-path/apollo-assembly.log
+>-Dlogging.file.name=/your-path/apollo-assembly.log
 
 ### 2.1.4 Program arguments配置
 `--configservice --adminservice`
@@ -92,9 +92,9 @@ Apollo本地开发需要以下组件：
 >
 >注4：这里指定了server.port=8070是因为`apollo-configservice`启动在8080端口，所以这里配置`apollo-portal`启动在8070端口。
 >
->注5：程序默认日志输出为/opt/logs/100003173/apollo-portal.log，如果需要修改日志文件路径，可以增加`logging.file`参数，如下：
+>注5：程序默认日志输出为/opt/logs/100003173/apollo-portal.log，如果需要修改日志文件路径，可以增加`logging.file.name`参数，如下：
 >
->-Dlogging.file=/your-path/apollo-portal.log
+>-Dlogging.file.name=/your-path/apollo-portal.log
 
 ### 2.2.4 运行
 对新建的运行配置点击Run或Debug皆可。
