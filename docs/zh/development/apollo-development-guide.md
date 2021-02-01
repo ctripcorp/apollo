@@ -62,12 +62,12 @@ Apollo本地开发需要以下组件：
 
 ![ConfigAdminApplication-Eureka](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/local-development/ConfigAdminApplication-Eureka.png)
 
-> 注：除了Eureka确认服务注册状态外，还可以通过请求健康检查接口确认服务健康状况：
+> 注：除了通过Eureka确认服务状态外，还可以通过请求健康检查接口确认服务健康状况：
 >
 > AdminService： [http://localhost:8090/health](http://localhost:8090/health)
 > ConfigService： [http://localhost:8080/health](http://localhost:8080/health)
 >
-> 如果服务健康，返回内容中的status.code应当为`UP`：
+> 如果服务健康，接口返回内容中的status.code应当为`UP`：
 >
 >     {
 >       "status": {
