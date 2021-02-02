@@ -64,8 +64,8 @@ Apollo本地开发需要以下组件：
 
 > 注：除了在Eureka确认服务状态外，还可以通过健康检查接口确认服务健康状况：
 >
-> AdminService： [http://localhost:8090/health](http://localhost:8090/health)
-> ConfigService： [http://localhost:8080/health](http://localhost:8080/health)
+> apollo-adminservice： [http://localhost:8090/health](http://localhost:8090/health)
+> apollo-configservice： [http://localhost:8080/health](http://localhost:8080/health)
 >
 > 如果服务健康，返回内容中的status.code应当为`UP`：
 >
