@@ -120,6 +120,9 @@
 					</imageTags>
 					<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
 					<serverId>docker-hub</serverId>
+					<buildArgs>
+						<VERSION>${project.version}</VERSION>
+					</buildArgs>
 					<resources>
 						<resource>
 							<targetPath>/</targetPath>
