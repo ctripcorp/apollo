@@ -58,7 +58,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
 
   private KeyNormalizeCache<String, ConfigCacheEntry> configCache;
 
-  private KeyNormalizeCache<Long, Optional<Release>> configIdCache;
+  private LoadingCache<Long, Optional<Release>> configIdCache;
 
   private ConfigCacheEntry nullConfigCacheEntry;
 
@@ -106,7 +106,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
         }
       }));
 
-    configIdCache = new KeyNormalizeCache(CacheBuilder.newBuilder()
+    configIdCache = CacheBuilder.newBuilder()
       .expireAfterAccess(DEFAULT_EXPIRED_AFTER_ACCESS_IN_MINUTES, TimeUnit.MINUTES)
       .build(new CacheLoader<Long, Optional<Release>>() {
         @Override
@@ -125,7 +125,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
             transaction.complete();
           }
         }
-      }));
+      });
   }
 
   @Override
