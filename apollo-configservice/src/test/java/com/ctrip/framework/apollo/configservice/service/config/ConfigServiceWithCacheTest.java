@@ -10,6 +10,7 @@ import com.ctrip.framework.apollo.biz.service.ReleaseMessageService;
 import com.ctrip.framework.apollo.biz.service.ReleaseService;
 import com.ctrip.framework.apollo.biz.utils.ReleaseMessageKeyGenerator;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -275,5 +276,20 @@ public class ConfigServiceWithCacheTest {
 
     verify(releaseMessageService, times(1)).findLatestReleaseMessageForMessages(Lists.newArrayList(someKey));
     verify(releaseService, times(1)).findLatestActiveRelease(someAppId, someClusterName, someNamespaceName);
+  }
+
+  @Test
+  public void testFindLatestActiveReleaseWithCaseInsensitive() throws Exception {
+
+    when(releaseService.findLatestActiveRelease(someAppId.toLowerCase() , someClusterName.toLowerCase(), someNamespaceName.toLowerCase())).thenReturn
+        (someRelease);
+
+    Release release = configServiceWithCache.findLatestActiveRelease(someAppId, someClusterName, someNamespaceName, someNotificationMessages);
+
+    assertEquals(someRelease, release);
+
+    Release releaseWithLowerCaseAppId = configServiceWithCache.findLatestActiveRelease(someAppId.toLowerCase(), someClusterName, someNamespaceName, someNotificationMessages);
+
+    assertEquals(release, releaseWithLowerCaseAppId);
   }
 }

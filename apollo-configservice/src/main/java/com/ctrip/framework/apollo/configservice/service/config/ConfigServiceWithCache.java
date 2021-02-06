@@ -56,7 +56,7 @@ public class ConfigServiceWithCache extends AbstractConfigService {
   @Autowired
   private ReleaseMessageService releaseMessageService;
 
-  private KeyNormalizeCache<String, ConfigCacheEntry> configCache;
+  private KeyNormalizeCache configCache;
 
   private LoadingCache<Long, Optional<Release>> configIdCache;
 
@@ -194,33 +194,38 @@ public class ConfigServiceWithCache extends AbstractConfigService {
     }
   }
 
-  private static class KeyNormalizeCache<K, V>{
+  private static class KeyNormalizeCache {
 
-    private LoadingCache<K, V> loadingCache;
+    private LoadingCache<String, ConfigCacheEntry> loadingCache;
 
-    public KeyNormalizeCache(LoadingCache<K, V> loadingCache) {
+    public KeyNormalizeCache(LoadingCache<String, ConfigCacheEntry> loadingCache) {
       this.loadingCache = loadingCache;
     }
 
-    private K normalize(K key){
-      return key instanceof String ? (K) key.toString().toLowerCase() : key;
+    private String normalize(String key){
+      return key == null ? null : key.toLowerCase();
     }
 
     private Object normalizeObject(Object key){
-      return key instanceof String ? (K) key.toString().toLowerCase() : key;
+      return key instanceof String ? normalize((String) key) : key;
     }
 
-
-    public V get(K k) throws ExecutionException {
-      return this.loadingCache.get(normalize(k));
+    public ConfigCacheEntry get(String k) throws ExecutionException {
+      ConfigCacheEntry value = this.loadingCache.get(k);
+      return value.getRelease() == null ? this.loadingCache.get(normalize(k)) : value;
     }
 
-    public V getUnchecked(K k) {
-      return this.loadingCache.getUnchecked(normalize(k));
+    public ConfigCacheEntry getUnchecked(String k) {
+      ConfigCacheEntry value = this.loadingCache.getUnchecked(k);
+      return value.getRelease() == null ? this.loadingCache.getUnchecked(normalize(k)) : value;
     }
 
     public void invalidate(Object o) {
-      this.loadingCache.invalidate(normalizeObject(o));
+      if(this.loadingCache.getIfPresent(o) != null){
+        this.loadingCache.invalidate(o);
+      }else{
+        this.loadingCache.invalidate(normalizeObject(o));
+      }
     }
 
     public long size() {
