@@ -77,7 +77,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
   - [Apollo配置中心设计](zh/design/apollo-design.md)
   - [Apollo配置中心介绍](zh/design/apollo-introduction.md)
   - [Apollo核心概念之“Namespace”](zh/design/apollo-core-concept-namespace.md)
-  * [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)（据说Apollo非常适合作为初学者第一个通读源码学习的分布式中间件产品）
+  - [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)（据说Apollo非常适合作为初学者第一个通读源码学习的分布式中间件产品）
 
 # Development
   - [Apollo开发指南](zh/development/apollo-development-guide.md)
@@ -85,7 +85,8 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
     - [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
     - [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
   - [Portal实现用户登录功能](zh/development/portal-how-to-implement-user-login-function.md)
-  - [邮件模板样例](zh/development/email-template-samples.md)
+  - [Portal接入邮件服务](zh/development/portal-how-to-enable-email-service.md)
+  - [Portal启用webhook通知](zh/development/portal-how-to-enable-webhook-notification.md)
 
 # Deployment
   - [Quick Start](zh/deployment/quick-start.md)

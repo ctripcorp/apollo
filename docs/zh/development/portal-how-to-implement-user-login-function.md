@@ -319,7 +319,6 @@ spring:
           # 必须是 https, jwt 的 issuer-uri
           # 例如 你的 issuer-uri 是 https://host:port/auth/realms/apollo/.well-known/openid-configuration, 那么此处只需要配置 https://host:port/auth/realms/apollo 即可, spring boot 处理的时候会自动加上 /.well-known/openid-configuration 的后缀
           issuer-uri: https://host:port/auth/realms/apollo
-
 ```
 
 ### 2. 配置 `startup.sh`
@@ -334,9 +333,7 @@ LOG_DIR=/opt/logs/100003173
 SERVER_PORT=8070
 
 export JAVA_OPTS="$JAVA_OPTS -Dspring.profiles.active=github,oidc"
-
 ```
-
 
 ## 实现方式四： 接入公司的统一登录认证系统
 
