@@ -235,7 +235,9 @@ select `Id`, `Key`, `Value`, `Comment` from `ApolloConfigDB`.`ServerConfig` limi
 
 ### 2.1.3 调整服务端配置
 
-Apollo自身的一些配置是放在数据库里面的，所以需要针对实际情况做一些调整，具体参数说明请参考[三、服务端配置说明](#三、服务端配置说明)
+Apollo自身的一些配置是放在数据库里面的，所以需要针对实际情况做一些调整，具体参数说明请参考[三、服务端配置说明](#三、服务端配置说明)。
+
+大部分配置可以先使用默认值，不过 [apollo.portal.envs](#_311-apolloportalenvs-可支持的环境列表) 和 [eureka.service.url](#_321-eurekaserviceurl-eureka服务url) 请务必配置正确后再进行下面的部署步骤。
 
 ## 2.2 虚拟机/物理机部署
 ### 2.2.1 获取安装包
@@ -552,6 +554,13 @@ docker run -p 8070:8070 \
 * SPRING_DATASOURCE_PASSWORD: 对应环境ApolloPortalDB的密码
 * APOLLO_PORTAL_ENVS(可选): 对应ApolloPortalDB中的[apollo.portal.envs](#_311-apolloportalenvs-可支持的环境列表)配置项，如果没有在数据库中配置的话，可以通过此环境参数配置
 * DEV_META/PRO_META(可选): 配置对应环境的Meta Service地址，以${ENV}_META命名，需要注意的是如果配置了ApolloPortalDB中的[apollo.portal.meta.servers](#_312-apolloportalmetaservers-各环境meta-service列表)配置，则以apollo.portal.meta.servers中的配置为准
+
+#### 2.3.1.4 通过源码构建 Docker 镜像
+
+如果修改了 apollo 服务端的代码，希望通过源码构建 Docker 镜像，可以参考下面的步骤：
+
+1. 通过源码构建安装包：`./scripts/build.sh`
+2. 构建 Docker 镜像：`mvn docker:build -pl apollo-configservice,apollo-adminservice,apollo-portal`
 
 ### 2.3.2 1.7.0之前的版本
 
@@ -995,6 +1004,10 @@ config:
           userDisplayName: "cn"
           email: "mail"
 ```
+
+#### 2.4.1.5 通过源码构建 Docker 镜像
+
+如果修改了 apollo 服务端的代码，希望通过源码构建 Docker 镜像，可以参考[2.3.1.4 通过源码构建 Docker 镜像](#_2314-通过源码构建-docker-镜像)的步骤。
 
 ### 2.4.2 基于内置的Eureka服务发现
 
