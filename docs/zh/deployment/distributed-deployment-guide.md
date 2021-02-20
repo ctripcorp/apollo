@@ -1015,6 +1015,9 @@ config:
 
 感谢[qct](https://github.com/qct)提供的Helm Chart部署支持，使用说明可以参考[qct/apollo-helm](https://github.com/qct/apollo-helm)。
 
+## 2.5 Swarm部署
+[docker swarm部署](https://github.com/ctripcorp/apollo/blob/master/scripts/apollo-on-swarm/README.md)
+
 # 三、服务端配置说明
 
 > 以下配置除了支持在数据库中配置以外，也支持通过-D参数、application.properties等配置，且-D参数、application.properties等优先级高于数据库中的配置
