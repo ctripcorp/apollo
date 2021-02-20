@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  apollo-configservice:
+    image: apolloconfig/apollo-configservice
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      endpoint_mode: vip
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://apollo-mysql:3306/ApolloConfigDB?characterEncoding=utf8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_PROFILES_ACTIVE=github,kubernetes
+      - apollo_config-service_url=http://localhost:8080
+      - apollo_admin-service_url=http://apollo-adminservice:8090
+    volumes:
+      - $(pwd)/application-github.properties:/apollo-configservice/config/application-github.properties
+    networks:
+      - apollo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - apollo-mysql
+  apollo-adminservice:
+    image: apolloconfig/apollo-adminservice
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      endpoint_mode: vip
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://apollo-mysql:3306/ApolloConfigDB?characterEncoding=utf8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_PROFILES_ACTIVE=github,kubernetes
+    networks:
+      - apollo
+    ports:
+      - "8090"
+    depends_on:
+      - apollo-mysql
+  apollo-portal:
+    image: apolloconfig/apollo-portal
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      endpoint_mode: vip
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://apollo-mysql:3306/ApolloPortalDB?characterEncoding=utf8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - DEV_META=http://apollo-configservice:8080
+    networks:
+      - apollo
+    ports:
+      - "8070:8070"
+    depends_on:
+      - apollo-configservice
+      - apollo-adminservice
+      - apollo-mysql
+  apollo-mysql:
+    image: mysql:5.7
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      endpoint_mode: vip
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - $(pwd)/../scripts/docker-quick-start/sql:/docker-entrypoint-initdb.d
+      - apollo-mysql:/var/lib/mysql
+    networks:
+      - apollo
+    ports:
+      - "3306"
+volumes:
+  apollo-mysql:
+networks:
+  apollo:
