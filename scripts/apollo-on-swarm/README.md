@@ -94,3 +94,8 @@ docker service create \
   --publish 8070:8070 \
   apolloconfig/apollo-portal
 ```
+
+或者通过docker stack
+```shell
+docker stack deploy -c ./docker-compose.yml apollo
+```
