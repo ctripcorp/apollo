@@ -38,18 +38,12 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   @Mock
   private AdminServiceAPI.NamespaceAPI namespaceAPI;
   @Mock
-  private ReleaseService releaseService;
-  @Mock
-  private ItemService itemService;
-  @Mock
-  private PropertyResolver resolver;
-  @Mock
   private AppNamespaceService appNamespaceService;
   @Mock
   private InstanceService instanceService;
   @Mock
   private NamespaceBranchService branchService;
-  @InjectMocks
+  @Mock
   private NamespaceBoAsyncService namespaceBoAsyncService;
   @Mock
   private UserInfoHolder userInfoHolder;
@@ -103,10 +97,6 @@ public class NamespaceServiceTest extends AbstractUnitTest {
         .thenReturn(applicationAppNamespace);
     when(appNamespaceService.findPublicAppNamespace("hermes")).thenReturn(hermesAppNamespace);
     when(namespaceAPI.findNamespaceByCluster(testAppId, Env.DEV, testClusterName)).thenReturn(namespaces);
-    when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName,
-                                          testNamespaceName)).thenReturn(someRelease);
-    when(releaseService.loadLatestRelease(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someRelease);
-    when(itemService.findItems(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someItems);
     when(namespaceBoAsyncService.getItemsAsync(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someAsyncItem);
     when(namespaceBoAsyncService.getLatestReleaseAsync(testAppId, Env.DEV, testClusterName, testNamespaceName)).thenReturn(someAsyncMap);
     when(namespaceBoAsyncService.getItemsAsync(testAppId, Env.DEV, testClusterName, "hermes")).thenReturn(someAsyncItem);
