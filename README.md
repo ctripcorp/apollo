@@ -533,6 +533,17 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/koolearn.png" alt="新东方在线"></td>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/kingcome.png" alt="金康高科"></td>
 </tr>
+ <tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/soulapp.png" alt="soul"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ezrpro.png" alt="驿氪"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/hc360.png" alt="慧聪"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/21cp.png" alt="中塑在线"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/goinglink.jpg" alt="甄云科技"></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aitrace.jpg" alt="追溯科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/moqipobing.png" alt="玩吧"></td>
+</tr>
 </table>
 
 # Awards
