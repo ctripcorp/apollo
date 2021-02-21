@@ -50,8 +50,7 @@ public class NamespaceService {
     private final InstanceService instanceService;
     private final NamespaceBranchService branchService;
     private final RolePermissionService rolePermissionService;
-    @Autowired
-    private NamespaceBoAsyncService namespaceBoAsyncService;
+    private final NamespaceBoAsyncService namespaceBoAsyncService;
 
     public NamespaceService(
             final PortalConfig portalConfig,
@@ -63,7 +62,8 @@ public class NamespaceService {
             final AppNamespaceService appNamespaceService,
             final InstanceService instanceService,
             final @Lazy NamespaceBranchService branchService,
-            final RolePermissionService rolePermissionService) {
+            final RolePermissionService rolePermissionService,
+            final NamespaceBoAsyncService namespaceBoAsyncService) {
         this.portalConfig = portalConfig;
         this.portalSettings = portalSettings;
         this.userInfoHolder = userInfoHolder;
@@ -74,6 +74,7 @@ public class NamespaceService {
         this.instanceService = instanceService;
         this.branchService = branchService;
         this.rolePermissionService = rolePermissionService;
+        this.namespaceBoAsyncService = namespaceBoAsyncService;
     }
 
 
