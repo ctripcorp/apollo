@@ -38,6 +38,12 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   @Mock
   private AdminServiceAPI.NamespaceAPI namespaceAPI;
   @Mock
+  private ReleaseService releaseService;
+  @Mock
+  private ItemService itemService;
+  @Mock
+  private PropertyResolver resolver;
+  @Mock
   private AppNamespaceService appNamespaceService;
   @Mock
   private InstanceService instanceService;
