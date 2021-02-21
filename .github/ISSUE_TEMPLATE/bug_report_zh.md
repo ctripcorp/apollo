@@ -10,7 +10,7 @@ assignees: ''
 
 - [ ] 我已经检查过[discussions](https://github.com/ctripcorp/apollo/discussions)
 - [ ] 我已经搜索过[issues](https://github.com/ctripcorp/apollo/issues)
-- [ ] 我已经仔细检查过[FAQ](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+- [ ] 我已经仔细检查过[FAQ](https://ctripcorp.github.io/apollo/#/zh/faq/common-issues-in-deployment-and-development-phase)
 
 **描述bug**
 
