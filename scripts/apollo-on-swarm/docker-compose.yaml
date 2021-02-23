@@ -1,5 +1,6 @@
 version: "3.9"
 
+# 注意APOLLO_CONFIG-SERVICE_URL更换为集群所处宿主机ip地址，保证外部客户端访问
 services:
   apollo-configservice:
     image: apolloconfig/apollo-configservice
@@ -13,8 +14,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_PROFILES_ACTIVE=github,kubernetes
-      - apollo_config-service_url=http://localhost:8080
-      - apollo_admin-service_url=http://apollo-adminservice:8090
+      - APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIGSERVICE-URL}:8080
+      - APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090
     volumes:
       - $(pwd)/application-github.properties:/apollo-configservice/config/application-github.properties
     networks:

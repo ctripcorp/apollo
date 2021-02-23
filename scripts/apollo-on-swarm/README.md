@@ -46,7 +46,7 @@ docker service create \
 
 ```shell
 # 注意密码更换为数据库密码
-# 注意apollo_config-service_url更换为对外地址接口
+# 注意APOLLO_CONFIG-SERVICE_URL更换为集群所处宿主机ip地址，保证外部客户端访问
 docker service create \
   --name apollo-configservice \
   --replicas 1 \
@@ -55,8 +55,8 @@ docker service create \
   --env SPRING_DATASOURCE_USERNAME=root \
   --env SPRING_DATASOURCE_PASSWORD= \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
-  --env apollo_config-service_url=http://localhost:8080 \
-  --env apollo_admin-service_url=http://apollo-adminservice:8090 \
+  --env APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIG-SERVICE-URL}:8080 \
+  --env APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090 \
   --mount type=bind,source=$(pwd)/application-github.properties,destination=/apollo-configservice/config/application-github.properties \
   --network apollo \
   --publish 8080:8080 \
@@ -95,7 +95,8 @@ docker service create \
   apolloconfig/apollo-portal
 ```
 
-或者通过docker stack
+或者通过docker-compose.yaml
+
 ```shell
-docker stack deploy -c ./docker-compose.yml apollo
+docker stack deploy -c ./docker-compose.yaml apollo
 ```
