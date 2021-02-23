@@ -59,7 +59,7 @@ public class NamespaceBoAsyncServiceTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testGetItemsAsynce() {
+    public void testGetItemsAsync() {
         ItemDTO i1 = new ItemDTO("a", "123", "", 1);
         ItemDTO i2 = new ItemDTO("b", "1", "", 2);
         ItemDTO i3 = new ItemDTO("", "", "#dddd", 3);
