@@ -1,10 +1,11 @@
 # 基于swarm集群部署, 不依赖Eureka
 
-这里我们采用挨个服务部署的方式进行，不统一yml文件
+## 手动部署-感知部署过程
 
 另这里只是给出了具体实现路径，细微调整需要根据项目做出调整，疑问也可以联系sunwei@aibeb.com
 
-如果已经在swarm集群中请跳过这一步，如果单纯docker环境请用如下命令开启swarm集群
+
+未开启swarm集群请手动开启
 
 ```shell
 docker swarm init
@@ -24,8 +25,6 @@ docker network create -d overlay --attachable apollo
 
 创建数据库，如果你已经有了数据库可以跳过这一步
 ```shell
-
-docker volume create apollo-mysql
 
 docker service create \
   --name apollo-mysql \
@@ -57,7 +56,6 @@ docker service create \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
   --env APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIG-SERVICE-URL}:8080 \
   --env APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090 \
-  --mount type=bind,source=$(pwd)/application-github.properties,destination=/apollo-configservice/config/application-github.properties \
   --network apollo \
   --publish 8080:8080 \
   apolloconfig/apollo-configservice
@@ -95,7 +93,7 @@ docker service create \
   apolloconfig/apollo-portal
 ```
 
-或者通过docker-compose.yaml
+## 通过docker-compose.yaml部署
 
 ```shell
 docker stack deploy -c ./docker-compose.yaml apollo

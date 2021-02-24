@@ -16,8 +16,6 @@ services:
       - SPRING_PROFILES_ACTIVE=github,kubernetes
       - APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIGSERVICE-URL}:8080
       - APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090
-    volumes:
-      - $(pwd)/application-github.properties:/apollo-configservice/config/application-github.properties
     networks:
       - apollo
     ports:
