@@ -2,10 +2,12 @@
 
 ## 手动部署-感知部署过程
 
-另这里只是给出了具体实现路径，细微调整需要根据项目做出调整，疑问也可以联系sunwei@aibeb.com
+这里只是给出了具体实现路径，细微调整需要根据项目做出调整，疑问也可以联系sunwei@aibeb.com
 
+注意:
+* 未开启swarm集群请手动开启
+* 可以通过修改.env中的${VERSION}来改变镜像版本
 
-未开启swarm集群请手动开启
 
 ```shell
 docker swarm init
@@ -45,7 +47,7 @@ docker service create \
 
 ```shell
 # 注意密码更换为数据库密码
-# 注意APOLLO_CONFIG-SERVICE_URL更换为集群所处宿主机ip地址，保证外部客户端访问
+# 注意通过修改.env文件中APOLLO.CONFIG-SERVICE.URL更换为集群所处宿主机ip地址，保证外部客户端访问
 docker service create \
   --name apollo-configservice \
   --replicas 1 \
@@ -54,11 +56,12 @@ docker service create \
   --env SPRING_DATASOURCE_USERNAME=root \
   --env SPRING_DATASOURCE_PASSWORD= \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
-  --env APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIG-SERVICE-URL}:8080 \
-  --env APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090 \
+  --env APOLLO.CONFIG-SERVICE.URL=http://${APOLLO.CONFIG-SERVICE.URL}:8080 \
+  --env APOLLO.ADMIN-SERVICE.URL=http://apollo-adminservice:8090 \
+  --env-file ./.env
   --network apollo \
   --publish 8080:8080 \
-  apolloconfig/apollo-configservice
+  apolloconfig/apollo-configservice:${VERSION}
 ```
 
 创建apollo-adminservice服务
@@ -72,9 +75,10 @@ docker service create \
   --env SPRING_DATASOURCE_USERNAME=root \
   --env SPRING_DATASOURCE_PASSWORD= \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
+  --env-file ./.env
   --network apollo \
   --publish 8090 \
-  apolloconfig/apollo-adminservice
+  apolloconfig/apollo-adminservice:${VERSION}
 ```
 
 创建apollo-portal服务
@@ -88,13 +92,15 @@ docker service create \
   --env SPRING_DATASOURCE_USERNAME=root \
   --env SPRING_DATASOURCE_PASSWORD= \
   --env DEV_META=http://apollo-configservice:8080 \
+  --env-file ./.env
   --network apollo \
   --publish 8070:8070 \
-  apolloconfig/apollo-portal
+  apolloconfig/apollo-portal:${VERSION}
 ```
 
 ## 通过docker-compose.yaml部署
 
 ```shell
+# 注意文件中 APOLLO.CONFIG-SERVICE.URL更换为集群所处宿主机ip地址，保证外部客户端访问
 docker stack deploy -c ./docker-compose.yaml apollo
 ```

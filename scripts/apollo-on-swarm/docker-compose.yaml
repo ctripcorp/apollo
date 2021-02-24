@@ -1,9 +1,9 @@
 version: "3.9"
 
-# 注意APOLLO_CONFIG-SERVICE_URL更换为集群所处宿主机ip地址，保证外部客户端访问
+# 注意APOLLO.CONFIG-SERVICE.URL更换为集群所处宿主机ip地址，保证外部客户端访问
 services:
   apollo-configservice:
-    image: apolloconfig/apollo-configservice
+    image: apolloconfig/apollo-configservice:${VERSION}
     deploy:
       replicas: 1
       restart_policy:
@@ -14,8 +14,10 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_PROFILES_ACTIVE=github,kubernetes
-      - APOLLO_CONFIG-SERVICE_URL=http://${APOLLO-CONFIGSERVICE-URL}:8080
-      - APOLLO_ADMIN-SERVICE_URL=http://apollo-adminservice:8090
+      - APOLLO.CONFIG-SERVICE.URL=http://${APOLLO.CONFIG-SERVICE.URL}:8080
+      - APOLLO.ADMIN-SERVICE.URL=http://apollo-adminservice:8090
+    env_file:
+      - ./.env
     networks:
       - apollo
     ports:
@@ -23,7 +25,7 @@ services:
     depends_on:
       - apollo-mysql
   apollo-adminservice:
-    image: apolloconfig/apollo-adminservice
+    image: apolloconfig/apollo-adminservice:${VERSION}
     deploy:
       replicas: 1
       restart_policy:
@@ -34,6 +36,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_PROFILES_ACTIVE=github,kubernetes
+    env_file:
+      - ./.env
     networks:
       - apollo
     ports:
@@ -41,7 +45,7 @@ services:
     depends_on:
       - apollo-mysql
   apollo-portal:
-    image: apolloconfig/apollo-portal
+    image: apolloconfig/apollo-portal:${VERSION}
     deploy:
       replicas: 1
       restart_policy:
@@ -52,6 +56,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - DEV_META=http://apollo-configservice:8080
+    env_file:
+      - ./.env
     networks:
       - apollo
     ports:
