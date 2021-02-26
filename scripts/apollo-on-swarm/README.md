@@ -77,7 +77,6 @@ docker service create \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
   --env-file ./.env
   --network apollo \
-  --publish 8090 \
   apolloconfig/apollo-adminservice:${VERSION}
 ```
 
