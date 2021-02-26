@@ -56,8 +56,8 @@ docker service create \
   --env SPRING_DATASOURCE_USERNAME=root \
   --env SPRING_DATASOURCE_PASSWORD= \
   --env SPRING_PROFILES_ACTIVE=github,kubernetes \
-  --env APOLLO.CONFIG-SERVICE.URL=http://${APOLLO.CONFIG-SERVICE.URL}:8080 \
-  --env APOLLO.ADMIN-SERVICE.URL=http://apollo-adminservice:8090 \
+  --env APOLLO_CONFIG_SERVICE_URL=http://${APOLLO.CONFIG-SERVICE.URL}:8080 \
+  --env APOLLO_ADMIN_SERVICE_URL=http://apollo-adminservice:8090 \
   --env-file ./.env
   --network apollo \
   --publish 8080:8080 \
