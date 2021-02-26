@@ -88,44 +88,60 @@ Apollo客户端和Portal会从Meta Server获取服务的地址（IP+端口），
 
 需要注意的是，`apollo-configservice`和`apollo-adminservice`是基于内网可信网络设计的，所以出于安全考虑，**请不要将`apollo-configservice`和`apollo-adminservice`直接暴露在公网**。
 
-所以如果实际部署的机器有多块网卡（如docker），或者存在某些网卡的IP是Apollo客户端和Portal无法访问的（如网络安全限制），那么我们就需要在`apollo-configservice`和`apollo-adminservice`中做相关限制以避免Eureka将这些网卡的IP注册到Meta Server。
+所以如果实际部署的机器有多块网卡（如docker），或者存在某些网卡的IP是Apollo客户端和Portal无法访问的（如网络安全限制），那么我们就需要在`apollo-configservice`和`apollo-adminservice`中做相关配置来解决连通性问题。
 
-具体文档可以参考[Ignore Network Interfaces](http://projects.spring.io/spring-cloud/spring-cloud.html#ignore-network-interfaces)章节。具体而言，就是分别编辑[apollo-configservice/src/main/resources/application.yml](https://github.com/ctripcorp/apollo/blob/master/apollo-configservice/src/main/resources/application.yml)和[apollo-adminservice/src/main/resources/application.yml](https://github.com/ctripcorp/apollo/blob/master/apollo-adminservice/src/main/resources/application.yml)，然后把需要忽略的网卡加进去。
+### 1.4.1 忽略某些网卡
 
-如下面这个例子就是对于`apollo-configservice`，把docker0和veth.*的网卡在注册到Eureka时忽略掉。
+可以分别修改`apollo-configservice`和`apollo-adminservice`的startup.sh，通过JVM System Property传入-D参数，也可以通过OS Environment Variable传入，下面的例子会把`docker0`和`veth`开头的网卡在注册到Eureka时忽略掉。
 
-```
-    spring:
-      application:
-          name: apollo-configservice
-      profiles:
-        active: ${apollo_profile}
-      cloud:
-        inetutils:
-          ignoredInterfaces:
-            - docker0
-            - veth.*
-```
-> 注意，对于application.yml修改时要小心，千万不要把其它信息改错了，如spring.application.name等。
+JVM System Property示例：
 
-另外一种方式是直接指定要注册的IP，可以修改startup.sh，通过JVM System Property在运行时传入，如`-Deureka.instance.ip-address=${指定的IP}`，也可以通过OS Environment Variable，如`EUREKA_INSTANCE_IP_ADDRESS=${指定的IP}`，或者也可以修改apollo-adminservice或apollo-configservice 的bootstrap.yml文件，加入以下配置
-
-``` yaml
-eureka:
-  instance:
-    ip-address: ${指定的IP}
+```properties
+-Dspring.cloud.inetutils.ignoredInterfaces[0]=docker0
+-Dspring.cloud.inetutils.ignoredInterfaces[1]=veth.*
 ```
 
-最后一种方式是直接指定要注册的IP+PORT，可以修改startup.sh，通过JVM System Property在运行时传入，如`-Deureka.instance.homePageUrl=http://${指定的IP}:${指定的Port}`，也可以通过OS Environment Variable，如`EUREKA_INSTANCE_HOME_PAGE_URL=http://${指定的IP}:${指定的Port}`，或者也可以修改apollo-adminservice或apollo-configservice 的bootstrap.yml文件，加入以下配置
+OS Environment Variable示例：
 
-``` yaml
-eureka:
-  instance:
-    homePageUrl: http://${指定的IP}:${指定的Port}
-    preferIpAddress: false
+```properties
+SPRING_CLOUD_INETUTILS_IGNORED_INTERFACES[0]=docker0
+SPRING_CLOUD_INETUTILS_IGNORED_INTERFACES[1]=veth.*
 ```
 
-做完上述修改并重启后，可以查看Eureka页面（http://${config-service-url:port}）检查注册上来的IP信息是否正确。
+### 1.4.2 指定要注册的IP
+可以分别修改`apollo-configservice`和`apollo-adminservice`的startup.sh，通过JVM System Property传入-D参数，也可以通过OS Environment Variable传入，下面的例子会指定注册的IP为`1.2.3.4`。
+
+JVM System Property示例：
+
+```properties
+-Deureka.instance.ip-address=1.2.3.4
+```
+
+OS Environment Variable示例：
+
+```properties
+EUREKA_INSTANCE_IP_ADDRESS=1.2.3.4
+```
+
+### 1.4.3 指定要注册的URL
+
+可以分别修改`apollo-configservice`和`apollo-adminservice`的startup.sh，通过JVM System Property传入-D参数，也可以通过OS Environment Variable传入，下面的例子会指定注册的URL为`http://1.2.3.4:8080`。
+
+JVM System Property示例：
+
+```properties
+-Deureka.instance.homePageUrl=http://1.2.3.4:8080
+-Deureka.instance.preferIpAddress=false
+```
+
+OS Environment Variable示例：
+
+```properties
+EUREKA_INSTANCE_HOME_PAGE_URL=http://1.2.3.4:8080
+EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+```
+
+### 1.4.4 直接指定apollo-configservice地址
 
 如果Apollo部署在公有云上，本地开发环境无法连接，但又需要做开发测试的话，客户端可以升级到0.11.0版本及以上，然后配置[跳过Apollo Meta Server服务发现](zh/usage/java-sdk-user-guide#_1222-跳过apollo-meta-server服务发现)
 
@@ -587,7 +603,7 @@ Apollo 1.7.0版本增加了基于Kubernetes原生服务发现的部署模式，�
 #### 2.4.1.2 添加Apollo Helm Chart仓库
 
 ```bash
-$ helm repo add apollo http://ctripcorp.github.io/apollo/charts
+$ helm repo add apollo https://ctripcorp.github.io/apollo/charts
 $ helm search repo apollo
 ```
 
