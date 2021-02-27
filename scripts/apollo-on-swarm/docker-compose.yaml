@@ -14,7 +14,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_PROFILES_ACTIVE=github,kubernetes
-      - APOLLO_CONFIG_SERVICE_URL=http://${APOLLO.CONFIG-SERVICE.URL}:8080
+      - APOLLO_CONFIG_SERVICE_URL=http://${APOLLO_CONFIG_SERVICE_HOST}:8080
       - APOLLO_ADMIN_SERVICE_URL=http://apollo-adminservice:8090
     env_file:
       - ./.env
