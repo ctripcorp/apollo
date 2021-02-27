@@ -41,25 +41,22 @@ public class NamespaceBoAsyncServiceTest extends AbstractUnitTest {
     }
 
     @Test
-    public void testGetLatestReleaseAsync() {
+    public void testGetLatestReleaseAsync() throws ExecutionException, InterruptedException {
         ReleaseDTO someRelease = new ReleaseDTO();
         someRelease.setConfigurations("{\"a\":\"123\",\"b\":\"123\"}");
         when(releaseService.loadLatestRelease(testAppId, testEnv, testClusterName, testNamespaceName))
                 .thenReturn(someRelease);
         Future<Map<String, String>> latestReleaseAsync = namespaceBoAsyncService.getLatestReleaseAsync(testAppId, testEnv, testClusterName, testNamespaceName);
-        try {
-            Map<String, String> asyncRelease = latestReleaseAsync.get();
-            assertNotNull(asyncRelease);
-            assertEquals(2, asyncRelease.size());
-            assertEquals("123", asyncRelease.get("a"));
-            assertEquals("123", asyncRelease.get("b"));
-        } catch (Exception e) {
-            assertTrue((e instanceof ExecutionException || e instanceof InterruptedException));
-        }
+        Map<String, String> asyncRelease = latestReleaseAsync.get();
+        assertNotNull(asyncRelease);
+        assertEquals(2, asyncRelease.size());
+        assertEquals("123", asyncRelease.get("a"));
+        assertEquals("123", asyncRelease.get("b"));
+
     }
 
     @Test
-    public void testGetItemsAsync() {
+    public void testGetItemsAsync() throws ExecutionException, InterruptedException {
         ItemDTO i1 = new ItemDTO("a", "123", "", 1);
         ItemDTO i2 = new ItemDTO("b", "1", "", 2);
         ItemDTO i3 = new ItemDTO("", "", "#dddd", 3);
@@ -68,16 +65,13 @@ public class NamespaceBoAsyncServiceTest extends AbstractUnitTest {
         when(itemService.findItems(testAppId, testEnv, testClusterName, testNamespaceName))
                 .thenReturn(someItems);
         Future<List<ItemDTO>> itemsAsync = namespaceBoAsyncService.getItemsAsync(testAppId, testEnv, testClusterName, testNamespaceName);
-        try {
-            List<ItemDTO> list = itemsAsync.get();
-            assertNotNull(list);
-            assertEquals(4, list.size());
-            assertEquals("a", list.get(0).getKey());
-            assertEquals(4, list.get(3).getLineNum());
-            assertEquals("", list.get(2).getValue());
-        } catch (Exception e) {
-            assertTrue((e instanceof ExecutionException || e instanceof InterruptedException));
-        }
+        List<ItemDTO> list = itemsAsync.get();
+        assertNotNull(list);
+        assertEquals(4, list.size());
+        assertEquals("a", list.get(0).getKey());
+        assertEquals(4, list.get(3).getLineNum());
+        assertEquals("", list.get(2).getValue());
+
     }
 
 

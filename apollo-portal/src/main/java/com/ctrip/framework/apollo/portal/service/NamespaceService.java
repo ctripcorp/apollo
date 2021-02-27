@@ -37,8 +37,8 @@ import java.util.stream.Collectors;
 @Service
 public class NamespaceService {
 
-  private Logger logger = LoggerFactory.getLogger(NamespaceService.class);
-  private static final Gson GSON = new Gson();
+    private Logger logger = LoggerFactory.getLogger(NamespaceService.class);
+    private static final Gson GSON = new Gson();
 
     private final PortalConfig portalConfig;
     private final PortalSettings portalSettings;
@@ -149,12 +149,13 @@ public class NamespaceService {
                         {
                             try {
                                 return transformNamespace2BO(env, namespace);
-                            } catch (Exception e) {
+                            } catch (ExecutionException | InterruptedException e) {
                                 logger.error("parse namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}",
                                         appId, env, clusterName, namespace.getNamespaceName(), e);
-                                throw e;
+                                return null;
                             }
                         })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -174,7 +175,13 @@ public class NamespaceService {
     if (namespace == null) {
       throw new BadRequestException("namespaces not exist");
     }
-    return transformNamespace2BO(env, namespace);
+      try {
+          return transformNamespace2BO(env, namespace);
+      } catch (ExecutionException | InterruptedException e) {
+          logger.error("load namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}",
+                  appId, env, clusterName, namespace.getNamespaceName(), e);
+          return null;
+      }
   }
 
   public boolean namespaceHasInstances(String appId, Env env, String clusterName,
@@ -192,7 +199,13 @@ public class NamespaceService {
         namespaceAPI
             .findPublicNamespaceForAssociatedNamespace(env, appId, clusterName, namespaceName);
 
-    return transformNamespace2BO(env, namespace);
+      try {
+          return transformNamespace2BO(env, namespace);
+      } catch (ExecutionException | InterruptedException e) {
+          logger.error("find namespace error. app id:{}, env:{}, clusterName:{}, namespace:{}",
+                  appId, env, clusterName, namespace.getNamespaceName(), e);
+          return null;
+      }
   }
 
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(String appId) {
@@ -208,58 +221,59 @@ public class NamespaceService {
     return result;
   }
 
-    private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) {
-        NamespaceBO namespaceBO = new NamespaceBO();
-        try {
-            namespaceBO.setBaseInfo(namespace);
-            String appId = namespace.getAppId();
-            String clusterName = namespace.getClusterName();
-            String namespaceName = namespace.getNamespaceName();
-            fillAppNamespaceProperties(namespaceBO);
-            Map<String, String> releaseItems = new HashMap<>();
-            List<ItemDTO> items = new ArrayList<>();
-            //Get the latest release asynchronously
-            Future<Map<String, String>> latestReleaseAsync = namespaceBoAsyncService
-                    .getLatestReleaseAsync(appId, env, clusterName, namespaceName);
-            //Get the item list asynchronously
-            Future<List<ItemDTO>> itemsAsync = namespaceBoAsyncService.getItemsAsync(appId, env, clusterName, namespaceName);
-            //This method takes the most time, so make it in the main thread
-            List<ItemDTO> deletedItems = itemService.findDeletedItems(appId, env, clusterName, namespaceName);
-            Map<String, ItemDTO> deletedItemsMap = new HashMap<>();
-            //Convert list to map
-            if (!CollectionUtils.isEmpty(deletedItems)) {
-                deletedItems.forEach(itemDTO -> deletedItemsMap.put(itemDTO.getKey(), itemDTO));
-            }
-            List<ItemDTO> list = itemsAsync.get();
-            if (!CollectionUtils.isEmpty(list)) {
-                items.addAll(list);
-            }
-            Map<String, String> releaseAsync = latestReleaseAsync.get();
-            if (Objects.nonNull(releaseAsync)) {
-                releaseItems.putAll(releaseAsync);
-            }
-            // Convert itemDTO' s list to ItemBO 's list
-            List<ItemBO> itemBOs = items
-                    .parallelStream()
-                    .map(itemDTO -> transformItem2BO(itemDTO, releaseItems))
-                    .collect(Collectors.toList());
-            // Count the number of modified items
-            long modifiedItemCnt = itemBOs
-                    .parallelStream()
-                    .filter(ItemBO::isModified)
-                    .count();
-            // Parse deleted items
-            List<ItemBO> deletedItemBos = parseDeletedItems(items, releaseItems, deletedItemsMap);
-            itemBOs.addAll(deletedItemBos);
-            namespaceBO.setItems(itemBOs);
-            // The number of items to be modified
-            namespaceBO.setItemModifiedCnt((int) modifiedItemCnt + deletedItemBos.size());
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("transformNamespace2BO error namespace:{}, env:{},err:{}",
-                    namespace, env, e);
-        }
-        return namespaceBO;
+  private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) throws ExecutionException, InterruptedException {
+    NamespaceBO namespaceBO = new NamespaceBO();
+    namespaceBO.setBaseInfo(namespace);
+    String appId = namespace.getAppId();
+    String clusterName = namespace.getClusterName();
+    String namespaceName = namespace.getNamespaceName();
+    fillAppNamespaceProperties(namespaceBO);
+    Map<String, String> releaseItems = new HashMap<>();
+    List<ItemDTO> items = new ArrayList<>();
+    //Get the latest release asynchronously
+    Future<Map<String, String>> latestReleaseAsync = namespaceBoAsyncService
+            .getLatestReleaseAsync(appId, env, clusterName, namespaceName);
+    //Get the item list asynchronously
+    Future<List<ItemDTO>> itemsAsync = namespaceBoAsyncService.getItemsAsync(appId, env, clusterName, namespaceName);
+    //This method takes the most time, so make it in the main thread
+    List<ItemDTO> deletedItems = itemService.findDeletedItems(appId, env, clusterName, namespaceName);
+    Map<String, ItemDTO> deletedItemsMap = new HashMap<>();
+    //Convert list to map
+    if (!CollectionUtils.isEmpty(deletedItems)) {
+        deletedItems.forEach(itemDTO -> deletedItemsMap.put(itemDTO.getKey(), itemDTO));
     }
+    try {
+        List<ItemDTO> list = itemsAsync.get();
+        if (!CollectionUtils.isEmpty(list)) {
+            items.addAll(list);
+        }
+        Map<String, String> releaseAsync = latestReleaseAsync.get();
+        if (Objects.nonNull(releaseAsync)) {
+            releaseItems.putAll(releaseAsync);
+        }
+    } catch (InterruptedException | ExecutionException e) {
+        logger.error("transformNamespace2BO error namespace:{}, env:{}",
+                namespace, env);
+        throw e;
+    }
+    // Convert itemDTO' s list to ItemBO 's list
+    List<ItemBO> itemBOs = items
+            .parallelStream()
+            .map(itemDTO -> transformItem2BO(itemDTO, releaseItems))
+            .collect(Collectors.toList());
+    // Count the number of modified items
+    long modifiedItemCnt = itemBOs
+            .parallelStream()
+            .filter(ItemBO::isModified)
+            .count();
+    // Parse deleted items
+    List<ItemBO> deletedItemBos = parseDeletedItems(items, releaseItems, deletedItemsMap);
+    itemBOs.addAll(deletedItemBos);
+    namespaceBO.setItems(itemBOs);
+    // The number of items to be modified
+    namespaceBO.setItemModifiedCnt((int) modifiedItemCnt + deletedItemBos.size());
+    return namespaceBO;
+  }
 
   private void fillAppNamespaceProperties(NamespaceBO namespace) {
 
