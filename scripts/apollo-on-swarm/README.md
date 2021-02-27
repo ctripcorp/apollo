@@ -100,6 +100,6 @@ docker service create \
 ## 通过docker-compose.yaml部署
 
 ```shell
-# 注意文件中 APOLLO.CONFIG-SERVICE.URL更换为集群所处宿主机ip地址，保证外部客户端访问
+# 注意文件中 APOLLO_CONFIG_SERVICE_HOST 更换为集群所处宿主机ip地址，保证外部客户端访问
 docker stack deploy -c ./docker-compose.yaml apollo
 ```
