@@ -3,7 +3,9 @@ spring:
     name: apollo-configservice
   profiles:
     active: ${apollo_profile}
-
+  cloud:
+    consul:
+      enabled: false
 ctrip:
   appid: 100003171
 
@@ -31,7 +33,6 @@ eureka:
     healthcheck:
       enabled: true
     eurekaServiceUrlPollIntervalSeconds: 60
-
 management:
   health:
     status:

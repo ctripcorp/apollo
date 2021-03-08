@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: ${apollo_profile}
+  cloud:
+    consul:
+      enabled: false
 
 logging:
   file:

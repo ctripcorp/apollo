@@ -442,6 +442,18 @@ mvn clean package -Pgithub,nacos-discovery -DskipTests -pl apollo-configservice,
 ```properties
 nacos.discovery.server-addr=127.0.0.1:8848
 ```
+##### 2.2.1.2.8 启用外部Consul服务注册中心替换内置eureka
+
+1. 修改build.sh/build.bat，将config-service和admin-service的maven编译命令更改为
+```shell
+mvn clean package -Pgithub -DskipTests -pl apollo-configservice,apollo-adminservice -am -Dapollo_profile=github,consul-discovery -Dspring_datasource_url=$apollo_config_db_url -Dspring_datasource_username=$apollo_config_db_username -Dspring_datasource_password=$apollo_config_db_password
+```
+
+2. 分别修改apollo-configservice和apollo-adminservice安装包中config目录下的application-github.properties，配置consul服务器地址
+```properties
+spring.cloud.consul.host=127.0.0.1
+spring.cloud.consul.port=8500
+```
 
 ### 2.2.2 部署Apollo服务端
 
