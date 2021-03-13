@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.ServiceConfigurationError;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -38,6 +39,11 @@ public class ServiceBootstrapTest {
   }
 
   @Test
+  public void loadAllWithServiceFileButNoServiceImpl() {
+    assertFalse(ServiceBootstrap.loadAll(Interface7.class).hasNext());
+  }
+
+  @Test
   public void loadPrimarySuccessfully() {
     Interface6 service = ServiceBootstrap.loadPrimary(Interface6.class);
     assertTrue(service instanceof Interface6Impl1);
@@ -46,6 +52,11 @@ public class ServiceBootstrapTest {
   @Test(expected = IllegalStateException.class)
   public void loadPrimaryWithServiceFileButNoServiceImpl() {
     ServiceBootstrap.loadPrimary(Interface7.class);
+  }
+
+  @Test
+  public void loadAllOrderedWithServiceFileButNoServiceImpl() {
+    assertTrue(ServiceBootstrap.loadAllOrdered(Interface7.class).isEmpty());
   }
 
   interface Interface1 {
