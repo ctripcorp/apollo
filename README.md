@@ -543,6 +543,9 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 <tr>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aitrace.jpg" alt="追溯科技"></td>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/moqipobing.png" alt="玩吧"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/cassan.png" alt="广州卡桑信息技术有限公司"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/shuidichou.png" alt="水滴"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/kuwo.png" alt="酷我音乐"></td>
 </tr>
 </table>
 
