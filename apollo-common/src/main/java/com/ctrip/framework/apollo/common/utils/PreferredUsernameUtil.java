@@ -1,11 +1,13 @@
 package com.ctrip.framework.apollo.common.utils;
 
 import com.ctrip.framework.apollo.common.dto.BaseDTO;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -13,6 +15,31 @@ import org.springframework.util.StringUtils;
  * @author vdisk <vdisk@foxmail.com>
  */
 public class PreferredUsernameUtil {
+
+  /**
+   * enrich the preferred username for the dto list
+   *
+   * @param dtoList    dto with operator id
+   * @param repository preferred username repository (operatorIdList -> preferredUsernameMap)
+   */
+  public static void enrichPreferredUserName(List<? extends BaseDTO> dtoList,
+      Function<List<String>, Map<String, String>> repository) {
+    if (CollectionUtils.isEmpty(dtoList)) {
+      return;
+    }
+    Set<String> operatorIdSet = PreferredUsernameUtil.extractOperatorId(dtoList);
+    if (CollectionUtils.isEmpty(operatorIdSet)) {
+      return;
+    }
+    // userId - preferredUsername
+    Map<String, String> preferredUsernameMap = repository.apply(new ArrayList<>(operatorIdSet));
+    if (CollectionUtils.isEmpty(preferredUsernameMap)) {
+      return;
+    }
+    for (BaseDTO dto : dtoList) {
+      PreferredUsernameUtil.setPreferredUsername(dto, preferredUsernameMap);
+    }
+  }
 
   /**
    * extract operator id from the dto list
@@ -26,8 +53,12 @@ public class PreferredUsernameUtil {
     }
     Set<String> operatorIdSet = new HashSet<>();
     for (BaseDTO dto : dtoList) {
-      operatorIdSet.add(dto.getDataChangeCreatedBy());
-      operatorIdSet.add(dto.getDataChangeLastModifiedBy());
+      if (StringUtils.hasText(dto.getDataChangeCreatedBy())) {
+        operatorIdSet.add(dto.getDataChangeCreatedBy());
+      }
+      if (StringUtils.hasText(dto.getDataChangeLastModifiedBy())) {
+        operatorIdSet.add(dto.getDataChangeLastModifiedBy());
+      }
     }
     return operatorIdSet;
   }
@@ -40,8 +71,12 @@ public class PreferredUsernameUtil {
    */
   public static Set<String> extractOperatorId(BaseDTO dto) {
     Set<String> operatorIdSet = new HashSet<>();
-    operatorIdSet.add(dto.getDataChangeCreatedBy());
-    operatorIdSet.add(dto.getDataChangeLastModifiedBy());
+    if (StringUtils.hasText(dto.getDataChangeCreatedBy())) {
+      operatorIdSet.add(dto.getDataChangeCreatedBy());
+    }
+    if (StringUtils.hasText(dto.getDataChangeLastModifiedBy())) {
+      operatorIdSet.add(dto.getDataChangeLastModifiedBy());
+    }
     return operatorIdSet;
   }
 

@@ -6,11 +6,14 @@ import com.ctrip.framework.apollo.common.dto.ReleaseDTO;
 import com.ctrip.framework.apollo.common.dto.ReleaseHistoryDTO;
 import com.ctrip.framework.apollo.common.entity.EntityPair;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.portal.api.AdminServiceAPI.ReleaseHistoryAPI;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
+import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RelativeDateFormat;
 import com.google.gson.Gson;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ReleaseHistoryService {
@@ -28,10 +33,14 @@ public class ReleaseHistoryService {
   
   private final AdminServiceAPI.ReleaseHistoryAPI releaseHistoryAPI;
   private final ReleaseService releaseService;
+  private final UserService userService;
 
-  public ReleaseHistoryService(final AdminServiceAPI.ReleaseHistoryAPI releaseHistoryAPI, final ReleaseService releaseService) {
+  public ReleaseHistoryService(final ReleaseHistoryAPI releaseHistoryAPI,
+      final ReleaseService releaseService,
+      final UserService userService) {
     this.releaseHistoryAPI = releaseHistoryAPI;
     this.releaseService = releaseService;
+    this.userService = userService;
   }
 
 
@@ -81,7 +90,9 @@ public class ReleaseHistoryService {
 
   private List<ReleaseHistoryBO> transformReleaseHistoryDTO2BO(List<ReleaseHistoryDTO> source,
                                                                List<ReleaseDTO> releases) {
-
+    if (CollectionUtils.isEmpty(source)) {
+      return Collections.emptyList();
+    }
     Map<Long, ReleaseDTO> releasesMap = BeanUtils.mapByKey("id", releases);
 
     List<ReleaseHistoryBO> bos = new ArrayList<>(source.size());
@@ -90,6 +101,22 @@ public class ReleaseHistoryService {
       bos.add(transformReleaseHistoryDTO2BO(dto, release));
     }
 
+    Set<String> operatorIdSet = bos.stream()
+        .map(ReleaseHistoryBO::getOperator)
+        .collect(Collectors.toSet());
+    Map<String, String> preferredUsernameMap = this.userService
+        .findPreferredUsernameMapByUserIds(new ArrayList<>(operatorIdSet));
+    if (CollectionUtils.isEmpty(preferredUsernameMap)) {
+      return bos;
+    }
+    bos.forEach(releaseHistory -> {
+      if (StringUtils.hasText(releaseHistory.getOperator())) {
+        String preferredUsername = preferredUsernameMap.get(releaseHistory.getOperator());
+        if (StringUtils.hasText(preferredUsername)) {
+          releaseHistory.setOperatorPreferredUsername(preferredUsername);
+        }
+      }
+    });
     return bos;
   }
 

@@ -12,11 +12,6 @@ import com.ctrip.framework.apollo.portal.entity.model.NamespaceReleaseModel;
 import com.ctrip.framework.apollo.portal.listener.ConfigPublishEvent;
 import com.ctrip.framework.apollo.portal.service.NamespaceBranchService;
 import com.ctrip.framework.apollo.portal.service.ReleaseService;
-import com.ctrip.framework.apollo.portal.spi.UserService;
-import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,21 +32,18 @@ public class NamespaceBranchController {
   private final NamespaceBranchService namespaceBranchService;
   private final ApplicationEventPublisher publisher;
   private final PortalConfig portalConfig;
-  private final UserService userService;
 
   public NamespaceBranchController(
       final PermissionValidator permissionValidator,
       final ReleaseService releaseService,
       final NamespaceBranchService namespaceBranchService,
       final ApplicationEventPublisher publisher,
-      final PortalConfig portalConfig,
-      final UserService userService) {
+      final PortalConfig portalConfig) {
     this.permissionValidator = permissionValidator;
     this.releaseService = releaseService;
     this.namespaceBranchService = namespaceBranchService;
     this.publisher = publisher;
     this.portalConfig = portalConfig;
-    this.userService = userService;
   }
 
   @GetMapping("/apps/{appId}/envs/{env}/clusters/{clusterName}/namespaces/{namespaceName}/branches")
@@ -64,10 +56,7 @@ public class NamespaceBranchController {
     if (namespaceBO != null && permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
       namespaceBO.hideItems();
     }
-    Set<String> operatorIdSet = NamespaceBOUtils.extractOperatorId(namespaceBO);
-    Map<String, String> preferredUsernameMap = userService
-        .findPreferredUsernameMapByUserIds(new ArrayList<>(operatorIdSet));
-    NamespaceBOUtils.setPreferredUsername(namespaceBO, preferredUsernameMap);
+
     return namespaceBO;
   }
 

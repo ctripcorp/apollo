@@ -8,12 +8,15 @@ import com.ctrip.framework.apollo.portal.controller.ConfigsExportController;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
@@ -76,6 +79,63 @@ public class NamespaceBOUtils {
     return configFileContent;
   }
 
+  /**
+   * enrich the preferred username for the namespace list
+   *
+   * @param namespaceList namespace list with operator id
+   * @param repository    preferred username repository (operatorIdList -> preferredUsernameMap)
+   */
+  public static void enrichPreferredUserName(List<NamespaceBO> namespaceList,
+      Function<List<String>, Map<String, String>> repository) {
+    if (CollectionUtils.isEmpty(namespaceList)) {
+      return;
+    }
+    Set<String> operatorIdSet = new HashSet<>();
+    for (NamespaceBO namespace : namespaceList) {
+      operatorIdSet.addAll(NamespaceBOUtils.extractOperatorId(namespace));
+    }
+    if (CollectionUtils.isEmpty(operatorIdSet)) {
+      return;
+    }
+    // userId - preferredUsername
+    Map<String, String> preferredUsernameMap = repository.apply(new ArrayList<>(operatorIdSet));
+    if (CollectionUtils.isEmpty(preferredUsernameMap)) {
+      return;
+    }
+    for (NamespaceBO namespace : namespaceList) {
+      NamespaceBOUtils.setPreferredUsername(namespace, preferredUsernameMap);
+    }
+  }
+
+  /**
+   * enrich the preferred username for the namespace
+   *
+   * @param namespace  namespace with operator id
+   * @param repository preferred username repository (operatorIdList -> preferredUsernameMap)
+   */
+  public static void enrichPreferredUserName(NamespaceBO namespace,
+      Function<List<String>, Map<String, String>> repository) {
+    if (namespace == null) {
+      return;
+    }
+    Set<String> operatorIdSet = NamespaceBOUtils.extractOperatorId(namespace);
+    if (CollectionUtils.isEmpty(operatorIdSet)) {
+      return;
+    }
+    // userId - preferredUsername
+    Map<String, String> preferredUsernameMap = repository.apply(new ArrayList<>(operatorIdSet));
+    if (CollectionUtils.isEmpty(preferredUsernameMap)) {
+      return;
+    }
+    NamespaceBOUtils.setPreferredUsername(namespace, preferredUsernameMap);
+  }
+
+  /**
+   * extract operator id from the namespace
+   *
+   * @param namespace namespace with operator id
+   * @return operator id set
+   */
   public static Set<String> extractOperatorId(NamespaceBO namespace) {
     if (namespace == null) {
       return Collections.emptySet();
@@ -91,6 +151,12 @@ public class NamespaceBOUtils {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * set the preferred username
+   *
+   * @param namespace            namespace with operator id
+   * @param preferredUsernameMap (userId - preferredUsername) prepared preferred username map
+   */
   public static void setPreferredUsername(NamespaceBO namespace,
       Map<String, String> preferredUsernameMap) {
     if (namespace == null) {

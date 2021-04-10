@@ -1,7 +1,5 @@
 package com.ctrip.framework.apollo.portal.controller;
 
-import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
-
 import com.ctrip.framework.apollo.common.dto.AppNamespaceDTO;
 import com.ctrip.framework.apollo.common.dto.NamespaceDTO;
 import com.ctrip.framework.apollo.common.entity.AppNamespace;
@@ -10,35 +8,21 @@ import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
-import com.ctrip.framework.apollo.common.utils.PreferredUsernameUtil;
 import com.ctrip.framework.apollo.common.utils.RequestPrecondition;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
-import com.ctrip.framework.apollo.portal.api.AdminServiceAPI.NamespaceAPI;
 import com.ctrip.framework.apollo.portal.component.PermissionValidator;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
-import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.entity.model.NamespaceCreationModel;
-import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceCreationEvent;
 import com.ctrip.framework.apollo.portal.listener.AppNamespaceDeletionEvent;
 import com.ctrip.framework.apollo.portal.service.AppNamespaceService;
 import com.ctrip.framework.apollo.portal.service.NamespaceService;
 import com.ctrip.framework.apollo.portal.service.RoleInitializationService;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.UserService;
-import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -53,6 +37,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.ctrip.framework.apollo.common.utils.RequestPrecondition.checkModel;
+
 @RestController
 public class NamespaceController {
 
@@ -66,7 +58,6 @@ public class NamespaceController {
   private final PortalConfig portalConfig;
   private final PermissionValidator permissionValidator;
   private final AdminServiceAPI.NamespaceAPI namespaceAPI;
-  private final UserService userService;
 
   public NamespaceController(
       final ApplicationEventPublisher publisher,
@@ -76,8 +67,7 @@ public class NamespaceController {
       final RoleInitializationService roleInitializationService,
       final PortalConfig portalConfig,
       final PermissionValidator permissionValidator,
-      final NamespaceAPI namespaceAPI,
-      final UserService userService) {
+      final AdminServiceAPI.NamespaceAPI namespaceAPI) {
     this.publisher = publisher;
     this.userInfoHolder = userInfoHolder;
     this.namespaceService = namespaceService;
@@ -86,7 +76,6 @@ public class NamespaceController {
     this.portalConfig = portalConfig;
     this.permissionValidator = permissionValidator;
     this.namespaceAPI = namespaceAPI;
-    this.userService = userService;
   }
 
 
@@ -100,18 +89,13 @@ public class NamespaceController {
                                           @PathVariable String clusterName) {
 
     List<NamespaceBO> namespaceBOs = namespaceService.findNamespaceBOs(appId, Env.valueOf(env), clusterName);
-    Set<String> operatorIdSet = new HashSet<>();
+
     for (NamespaceBO namespaceBO : namespaceBOs) {
       if (permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceBO.getBaseInfo().getNamespaceName())) {
         namespaceBO.hideItems();
       }
-      operatorIdSet.addAll(NamespaceBOUtils.extractOperatorId(namespaceBO));
     }
-    Map<String, String> preferredUsernameMap = userService
-        .findPreferredUsernameMapByUserIds(new ArrayList<>(operatorIdSet));
-    for (NamespaceBO namespace : namespaceBOs) {
-      NamespaceBOUtils.setPreferredUsername(namespace, preferredUsernameMap);
-    }
+
     return namespaceBOs;
   }
 
@@ -124,10 +108,7 @@ public class NamespaceController {
     if (namespaceBO != null && permissionValidator.shouldHideConfigToCurrentUser(appId, env, namespaceName)) {
       namespaceBO.hideItems();
     }
-    Set<String> operatorIdSet = NamespaceBOUtils.extractOperatorId(namespaceBO);
-    Map<String, String> preferredUsernameMap = userService
-        .findPreferredUsernameMapByUserIds(new ArrayList<>(operatorIdSet));
-    NamespaceBOUtils.setPreferredUsername(namespaceBO, preferredUsernameMap);
+
     return namespaceBO;
   }
 
@@ -136,14 +117,8 @@ public class NamespaceController {
                                                                @PathVariable String appId,
                                                                @PathVariable String namespaceName,
                                                                @PathVariable String clusterName) {
-    NamespaceBO namespace = namespaceService
-        .findPublicNamespaceForAssociatedNamespace(Env.valueOf(env), appId, clusterName,
-            namespaceName);
-    Set<String> operatorIdSet = NamespaceBOUtils.extractOperatorId(namespace);
-    Map<String, String> preferredUsernameMap = userService
-        .findPreferredUsernameMapByUserIds(new ArrayList<>(operatorIdSet));
-    NamespaceBOUtils.setPreferredUsername(namespace, preferredUsernameMap);
-    return namespace;
+
+    return namespaceService.findPublicNamespaceForAssociatedNamespace(Env.valueOf(env), appId, clusterName, namespaceName);
   }
 
   @PreAuthorize(value = "@permissionValidator.hasCreateNamespacePermission(#appId)")
