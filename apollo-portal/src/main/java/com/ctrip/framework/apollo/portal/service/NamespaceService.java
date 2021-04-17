@@ -18,8 +18,6 @@ import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.UserService;
-import com.ctrip.framework.apollo.portal.util.NamespaceBOUtils;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Maps;
@@ -49,7 +47,7 @@ public class NamespaceService {
   private final InstanceService instanceService;
   private final NamespaceBranchService branchService;
   private final RolePermissionService rolePermissionService;
-  private final UserService userService;
+  private final AdditionalUserInfoEnrichService additionalUserInfoEnrichService;
 
   public NamespaceService(
       final PortalConfig portalConfig,
@@ -62,7 +60,7 @@ public class NamespaceService {
       final InstanceService instanceService,
       final @Lazy NamespaceBranchService branchService,
       final RolePermissionService rolePermissionService,
-      final UserService userService) {
+      AdditionalUserInfoEnrichService additionalUserInfoEnrichService) {
     this.portalConfig = portalConfig;
     this.portalSettings = portalSettings;
     this.userInfoHolder = userInfoHolder;
@@ -73,7 +71,7 @@ public class NamespaceService {
     this.instanceService = instanceService;
     this.branchService = branchService;
     this.rolePermissionService = rolePermissionService;
-    this.userService = userService;
+    this.additionalUserInfoEnrichService = additionalUserInfoEnrichService;
   }
 
 
@@ -155,7 +153,7 @@ public class NamespaceService {
         throw e;
       }
     }
-    NamespaceBOUtils.enrichPreferredUserName(namespaceBOs, this.userService::findPreferredUsernameMapByUserIds);
+
     return namespaceBOs;
   }
 
@@ -175,7 +173,7 @@ public class NamespaceService {
     if (namespace == null) {
       throw new BadRequestException("namespaces not exist");
     }
-    return transformNamespace2BOAndEnrichPreferredUserName(env, namespace);
+    return transformNamespace2BO(env, namespace);
   }
 
   public boolean namespaceHasInstances(String appId, Env env, String clusterName,
@@ -193,7 +191,7 @@ public class NamespaceService {
         namespaceAPI
             .findPublicNamespaceForAssociatedNamespace(env, appId, clusterName, namespaceName);
 
-    return transformNamespace2BOAndEnrichPreferredUserName(env, namespace);
+    return transformNamespace2BO(env, namespace);
   }
 
   public Map<String, Map<String, Boolean>> getNamespacesPublishInfo(String appId) {
@@ -207,12 +205,6 @@ public class NamespaceService {
     }
 
     return result;
-  }
-
-  private NamespaceBO transformNamespace2BOAndEnrichPreferredUserName(Env env, NamespaceDTO namespace) {
-    NamespaceBO namespaceBO = transformNamespace2BO(env, namespace);
-    NamespaceBOUtils.enrichPreferredUserName(namespaceBO, this.userService::findPreferredUsernameMapByUserIds);
-    return namespaceBO;
   }
 
   private NamespaceBO transformNamespace2BO(Env env, NamespaceDTO namespace) {
@@ -239,6 +231,7 @@ public class NamespaceService {
 
     //not Release config items
     List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
+    additionalUserInfoEnrichService.enrichAdditionalUserInfo(items);
     int modifiedItemCnt = 0;
     for (ItemDTO itemDTO : items) {
 
