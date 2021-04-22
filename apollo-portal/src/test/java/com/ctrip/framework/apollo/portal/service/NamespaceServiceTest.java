@@ -14,7 +14,6 @@ import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 
-import com.ctrip.framework.apollo.portal.spi.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -49,7 +48,7 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   @Mock
   private UserInfoHolder userInfoHolder;
   @Mock
-  private UserService userService;
+  private AdditionalUserInfoEnrichService additionalUserInfoEnrichService;
 
   @InjectMocks
   private NamespaceService namespaceService;
