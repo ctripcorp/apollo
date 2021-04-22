@@ -50,8 +50,13 @@ public class AdditionalUserInfoEnrichServiceImpl implements AdditionalUserInfoEn
     }
     Map<String, UserInfo> userInfoMap = userInfoList.stream()
         .collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
-    for (AdditionalUserInfoEnricher enricher : this.enricherList) {
-      enricher.enrichAdditionalUserInfo(dtoList, userInfoMap);
+    for (BaseDTO dto : dtoList) {
+      if (dto == null) {
+        continue;
+      }
+      for (AdditionalUserInfoEnricher enricher : this.enricherList) {
+        enricher.enrichAdditionalUserInfo(dto, userInfoMap);
+      }
     }
   }
 

@@ -13,8 +13,8 @@ public interface AdditionalUserInfoEnricher {
   /**
    * enrich an additional user info for the dto list
    *
-   * @param dtoList     dto with operator id
+   * @param dto     dto with operator id
    * @param userInfoMap userInfo map
    */
-  void enrichAdditionalUserInfo(List<? extends BaseDTO> dtoList, Map<String, UserInfo> userInfoMap);
+  void enrichAdditionalUserInfo(BaseDTO dto, Map<String, UserInfo> userInfoMap);
 }

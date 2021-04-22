@@ -15,18 +15,8 @@ import org.springframework.util.StringUtils;
 public class PreferredUserNameEnricher implements AdditionalUserInfoEnricher {
 
   @Override
-  public void enrichAdditionalUserInfo(List<? extends BaseDTO> dtoList,
+  public void enrichAdditionalUserInfo(BaseDTO dto,
       Map<String, UserInfo> userInfoMap) {
-    for (BaseDTO dto : dtoList) {
-      this.setPreferredUsername(dto, userInfoMap);
-    }
-  }
-
-  private void setPreferredUsername(BaseDTO dto,
-      Map<String, UserInfo> userInfoMap) {
-    if (dto == null) {
-      return;
-    }
     if (StringUtils.hasText(dto.getDataChangeCreatedBy())) {
       UserInfo userInfo = userInfoMap.get(dto.getDataChangeCreatedBy());
       if (userInfo != null && StringUtils.hasText(userInfo.getName())) {
