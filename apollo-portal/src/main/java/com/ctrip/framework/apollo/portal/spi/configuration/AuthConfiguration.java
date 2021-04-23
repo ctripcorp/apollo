@@ -227,8 +227,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder springSecurityUserInfoHolder() {
-      return new SpringSecurityUserInfoHolder();
+    public UserInfoHolder springSecurityUserInfoHolder(UserService userService) {
+      return new SpringSecurityUserInfoHolder(userService);
     }
 
     @Bean
@@ -320,8 +320,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder springSecurityUserInfoHolder() {
-      return new SpringSecurityUserInfoHolder();
+    public UserInfoHolder springSecurityUserInfoHolder(UserService userService) {
+      return new SpringSecurityUserInfoHolder(userService);
     }
 
     @Bean
@@ -445,8 +445,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder oidcUserInfoHolder() {
-      return new OidcUserInfoHolder();
+    public UserInfoHolder oidcUserInfoHolder(UserService userService) {
+      return new OidcUserInfoHolder(userService);
     }
 
     @Bean
