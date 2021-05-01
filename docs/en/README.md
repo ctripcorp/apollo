@@ -10,7 +10,7 @@ The Java SDK does not rely on any framework and can run in all Java runtime envi
 
 The .Net SDK does not rely on any framework and can run in all .Net runtime environments.
 
-For more detials of the product introduction, please refer [Introduction to Apollo Configuration Center](https://ctripcorp.github.io/apollo/#/zh/design/apollo-introduction).
+For more details of the product introduction, please refer [Introduction to Apollo Configuration Center](https://ctripcorp.github.io/apollo/#/zh/design/apollo-introduction).
 
 For local demo purpose, please refer [Quick Start](https://ctripcorp.github.io/apollo/#/zh/deployment/quick-start).
 
@@ -26,7 +26,7 @@ Demo Environment:
     * Apollo provides a unified interface to centrally manage the configurations of different environments, different clusters, and different namespaces
     * The same codebase could have different configurations when deployed in different clusters
     * With the namespace concept, it is easy to support multiple applications to share the same configurations, while also allowing them to customize the configurations
-    * Multiple languages is provided in user interface (currently Chinese and English）
+    * Multiple languages is provided in user interface(currently Chinese and English)
 
 * **Configuration changes takes effect in real time (hot release)**
     * After the user modified the configuration and released it in Apollo, the sdk will receive the latest configurations in real time (1 second) and notify the application
