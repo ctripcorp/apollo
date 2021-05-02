@@ -16,9 +16,9 @@ The Java SDK does not rely on any framework and can run in all Java runtime envi
 
 The .Net SDK does not rely on any framework and can run in all .Net runtime environments.
 
-For more details of the product introduction, please refer [Introduction to Apollo Configuration Center](https://ctripcorp.github.io/apollo/#/zh/design/apollo-introduction).
+For more details of the product introduction, please refer [Introduction to Apollo Configuration Center](https://www.apolloconfig.com/#/zh/design/apollo-introduction).
 
-For local demo purpose, please refer [Quick Start](https://ctripcorp.github.io/apollo/#/zh/deployment/quick-start).
+For local demo purpose, please refer [Quick Start](https://www.apolloconfig.com/#/zh/deployment/quick-start).
 
 Demo Environment:
 - [http://106.54.227.205](http://106.54.227.205/)
@@ -69,38 +69,38 @@ Demo Environment:
   * Apollo also provides a packaging script, which can generate all required installation packages with just one click, and supports customization of runtime parameters
 
 # Usage
-  1. [Apollo User Guide](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-user-guide)
-  2. [Java SDK User Guide](https://ctripcorp.github.io/apollo/#/zh/usage/java-sdk-user-guide)
-  3. [.Net SDK user Guide](https://ctripcorp.github.io/apollo/#/zh/usage/dotnet-sdk-user-guide)
-  4. [Third Party SDK User Guide](https://ctripcorp.github.io/apollo/#/zh/usage/third-party-sdks-user-guide)
-  5. [Other Language Client User Guide](https://ctripcorp.github.io/apollo/#/zh/usage/other-language-client-user-guide)
-  6. [Apollo Open APIs](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-open-api-platform)
+  1. [Apollo User Guide](https://www.apolloconfig.com/#/zh/usage/apollo-user-guide)
+  2. [Java SDK User Guide](https://www.apolloconfig.com/#/zh/usage/java-sdk-user-guide)
+  3. [.Net SDK user Guide](https://www.apolloconfig.com/#/zh/usage/dotnet-sdk-user-guide)
+  4. [Third Party SDK User Guide](https://www.apolloconfig.com/#/zh/usage/third-party-sdks-user-guide)
+  5. [Other Language Client User Guide](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide)
+  6. [Apollo Open APIs](https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform)
   7. [Apollo Use Cases](https://github.com/ctripcorp/apollo-use-cases)
-  8. [Apollo User Practices](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-user-practices)
-  9. [Apollo Security Best Practices](https://ctripcorp.github.io/apollo/#/zh/usage/apollo-user-guide?id=_71-%e5%ae%89%e5%85%a8%e7%9b%b8%e5%85%b3)
+  8. [Apollo User Practices](https://www.apolloconfig.com/#/zh/usage/apollo-user-practices)
+  9. [Apollo Security Best Practices](https://www.apolloconfig.com/#/zh/usage/apollo-user-guide?id=_71-%e5%ae%89%e5%85%a8%e7%9b%b8%e5%85%b3)
 
 # Design
-  * [Apollo Design](https://ctripcorp.github.io/apollo/#/zh/design/apollo-design)
-  * [Apollo Core Concept - Namespace](https://ctripcorp.github.io/apollo/#/zh/design/apollo-core-concept-namespace)
+  * [Apollo Design](https://www.apolloconfig.com/#/zh/design/apollo-design)
+  * [Apollo Core Concept - Namespace](https://www.apolloconfig.com/#/zh/design/apollo-core-concept-namespace)
   * [Apollo Architecture Analysis](https://mp.weixin.qq.com/s/-hUaQPzfsl9Lm3IqQW3VDQ)
   * [Apollo Source Code Explanation](http://www.iocoder.cn/categories/Apollo/)
 
 # Development
-  * [Apollo Development Guide](https://ctripcorp.github.io/apollo/#/zh/development/apollo-development-guide)
+  * [Apollo Development Guide](https://www.apolloconfig.com/#/zh/development/apollo-development-guide)
   * Code Styles
     * [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
     * [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
 
 # Deployment
-  * [Quick Start](https://ctripcorp.github.io/apollo/#/zh/deployment/quick-start)
-  * [Distributed Deployment Guide](https://ctripcorp.github.io/apollo/#/zh/deployment/distributed-deployment-guide)
+  * [Quick Start](https://www.apolloconfig.com/#/zh/deployment/quick-start)
+  * [Distributed Deployment Guide](https://www.apolloconfig.com/#/zh/deployment/distributed-deployment-guide)
 
 # Release Notes
   * [Releases](https://github.com/ctripcorp/apollo/releases)
 
 # FAQ
-  * [FAQ](https://ctripcorp.github.io/apollo/#/zh/faq/faq)
-  * [Common Issues in Deployment & Development Phase](https://ctripcorp.github.io/apollo/#/zh/faq/common-issues-in-deployment-and-development-phase)
+  * [FAQ](https://www.apolloconfig.com/#/zh/faq/faq)
+  * [Common Issues in Deployment & Development Phase](https://www.apolloconfig.com/#/zh/faq/common-issues-in-deployment-and-development-phase)
 
 # Presentation
   * [Design and Implementation Details of Apollo](http://www.itdks.com/dakalive/detail/3420)

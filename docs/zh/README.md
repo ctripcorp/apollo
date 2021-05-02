@@ -15,7 +15,7 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
 本地快速部署请参见[Quick Start](zh/deployment/quick-start)
 
 演示环境（Demo）:
-- [106.54.227.205](http://106.54.227.205/)
+- [http://106.54.227.205](http://106.54.227.205/)
 - 账号/密码:apollo/admin
 
 > 如访问github速度缓慢，可以访问[gitee镜像](https://gitee.com/nobodyiam/apollo)，不定期同步
@@ -67,11 +67,12 @@ Java客户端不依赖任何框架，能够运行于所有Java运行时环境，
   1. [应用接入指南](zh/usage/apollo-user-guide)
   2. [Java客户端使用指南](zh/usage/java-sdk-user-guide)
   3. [.Net客户端使用指南](zh/usage/dotnet-sdk-user-guide)
-  4. [其它语言客户端接入指南](zh/usage/other-language-client-user-guide)
-  5. [Apollo开放平台接入指南](zh/usage/apollo-open-api-platform)
-  6. [Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)
-  7. [Apollo实践案例](zh/usage/apollo-user-practices)
-  8. [Apollo安全相关最佳实践](zh/usage/apollo-user-guide?id=_71-%e5%ae%89%e5%85%a8%e7%9b%b8%e5%85%b3)
+  4. [Go、Python、NodeJS、PHP等客户端使用指南](zh/usage/third-party-sdks-user-guide)
+  5. [其它语言客户端接入指南](zh/usage/other-language-client-user-guide)
+  6. [Apollo开放平台接入指南](zh/usage/apollo-open-api-platform)
+  7. [Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)
+  8. [Apollo实践案例](zh/usage/apollo-user-practices)
+  9. [Apollo安全相关最佳实践](zh/usage/apollo-user-guide?id=_71-%e5%ae%89%e5%85%a8%e7%9b%b8%e5%85%b3)
 
 # Design
   - [Apollo配置中心设计](zh/design/apollo-design.md)
