@@ -62,13 +62,8 @@ public class AdditionalUserInfoEnrichServiceImpl implements AdditionalUserInfoEn
 
   private Set<String> extractOperatorId(List<? extends BaseDTO> dtoList) {
     Set<String> operatorIdSet = new HashSet<>();
-    for (BaseDTO dto : dtoList) {
-      if (StringUtils.hasText(dto.getDataChangeCreatedBy())) {
-        operatorIdSet.add(dto.getDataChangeCreatedBy());
-      }
-      if (StringUtils.hasText(dto.getDataChangeLastModifiedBy())) {
-        operatorIdSet.add(dto.getDataChangeLastModifiedBy());
-      }
+    for (AdditionalUserInfoEnricher enricher : this.enricherList) {
+      operatorIdSet.addAll(enricher.extractOperatorId(dtoList));
     }
     return operatorIdSet;
   }

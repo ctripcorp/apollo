@@ -9,9 +9,9 @@ public class BaseDTO {
 
   protected String dataChangeLastModifiedBy;
 
-  protected String dataChangeCreatedByPreferredUsername;
+  protected String dataChangeCreatedByDisplayName;
 
-  protected String dataChangeLastModifiedByPreferredUsername;
+  protected String dataChangeLastModifiedByDisplayName;
 
   protected Date dataChangeCreatedTime;
 
@@ -33,22 +33,20 @@ public class BaseDTO {
     this.dataChangeLastModifiedBy = dataChangeLastModifiedBy;
   }
 
-  public String getDataChangeCreatedByPreferredUsername() {
-    return dataChangeCreatedByPreferredUsername;
+  public String getDataChangeCreatedByDisplayName() {
+    return dataChangeCreatedByDisplayName;
   }
 
-  public void setDataChangeCreatedByPreferredUsername(
-      String dataChangeCreatedByPreferredUsername) {
-    this.dataChangeCreatedByPreferredUsername = dataChangeCreatedByPreferredUsername;
+  public void setDataChangeCreatedByDisplayName(String dataChangeCreatedByDisplayName) {
+    this.dataChangeCreatedByDisplayName = dataChangeCreatedByDisplayName;
   }
 
-  public String getDataChangeLastModifiedByPreferredUsername() {
-    return dataChangeLastModifiedByPreferredUsername;
+  public String getDataChangeLastModifiedByDisplayName() {
+    return dataChangeLastModifiedByDisplayName;
   }
 
-  public void setDataChangeLastModifiedByPreferredUsername(
-      String dataChangeLastModifiedByPreferredUsername) {
-    this.dataChangeLastModifiedByPreferredUsername = dataChangeLastModifiedByPreferredUsername;
+  public void setDataChangeLastModifiedByDisplayName(String dataChangeLastModifiedByDisplayName) {
+    this.dataChangeLastModifiedByDisplayName = dataChangeLastModifiedByDisplayName;
   }
 
   public Date getDataChangeCreatedTime() {

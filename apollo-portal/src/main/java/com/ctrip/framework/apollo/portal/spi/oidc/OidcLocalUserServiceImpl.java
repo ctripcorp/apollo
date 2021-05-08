@@ -62,7 +62,7 @@ public class OidcLocalUserServiceImpl implements OidcLocalUserService {
       managedUser.setEmail(newUserInfo.getEmail());
     }
     if (!StringUtils.isBlank(newUserInfo.getName())) {
-      managedUser.setPreferredUsername(newUserInfo.getName());
+      managedUser.setUserDisplayName(newUserInfo.getName());
     }
     userRepository.save(managedUser);
   }

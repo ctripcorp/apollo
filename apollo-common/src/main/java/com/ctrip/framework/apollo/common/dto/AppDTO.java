@@ -1,9 +1,10 @@
 package com.ctrip.framework.apollo.common.dto;
 
+import com.ctrip.framework.apollo.common.enrich.OperatorInfoEnriched;
 import com.ctrip.framework.apollo.common.utils.InputValidator;
 import javax.validation.constraints.Pattern;
 
-public class AppDTO extends BaseDTO{
+public class AppDTO extends BaseDTO implements OperatorInfoEnriched {
 
   private long id;
 
@@ -21,9 +22,19 @@ public class AppDTO extends BaseDTO{
 
   private String ownerName;
 
-  private String ownerPreferredUsername;
+  private String ownerDisplayName;
 
   private String ownerEmail;
+
+  @Override
+  public String getOperatorId() {
+    return this.getOwnerName();
+  }
+
+  @Override
+  public void setOperatorDisplayName(String operatorDisplayName) {
+    this.setOwnerDisplayName(operatorDisplayName);
+  }
 
   public long getId() {
     return id;
@@ -73,12 +84,12 @@ public class AppDTO extends BaseDTO{
     this.ownerName = ownerName;
   }
 
-  public String getOwnerPreferredUsername() {
-    return ownerPreferredUsername;
+  public String getOwnerDisplayName() {
+    return ownerDisplayName;
   }
 
-  public void setOwnerPreferredUsername(String ownerPreferredUsername) {
-    this.ownerPreferredUsername = ownerPreferredUsername;
+  public void setOwnerDisplayName(String ownerDisplayName) {
+    this.ownerDisplayName = ownerDisplayName;
   }
 
   public String getOwnerEmail() {

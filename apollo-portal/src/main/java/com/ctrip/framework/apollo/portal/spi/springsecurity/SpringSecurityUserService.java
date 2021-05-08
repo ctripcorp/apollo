@@ -58,7 +58,7 @@ public class SpringSecurityUserService implements UserService {
 
     UserPO managedUser = userRepository.findByUsername(username);
     managedUser.setEmail(user.getEmail());
-    managedUser.setPreferredUsername(user.getPreferredUsername());
+    managedUser.setUserDisplayName(user.getUserDisplayName());
 
     userRepository.save(managedUser);
   }
