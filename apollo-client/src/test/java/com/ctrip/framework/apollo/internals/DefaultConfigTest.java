@@ -735,7 +735,7 @@ public class DefaultConfigTest {
     ConfigChangeEvent changeEvent = interestedInAllKeysFuture.get(500, TimeUnit.MILLISECONDS);
 
     assertEquals(someChangeEvent, changeEvent);
-    assertEquals(someChangeEvent, interestedInSomeKeyFuture.get(500, TimeUnit.MILLISECONDS));
+    assertEquals(someChangeEvent.getChanges(), interestedInSomeKeyFuture.get(500, TimeUnit.MILLISECONDS).getChanges());
     assertFalse(interestedInSomeKeyNotChangedFuture.isDone());
   }
 

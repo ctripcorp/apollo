@@ -38,6 +38,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.Collections;
 import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -515,12 +516,21 @@ public abstract class AbstractConfig implements Config {
   /**
    * @return new {@link ConfigChangeEvent} contains interested and changed keys
    */
-  private ConfigChangeEvent resolve(ConfigChangeListener configChangeListener, ConfigChangeEvent configChangeEvent) {
-    Set<String> interestedKeys = m_interestedKeys.get(configChangeListener);
-    Set<String> interestedKeyPrefixes = m_interestedKeyPrefixes.get(configChangeListener);
+  private ConfigChangeEvent resolve(ConfigChangeListener configChangeListener,
+      ConfigChangeEvent configChangeEvent) {
+    if (!this.m_interestedKeys.containsKey(configChangeListener) && !this.m_interestedKeyPrefixes.containsKey(configChangeListener)) {
+      return configChangeEvent;
+    }
 
-    Set<String> interestedChangedKeys = resolveInterestedChangedKeys(configChangeEvent.changedKeys(), interestedKeys, interestedKeyPrefixes);
-    return new ConfigChangeEvent(configChangeEvent.getNamespace(), configChangeEvent.getChanges(), interestedChangedKeys);
+    Set<String> interestedChangedKeys = resolveInterestedChangedKeys(
+        configChangeEvent.changedKeys(),
+        m_interestedKeys.containsKey(configChangeListener) ? m_interestedKeys
+            .get(configChangeListener) : Collections.<String>emptySet(),
+        m_interestedKeyPrefixes.containsKey(configChangeListener) ? m_interestedKeyPrefixes
+            .get(configChangeListener) : Collections.<String>emptySet()
+    );
+    return new ConfigChangeEvent(configChangeEvent.getNamespace(), configChangeEvent.getChanges(),
+        interestedChangedKeys);
   }
 
   static Set<String> resolveInterestedChangedKeys(Set<String> changedKeys, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
