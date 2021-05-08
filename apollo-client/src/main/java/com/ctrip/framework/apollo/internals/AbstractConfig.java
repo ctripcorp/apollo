@@ -21,6 +21,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -450,7 +451,7 @@ public abstract class AbstractConfig implements Config {
           String listenerName = listener.getClass().getName();
           Transaction transaction = Tracer.newTransaction("Apollo.ConfigChangeListener", listenerName);
           try {
-            listener.onChange(changeEvent);
+            listener.onChange(resolve(listener, changeEvent));
             transaction.setStatus(Transaction.SUCCESS);
           } catch (Throwable ex) {
             transaction.setStatus(ex);
@@ -492,6 +493,37 @@ public abstract class AbstractConfig implements Config {
     }
 
     return false;
+  }
+
+  /**
+   * @return new {@link ConfigChangeEvent} contains interested and changed keys
+   */
+  private ConfigChangeEvent resolve(ConfigChangeListener configChangeListener, ConfigChangeEvent configChangeEvent) {
+    Set<String> interestedKeys = m_interestedKeys.get(configChangeListener);
+    Set<String> interestedKeyPrefixes = m_interestedKeyPrefixes.get(configChangeListener);
+
+    Set<String> interestedChangedKeys = resolveInterestedChangedKeys(configChangeEvent.changedKeys(), interestedKeys, interestedKeyPrefixes);
+    return new ConfigChangeEvent(configChangeEvent.getNamespace(), configChangeEvent.getChanges(), interestedChangedKeys);
+  }
+
+  static Set<String> resolveInterestedChangedKeys(Set<String> changedKeys, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
+    Set<String> interestedChangedKeys = new HashSet<>();
+
+    for (String interestedKey : interestedKeys) {
+      if (changedKeys.contains(interestedKey)) {
+        interestedChangedKeys.add(interestedKey);
+      }
+    }
+
+    for (String interestedKeyPrefix : interestedKeyPrefixes) {
+      for (String changedKey : changedKeys) {
+        if (changedKey.startsWith(interestedKeyPrefix)) {
+          interestedChangedKeys.add(changedKey);
+        }
+      }
+    }
+
+    return interestedChangedKeys;
   }
 
   List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,
