@@ -82,6 +82,11 @@
           '/': 'Copied',
         },
       },
+      // docsify-pagination
+      pagination: {
+        crossChapter: true,
+        crossChapterText: true,
+      },
       plugins: [
         // Edit Document Button in each page
         function (hook, vm) {
@@ -116,6 +121,8 @@
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
   <!-- Add a simple Click to copy button to all preformatted code blocks to effortlessly allow users to copy example code from your docs -->
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <!-- docsify-pagination -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
 
   <!-- code highlight -->
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>

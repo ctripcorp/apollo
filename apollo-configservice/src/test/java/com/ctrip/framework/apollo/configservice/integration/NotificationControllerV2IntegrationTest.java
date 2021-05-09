@@ -54,7 +54,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     someCluster = ConfigConsts.CLUSTER_NAME_DEFAULT;
     defaultNamespace = ConfigConsts.NAMESPACE_APPLICATION;
     somePublicNamespace = "somePublicNamespace";
-    executorService = Executors.newSingleThreadExecutor();
+    executorService = Executors.newFixedThreadPool(1);
     typeReference = new ParameterizedTypeReference<List<ApolloConfigNotification>>() {
     };
   }
