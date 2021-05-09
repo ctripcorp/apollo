@@ -9,11 +9,12 @@ import com.ctrip.framework.apollo.common.http.MultiResponseEntity;
 import com.ctrip.framework.apollo.common.http.RichResponseEntity;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.enricher.adapter.AppDtoUserInfoEnrichedAdapter;
 import com.ctrip.framework.apollo.portal.entity.model.AppModel;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
 import com.ctrip.framework.apollo.portal.entity.vo.EnvClusterInfo;
+import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.listener.AppCreationEvent;
 import com.ctrip.framework.apollo.portal.listener.AppDeletionEvent;
 import com.ctrip.framework.apollo.portal.listener.AppInfoChangedEvent;
@@ -25,6 +26,10 @@ import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
 import com.ctrip.framework.apollo.portal.util.RoleUtils;
 import com.google.common.collect.Sets;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import javax.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,11 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 
 @RestController
@@ -176,7 +176,8 @@ public class AppController {
   public AppDTO load(@PathVariable String appId) {
     App app = appService.load(appId);
     AppDTO appDto = BeanUtils.transform(AppDTO.class, app);
-    additionalUserInfoEnrichService.enrichAdditionalUserInfo(Collections.singletonList(appDto));
+    additionalUserInfoEnrichService.enrichAdditionalUserInfo(Collections.singletonList(appDto),
+        AppDtoUserInfoEnrichedAdapter::new);
     return appDto;
   }
 

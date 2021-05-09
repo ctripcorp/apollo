@@ -20,7 +20,7 @@ public class ReleaseHistoryBO {
 
   private String operator;
 
-  private String operatorPreferredUsername;
+  private String operatorDisplayName;
 
   private long releaseId;
 
@@ -91,12 +91,12 @@ public class ReleaseHistoryBO {
     this.operator = operator;
   }
 
-  public String getOperatorPreferredUsername() {
-    return operatorPreferredUsername;
+  public String getOperatorDisplayName() {
+    return operatorDisplayName;
   }
 
-  public void setOperatorPreferredUsername(String operatorPreferredUsername) {
-    this.operatorPreferredUsername = operatorPreferredUsername;
+  public void setOperatorDisplayName(String operatorDisplayName) {
+    this.operatorDisplayName = operatorDisplayName;
   }
 
   public long getReleaseId() {

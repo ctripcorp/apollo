@@ -1,6 +1,7 @@
 package com.ctrip.framework.apollo.portal.service;
 
 import com.ctrip.framework.apollo.common.dto.CommitDTO;
+import com.ctrip.framework.apollo.portal.enricher.adapter.BaseDtoUserInfoEnrichedAdapter;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,8 @@ public class CommitService {
 
   public List<CommitDTO> find(String appId, Env env, String clusterName, String namespaceName, int page, int size) {
     List<CommitDTO> dtoList = commitAPI.find(appId, env, clusterName, namespaceName, page, size);
-    this.additionalUserInfoEnrichService.enrichAdditionalUserInfo(dtoList);
+    this.additionalUserInfoEnrichService.enrichAdditionalUserInfo(dtoList,
+        BaseDtoUserInfoEnrichedAdapter::new);
     return dtoList;
   }
 

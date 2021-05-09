@@ -1,7 +1,8 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.ctrip.framework.apollo.common.dto.BaseDTO;
+import com.ctrip.framework.apollo.portal.enricher.adapter.UserInfoEnrichedAdapter;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author vdisk <vdisk@foxmail.com>
@@ -9,9 +10,11 @@ import java.util.List;
 public interface AdditionalUserInfoEnrichService {
 
   /**
-   * enrich the additional user info for the dto list
+   * enrich the additional user info for the object list
    *
-   * @param dtoList dto with operator id
+   * @param list   object with user id
+   * @param mapper map the object in the list to {@link UserInfoEnrichedAdapter}
    */
-  void enrichAdditionalUserInfo(List<? extends BaseDTO> dtoList);
+  <T> void enrichAdditionalUserInfo(List<? extends T> list,
+      Function<? super T, ? extends UserInfoEnrichedAdapter> mapper);
 }

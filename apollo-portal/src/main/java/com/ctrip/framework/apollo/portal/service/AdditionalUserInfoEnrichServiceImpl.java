@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.service;
 
-import com.ctrip.framework.apollo.common.dto.BaseDTO;
 import com.ctrip.framework.apollo.portal.enricher.AdditionalUserInfoEnricher;
+import com.ctrip.framework.apollo.portal.enricher.adapter.UserInfoEnrichedAdapter;
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.UserService;
 import java.util.ArrayList;
@@ -33,37 +33,60 @@ public class AdditionalUserInfoEnrichServiceImpl implements AdditionalUserInfoEn
   }
 
   @Override
-  public void enrichAdditionalUserInfo(List<? extends BaseDTO> dtoList) {
-    if (CollectionUtils.isEmpty(dtoList)) {
+  public <T> void enrichAdditionalUserInfo(List<? extends T> list,
+      Function<? super T, ? extends UserInfoEnrichedAdapter> mapper) {
+    if (CollectionUtils.isEmpty(list)) {
       return;
     }
     if (CollectionUtils.isEmpty(this.enricherList)) {
       return;
     }
-    Set<String> operatorIdSet = this.extractOperatorId(dtoList);
-    if (CollectionUtils.isEmpty(operatorIdSet)) {
+    List<UserInfoEnrichedAdapter> adapterList = this.adapt(list, mapper);
+    if (CollectionUtils.isEmpty(adapterList)) {
       return;
     }
-    List<UserInfo> userInfoList = this.userService.findByUserIds(new ArrayList<>(operatorIdSet));
+    Set<String> userIdSet = this.extractOperatorId(adapterList);
+    if (CollectionUtils.isEmpty(userIdSet)) {
+      return;
+    }
+    List<UserInfo> userInfoList = this.userService.findByUserIds(new ArrayList<>(userIdSet));
     if (CollectionUtils.isEmpty(userInfoList)) {
       return;
     }
     Map<String, UserInfo> userInfoMap = userInfoList.stream()
         .collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
-    for (BaseDTO dto : dtoList) {
-      if (dto == null) {
-        continue;
-      }
+    for (UserInfoEnrichedAdapter adapter : adapterList) {
       for (AdditionalUserInfoEnricher enricher : this.enricherList) {
-        enricher.enrichAdditionalUserInfo(dto, userInfoMap);
+        enricher.enrichAdditionalUserInfo(adapter, userInfoMap);
       }
     }
   }
 
-  private Set<String> extractOperatorId(List<? extends BaseDTO> dtoList) {
+  private <T> List<UserInfoEnrichedAdapter> adapt(List<? extends T> dtoList,
+      Function<? super T, ? extends UserInfoEnrichedAdapter> mapper) {
+    List<UserInfoEnrichedAdapter> adapterList = new ArrayList<>(dtoList.size());
+    for (T dto : dtoList) {
+      if (dto == null) {
+        continue;
+      }
+      UserInfoEnrichedAdapter enrichedAdapter = mapper.apply(dto);
+      adapterList.add(enrichedAdapter);
+    }
+    return adapterList;
+  }
+
+  private <T> Set<String> extractOperatorId(List<UserInfoEnrichedAdapter> adapterList) {
     Set<String> operatorIdSet = new HashSet<>();
-    for (AdditionalUserInfoEnricher enricher : this.enricherList) {
-      operatorIdSet.addAll(enricher.extractOperatorId(dtoList));
+    for (UserInfoEnrichedAdapter adapter : adapterList) {
+      if (StringUtils.hasText(adapter.getFirstUserId())) {
+        operatorIdSet.add(adapter.getFirstUserId());
+      }
+      if (StringUtils.hasText(adapter.getSecondUserId())) {
+        operatorIdSet.add(adapter.getSecondUserId());
+      }
+      if (StringUtils.hasText(adapter.getThirdUserId())) {
+        operatorIdSet.add(adapter.getThirdUserId());
+      }
     }
     return operatorIdSet;
   }
