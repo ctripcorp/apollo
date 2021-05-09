@@ -1,8 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -138,9 +136,9 @@ public class LocalFileConfigRepositoryTest {
 
     Properties result = localFileConfigRepository.getConfig();
 
-    assertThat(
+    assertEquals(
         "LocalFileConfigRepository's properties should be the same as fallback repo's when there is no local cache",
-        result.entrySet(), equalTo(someProperties.entrySet()));
+        result, someProperties);
     assertEquals(someSourceType, localFileConfigRepository.getSourceType());
   }
 
@@ -159,9 +157,9 @@ public class LocalFileConfigRepositoryTest {
 
     Properties anotherProperties = anotherLocalRepoWithNoFallback.getConfig();
 
-    assertThat(
+    assertEquals(
         "LocalFileConfigRepository should persist local cache files and return that afterwards",
-        someProperties.entrySet(), equalTo(anotherProperties.entrySet()));
+        someProperties, anotherProperties);
     assertEquals(someSourceType, localRepo.getSourceType());
   }
 

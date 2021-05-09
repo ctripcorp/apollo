@@ -228,7 +228,7 @@ public class PortalConfig extends RefreshableConfig {
   }
 
   public String wikiAddress() {
-    return getValue("wiki.address", "https://ctripcorp.github.io/apollo");
+    return getValue("wiki.address", "https://www.apolloconfig.com");
   }
 
   public boolean canAppAdminCreatePrivateNamespace() {
