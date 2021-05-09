@@ -90,13 +90,13 @@ public class OidcLocalUserServiceImpl implements OidcLocalUserService {
     List<UserPO> users = new ArrayList<>();
     List<UserPO> byUsername = userRepository
         .findByUsernameLikeAndEnabled("%" + keyword + "%", 1);
-    List<UserPO> byPreferredUsername = userRepository
-        .findByPreferredUsernameLikeAndEnabled("%" + keyword + "%", 1);
+    List<UserPO> byUserDisplayName = userRepository
+        .findByUserDisplayNameLikeAndEnabled("%" + keyword + "%", 1);
     if (!CollectionUtils.isEmpty(byUsername)) {
       users.addAll(byUsername);
     }
-    if (!CollectionUtils.isEmpty(byPreferredUsername)) {
-      users.addAll(byPreferredUsername);
+    if (!CollectionUtils.isEmpty(byUserDisplayName)) {
+      users.addAll(byUserDisplayName);
     }
     return users;
   }

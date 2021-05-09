@@ -81,7 +81,7 @@ directive_module.directive('apollonav',
 
                 UserService.load_user().then(function (result) {
                     scope.userName = result.userId;
-                    scope.preferredUsername = result.name;
+                    scope.userDisplayName = result.name;
                 }, function (result) {
 
                 });

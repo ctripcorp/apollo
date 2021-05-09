@@ -550,7 +550,7 @@
   "UserMange.Title": "User Management",
   "UserMange.TitleTips": "(Only valid for the default Spring Security simple authentication method: - Dapollo_profile = github,auth)",
   "UserMange.UserName": "User Login Name",
-  "UserMange.PreferredUsername": "User Preferred Name",
+  "UserMange.UserDisplayName": "User Display Name",
   "UserMange.UserNameTips": "If the user name entered does not exist, will create a new one. If it already exists, then it will be updated.",
   "UserMange.Pwd": "Password",
   "UserMange.Email": "Email",

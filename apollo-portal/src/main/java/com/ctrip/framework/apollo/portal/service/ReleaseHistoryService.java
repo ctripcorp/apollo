@@ -11,10 +11,8 @@ import com.ctrip.framework.apollo.portal.enricher.adapter.BaseDtoUserInfoEnriche
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.portal.api.AdminServiceAPI;
 import com.ctrip.framework.apollo.portal.entity.bo.ReleaseHistoryBO;
-import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.ctrip.framework.apollo.portal.util.RelativeDateFormat;
 import com.google.gson.Gson;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 @Service
 public class ReleaseHistoryService {
@@ -38,7 +35,6 @@ public class ReleaseHistoryService {
 
   public ReleaseHistoryService(final ReleaseHistoryAPI releaseHistoryAPI,
       final ReleaseService releaseService,
-      final UserService userService,
       AdditionalUserInfoEnrichService additionalUserInfoEnrichService) {
     this.releaseHistoryAPI = releaseHistoryAPI;
     this.releaseService = releaseService;
@@ -96,6 +92,7 @@ public class ReleaseHistoryService {
       return Collections.emptyList();
     }
     this.additionalUserInfoEnrichService.enrichAdditionalUserInfo(source, BaseDtoUserInfoEnrichedAdapter::new);
+
     Map<Long, ReleaseDTO> releasesMap = BeanUtils.mapByKey("id", releases);
 
     List<ReleaseHistoryBO> bos = new ArrayList<>(source.size());
@@ -103,6 +100,7 @@ public class ReleaseHistoryService {
       ReleaseDTO release = releasesMap.get(dto.getReleaseId());
       bos.add(transformReleaseHistoryDTO2BO(dto, release));
     }
+
     return bos;
   }
 
