@@ -1,12 +1,12 @@
 # Overview 
 
-Apollo is a meritocratic, consensus-based community project. Anyone with an interest in the project can join the community, contribute to the project design and participate in the decision making process.
+Apollo is a meritocratic, consensus-based community project. Anyone with an interest in the project can join the community, contribute to the project design and participate in the decision-making process.
 
 This document describes how that participation takes place and how to set about earning merit within the project community.
 
 # Roles and Responsibilities
 
-Apollo community is comprised of and operated by the following roles:
+Apollo community is composed of and operated by the following roles:
 
 - Users
 - Contributors
@@ -69,21 +69,25 @@ The PMC(Project Management Committee) functions as the core management team that
 
 ### Privileges and responsibilities
 
-Members of the PMC do not have significant authority over other members of the community, although it is the PMC that votes on new Committers, and makes all major decisions for the future with respect to Apollo, such as project-level governance policies, management of sub-structures, security processes and so on. It also makes decisions when community consensus cannot be reached.
+- Handle reported security issues (CVE, etc.)
+- Nominate new committers and PMC members
+- Vote on new committers and new PMC members
+- Make major decisions for the future with respect to Apollo, such as project-level governance policies, management of sub-structures, security processes and so on
+- Make decisions when community consensus cannot be reached
 
-# Decision making and voting
+# Decision-making and voting
 
 Proposals and ideas can be submitted for agreement via a GitHub issue, PR, or GitHub Discussion.
 
-Major changes such as feature proposals and organization or process changes should be brought to the PMC. For the change to happen, the change must earn the supermajority (2/3) votes.
+Major changes such as feature proposals and organization or process changes should be brought to the PMC. For the change to happen, the change must earn more +1 than -1.
 
 # Conflict resolution
 
-In general, we prefer that technical issues and other disputes upon which consensus can't be reached are amicably worked out between the persons involved. If a dispute cannot be decided independently, the PMC can be called in to resolve the issue by voting. The same PR can be used or a separate PR can be opened for voting.
+In general, we prefer that technical issues and other disputes upon which consensus can't be reached are amicably worked out between the persons involved. If a dispute cannot be decided independently, the PMC can be called in to resolve the issue by voting. The same PR can be used, or a separate PR can be opened for voting.
 
 # Changes in Governance
 
-Any change in this Governance document, or similar nature of changes to other governance related documents, shall go through the voting process as described in [Decision making and voting](#decision-making-and-voting).
+Any change in this Governance document, or similar nature of changes to other governance related documents, shall go through the voting process as described in [Decision-making and voting](#decision-making-and-voting).
 
 # Credits
 
