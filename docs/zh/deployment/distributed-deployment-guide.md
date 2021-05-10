@@ -615,7 +615,7 @@ Apollo 1.7.0版本增加了基于Kubernetes原生服务发现的部署模式，�
 #### 2.4.1.2 添加Apollo Helm Chart仓库
 
 ```bash
-$ helm repo add apollo https://ctripcorp.github.io/apollo/charts
+$ helm repo add apollo https://www.apolloconfig.com/charts
 $ helm search repo apollo
 ```
 
