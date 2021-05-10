@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/logo/logo-simple.png" alt="apollo-logo" width="60%">
+<img src="https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/logo/logo-simple.png" alt="apollo-logo" width="40%">
 
 # Apollo - A reliable configuration management system
 
@@ -8,130 +8,109 @@
 [![codecov.io](https://codecov.io/github/ctripcorp/apollo/coverage.svg?branch=master)](https://codecov.io/github/ctripcorp/apollo?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+Apollo is a reliable configuration management system. It can centrally manage the configurations of different applications and different clusters. It is suitable for microservice configuration management scenarios.
 
-Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。
+The server side is developed based on Spring Boot and Spring Cloud, which can simply run without the need to install additional application containers such as Tomcat.
 
-服务端基于Spring Boot和Spring Cloud开发，打包后可以直接运行，不需要额外安装Tomcat等应用容器。
+The Java SDK does not rely on any framework and can run in all Java runtime environments. It also has good support for Spring/Spring Boot environments.
 
-Java客户端不依赖任何框架，能够运行于所有Java运行时环境，同时对Spring/Spring Boot环境也有较好的支持。
+The .Net SDK does not rely on any framework and can run in all .Net runtime environments.
 
-.Net客户端不依赖任何框架，能够运行于所有.Net运行时环境。
+For more details of the product introduction, please refer [Introduction to Apollo Configuration Center](https://www.apolloconfig.com/#/zh/design/apollo-introduction).
 
-更多产品介绍参见[Apollo配置中心介绍](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E4%BB%8B%E7%BB%8D)
+For local demo purpose, please refer [Quick Start](https://www.apolloconfig.com/#/zh/deployment/quick-start).
 
-本地快速部署请参见[Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
-
-演示环境（Demo）:
-- [106.54.227.205](http://106.54.227.205/)
-- 账号/密码:apollo/admin
-
-> 如访问github速度缓慢，可以访问[gitee镜像](https://gitee.com/nobodyiam/apollo)，不定期同步
+Demo Environment:
+- [http://106.54.227.205](http://106.54.227.205/)
+- User/Password: apollo/admin
 
 # Screenshots
-![配置界面](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/apollo-home-screenshot.jpg)
+![Screenshot](https://raw.githubusercontent.com/ctripcorp/apollo/master/docs/en/images/apollo-home-screenshot.jpg)
 
 # Features
-* **统一管理不同环境、不同集群的配置**
-  * Apollo提供了一个统一界面集中式管理不同环境（environment）、不同集群（cluster）、不同命名空间（namespace）的配置。
-  * 同一份代码部署在不同的集群，可以有不同的配置，比如zk的地址等
-  * 通过命名空间（namespace）可以很方便的支持多个不同应用共享同一份配置，同时还允许应用对共享的配置进行覆盖
-  * 配置界面支持多语言（中文，English）
+* **Unified management of the configurations of different environments and different clusters**
+  * Apollo provides a unified interface to centrally manage the configurations of different environments, different clusters, and different namespaces
+  * The same codebase could have different configurations when deployed in different clusters
+  * With the namespace concept, it is easy to support multiple applications to share the same configurations, while also allowing them to customize the configurations
+  * Multiple languages is provided in user interface(currently Chinese and English)
 
-* **配置修改实时生效（热发布）**
-  * 用户在Apollo修改完配置并发布后，客户端能实时（1秒）接收到最新的配置，并通知到应用程序。
+* **Configuration changes takes effect in real time (hot release)**
+  * After the user modified the configuration and released it in Apollo, the sdk will receive the latest configurations in real time (1 second) and notify the application
 
-* **版本发布管理**
-  * 所有的配置发布都有版本概念，从而可以方便的支持配置的回滚。
+* **Release version management**
+  * Every configuration releases are versioned, which is friendly to support configuration rollback
 
-* **灰度发布**
-  * 支持配置的灰度发布，比如点了发布后，只对部分应用实例生效，等观察一段时间没问题后再推给所有应用实例。
+* **Grayscale release**
+  * Support grayscale configuration release, for example, after clicking release, it will only take effect for some application instances. After a period of observation, we could push the configurations to all application instances if there is no problem
 
-* **权限管理、发布审核、操作审计**
-  * 应用和配置的管理都有完善的权限管理机制，对配置的管理还分为了编辑和发布两个环节，从而减少人为的错误。
-  * 所有的操作都有审计日志，可以方便的追踪问题。
+* **Authorization management, release approval and operation audit**
+  * Great authorization mechanism is designed for applications and configurations management, and the management of configurations is divided into two operations: editing and publishing, therefore greatly reducing human errors
+  * All operations have audit logs for easy tracking of problems
 
-* **客户端配置信息监控**
-  * 可以方便的看到配置在被哪些实例使用
+* **Client side configuration information monitoring**
+  * It's very easy to see which instances are using the configurations and what versions they are using
 
-* **提供Java和.Net原生客户端**
-  * 提供了Java和.Net的原生客户端，方便应用集成
-  * 支持Spring Placeholder，Annotation和Spring Boot的ConfigurationProperties，方便应用使用（需要Spring 3.1.1+）
-  * 同时提供了Http接口，非Java和.Net应用也可以方便的使用
+* **Rich SDKs available**
+  * Provides native sdks of Java and .Net to facilitate application integration
+  * Support Spring Placeholder, Annotation and Spring Boot ConfigurationProperties for easy application use (requires Spring 3.1.1+)
+  * Http APIs are provided, so non-Java and .Net applications can integrate conveniently
+  * Rich third party sdks are also available, e.g. Golang, Python, NodeJS, PHP, C, etc
 
-* **提供开放平台API**
-  * Apollo自身提供了比较完善的统一配置管理界面，支持多环境、多数据中心配置管理、权限、流程治理等特性。
-  * 不过Apollo出于通用性考虑，对配置的修改不会做过多限制，只要符合基本的格式就能够保存。
-  * 在我们的调研中发现，对于有些使用方，它们的配置可能会有比较复杂的格式，如xml, json，需要对格式做校验。
-  * 还有一些使用方如DAL，不仅有特定的格式，而且对输入的值也需要进行校验后方可保存，如检查数据库、用户名和密码是否匹配。
-  * 对于这类应用，Apollo支持应用方通过开放接口在Apollo进行配置的修改和发布，并且具备完善的授权和权限控制
+* **Open platform API**
+  * Apollo itself provides a unified configuration management interface, which supports features such as multi-environment, multi-data center configuration management, permissions, and process governance
+  * However, for the sake of versatility, Apollo will not put too many restrictions on the modification of the configuration, as long as it conforms to the basic format, it can be saved.
+  * In our research, we found that for some users, their configurations may have more complicated formats, such as xml, json, and the format needs to be verified
+  * There are also some users such as DAL, which not only have a specific format, but also need to verify the entered value before saving, such as checking whether the database, username and password match
+  * For this type of application, Apollo allows the application to modify and release configurations through open APIs, which has great authorization and permission control mechanism built in
 
-* **部署简单**
-  * 配置中心作为基础服务，可用性要求非常高，这就要求Apollo对外部依赖尽可能地少
-  * 目前唯一的外部依赖是MySQL，所以部署非常简单，只要安装好Java和MySQL就可以让Apollo跑起来
-  * Apollo还提供了打包脚本，一键就可以生成所有需要的安装包，并且支持自定义运行时参数
+* **Simple deployment**
+  * As an infrastructure service, the configuration center has very high availability requirements, which forces Apollo to rely on external dependencies as little as possible
+  * Currently, the only external dependency is MySQL, so the deployment is very simple. Apollo can run as long as Java and MySQL are installed
+  * Apollo also provides a packaging script, which can generate all required installation packages with just one click, and supports customization of runtime parameters
 
 # Usage
-  1. [应用接入指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  2. [Java客户端使用指南](https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  3. [.Net客户端使用指南](https://github.com/ctripcorp/apollo/wiki/.Net%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-  4. [其它语言客户端接入指南](https://github.com/ctripcorp/apollo/wiki/%E5%85%B6%E5%AE%83%E8%AF%AD%E8%A8%80%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
-  5. [Apollo开放平台接入指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0)
-  6. [Apollo使用场景和示例代码](https://github.com/ctripcorp/apollo-use-cases)
-  7. [Apollo实践案例](https://github.com/ctripcorp/apollo/wiki/Apollo-%E5%AE%9E%E8%B7%B5%E6%A1%88%E4%BE%8B)
-  8. [Apollo安全相关最佳实践](https://github.com/ctripcorp/apollo/wiki/Apollo%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97#71-%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3)
+  1. [Apollo User Guide](https://www.apolloconfig.com/#/zh/usage/apollo-user-guide)
+  2. [Java SDK User Guide](https://www.apolloconfig.com/#/zh/usage/java-sdk-user-guide)
+  3. [.Net SDK user Guide](https://www.apolloconfig.com/#/zh/usage/dotnet-sdk-user-guide)
+  4. [Third Party SDK User Guide](https://www.apolloconfig.com/#/zh/usage/third-party-sdks-user-guide)
+  5. [Other Language Client User Guide](https://www.apolloconfig.com/#/zh/usage/other-language-client-user-guide)
+  6. [Apollo Open APIs](https://www.apolloconfig.com/#/zh/usage/apollo-open-api-platform)
+  7. [Apollo Use Cases](https://github.com/ctripcorp/apollo-use-cases)
+  8. [Apollo User Practices](https://www.apolloconfig.com/#/zh/usage/apollo-user-practices)
+  9. [Apollo Security Best Practices](https://www.apolloconfig.com/#/zh/usage/apollo-user-guide?id=_71-%e5%ae%89%e5%85%a8%e7%9b%b8%e5%85%b3)
 
 # Design
-  * [Apollo配置中心设计](https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1)
-  * [Apollo核心概念之“Namespace”](https://github.com/ctripcorp/apollo/wiki/Apollo%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E4%B9%8B%E2%80%9CNamespace%E2%80%9D)
-  * [Apollo配置中心架构剖析](https://mp.weixin.qq.com/s/-hUaQPzfsl9Lm3IqQW3VDQ)
-  * [Apollo源码解析](http://www.iocoder.cn/categories/Apollo/)（据说Apollo非常适合作为初学者第一个通读源码学习的分布式中间件产品）
+  * [Apollo Design](https://www.apolloconfig.com/#/zh/design/apollo-design)
+  * [Apollo Core Concept - Namespace](https://www.apolloconfig.com/#/zh/design/apollo-core-concept-namespace)
+  * [Apollo Architecture Analysis](https://mp.weixin.qq.com/s/-hUaQPzfsl9Lm3IqQW3VDQ)
+  * [Apollo Source Code Explanation](http://www.iocoder.cn/categories/Apollo/)
 
 # Development
-  * [Apollo开发指南](https://github.com/ctripcorp/apollo/wiki/Apollo%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97)
+  * [Apollo Development Guide](https://www.apolloconfig.com/#/zh/development/apollo-development-guide)
   * Code Styles
     * [Eclipse Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/eclipse-java-google-style.xml)
     * [Intellij Code Style](https://github.com/ctripcorp/apollo/blob/master/apollo-buildtools/style/intellij-java-google-style.xml)
 
 # Deployment
-  * [Quick Start](https://github.com/ctripcorp/apollo/wiki/Quick-Start)
-  * [分布式部署指南](https://github.com/ctripcorp/apollo/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)
+  * [Quick Start](https://www.apolloconfig.com/#/zh/deployment/quick-start)
+  * [Distributed Deployment Guide](https://www.apolloconfig.com/#/zh/deployment/distributed-deployment-guide)
 
 # Release Notes
-  * [版本发布历史](https://github.com/ctripcorp/apollo/releases)
+  * [Releases](https://github.com/ctripcorp/apollo/releases)
 
 # FAQ
-  * [常见问题回答](https://github.com/ctripcorp/apollo/wiki/FAQ)
-  * [部署&开发遇到的常见问题](https://github.com/ctripcorp/apollo/wiki/%E9%83%A8%E7%BD%B2&%E5%BC%80%E5%8F%91%E9%81%87%E5%88%B0%E7%9A%84%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  * [FAQ](https://www.apolloconfig.com/#/zh/faq/faq)
+  * [Common Issues in Deployment & Development Phase](https://www.apolloconfig.com/#/zh/faq/common-issues-in-deployment-and-development-phase)
 
 # Presentation
-  * [携程开源配置中心Apollo的设计与实现](http://www.itdks.com/dakalive/detail/3420)
+  * [Design and Implementation Details of Apollo](http://www.itdks.com/dakalive/detail/3420)
     * [Slides](https://myslide.cn/slides/10168)
-  * [配置中心，让微服务更『智能』](https://2018.qconshanghai.com/presentation/799)
+  * [Configuration Center Makes Microservices Smart](https://2018.qconshanghai.com/presentation/799)
     * [Slides](https://myslide.cn/slides/10035)
 
 # Publication
-  * [开源配置中心Apollo的设计与实现](https://www.infoq.cn/article/open-source-configuration-center-apollo)
-  * [配置中心，让微服务更『智能』](https://mp.weixin.qq.com/s/iDmYJre_ULEIxuliu1EbIQ)
-
-# Support
-<table>
-  <thead>
-    <th>Apollo技术支持⑤群<br />群号：914839843（未满）</th>
-    <th>Apollo技术支持②群<br />群号：904287263（未满）</th>
-    <th>Apollo技术支持④群<br />群号：516773934（已满）</th>
-    <th>Apollo技术支持③群<br />群号：742035428（已满）</th>
-    <th>Apollo技术支持①群<br />群号：375526581（已满）</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-5.png" alt="tech-support-qq-5"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-2.png" alt="tech-support-qq-2"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-4.png" alt="tech-support-qq-4"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-3.png" alt="tech-support-qq-3"></td>
-      <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/tech-support/tech-support-qq-1.png" alt="tech-support-qq-1"></td>
-    </tr>
-  </tbody>
-</table>
+  * [Design and Implementation Details of Apollo](https://www.infoq.cn/article/open-source-configuration-center-apollo)
+  * [Configuration Center Makes Microservices Smart](https://mp.weixin.qq.com/s/iDmYJre_ULEIxuliu1EbIQ)
 
 # Contribution
 
@@ -146,7 +125,7 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 
 # Known Users
 
-> 按照登记顺序排序，更多接入公司，欢迎在[https://github.com/ctripcorp/apollo/issues/451](https://github.com/ctripcorp/apollo/issues/451)登记（仅供开源用户参考）
+> Sorted by registration order，users are welcome to register in [https://github.com/ctripcorp/apollo/issues/451](https://github.com/ctripcorp/apollo/issues/451) (reference purpose only for the community)
 
 <table>
 <tr>
@@ -529,12 +508,36 @@ The project is licensed under the [Apache 2 license](https://github.com/ctripcor
 </tr>
 <tr>
 <td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/jidouauto.png" alt="极豆车联网"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ipalfish.png" alt="伴鱼少儿英语"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/iqboard.png" alt="锐达科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/koolearn.png" alt="新东方在线"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/kingcome.png" alt="金康高科"></td>
+</tr>
+ <tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/soulapp.png" alt="soul"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/ezrpro.png" alt="驿氪"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/hc360.png" alt="慧聪"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/21cp.png" alt="中塑在线"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/goinglink.jpg" alt="甄云科技"></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/aitrace.jpg" alt="追溯科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/moqipobing.png" alt="玩吧"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/cassan.png" alt="广州卡桑信息技术有限公司"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/shuidichou.png" alt="水滴"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/kuwo.png" alt="酷我音乐"></td>
+</tr>
+<tr>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mi.png" alt="小米"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/mvmyun.png" alt="今典"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/visabao.jpg" alt="签宝科技"></td>
+<td><img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/known-users/inrice.png" alt="广州趣米网络科技有限公司"></td>
 </tr>
 </table>
 
 # Awards
 
-<img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/awards/oschina-2018-award.jpg" width="240px" alt="2018 年度最受欢迎中国开源软件">
+<img src="https://raw.githubusercontent.com/ctripcorp/apollo-community/master/images/awards/oschina-2018-award.jpg" width="240px" alt="The most popular Chinese open source software in 2018">
 
 # Stargazers over time
 

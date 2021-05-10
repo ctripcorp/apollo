@@ -1,5 +1,3 @@
-- Getting started
-
-  - [Quick start](en/quick-start.md)
+- [**Home**](en/README.md)
 
 - [Releases](https://github.com/ctripcorp/apollo/releases)
