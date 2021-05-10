@@ -73,7 +73,7 @@ Members of the PMC do not have significant authority over other members of the c
 
 # Decision making and voting
 
-Proposals and ideas can be submitted for agreement via a github issue or PR.
+Proposals and ideas can be submitted for agreement via a GitHub issue, PR, or GitHub Discussion.
 
 Major changes such as feature proposals and organization or process changes should be brought to the PMC. For the change to happen, the change must earn the supermajority (2/3) votes.
 
