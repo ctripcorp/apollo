@@ -34,6 +34,8 @@ You are also encouraged to participate in the projects in the following ways:
 - Submit valuable issues
 - Report or fix known and unknown bugs
 - Write articles about source code analysis and usage cases for a project.
+- Give representations of Apollo topic in conferences.
+- Take part in our discussions of features, enhancements, etc.
 
 ## Committers
 
