@@ -49,7 +49,7 @@ A Committer must have accomplished one or more of the following items:
 - Demonstrated deep understanding of Apollo components by contributing significantly as:
     - Finished 2 or more tasks of Medium difficulty
     - Fixed 1 or more tasks of Hard difficulty
-- Nominated by one PMC and gained supermajority (2/3) votes from PMCs
+- Nominated by one PMC member and gained more +1 than -1.
 
 ### Privileges and responsibilities
 
