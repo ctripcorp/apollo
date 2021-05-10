@@ -61,7 +61,7 @@ A Committer must have accomplished one or more of the following items:
 
 The PMC(Project Management Committee) functions as the core management team that oversees the Apollo community. The PMC has additional responsibilities over and above those of Committers. These responsibilities ensure the smooth running of the project.
 
-### How to become a PMC
+### How to become a PMC member
 
 - Membership of the PMC is by invitation from the existing PMC members. 
 - A nomination will result in discussion and then a vote by the existing PMC members.
