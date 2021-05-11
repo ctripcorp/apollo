@@ -18,6 +18,7 @@
 
 package com.ctrip.framework.foundation.internals.provider;
 
+import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
 import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,6 +79,7 @@ public class DefaultServerProvider implements ServerProvider {
       File file = new File(this.getServerPropertiesPath());
       if (file.exists() && file.canRead()) {
         logger.info("Loading {}", file.getAbsolutePath());
+        DeferredLogUtil.info(logger,"Loading {}", file.getAbsolutePath());
         FileInputStream fis = new FileInputStream(file);
         initialize(fis);
         return;
@@ -85,7 +87,9 @@ public class DefaultServerProvider implements ServerProvider {
 
       initialize(null);
     } catch (Throwable ex) {
-      logger.error("Initialize DefaultServerProvider failed.", ex);
+      String errMsg = "Initialize DefaultServerProvider failed.";
+      logger.error(errMsg, ex);
+      DeferredLogUtil.error(logger, errMsg, ex);
     }
   }
 
@@ -103,8 +107,9 @@ public class DefaultServerProvider implements ServerProvider {
       initEnvType();
       initDataCenter();
     } catch (Throwable ex) {
-      logger.error("Initialize DefaultServerProvider failed.", ex);
-    }
+      String errMsg = "Initialize DefaultServerProvider failed.";
+      logger.error(errMsg, ex);
+      DeferredLogUtil.error(logger, errMsg, ex);    }
   }
 
   @Override
@@ -151,7 +156,9 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = System.getProperty("env");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      logger.info("Environment is set to [{}] by JVM system property 'env'.", m_env);
+      String logMsg = "Environment is set to [{}] by JVM system property 'env'.";
+      logger.info(logMsg, m_env);
+      DeferredLogUtil.info(logger, logMsg, m_env);
       return;
     }
 
@@ -159,7 +166,9 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = System.getenv("ENV");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      logger.info("Environment is set to [{}] by OS env variable 'ENV'.", m_env);
+      String logMsg = "Environment is set to [{}] by OS env variable 'ENV'.";
+      logger.info(logMsg, m_env);
+      DeferredLogUtil.info(logger, logMsg, m_env);
       return;
     }
 
@@ -167,13 +176,17 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = m_serverProperties.getProperty("env");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      logger.info("Environment is set to [{}] by property 'env' in server.properties.", m_env);
+      String logMsg = "Environment is set to [{}] by property 'env' in server.properties.";
+      logger.info(logMsg, m_env);
+      DeferredLogUtil.info(logger, logMsg, m_env);
       return;
     }
 
     // 4. Set environment to null.
     m_env = null;
-    logger.info("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
+    String logMsg = "Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.";
+    logger.info(logMsg);
+    DeferredLogUtil.info(logger, logMsg);
   }
 
   private void initDataCenter() {
@@ -181,7 +194,9 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = System.getProperty("idc");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by JVM system property 'idc'.", m_dc);
+      String logMsg = "Data Center is set to [{}] by JVM system property 'idc'.";
+      logger.info(logMsg, m_dc);
+      DeferredLogUtil.info(logger, logMsg, m_dc);
       return;
     }
 
@@ -189,7 +204,9 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = System.getenv("IDC");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by OS env variable 'IDC'.", m_dc);
+      String logMsg = "Data Center is set to [{}] by OS env variable 'IDC'.";
+      logger.info(logMsg, m_dc);
+      DeferredLogUtil.info(logger, logMsg, m_dc);
       return;
     }
 
@@ -197,13 +214,17 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = m_serverProperties.getProperty("idc");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
+      String logMsg = "Data Center is set to [{}] by property 'idc' in server.properties.";
+      logger.info(logMsg, m_dc);
+      DeferredLogUtil.info(logger, logMsg, m_dc);
       return;
     }
 
     // 4. Set Data Center to null.
     m_dc = null;
-    logger.debug("Data Center is set to null. Because it is not available in either (1) JVM system property 'idc', (2) OS env variable 'IDC' nor (3) property 'idc' from the properties InputStream.");
+    String logMsg = "Data Center is set to null. Because it is not available in either (1) JVM system property 'idc', (2) OS env variable 'IDC' nor (3) property 'idc' from the properties InputStream.";
+    logger.debug(logMsg);
+    DeferredLogUtil.debug(logger, logMsg);
   }
 
   @Override

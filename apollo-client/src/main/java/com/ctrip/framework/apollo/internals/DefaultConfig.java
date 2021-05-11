@@ -1,5 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +59,9 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
-      logger.warn("Init Apollo Local Config failed - namespace: {}, reason: {}.",
-          m_namespace, ExceptionUtil.getDetailMessage(ex));
+      String logWarnMsg = "Init Apollo Local Config failed - namespace: {}, reason: {}.";
+      logger.warn(logWarnMsg, m_namespace, ExceptionUtil.getDetailMessage(ex));
+      DeferredLogUtil.warn(logger, logWarnMsg, m_namespace, ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not
       //so that whenever config repository is recovered, config could get changed
@@ -92,7 +94,9 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
-      logger.warn("Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
+      String logWarnMsg = "Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!";
+      logger.warn(logWarnMsg, m_namespace);
+      DeferredLogUtil.warn(logger, logWarnMsg);
     }
 
     return value == null ? defaultValue : value;
@@ -219,7 +223,9 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
         properties.load(in);
       } catch (IOException ex) {
         Tracer.logError(ex);
-        logger.error("Load resource config for namespace {} failed", namespace, ex);
+        String errMsg = "Load resource config for namespace {} failed";
+        logger.error(errMsg, namespace, ex);
+        DeferredLogUtil.error(logger, errMsg, ex);
       } finally {
         try {
           in.close();

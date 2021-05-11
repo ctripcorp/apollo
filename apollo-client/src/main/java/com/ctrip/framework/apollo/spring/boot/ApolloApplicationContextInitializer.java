@@ -3,6 +3,7 @@ package com.ctrip.framework.apollo.spring.boot;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.ConfigConsts;
+import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
@@ -91,7 +92,8 @@ public class ApolloApplicationContextInitializer implements
   protected void initialize(ConfigurableEnvironment environment) {
 
     if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
-      //already initialized
+      //already initialized ,  replay the logs that were printed before the logging system was initialized
+      DeferredLogUtil.replayTo();
       return;
     }
 
