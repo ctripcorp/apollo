@@ -295,7 +295,7 @@ public class RemoteConfigRepositoryTest {
     when(pollResponse.getBody()).thenReturn(Lists.newArrayList(someNotification));
     when(someResponse.getBody()).thenReturn(newApolloConfig);
 
-    longPollFinished.get(5000, TimeUnit.MILLISECONDS);
+    longPollFinished.get(30_000, TimeUnit.MILLISECONDS);
 
     remoteConfigLongPollService.stopLongPollingRefresh();
 
