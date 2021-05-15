@@ -3,6 +3,9 @@ spring:
     name: apollo-adminservice
   profiles:
     active: ${apollo_profile}
+  cloud:
+    consul:
+      enabled: false
 
 ctrip:
   appid: 100003172
