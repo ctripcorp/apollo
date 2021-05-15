@@ -57,7 +57,7 @@ public class NamespaceBoAsyncServiceTest extends AbstractUnitTest {
 
     @Test
     public void testGetItemsAsync() throws ExecutionException, InterruptedException {
-        ItemDTO i1 = new ItemDTO("a", "123", "", 1);
+        ItemDTO i1 = new ItemDTO("a", "1234", "", 1);
         ItemDTO i2 = new ItemDTO("b", "1", "", 2);
         ItemDTO i3 = new ItemDTO("", "", "#dddd", 3);
         ItemDTO i4 = new ItemDTO("c", "1", "", 4);
