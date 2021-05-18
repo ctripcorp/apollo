@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Apollo Authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -30,8 +46,8 @@
 	</scm>
 
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/ctripcorp/apollo</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/ctripcorp/apollo/actions</url>
 	</ciManagement>
 
 	<issueManagement>
@@ -47,6 +63,7 @@
 			<organization>Ctrip, Inc.</organization>
 			<organizationUrl>http://www.ctrip.com</organizationUrl>
 			<roles>
+				<role>Project Management Committee Member</role>
 				<role>Developer</role>
 			</roles>
 		</developer>
@@ -68,6 +85,18 @@
 			<organizationUrl>http://www.ctrip.com</organizationUrl>
 			<roles>
 				<role>Developer(Inactive)</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>kezhenxu94</id>
+			<url>https://github.com/kezhenxu94</url>
+			<name>Zhenxu Ke</name>
+			<email>kezhenxu94 at apache.org</email>
+			<organization>Tetrate.io</organization>
+			<organizationUrl>http://tetrate.io</organizationUrl>
+			<roles>
+				<role>Project Management Committee Member</role>
+				<role>Developer</role>
 			</roles>
 		</developer>
 	</developers>
