@@ -18,7 +18,7 @@
 
 package com.ctrip.framework.foundation.internals.provider;
 
-import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
+import com.ctrip.framework.apollo.core.utils.DeferredLogFactory;
 import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,10 +32,9 @@ import com.ctrip.framework.foundation.internals.io.BOMInputStream;
 import com.ctrip.framework.foundation.spi.provider.Provider;
 import com.ctrip.framework.foundation.spi.provider.ServerProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultServerProvider implements ServerProvider {
-  private static final Logger logger = LoggerFactory.getLogger(DefaultServerProvider.class);
+  private static final Logger logger = DeferredLogFactory.getLogger(DefaultServerProvider.class);
 
   static final String DEFAULT_SERVER_PROPERTIES_PATH_ON_LINUX = "/opt/settings/server.properties";
   static final String DEFAULT_SERVER_PROPERTIES_PATH_ON_WINDOWS = "C:/opt/settings/server.properties";
@@ -57,14 +56,14 @@ public class DefaultServerProvider implements ServerProvider {
   private String getCustomizedServerPropertiesPath() {
     // 1. Get from System Property
     final String serverPropertiesPathFromSystemProperty = System
-        .getProperty("apollo.path.server.properties");
+            .getProperty("apollo.path.server.properties");
     if (!Strings.isNullOrEmpty(serverPropertiesPathFromSystemProperty)) {
       return serverPropertiesPathFromSystemProperty;
     }
 
     // 2. Get from OS environment variable
     final String serverPropertiesPathFromEnvironment = System
-        .getenv("APOLLO_PATH_SERVER_PROPERTIES");
+            .getenv("APOLLO_PATH_SERVER_PROPERTIES");
     if (!Strings.isNullOrEmpty(serverPropertiesPathFromEnvironment)) {
       return serverPropertiesPathFromEnvironment;
     }
@@ -79,7 +78,6 @@ public class DefaultServerProvider implements ServerProvider {
       File file = new File(this.getServerPropertiesPath());
       if (file.exists() && file.canRead()) {
         logger.info("Loading {}", file.getAbsolutePath());
-        DeferredLogUtil.info(logger,"Loading {}", file.getAbsolutePath());
         FileInputStream fis = new FileInputStream(file);
         initialize(fis);
         return;
@@ -87,9 +85,7 @@ public class DefaultServerProvider implements ServerProvider {
 
       initialize(null);
     } catch (Throwable ex) {
-      String errMsg = "Initialize DefaultServerProvider failed.";
-      logger.error(errMsg, ex);
-      DeferredLogUtil.error(logger, errMsg, ex);
+      logger.error("Initialize DefaultServerProvider failed.", ex);
     }
   }
 
@@ -107,9 +103,8 @@ public class DefaultServerProvider implements ServerProvider {
       initEnvType();
       initDataCenter();
     } catch (Throwable ex) {
-      String errMsg = "Initialize DefaultServerProvider failed.";
-      logger.error(errMsg, ex);
-      DeferredLogUtil.error(logger, errMsg, ex);    }
+      logger.error("Initialize DefaultServerProvider failed.", ex);
+    }
   }
 
   @Override
@@ -156,9 +151,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = System.getProperty("env");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      String logMsg = "Environment is set to [{}] by JVM system property 'env'.";
-      logger.info(logMsg, m_env);
-      DeferredLogUtil.info(logger, logMsg, m_env);
+      logger.info("Environment is set to [{}] by JVM system property 'env'.", m_env);
       return;
     }
 
@@ -166,9 +159,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = System.getenv("ENV");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      String logMsg = "Environment is set to [{}] by OS env variable 'ENV'.";
-      logger.info(logMsg, m_env);
-      DeferredLogUtil.info(logger, logMsg, m_env);
+      logger.info("Environment is set to [{}] by OS env variable 'ENV'.", m_env);
       return;
     }
 
@@ -176,17 +167,13 @@ public class DefaultServerProvider implements ServerProvider {
     m_env = m_serverProperties.getProperty("env");
     if (!Utils.isBlank(m_env)) {
       m_env = m_env.trim();
-      String logMsg = "Environment is set to [{}] by property 'env' in server.properties.";
-      logger.info(logMsg, m_env);
-      DeferredLogUtil.info(logger, logMsg, m_env);
+      logger.info("Environment is set to [{}] by property 'env' in server.properties.", m_env);
       return;
     }
 
     // 4. Set environment to null.
     m_env = null;
-    String logMsg = "Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.";
-    logger.info(logMsg);
-    DeferredLogUtil.info(logger, logMsg);
+    logger.info("Environment is set to null. Because it is not available in either (1) JVM system property 'env', (2) OS env variable 'ENV' nor (3) property 'env' from the properties InputStream.");
   }
 
   private void initDataCenter() {
@@ -194,9 +181,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = System.getProperty("idc");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      String logMsg = "Data Center is set to [{}] by JVM system property 'idc'.";
-      logger.info(logMsg, m_dc);
-      DeferredLogUtil.info(logger, logMsg, m_dc);
+      logger.info("Data Center is set to [{}] by JVM system property 'idc'.", m_dc);
       return;
     }
 
@@ -204,9 +189,7 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = System.getenv("IDC");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      String logMsg = "Data Center is set to [{}] by OS env variable 'IDC'.";
-      logger.info(logMsg, m_dc);
-      DeferredLogUtil.info(logger, logMsg, m_dc);
+      logger.info("Data Center is set to [{}] by OS env variable 'IDC'.", m_dc);
       return;
     }
 
@@ -214,22 +197,18 @@ public class DefaultServerProvider implements ServerProvider {
     m_dc = m_serverProperties.getProperty("idc");
     if (!Utils.isBlank(m_dc)) {
       m_dc = m_dc.trim();
-      String logMsg = "Data Center is set to [{}] by property 'idc' in server.properties.";
-      logger.info(logMsg, m_dc);
-      DeferredLogUtil.info(logger, logMsg, m_dc);
+      logger.info("Data Center is set to [{}] by property 'idc' in server.properties.", m_dc);
       return;
     }
 
     // 4. Set Data Center to null.
     m_dc = null;
-    String logMsg = "Data Center is set to null. Because it is not available in either (1) JVM system property 'idc', (2) OS env variable 'IDC' nor (3) property 'idc' from the properties InputStream.";
-    logger.debug(logMsg);
-    DeferredLogUtil.debug(logger, logMsg);
+    logger.debug("Data Center is set to null. Because it is not available in either (1) JVM system property 'idc', (2) OS env variable 'IDC' nor (3) property 'idc' from the properties InputStream.");
   }
 
   @Override
   public String toString() {
     return "environment [" + getEnvType() + "] data center [" + getDataCenter() + "] properties: " + m_serverProperties
-        + " (DefaultServerProvider)";
+            + " (DefaultServerProvider)";
   }
 }

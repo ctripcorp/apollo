@@ -11,9 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
+import com.ctrip.framework.apollo.core.utils.DeferredLogFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
 import com.ctrip.framework.apollo.core.utils.ApolloThreadFactory;
@@ -47,7 +46,7 @@ public class MetaDomainConsts {
   private static volatile List<MetaServerProvider> metaServerProviders = null;
 
   private static final long REFRESH_INTERVAL_IN_SECOND = 60;// 1 min
-  private static final Logger logger = LoggerFactory.getLogger(MetaDomainConsts.class);
+  private static final Logger logger = DeferredLogFactory.getLogger(MetaDomainConsts.class);
   // comma separated meta server address -> selected single meta server address cache
   private static final Map<String, String> selectedMetaServerAddressCache = Maps.newConcurrentMap();
   private static final AtomicBoolean periodicRefreshStarted = new AtomicBoolean(false);
@@ -91,9 +90,8 @@ public class MetaDomainConsts {
     for (MetaServerProvider provider : metaServerProviders) {
       metaAddress = provider.getMetaServerAddress(env);
       if (!Strings.isNullOrEmpty(metaAddress)) {
-        String logMsg = "Located meta server address {} for env {} from {}";
-        logger.info(logMsg, metaAddress, env, provider.getClass().getName());
-        DeferredLogUtil.info(logger, logMsg, metaAddress, env, provider.getClass().getName());
+        logger.info("Located meta server address {} for env {} from {}", metaAddress, env,
+                provider.getClass().getName());
         break;
       }
     }
@@ -101,9 +99,9 @@ public class MetaDomainConsts {
     if (Strings.isNullOrEmpty(metaAddress)) {
       // Fallback to default meta address
       metaAddress = DEFAULT_META_URL;
-      String logWarnMsg = "Meta server address fallback to {} for env {}, because it is not available in all MetaServerProviders";
-      logger.warn(logWarnMsg, metaAddress, env);
-      DeferredLogUtil.warn(logger, logWarnMsg, metaAddress, env);
+      logger.warn(
+              "Meta server address fallback to {} for env {}, because it is not available in all MetaServerProviders",
+              metaAddress, env);
     }
 
     metaServerAddressCache.put(env, metaAddress.trim());
@@ -180,7 +178,7 @@ public class MetaDomainConsts {
 
       if (!serverAvailable) {
         logger.warn("Could not find available meta server for configured meta server addresses: {}, fallback to: {}",
-            metaServerAddresses, selectedMetaServerAddressCache.get(metaServerAddresses));
+                metaServerAddresses, selectedMetaServerAddressCache.get(metaServerAddresses));
       }
 
       transaction.setStatus(Transaction.SUCCESS);
@@ -194,7 +192,7 @@ public class MetaDomainConsts {
 
   private static void schedulePeriodicRefresh() {
     ScheduledExecutorService scheduledExecutorService =
-        Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("MetaServiceLocator", true));
+            Executors.newScheduledThreadPool(1, ApolloThreadFactory.create("MetaServiceLocator", true));
 
     scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
       @Override
@@ -205,7 +203,7 @@ public class MetaDomainConsts {
           }
         } catch (Throwable ex) {
           logger.warn(String.format("Refreshing meta server address failed, will retry in %d seconds",
-              REFRESH_INTERVAL_IN_SECOND), ex);
+                  REFRESH_INTERVAL_IN_SECOND), ex);
         }
       }
     }, REFRESH_INTERVAL_IN_SECOND, REFRESH_INTERVAL_IN_SECOND, TimeUnit.SECONDS);

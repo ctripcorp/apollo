@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
-import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
+import com.ctrip.framework.apollo.core.utils.DeferredLogFactory;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
@@ -30,7 +29,7 @@ import com.google.common.util.concurrent.RateLimiter;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfig extends AbstractConfig implements RepositoryChangeListener {
-  private static final Logger logger = LoggerFactory.getLogger(DefaultConfig.class);
+  private static final Logger logger = DeferredLogFactory.getLogger(DefaultConfig.class);
   private final String m_namespace;
   private final Properties m_resourceProperties;
   private final AtomicReference<Properties> m_configProperties;
@@ -59,9 +58,8 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       updateConfig(m_configRepository.getConfig(), m_configRepository.getSourceType());
     } catch (Throwable ex) {
       Tracer.logError(ex);
-      String logWarnMsg = "Init Apollo Local Config failed - namespace: {}, reason: {}.";
-      logger.warn(logWarnMsg, m_namespace, ExceptionUtil.getDetailMessage(ex));
-      DeferredLogUtil.warn(logger, logWarnMsg, m_namespace, ExceptionUtil.getDetailMessage(ex));
+      logger.warn("Init Apollo Local Config failed - namespace: {}, reason: {}.",
+              m_namespace, ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not
       //so that whenever config repository is recovered, config could get changed
@@ -94,9 +92,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
-      String logWarnMsg = "Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!";
-      logger.warn(logWarnMsg, m_namespace);
-      DeferredLogUtil.warn(logger, logWarnMsg);
+      logger.warn("Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
     }
 
     return value == null ? defaultValue : value;
@@ -158,12 +154,12 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   }
 
   private Map<String, ConfigChange> updateAndCalcConfigChanges(Properties newConfigProperties,
-      ConfigSourceType sourceType) {
+                                                               ConfigSourceType sourceType) {
     List<ConfigChange> configChanges =
-        calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);
+            calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);
 
     ImmutableMap.Builder<String, ConfigChange> actualChanges =
-        new ImmutableMap.Builder<>();
+            new ImmutableMap.Builder<>();
 
     /** === Double check since DefaultConfig has multiple config sources ==== **/
 
@@ -223,9 +219,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
         properties.load(in);
       } catch (IOException ex) {
         Tracer.logError(ex);
-        String errMsg = "Load resource config for namespace {} failed";
-        logger.error(errMsg, namespace, ex);
-        DeferredLogUtil.error(logger, errMsg, ex);
+        logger.error("Load resource config for namespace {} failed", namespace, ex);
       } finally {
         try {
           in.close();

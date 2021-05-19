@@ -9,15 +9,15 @@ import org.slf4j.LoggerFactory;
  * @author kl (http://kailing.pub)
  * @since 2021/5/11
  */
-public class DeferredLogUtilTest{
+public class DeferredLogCacheTest {
 
-    private final Logger logger = LoggerFactory.getLogger(DeferredLogUtilTest.class);
+    private final Logger logger = LoggerFactory.getLogger(DeferredLogCacheTest.class);
 
     @Test
     public void testMaxLogSize() {
         for (int i = 0; i < 20000; i++) {
-            DeferredLogUtil.info(logger, "DeferredLogUtilTest");
+            DeferredLogCache.info(logger, "DeferredLogUtilTest");
         }
-        Assert.assertEquals(DeferredLogUtil.logSize(), DeferredLogUtil.MAX_LOG_SIZE);
+        Assert.assertEquals(DeferredLogCache.logSize(), DeferredLogCache.MAX_LOG_SIZE);
     }
 }

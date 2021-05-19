@@ -6,23 +6,38 @@ import org.slf4j.Logger;
 import org.slf4j.event.Level;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Delayed log printing utility class, used only for logging when Apollo is initialized
+ *
  * @author kl (http://kailing.pub)
  * @since 2021/5/11
  */
-public final class DeferredLogUtil {
+public final class DeferredLogCache {
 
     public static final int MAX_LOG_SIZE = 1000;
+    private static final AtomicBoolean ENABLED = new AtomicBoolean(false);
     private static final AtomicInteger LOG_INDEX = new AtomicInteger(0);
     private static final Cache<Integer, Line> LOG_CACHE = CacheBuilder.newBuilder()
             .maximumSize(MAX_LOG_SIZE)
             .expireAfterWrite(1, TimeUnit.MINUTES)
             .build();
 
-    private DeferredLogUtil(){}
+    private DeferredLogCache() { }
+
+    public static void enableDeferredLog() {
+        ENABLED.set(true);
+    }
+
+    public static void disableDeferredLog() {
+        ENABLED.set(false);
+    }
+
+    public static boolean isEnabled() {
+        return ENABLED.get();
+    }
 
     public static void debug(Logger logger, String message, Object... objects) {
         add(logger, Level.DEBUG, message, objects, null);
@@ -41,30 +56,36 @@ public final class DeferredLogUtil {
     }
 
     private static void add(Logger logger, Level level, String message, Object[] objects, Throwable throwable) {
-        Line logLine = new Line(level, message, objects, throwable, logger);
-        LOG_CACHE.put(LOG_INDEX.incrementAndGet(), logLine);
+        if (isEnabled()) {
+            Line logLine = new Line(level, message, objects, throwable, logger);
+            LOG_CACHE.put(LOG_INDEX.incrementAndGet(), logLine);
+        }
     }
 
     public static void replayTo() {
-        for (int i = 1; i <= LOG_INDEX.get(); i++) {
-            Line logLine = LOG_CACHE.getIfPresent(i);
-            assert logLine != null;
-            Logger logger = logLine.getLogger();
-            Level level = logLine.getLevel();
-            String message = logLine.getMessage();
-            Object[] objects = logLine.getObjects();
-            Throwable throwable = logLine.getThrowable();
-            logTo(logger, level, message, objects, throwable);
+        if (isEnabled()) {
+            for (int i = 1; i <= LOG_INDEX.get(); i++) {
+                Line logLine = LOG_CACHE.getIfPresent(i);
+                assert logLine != null;
+                Logger logger = logLine.getLogger();
+                Level level = logLine.getLevel();
+                String message = logLine.getMessage();
+                Object[] objects = logLine.getObjects();
+                Throwable throwable = logLine.getThrowable();
+                logTo(logger, level, message, objects, throwable);
+            }
+            clear();
         }
-        clear();
+
     }
 
-    private static void clear(){
+    private static void clear() {
         LOG_CACHE.invalidateAll();
         LOG_INDEX.set(0);
+        disableDeferredLog();
     }
 
-    public static long logSize(){
+    public static long logSize() {
         return LOG_CACHE.size();
     }
 

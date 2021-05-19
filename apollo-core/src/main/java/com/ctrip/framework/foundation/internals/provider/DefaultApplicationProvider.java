@@ -5,9 +5,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-import com.ctrip.framework.apollo.core.utils.DeferredLogUtil;
+import com.ctrip.framework.apollo.core.utils.DeferredLogFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ctrip.framework.foundation.internals.Utils;
 import com.ctrip.framework.foundation.internals.io.BOMInputStream;
@@ -16,7 +15,7 @@ import com.ctrip.framework.foundation.spi.provider.Provider;
 
 public class DefaultApplicationProvider implements ApplicationProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DefaultApplicationProvider.class);
+  private static final Logger logger = DeferredLogFactory.getLogger(DefaultApplicationProvider.class);
   public static final String APP_PROPERTIES_CLASSPATH = "/META-INF/app.properties";
   private Properties m_appProperties = new Properties();
 
@@ -27,16 +26,14 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   public void initialize() {
     try {
       InputStream in = Thread.currentThread().getContextClassLoader()
-          .getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
+              .getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
       if (in == null) {
         in = DefaultApplicationProvider.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
       }
 
       initialize(in);
     } catch (Throwable ex) {
-        String errMsg = "Initialize DefaultApplicationProvider failed.";
-        logger.error(errMsg, ex);
-        DeferredLogUtil.error(logger, errMsg, ex);
+      logger.error("Initialize DefaultApplicationProvider failed.", ex);
     }
   }
 
@@ -46,7 +43,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
       if (in != null) {
         try {
           m_appProperties
-              .load(new InputStreamReader(new BOMInputStream(in), StandardCharsets.UTF_8));
+                  .load(new InputStreamReader(new BOMInputStream(in), StandardCharsets.UTF_8));
         } finally {
           in.close();
         }
@@ -55,9 +52,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
       initAppId();
       initAccessKey();
     } catch (Throwable ex) {
-        String errMsg = "Initialize DefaultApplicationProvider failed.";
-        logger.error(errMsg, ex);
-        DeferredLogUtil.error(logger, errMsg, ex);
+      logger.error("Initialize DefaultApplicationProvider failed.", ex);
     }
   }
 
@@ -102,9 +97,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     m_appId = System.getProperty("app.id");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
-      String logMsg = "App ID is set to {} by app.id property from System Property";
-      logger.info(logMsg, m_appId);
-      DeferredLogUtil.info(logger, logMsg, m_appId);
+      logger.info("App ID is set to {} by app.id property from System Property", m_appId);
       return;
     }
 
@@ -112,9 +105,7 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     m_appId = System.getenv("APP_ID");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
-      String logMsg = "App ID is set to {} by APP_ID property from OS environment variable";
-      logger.info(logMsg, m_appId);
-      DeferredLogUtil.info(logger, logMsg, m_appId);
+      logger.info("App ID is set to {} by APP_ID property from OS environment variable", m_appId);
       return;
     }
 
@@ -122,16 +113,14 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     m_appId = m_appProperties.getProperty("app.id");
     if (!Utils.isBlank(m_appId)) {
       m_appId = m_appId.trim();
-      String logMsg = "App ID is set to {} by app.id property from {}";
-      logger.info(logMsg, m_appId, APP_PROPERTIES_CLASSPATH);
-      DeferredLogUtil.info(logger, logMsg, m_appId, APP_PROPERTIES_CLASSPATH);
+      logger.info("App ID is set to {} by app.id property from {}", m_appId,
+              APP_PROPERTIES_CLASSPATH);
       return;
     }
 
     m_appId = null;
-    String logWarnMsg = "app.id is not available from System Property and {}. It is set to null";
-    logger.warn(logWarnMsg, APP_PROPERTIES_CLASSPATH);
-    DeferredLogUtil.warn(logger, logWarnMsg, APP_PROPERTIES_CLASSPATH);
+    logger.warn("app.id is not available from System Property and {}. It is set to null",
+            APP_PROPERTIES_CLASSPATH);
   }
 
   private void initAccessKey() {
@@ -139,9 +128,8 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     accessKeySecret = System.getProperty("apollo.accesskey.secret");
     if (!Utils.isBlank(accessKeySecret)) {
       accessKeySecret = accessKeySecret.trim();
-      String logMsg = "ACCESSKEY SECRET is set by apollo.accesskey.secret property from System Property";
-      logger.info(logMsg);
-      DeferredLogUtil.info(logger, logMsg);
+      logger
+              .info("ACCESSKEY SECRET is set by apollo.accesskey.secret property from System Property");
       return;
     }
 
@@ -149,9 +137,8 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     accessKeySecret = System.getenv("APOLLO_ACCESSKEY_SECRET");
     if (!Utils.isBlank(accessKeySecret)) {
       accessKeySecret = accessKeySecret.trim();
-      String logMsg = "ACCESSKEY SECRET is set by APOLLO_ACCESSKEY_SECRET property from OS environment variable";
-      logger.info(logMsg);
-      DeferredLogUtil.info(logger, logMsg);
+      logger.info(
+              "ACCESSKEY SECRET is set by APOLLO_ACCESSKEY_SECRET property from OS environment variable");
       return;
     }
 
@@ -159,9 +146,8 @@ public class DefaultApplicationProvider implements ApplicationProvider {
     accessKeySecret = m_appProperties.getProperty("apollo.accesskey.secret");
     if (!Utils.isBlank(accessKeySecret)) {
       accessKeySecret = accessKeySecret.trim();
-      String logMsg = "ACCESSKEY SECRET is set by apollo.accesskey.secret property from {}";
-      logger.info(logMsg, APP_PROPERTIES_CLASSPATH);
-      DeferredLogUtil.info(logger, logMsg, APP_PROPERTIES_CLASSPATH);
+      logger.info("ACCESSKEY SECRET is set by apollo.accesskey.secret property from {}",
+              APP_PROPERTIES_CLASSPATH);
       return;
     }
 
@@ -171,6 +157,6 @@ public class DefaultApplicationProvider implements ApplicationProvider {
   @Override
   public String toString() {
     return "appId [" + getAppId() + "] properties: " + m_appProperties
-        + " (DefaultApplicationProvider)";
+            + " (DefaultApplicationProvider)";
   }
 }
