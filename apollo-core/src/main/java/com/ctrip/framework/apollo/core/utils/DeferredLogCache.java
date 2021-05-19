@@ -52,7 +52,7 @@ public final class DeferredLogCache {
     }
 
     public static void error(Logger logger, String message, Throwable throwable) {
-        add(logger, Level.WARN, message, null, throwable);
+        add(logger, Level.ERROR, message, null, throwable);
     }
 
     private static void add(Logger logger, Level level, String message, Object[] objects, Throwable throwable) {
