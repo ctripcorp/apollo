@@ -92,7 +92,7 @@ public class ApolloApplicationContextInitializer implements
   protected void initialize(ConfigurableEnvironment environment) {
 
     if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
-      //already initialized ,  replay the logs that were printed before the logging system was initialized
+      //already initialized, replay the logs that were printed before the logging system was initialized
       DeferredLogCache.replayTo();
       return;
     }

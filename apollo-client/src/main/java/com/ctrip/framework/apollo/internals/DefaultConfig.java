@@ -1,6 +1,6 @@
 package com.ctrip.framework.apollo.internals;
 
-import com.ctrip.framework.apollo.core.utils.DeferredLogFactory;
+import com.ctrip.framework.apollo.core.utils.DeferredLoggerFactory;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +29,8 @@ import com.google.common.util.concurrent.RateLimiter;
  * @author Jason Song(song_s@ctrip.com)
  */
 public class DefaultConfig extends AbstractConfig implements RepositoryChangeListener {
-  private static final Logger logger = DeferredLogFactory.getLogger(DefaultConfig.class);
+
+  private static final Logger logger = DeferredLoggerFactory.getLogger(DefaultConfig.class);
   private final String m_namespace;
   private final Properties m_resourceProperties;
   private final AtomicReference<Properties> m_configProperties;
@@ -59,7 +60,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     } catch (Throwable ex) {
       Tracer.logError(ex);
       logger.warn("Init Apollo Local Config failed - namespace: {}, reason: {}.",
-              m_namespace, ExceptionUtil.getDetailMessage(ex));
+          m_namespace, ExceptionUtil.getDetailMessage(ex));
     } finally {
       //register the change listener no matter config repository is working or not
       //so that whenever config repository is recovered, config could get changed
@@ -92,7 +93,9 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     }
 
     if (value == null && m_configProperties.get() == null && m_warnLogRateLimiter.tryAcquire()) {
-      logger.warn("Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!", m_namespace);
+      logger.warn(
+          "Could not load config for namespace {} from Apollo, please check whether the configs are released in Apollo! Return default value now!",
+          m_namespace);
     }
 
     return value == null ? defaultValue : value;
@@ -136,7 +139,8 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
     Properties newConfigProperties = propertiesFactory.getPropertiesInstance();
     newConfigProperties.putAll(newProperties);
 
-    Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties, sourceType);
+    Map<String, ConfigChange> actualChanges = updateAndCalcConfigChanges(newConfigProperties,
+        sourceType);
 
     //check double checked result
     if (actualChanges.isEmpty()) {
@@ -154,12 +158,12 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
   }
 
   private Map<String, ConfigChange> updateAndCalcConfigChanges(Properties newConfigProperties,
-                                                               ConfigSourceType sourceType) {
+      ConfigSourceType sourceType) {
     List<ConfigChange> configChanges =
-            calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);
+        calcPropertyChanges(m_namespace, m_configProperties.get(), newConfigProperties);
 
     ImmutableMap.Builder<String, ConfigChange> actualChanges =
-            new ImmutableMap.Builder<>();
+        new ImmutableMap.Builder<>();
 
     /** === Double check since DefaultConfig has multiple config sources ==== **/
 
