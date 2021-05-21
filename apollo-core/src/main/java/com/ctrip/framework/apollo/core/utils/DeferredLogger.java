@@ -47,6 +47,7 @@ public class DeferredLogger implements Logger {
   }
 
   public static void replayTo(){
+    disable();
     DeferredLogCache.replayTo();
   }
 

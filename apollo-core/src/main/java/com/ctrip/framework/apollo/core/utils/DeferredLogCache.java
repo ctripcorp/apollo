@@ -50,8 +50,6 @@ final class DeferredLogCache {
   }
 
   public static void replayTo() {
-    if (DeferredLogger.isEnabled()) {
-      DeferredLogger.disable();
       for (int i = 1; i <= LOG_INDEX.get(); i++) {
         Line logLine = LOG_CACHE.getIfPresent(i);
         assert logLine != null;
@@ -63,8 +61,6 @@ final class DeferredLogCache {
         logTo(logger, level, message, objects, throwable);
       }
       clear();
-    }
-
   }
 
   public static void clear() {
