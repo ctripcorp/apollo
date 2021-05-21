@@ -11,15 +11,21 @@ import org.slf4j.Marker;
  *  public void debug(String s, Object o);
  *  public void debug(String s, Object... objects);
  *  public void debug(String s, Object o, Object o1);
+ *  public void debug(String s, Throwable throwable);
  *  public void info(String s);
  *  public void info(String s, Object o);
  *  public void info(String s, Object... objects);
  *  public void info(String s, Object o, Object o1);
+ *  public void info(String s, Throwable throwable);
  *  public void warn(String s);
  *  public void warn(String s, Object o);
  *  public void warn(String s, Object... objects);
  *  public void warn(String s, Object o, Object o1);
+ *  public void warn(String s, Throwable throwable)
  *  public void error(String s);
+ *  public void error(String s, Object o);
+ *  public void error(String s, Object o, Object o1);
+ *  public void error(String s, Object... objects);
  *  public void error(String s, Throwable throwable);
  * </pre>
  *
@@ -46,7 +52,7 @@ public class DeferredLogger implements Logger {
     return state.get() == 1;
   }
 
-  public static void replayTo(){
+  public static void replayTo() {
     disable();
     DeferredLogCache.replayTo();
   }
@@ -129,7 +135,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void debug(String s) {
     if (isEnabled()) {
-      DeferredLogCache.debug(logger, s);
+      DeferredLogCache.debug(logger, s, null);
     } else {
       logger.debug(s);
     }
@@ -138,7 +144,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void debug(String s, Object o) {
     if (isEnabled()) {
-      DeferredLogCache.debug(logger, s, o);
+      DeferredLogCache.debug(logger, s, null, o);
     } else {
       logger.debug(s, o);
     }
@@ -147,7 +153,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void debug(String s, Object o, Object o1) {
     if (isEnabled()) {
-      DeferredLogCache.debug(logger, s, o1);
+      DeferredLogCache.debug(logger, s, null, o1);
     } else {
       logger.debug(s, o, o1);
     }
@@ -156,7 +162,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void debug(String s, Object... objects) {
     if (isEnabled()) {
-      DeferredLogCache.debug(logger, s, objects);
+      DeferredLogCache.debug(logger, s, null, objects);
     } else {
       logger.debug(s, objects);
     }
@@ -164,7 +170,11 @@ public class DeferredLogger implements Logger {
 
   @Override
   public void debug(String s, Throwable throwable) {
-    logger.debug(s, throwable);
+    if (isEnabled()) {
+      DeferredLogCache.debug(logger, s, throwable);
+    } else {
+      logger.debug(s, throwable);
+    }
   }
 
   @Override
@@ -205,7 +215,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void info(String s) {
     if (isEnabled()) {
-      DeferredLogCache.info(logger, s);
+      DeferredLogCache.info(logger, s, null);
     } else {
       logger.info(s);
     }
@@ -214,7 +224,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void info(String s, Object o) {
     if (isEnabled()) {
-      DeferredLogCache.info(logger, s, o);
+      DeferredLogCache.info(logger, s, null, o);
     } else {
       logger.info(s, o);
     }
@@ -223,7 +233,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void info(String s, Object o, Object o1) {
     if (isEnabled()) {
-      DeferredLogCache.info(logger, s, o, o1);
+      DeferredLogCache.info(logger, s, null, o, o1);
     } else {
       logger.info(s, o, o1);
     }
@@ -232,7 +242,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void info(String s, Object... objects) {
     if (isEnabled()) {
-      DeferredLogCache.info(logger, s, objects);
+      DeferredLogCache.info(logger, s, null, objects);
     } else {
       logger.info(s, objects);
     }
@@ -240,7 +250,11 @@ public class DeferredLogger implements Logger {
 
   @Override
   public void info(String s, Throwable throwable) {
-    logger.info(s, throwable);
+    if (isEnabled()) {
+      DeferredLogCache.info(logger, s, throwable);
+    } else {
+      logger.info(s, throwable);
+    }
   }
 
   @Override
@@ -281,7 +295,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void warn(String s) {
     if (isEnabled()) {
-      DeferredLogCache.warn(logger, s);
+      DeferredLogCache.warn(logger, s, null);
     } else {
       logger.warn(s);
     }
@@ -290,7 +304,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void warn(String s, Object o) {
     if (isEnabled()) {
-      DeferredLogCache.warn(logger, s, o);
+      DeferredLogCache.warn(logger, s, null, o);
     } else {
       logger.warn(s, o);
     }
@@ -299,7 +313,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void warn(String s, Object... objects) {
     if (isEnabled()) {
-      DeferredLogCache.warn(logger, s, objects);
+      DeferredLogCache.warn(logger, s, null, objects);
     } else {
       logger.warn(s, objects);
     }
@@ -308,7 +322,7 @@ public class DeferredLogger implements Logger {
   @Override
   public void warn(String s, Object o, Object o1) {
     if (isEnabled()) {
-      DeferredLogCache.warn(logger, s, o, o1);
+      DeferredLogCache.warn(logger, s, null, o, o1);
     } else {
       logger.warn(s, o, o1);
     }
@@ -316,7 +330,11 @@ public class DeferredLogger implements Logger {
 
   @Override
   public void warn(String s, Throwable throwable) {
-    logger.warn(s, throwable);
+    if (isEnabled()) {
+      DeferredLogCache.warn(logger, s, null);
+    } else {
+      logger.warn(s, throwable);
+    }
   }
 
   @Override
@@ -365,17 +383,29 @@ public class DeferredLogger implements Logger {
 
   @Override
   public void error(String s, Object o) {
-    logger.error(s, o);
+    if (isEnabled()) {
+      DeferredLogCache.error(logger, s, null, o);
+    } else {
+      logger.error(s, o);
+    }
   }
 
   @Override
   public void error(String s, Object o, Object o1) {
-    logger.error(s, o, o1);
+    if (isEnabled()) {
+      DeferredLogCache.error(logger, s, null, o, o1);
+    } else {
+      logger.error(s, o, o1);
+    }
   }
 
   @Override
   public void error(String s, Object... objects) {
-    logger.error(s, objects);
+    if (isEnabled()) {
+      DeferredLogCache.error(logger, s, null, objects);
+    } else {
+      logger.error(s, objects);
+    }
   }
 
   @Override

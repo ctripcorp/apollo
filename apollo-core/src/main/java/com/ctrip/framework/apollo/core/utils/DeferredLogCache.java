@@ -27,20 +27,20 @@ final class DeferredLogCache {
   }
 
 
-  public static void debug(Logger logger, String message, Object... objects) {
-    add(logger, Level.DEBUG, message, objects, null);
+  public static void debug(Logger logger, String message, Throwable throwable, Object... objects) {
+    add(logger, Level.DEBUG, message, objects, throwable);
   }
 
-  public static void info(Logger logger, String message, Object... objects) {
-    add(logger, Level.INFO, message, objects, null);
+  public static void info(Logger logger, String message, Throwable throwable, Object... objects) {
+    add(logger, Level.INFO, message, objects, throwable);
   }
 
-  public static void warn(Logger logger, String message, Object... objects) {
-    add(logger, Level.WARN, message, objects, null);
+  public static void warn(Logger logger, String message, Throwable throwable, Object... objects) {
+    add(logger, Level.WARN, message, objects, throwable);
   }
 
-  public static void error(Logger logger, String message, Throwable throwable) {
-    add(logger, Level.ERROR, message, null, throwable);
+  public static void error(Logger logger, String message, Throwable throwable, Object... objects) {
+    add(logger, Level.ERROR, message, objects, throwable);
   }
 
   private static void add(Logger logger, Level level, String message, Object[] objects,
@@ -50,17 +50,17 @@ final class DeferredLogCache {
   }
 
   public static void replayTo() {
-      for (int i = 1; i <= LOG_INDEX.get(); i++) {
-        Line logLine = LOG_CACHE.getIfPresent(i);
-        assert logLine != null;
-        Logger logger = logLine.getLogger();
-        Level level = logLine.getLevel();
-        String message = logLine.getMessage();
-        Object[] objects = logLine.getObjects();
-        Throwable throwable = logLine.getThrowable();
-        logTo(logger, level, message, objects, throwable);
-      }
-      clear();
+    for (int i = 1; i <= LOG_INDEX.get(); i++) {
+      Line logLine = LOG_CACHE.getIfPresent(i);
+      assert logLine != null;
+      Logger logger = logLine.getLogger();
+      Level level = logLine.getLevel();
+      String message = logLine.getMessage();
+      Object[] objects = logLine.getObjects();
+      Throwable throwable = logLine.getThrowable();
+      logTo(logger, level, message, objects, throwable);
+    }
+    clear();
   }
 
   public static void clear() {
@@ -76,16 +76,32 @@ final class DeferredLogCache {
       Throwable throwable) {
     switch (level) {
       case DEBUG:
-        logger.debug(message, objects);
+        if (throwable != null) {
+          logger.debug(message, throwable);
+        } else {
+          logger.debug(message, objects);
+        }
         return;
       case INFO:
-        logger.info(message, objects);
+        if (throwable != null) {
+          logger.info(message, throwable);
+        } else {
+          logger.info(message, objects);
+        }
         return;
       case WARN:
-        logger.warn(message, objects);
+        if (throwable != null) {
+          logger.warn(message, throwable);
+        } else {
+          logger.warn(message, objects);
+        }
         return;
       case ERROR:
-        logger.error(message, throwable);
+        if (throwable != null) {
+          logger.error(message, throwable);
+        } else {
+          logger.error(message, objects);
+        }
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + level);
