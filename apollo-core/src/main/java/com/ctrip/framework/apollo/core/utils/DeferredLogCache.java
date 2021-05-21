@@ -15,10 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author kl (http://kailing.pub)
  * @since 2021/5/11
  */
-public final class DeferredLogCache {
+final class DeferredLogCache {
 
   public static final int MAX_LOG_SIZE = 1000;
-  private static final AtomicBoolean ENABLED = new AtomicBoolean(false);
   private static final AtomicInteger LOG_INDEX = new AtomicInteger(0);
   private static final Cache<Integer, Line> LOG_CACHE = CacheBuilder.newBuilder()
       .maximumSize(MAX_LOG_SIZE)
@@ -28,13 +27,6 @@ public final class DeferredLogCache {
   private DeferredLogCache() {
   }
 
-  public static synchronized void enableDeferredLog() {
-    ENABLED.set(true);
-  }
-
-  public static boolean isEnabled() {
-    return ENABLED.get();
-  }
 
   public static void debug(Logger logger, String message, Object... objects) {
     add(logger, Level.DEBUG, message, objects, null);
@@ -59,7 +51,8 @@ public final class DeferredLogCache {
   }
 
   public static void replayTo() {
-    if (ENABLED.compareAndSet(true,false)) {
+    if (DeferredLogger.isEnabled()) {
+      DeferredLogger.disable();
       for (int i = 1; i <= LOG_INDEX.get(); i++) {
         Line logLine = LOG_CACHE.getIfPresent(i);
         assert logLine != null;
@@ -75,7 +68,7 @@ public final class DeferredLogCache {
 
   }
 
-  private static void clear() {
+  public static void clear() {
     LOG_CACHE.invalidateAll();
     LOG_INDEX.set(0);
   }

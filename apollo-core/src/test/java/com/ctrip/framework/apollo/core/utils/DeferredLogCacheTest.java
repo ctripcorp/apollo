@@ -1,7 +1,11 @@
 package com.ctrip.framework.apollo.core.utils;
 
+import com.ctrip.framework.test.tools.AloneRunner;
+import com.ctrip.framework.test.tools.AloneWith;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +13,8 @@ import org.slf4j.LoggerFactory;
  * @author kl (http://kailing.pub)
  * @since 2021/5/20
  */
+@RunWith(AloneRunner.class)
+@AloneWith(JUnit4.class)
 public class DeferredLogCacheTest {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -23,26 +29,25 @@ public class DeferredLogCacheTest {
   }
 
   @Test
-  public void testEnableDeferredLog() {
-    Assert.assertFalse(DeferredLogCache.isEnabled());
-
-    DeferredLogCache.enableDeferredLog();
-    Assert.assertTrue(DeferredLogCache.isEnabled());
-
-    DeferredLogCache.replayTo();
-    Assert.assertFalse(DeferredLogCache.isEnabled());
-
+  public void testDisableDeferred(){
+    DeferredLogCache.clear();
+    DeferredLogger.disable();
     final Logger defaultLogger = DeferredLoggerFactory.getLogger(DeferredLoggerTest.class);
     defaultLogger.info(logMsg);
     defaultLogger.debug(logMsg);
     defaultLogger.warn(logMsg);
     Assert.assertEquals(0, DeferredLogCache.logSize());
 
-    DeferredLogCache.enableDeferredLog();
+  }
+
+  @Test
+  public void testEnableDeferred(){
+    final Logger defaultLogger = DeferredLoggerFactory.getLogger(DeferredLoggerTest.class);
+    DeferredLogger.enable();
+
     defaultLogger.info(logMsg);
     defaultLogger.debug(logMsg);
     defaultLogger.warn(logMsg);
-    defaultLogger.error(logMsg, new RuntimeException());
-    Assert.assertEquals(4, DeferredLogCache.logSize());
+    Assert.assertEquals(3, DeferredLogCache.logSize());
   }
 }

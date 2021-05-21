@@ -3,7 +3,7 @@ package com.ctrip.framework.apollo.spring.boot;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.core.utils.DeferredLogCache;
+import com.ctrip.framework.apollo.core.utils.DeferredLogger;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
@@ -93,7 +93,7 @@ public class ApolloApplicationContextInitializer implements
 
     if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
       //already initialized, replay the logs that were printed before the logging system was initialized
-      DeferredLogCache.replayTo();
+      DeferredLogger.replayTo();
       return;
     }
 
@@ -162,7 +162,7 @@ public class ApolloApplicationContextInitializer implements
     Boolean bootstrapEnabled = configurableEnvironment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_ENABLED, Boolean.class, false);
 
     if (bootstrapEnabled) {
-      DeferredLogCache.enableDeferredLog();
+      DeferredLogger.enable();
       initialize(configurableEnvironment);
     }
 
