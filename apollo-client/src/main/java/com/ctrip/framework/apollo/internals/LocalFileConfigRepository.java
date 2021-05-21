@@ -119,7 +119,6 @@ public class LocalFileConfigRepository extends AbstractConfigRepository
       m_upstream.removeChangeListener(this);
     }
     m_upstream = upstreamConfigRepository;
-    trySyncFromUpstream();
     upstreamConfigRepository.addChangeListener(this);
   }
 
