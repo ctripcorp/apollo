@@ -64,7 +64,7 @@ public class NamespaceService {
       final InstanceService instanceService,
       final @Lazy NamespaceBranchService branchService,
       final RolePermissionService rolePermissionService,
-      AdditionalUserInfoEnrichService additionalUserInfoEnrichService) {
+      final AdditionalUserInfoEnrichService additionalUserInfoEnrichService) {
     this.portalConfig = portalConfig;
     this.portalSettings = portalSettings;
     this.userInfoHolder = userInfoHolder;
