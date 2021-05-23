@@ -60,8 +60,8 @@
 			<id>nobodyiam</id>
 			<name>Jason(Shun) Song</name>
 			<email>nobodyiam at gmail.com</email>
-			<organization>Ctrip, Inc.</organization>
-			<organizationUrl>http://www.ctrip.com</organizationUrl>
+			<organization>Ant Group</organization>
+			<organizationUrl>https://www.antgroup.com</organizationUrl>
 			<roles>
 				<role>Project Management Committee Member</role>
 				<role>Developer</role>
@@ -71,8 +71,8 @@
 			<id>lepdou</id>
 			<name>Le Zhang</name>
 			<email>lepdou at gmail.com</email>
-			<organization>Ctrip, Inc.</organization>
-			<organizationUrl>http://www.ctrip.com</organizationUrl>
+			<organization>Ant Group</organization>
+			<organizationUrl>https://www.antgroup.com</organizationUrl>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -96,6 +96,62 @@
 			<organizationUrl>http://tetrate.io</organizationUrl>
 			<roles>
 				<role>Project Management Committee Member</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>JaredTan95</id>
+			<url>https://github.com/JaredTan95</url>
+			<name>Jared Tan</name>
+			<email>TBD</email>
+			<organization>DaoCloud</organization>
+			<organizationUrl>https://www.daocloud.io</organizationUrl>
+			<roles>
+				<role>Project Management Committee Member</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>Anilpole</id>
+			<url>https://github.com/Anilpole</url>
+			<name>Xiaoquan Wang</name>
+			<email>TBD</email>
+			<organization>TBD</organization>
+			<organizationUrl>TBD</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>klboke</id>
+			<url>https://github.com/klboke</url>
+			<name>Kailing Chen</name>
+			<email>TBD</email>
+			<organization>TBD</organization>
+			<organizationUrl>TBD</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>nisiyong</id>
+			<url>https://github.com/nisiyong</url>
+			<name>Stephen Ni</name>
+			<email>TBD</email>
+			<organization>TBD</organization>
+			<organizationUrl>TBD</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>vdisk-group</id>
+			<url>https://github.com/vdisk-group</url>
+			<name>Lvqiu Ye</name>
+			<email>TBD</email>
+			<organization>TBD</organization>
+			<organizationUrl>TBD</organizationUrl>
+			<roles>
 				<role>Developer</role>
 			</roles>
 		</developer>
