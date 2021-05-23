@@ -39,7 +39,7 @@ public class DeferredLogCacheTest {
     @Test
     public void testDeferredLogCacheMaxLogSize() {
         for (int i = 0; i < 20000; i++) {
-            DeferredLogCache.info(logger, "DeferredLogUtilTest", null);
+            DeferredLogCache.info(logger, "DeferredLogUtilTest");
         }
         Assert.assertEquals(DeferredLogCache.logSize(), DeferredLogCache.MAX_LOG_SIZE);
     }

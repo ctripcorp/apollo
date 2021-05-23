@@ -43,20 +43,37 @@ final class DeferredLogCache {
   }
 
 
-  public static void debug(Logger logger, String message, Throwable throwable, Object... objects) {
-    add(logger, Level.DEBUG, message, objects, throwable);
+  public static void debug(Logger logger, String message, Throwable throwable) {
+    add(logger, Level.DEBUG, message, null, throwable);
   }
 
-  public static void info(Logger logger, String message, Throwable throwable, Object... objects) {
-    add(logger, Level.INFO, message, objects, throwable);
+  public static void debug(Logger logger, String message, Object... objects) {
+    add(logger, Level.DEBUG, message, objects, null);
   }
 
-  public static void warn(Logger logger, String message, Throwable throwable, Object... objects) {
-    add(logger, Level.WARN, message, objects, throwable);
+  public static void info(Logger logger, String message, Throwable throwable) {
+    add(logger, Level.INFO, message, null, throwable);
   }
 
-  public static void error(Logger logger, String message, Throwable throwable, Object... objects) {
-    add(logger, Level.ERROR, message, objects, throwable);
+  public static void info(Logger logger, String message, Object... objects) {
+    add(logger, Level.INFO, message, objects, null);
+  }
+
+  public static void warn(Logger logger, String message, Object... objects) {
+    add(logger, Level.WARN, message, objects, null);
+  }
+
+  public static void warn(Logger logger, String message, Throwable throwable) {
+    add(logger, Level.WARN, message, null, throwable);
+  }
+
+
+  public static void error(Logger logger, String message, Throwable throwable) {
+    add(logger, Level.ERROR, message, null, throwable);
+  }
+
+  public static void error(Logger logger, String message, Object... objects) {
+    add(logger, Level.ERROR, message, objects, null);
   }
 
   private static void add(Logger logger, Level level, String message, Object[] objects,
@@ -65,7 +82,7 @@ final class DeferredLogCache {
     LOG_CACHE.put(LOG_INDEX.incrementAndGet(), logLine);
   }
 
-  public static void replayTo() {
+  static void replayTo() {
     for (int i = 1; i <= LOG_INDEX.get(); i++) {
       Line logLine = LOG_CACHE.getIfPresent(i);
       assert logLine != null;
@@ -79,12 +96,12 @@ final class DeferredLogCache {
     clear();
   }
 
-  public static void clear() {
+  static void clear() {
     LOG_CACHE.invalidateAll();
     LOG_INDEX.set(0);
   }
 
-  public static long logSize() {
+  static long logSize() {
     return LOG_CACHE.size();
   }
 
@@ -124,7 +141,7 @@ final class DeferredLogCache {
     }
   }
 
-  static class Line {
+  private static class Line {
 
     private final Level level;
 
