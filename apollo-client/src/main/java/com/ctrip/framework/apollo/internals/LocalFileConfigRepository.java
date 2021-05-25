@@ -16,6 +16,7 @@
  */
 package com.ctrip.framework.apollo.internals;
 
+import com.ctrip.framework.apollo.core.utils.DeferredLoggerFactory;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +30,6 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
 import com.ctrip.framework.apollo.core.ConfigConsts;
@@ -47,7 +47,7 @@ import com.google.common.base.Preconditions;
  */
 public class LocalFileConfigRepository extends AbstractConfigRepository
     implements RepositoryChangeListener {
-  private static final Logger logger = LoggerFactory.getLogger(LocalFileConfigRepository.class);
+  private static final Logger logger = DeferredLoggerFactory.getLogger(LocalFileConfigRepository.class);
   private static final String CONFIG_DIR = "/config-cache";
   private final String m_namespace;
   private File m_baseDir;

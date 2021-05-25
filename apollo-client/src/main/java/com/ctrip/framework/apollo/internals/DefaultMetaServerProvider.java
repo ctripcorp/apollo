@@ -19,15 +19,16 @@ package com.ctrip.framework.apollo.internals;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.enums.Env;
 import com.ctrip.framework.apollo.core.spi.MetaServerProvider;
+import com.ctrip.framework.apollo.core.utils.DeferredLoggerFactory;
 import com.ctrip.framework.foundation.Foundation;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultMetaServerProvider implements MetaServerProvider {
 
   public static final int ORDER = 0;
-  private static final Logger logger = LoggerFactory.getLogger(DefaultMetaServerProvider.class);
+  private static final Logger logger = DeferredLoggerFactory
+      .getLogger(DefaultMetaServerProvider.class);
 
   private final String metaServerAddress;
 
@@ -52,7 +53,8 @@ public class DefaultMetaServerProvider implements MetaServerProvider {
     }
 
     if (Strings.isNullOrEmpty(metaAddress)) {
-      logger.warn("Could not find meta server address, because it is not available in neither (1) JVM system property 'apollo.meta', (2) OS env variable 'APOLLO_META' (3) property 'apollo.meta' from server.properties nor (4) property 'apollo.meta' from app.properties");
+      logger.warn(
+          "Could not find meta server address, because it is not available in neither (1) JVM system property 'apollo.meta', (2) OS env variable 'APOLLO_META' (3) property 'apollo.meta' from server.properties nor (4) property 'apollo.meta' from app.properties");
     } else {
       metaAddress = metaAddress.trim();
       logger.info("Located meta services from apollo.meta configuration: {}!", metaAddress);

@@ -28,7 +28,7 @@
         <logger name="com.ctrip.framework.apollo" additivity="false" level="trace">
             <AppenderRef ref="Async" level="WARN"/>
         </logger>
-        <root level="INFO">
+        <root level="debug">
             <AppenderRef ref="Async"/>
         </root>
     </loggers>

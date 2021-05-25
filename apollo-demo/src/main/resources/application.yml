@@ -16,5 +16,7 @@
 apollo:
   bootstrap:
     enabled: true
+    eagerLoad:
+      enabled: true
     # will inject 'application' and 'TEST1.apollo' namespaces in bootstrap phase
     namespaces: application,TEST1.apollo,application.yaml
