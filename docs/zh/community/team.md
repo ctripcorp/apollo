@@ -19,7 +19,7 @@ Member 包括 PMC 成员和 Committer，该列表按字母顺序排列。
 ### Committer
 | Github ID   | Name          | Organization |
 | ----------- | ------------- | ------------ |
-| Anilpole    | Xiaoquan Wang |              |
+| Anilople    | Xiaoquan Wang | Bank         |
 | klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
 | nisiyong    | Stephen Ni    |              |
@@ -38,4 +38,3 @@ Member 包括 PMC 成员和 Committer，该列表按字母顺序排列。
 ## **如何成为提交者**
 
 请参考 [How to become a Committer](https://github.com/ctripcorp/apollo/blob/master/GOVERNANCE.md#how-to-become-a-committer).
-
