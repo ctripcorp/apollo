@@ -22,7 +22,7 @@ Member 包括 PMC 成员和 Committer，该列表按字母顺序排列。
 | Anilople    | Xiaoquan Wang | Some Bank    |
 | klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
-| nisiyong    | Stephen Ni    |              |
+| nisiyong    | Stephen Ni    | Qihoo 360    |
 | vdisk-group | Lvqiu Ye      |              |
 
 ## Contributor
