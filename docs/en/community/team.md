@@ -19,7 +19,7 @@ Members include Project Management Committee members and committers. The list is
 ### Committer
 | Github ID   | Name          | Organization |
 | ----------- | ------------- | ------------ |
-| Anilople    | Xiaoquan Wang | Bank         |
+| Anilople    | Xiaoquan Wang | Some Bank    |
 | klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
 | nisiyong    | Stephen Ni    |              |
