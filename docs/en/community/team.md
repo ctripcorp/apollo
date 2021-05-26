@@ -22,7 +22,7 @@ Members include Project Management Committee members and committers. The list is
 | Anilople    | Xiaoquan Wang | Some Bank    |
 | klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
-| nisiyong    | Stephen Ni    |              |
+| nisiyong    | Stephen Ni    | Qihoo 360    |
 | vdisk-group | Lvqiu Ye      |              |
 
 ## Contributors
