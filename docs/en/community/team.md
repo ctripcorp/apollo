@@ -20,7 +20,7 @@ Members include Project Management Committee members and committers. The list is
 | Github ID   | Name          | Organization |
 | ----------- | ------------- | ------------ |
 | Anilpole    | Xiaoquan Wang |              |
-| klboke      | Kailing Chen  |              |
+| klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
 | nisiyong    | Stephen Ni    |              |
 | vdisk-group | Lvqiu Ye      |              |
