@@ -299,7 +299,7 @@ CREATE TABLE `Users` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
   `Username` varchar(64) NOT NULL DEFAULT 'default' COMMENT '用户登录账户',
   `Password` varchar(64) NOT NULL DEFAULT 'default' COMMENT '密码',
-  `UserDisplayName` varchar(512) NOT NULL DEFAULT 'default' COMMENT '用户名称',
+  `PreferredUsername` varchar(512) NOT NULL DEFAULT 'default' COMMENT '用户名称',
   `Email` varchar(64) NOT NULL DEFAULT 'default' COMMENT '邮箱地址',
   `Enabled` tinyint(4) DEFAULT NULL COMMENT '是否有效',
   PRIMARY KEY (`Id`)
