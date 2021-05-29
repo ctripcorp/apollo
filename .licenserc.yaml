@@ -50,3 +50,5 @@ header:
     - 'apollo-core/src/test/resources/properties/server-with-utf8bom.properties'
 
   comment: on-failure
+
+  license-location-threshold: 130
