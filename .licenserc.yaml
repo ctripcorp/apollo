@@ -28,6 +28,7 @@ header:
     - '.gitattributes'
     - '.mvn'
     - '**/*.md'
+    - '**/*.svg'
     - '**/*.json'
     - '**/*.conf'
     - '**/*.ftl'
