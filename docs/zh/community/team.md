@@ -23,6 +23,7 @@ Member 包括 PMC 成员和 Committer，该列表按字母顺序排列。
 | klboke      | Kailing Chen  | TapTap       |
 | lepdou      | Le Zhang      | Ant Group    |
 | nisiyong    | Stephen Ni    | Qihoo 360    |
+| pengweiqhca | Wei Peng      | Tuhu         |
 | vdisk-group | Lvqiu Ye      | Hundsun      |
 
 ## Contributor
