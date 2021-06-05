@@ -762,7 +762,7 @@ public class DefaultConfigTest {
         assertEquals(expectConfigChange, actualConfigChange);
       }
     }
-    
+
     assertFalse(interestedInSomeKeyNotChangedFuture.isDone());
   }
 
