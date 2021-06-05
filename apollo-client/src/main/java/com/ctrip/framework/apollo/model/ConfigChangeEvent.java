@@ -96,11 +96,4 @@ public class ConfigChangeEvent {
   public String getNamespace() {
     return m_namespace;
   }
-
-  /**
-   * @return all changed keys and instances
-   */
-  public Map<String, ConfigChange> getChanges() {
-    return Collections.unmodifiableMap(this.m_changes);
-  }
 }

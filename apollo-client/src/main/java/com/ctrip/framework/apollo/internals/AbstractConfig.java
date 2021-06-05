@@ -37,17 +37,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.Collections;
-import java.util.HashSet;
+
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -521,14 +516,23 @@ public abstract class AbstractConfig implements Config {
       return configChangeEvent;
     }
 
+    final Set<String> changedKeys = configChangeEvent.changedKeys();
+
     Set<String> interestedChangedKeys = resolveInterestedChangedKeys(
-        configChangeEvent.changedKeys(),
+            changedKeys,
         m_interestedKeys.containsKey(configChangeListener) ? m_interestedKeys
             .get(configChangeListener) : Collections.<String>emptySet(),
         m_interestedKeyPrefixes.containsKey(configChangeListener) ? m_interestedKeyPrefixes
             .get(configChangeListener) : Collections.<String>emptySet()
     );
-    return new ConfigChangeEvent(configChangeEvent.getNamespace(), configChangeEvent.getChanges(),
+
+    Map<String, ConfigChange> changes = new HashMap<>();
+    for (String changedKey : changedKeys) {
+      ConfigChange configChange = configChangeEvent.getChange(changedKey);
+      changes.put(changedKey, configChange);
+    }
+
+    return new ConfigChangeEvent(configChangeEvent.getNamespace(), changes,
         interestedChangedKeys);
   }
 
