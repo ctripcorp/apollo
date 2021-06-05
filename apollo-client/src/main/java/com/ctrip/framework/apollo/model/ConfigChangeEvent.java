@@ -16,9 +16,6 @@
  */
 package com.ctrip.framework.apollo.model;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -30,15 +27,6 @@ import java.util.Set;
 public class ConfigChangeEvent {
   private final String m_namespace;
   private final Map<String, ConfigChange> m_changes;
-
-  /**
-   * @see Config#addChangeListener(ConfigChangeListener, Set)
-   * @see Config#addChangeListener(ConfigChangeListener, Set, Set)
-   * @see ApolloConfigChangeListener#interestedKeys()
-   * @see ApolloConfigChangeListener#interestedKeyPrefixes()
-   */
-  private final Set<String> m_interestedChangedKeys;
-
   /**
    * Constructor.
    * @param namespace the namespace of this change
@@ -46,14 +34,8 @@ public class ConfigChangeEvent {
    */
   public ConfigChangeEvent(String namespace,
                            Map<String, ConfigChange> changes) {
-    this(namespace, changes, Collections.<String>emptySet());
-  }
-
-  public ConfigChangeEvent(String namespace,
-      Map<String, ConfigChange> changes, Set<String> interestedChangedKeys) {
     this.m_namespace = namespace;
     this.m_changes = changes;
-    this.m_interestedChangedKeys = interestedChangedKeys;
   }
 
   /**
@@ -66,9 +48,10 @@ public class ConfigChangeEvent {
 
   /**
    * @return interested and changed keys
+   * @see InterestedConfigChangeEvent#interestedChangedKeys()
    */
   public Set<String> interestedChangedKeys() {
-    return Collections.unmodifiableSet(this.m_interestedChangedKeys);
+    return Collections.emptySet();
   }
 
   /**

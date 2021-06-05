@@ -24,6 +24,7 @@ import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
+import com.ctrip.framework.apollo.model.InterestedConfigChangeEvent;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.ctrip.framework.apollo.util.ConfigUtil;
@@ -451,30 +452,48 @@ public abstract class AbstractConfig implements Config {
     }
   }
 
+  /**
+   * @param changes map's key is config property's key
+   */
+  protected void fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
+    final Set<String> changedKeys = changes.keySet();
+    for (final ConfigChangeListener listener : this.m_listeners) {
+      Set<String> interestedChangedKeys = resolveInterestedChangedKeys(listener, changedKeys);
+      InterestedConfigChangeEvent interestedConfigChangeEvent = new InterestedConfigChangeEvent(
+          namespace, changes, interestedChangedKeys);
+      // reuse
+      this.fireConfigChange(interestedConfigChangeEvent);
+    }
+  }
+
   protected void fireConfigChange(final ConfigChangeEvent changeEvent) {
     for (final ConfigChangeListener listener : m_listeners) {
       // check whether the listener is interested in this change event
       if (!isConfigChangeListenerInterested(listener, changeEvent)) {
         continue;
       }
-      m_executorService.submit(new Runnable() {
-        @Override
-        public void run() {
-          String listenerName = listener.getClass().getName();
-          Transaction transaction = Tracer.newTransaction("Apollo.ConfigChangeListener", listenerName);
-          try {
-            listener.onChange(resolve(listener, changeEvent));
-            transaction.setStatus(Transaction.SUCCESS);
-          } catch (Throwable ex) {
-            transaction.setStatus(ex);
-            Tracer.logError(ex);
-            logger.error("Failed to invoke config change listener {}", listenerName, ex);
-          } finally {
-            transaction.complete();
-          }
-        }
-      });
+      this.notifyAsync(listener, changeEvent);
     }
+  }
+
+  private void notifyAsync(final ConfigChangeListener listener, final ConfigChangeEvent changeEvent) {
+    m_executorService.submit(new Runnable() {
+      @Override
+      public void run() {
+        String listenerName = listener.getClass().getName();
+        Transaction transaction = Tracer.newTransaction("Apollo.ConfigChangeListener", listenerName);
+        try {
+          listener.onChange(changeEvent);
+          transaction.setStatus(Transaction.SUCCESS);
+        } catch (Throwable ex) {
+          transaction.setStatus(ex);
+          Tracer.logError(ex);
+          logger.error("Failed to invoke config change listener {}", listenerName, ex);
+        } finally {
+          transaction.complete();
+        }
+      }
+    });
   }
 
   private boolean isConfigChangeListenerInterested(ConfigChangeListener configChangeListener, ConfigChangeEvent configChangeEvent) {
@@ -507,53 +526,30 @@ public abstract class AbstractConfig implements Config {
     return false;
   }
 
-  /**
-   * @return new {@link ConfigChangeEvent} contains interested and changed keys
-   */
-  private ConfigChangeEvent resolve(ConfigChangeListener configChangeListener,
-      ConfigChangeEvent configChangeEvent) {
-    if (!this.m_interestedKeys.containsKey(configChangeListener) && !this.m_interestedKeyPrefixes.containsKey(configChangeListener)) {
-      return configChangeEvent;
-    }
-
-    final Set<String> changedKeys = configChangeEvent.changedKeys();
-
-    Set<String> interestedChangedKeys = resolveInterestedChangedKeys(
-            changedKeys,
-        m_interestedKeys.containsKey(configChangeListener) ? m_interestedKeys
-            .get(configChangeListener) : Collections.<String>emptySet(),
-        m_interestedKeyPrefixes.containsKey(configChangeListener) ? m_interestedKeyPrefixes
-            .get(configChangeListener) : Collections.<String>emptySet()
-    );
-
-    Map<String, ConfigChange> changes = new HashMap<>();
-    for (String changedKey : changedKeys) {
-      ConfigChange configChange = configChangeEvent.getChange(changedKey);
-      changes.put(changedKey, configChange);
-    }
-
-    return new ConfigChangeEvent(configChangeEvent.getNamespace(), changes,
-        interestedChangedKeys);
-  }
-
-  static Set<String> resolveInterestedChangedKeys(Set<String> changedKeys, Set<String> interestedKeys, Set<String> interestedKeyPrefixes) {
+  private Set<String> resolveInterestedChangedKeys(ConfigChangeListener configChangeListener, Set<String> changedKeys) {
     Set<String> interestedChangedKeys = new HashSet<>();
 
-    for (String interestedKey : interestedKeys) {
-      if (changedKeys.contains(interestedKey)) {
-        interestedChangedKeys.add(interestedKey);
-      }
-    }
-
-    for (String interestedKeyPrefix : interestedKeyPrefixes) {
-      for (String changedKey : changedKeys) {
-        if (changedKey.startsWith(interestedKeyPrefix)) {
-          interestedChangedKeys.add(changedKey);
+    if (this.m_interestedKeys.containsKey(configChangeListener)) {
+      Set<String> interestedKeys = this.m_interestedKeys.get(configChangeListener);
+      for (String interestedKey : interestedKeys) {
+        if (changedKeys.contains(interestedKey)) {
+          interestedChangedKeys.add(interestedKey);
         }
       }
     }
 
-    return interestedChangedKeys;
+    if (this.m_interestedKeyPrefixes.containsKey(configChangeListener)) {
+      Set<String> interestedKeyPrefixes = this.m_interestedKeyPrefixes.get(configChangeListener);
+      for (String interestedKeyPrefix : interestedKeyPrefixes) {
+        for (String changedKey : changedKeys) {
+          if (changedKey.startsWith(interestedKeyPrefix)) {
+            interestedChangedKeys.add(changedKey);
+          }
+        }
+      }
+    }
+
+    return Collections.unmodifiableSet(interestedChangedKeys);
   }
 
   List<ConfigChange> calcPropertyChanges(String namespace, Properties previous,
