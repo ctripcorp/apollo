@@ -22,8 +22,10 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.internals.AbstractConfig;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -46,13 +48,16 @@ public class InterestedConfigChangeEventTest {
 
     final String namespace = "app";
     final String keyPrefix = "key-abc.";
-    final String key = keyPrefix + UUID.randomUUID().toString();
+    final String key = keyPrefix + UUID.randomUUID();
+    final String anotherKey = UUID.randomUUID().toString();
 
     final SettableFuture<ConfigChangeEvent> onChangeFuture = SettableFuture.create();
     ConfigChangeListener configChangeListener = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
         assertEquals(namespace, changeEvent.getNamespace());
+        assertEquals(2, changeEvent.changedKeys().size());
+        assertTrue(changeEvent.changedKeys().containsAll(Sets.newHashSet(key, anotherKey)));
         assertEquals(1, changeEvent.interestedChangedKeys().size());
         assertTrue(changeEvent.interestedChangedKeys().contains(key));
         onChangeFuture.set(changeEvent);
@@ -61,8 +66,13 @@ public class InterestedConfigChangeEventTest {
 
     UnsupportedOperationConfig config = new UnsupportedOperationConfig();
     config.addChangeListener(configChangeListener, Collections.singleton("key-nothing"), Collections.singleton(keyPrefix));
-    config.fireConfigChange(namespace, Collections.singletonMap(key,
-        new ConfigChange(namespace, key, "123", "456", PropertyChangeType.MODIFIED)));
+
+
+    Map<String, ConfigChange> changes = new HashMap<>();
+    changes.put(key, new ConfigChange(namespace, key, "123", "456", PropertyChangeType.MODIFIED));
+    changes.put(anotherKey,
+        new ConfigChange(namespace, anotherKey, null, "someValue", PropertyChangeType.ADDED));
+    config.fireConfigChange(namespace, changes);
 
     onChangeFuture.get(500, TimeUnit.MILLISECONDS);
 
