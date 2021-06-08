@@ -36,6 +36,8 @@ public class ReleaseHistoryBO {
 
   private String operator;
 
+  private String operatorDisplayName;
+
   private long releaseId;
 
   private String releaseTitle;
@@ -97,44 +99,28 @@ public class ReleaseHistoryBO {
     this.branchName = branchName;
   }
 
-  public long getReleaseId() {
-    return releaseId;
-  }
-
-  public void setReleaseId(long releaseId) {
-    this.releaseId = releaseId;
-  }
-
-  public long getPreviousReleaseId() {
-    return previousReleaseId;
-  }
-
-  public void setPreviousReleaseId(long previousReleaseId) {
-    this.previousReleaseId = previousReleaseId;
-  }
-
-  public int getOperation() {
-    return operation;
-  }
-
-  public void setOperation(int operation) {
-    this.operation = operation;
-  }
-
-  public Map<String, Object> getOperationContext() {
-    return operationContext;
-  }
-
-  public void setOperationContext(Map<String, Object> operationContext) {
-    this.operationContext = operationContext;
-  }
-
   public String getOperator() {
     return operator;
   }
 
   public void setOperator(String operator) {
     this.operator = operator;
+  }
+
+  public String getOperatorDisplayName() {
+    return operatorDisplayName;
+  }
+
+  public void setOperatorDisplayName(String operatorDisplayName) {
+    this.operatorDisplayName = operatorDisplayName;
+  }
+
+  public long getReleaseId() {
+    return releaseId;
+  }
+
+  public void setReleaseId(long releaseId) {
+    this.releaseId = releaseId;
   }
 
   public String getReleaseTitle() {
@@ -184,5 +170,29 @@ public class ReleaseHistoryBO {
 
   public void setReleaseAbandoned(boolean releaseAbandoned) {
     isReleaseAbandoned = releaseAbandoned;
+  }
+
+  public long getPreviousReleaseId() {
+    return previousReleaseId;
+  }
+
+  public void setPreviousReleaseId(long previousReleaseId) {
+    this.previousReleaseId = previousReleaseId;
+  }
+
+  public int getOperation() {
+    return operation;
+  }
+
+  public void setOperation(int operation) {
+    this.operation = operation;
+  }
+
+  public Map<String, Object> getOperationContext() {
+    return operationContext;
+  }
+
+  public void setOperationContext(Map<String, Object> operationContext) {
+    this.operationContext = operationContext;
   }
 }

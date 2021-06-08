@@ -38,6 +38,8 @@ public class UserPO {
   private long id;
   @Column(name = "Username", nullable = false)
   private String username;
+  @Column(name = "UserDisplayName", nullable = false)
+  private String userDisplayName;
   @Column(name = "Password", nullable = false)
   private String password;
   @Column(name = "Email", nullable = false)
@@ -59,6 +61,14 @@ public class UserPO {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getUserDisplayName() {
+    return userDisplayName;
+  }
+
+  public void setUserDisplayName(String userDisplayName) {
+    this.userDisplayName = userDisplayName;
   }
 
   public String getEmail() {
@@ -87,8 +97,8 @@ public class UserPO {
 
   public UserInfo toUserInfo() {
     UserInfo userInfo = new UserInfo();
-    userInfo.setName(this.getUsername());
     userInfo.setUserId(this.getUsername());
+    userInfo.setName(this.getUserDisplayName());
     userInfo.setEmail(this.getEmail());
     return userInfo;
   }

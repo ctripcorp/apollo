@@ -75,6 +75,7 @@ function ConfigBaseInfoController($rootScope, $scope, $window, $location, $trans
 
             $scope.appBaseInfo = result;
             $scope.appBaseInfo.orgInfo = result.orgName + '(' + result.orgId + ')';
+            $scope.appBaseInfo.ownerInfo = result.ownerDisplayName + '(' + result.ownerName + ')';
 
             loadNavTree();
             recordVisitApp();

@@ -30,6 +30,7 @@ import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.constant.RoleType;
 import com.ctrip.framework.apollo.portal.constant.TracerEventType;
+import com.ctrip.framework.apollo.portal.enricher.adapter.BaseDtoUserInfoEnrichedAdapter;
 import com.ctrip.framework.apollo.portal.entity.bo.ItemBO;
 import com.ctrip.framework.apollo.portal.entity.bo.NamespaceBO;
 import com.ctrip.framework.apollo.portal.environment.Env;
@@ -39,13 +40,16 @@ import com.ctrip.framework.apollo.tracer.Tracer;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 public class NamespaceService {
@@ -63,6 +67,7 @@ public class NamespaceService {
   private final InstanceService instanceService;
   private final NamespaceBranchService branchService;
   private final RolePermissionService rolePermissionService;
+  private final AdditionalUserInfoEnrichService additionalUserInfoEnrichService;
 
   public NamespaceService(
       final PortalConfig portalConfig,
@@ -74,7 +79,8 @@ public class NamespaceService {
       final AppNamespaceService appNamespaceService,
       final InstanceService instanceService,
       final @Lazy NamespaceBranchService branchService,
-      final RolePermissionService rolePermissionService) {
+      final RolePermissionService rolePermissionService,
+      final AdditionalUserInfoEnrichService additionalUserInfoEnrichService) {
     this.portalConfig = portalConfig;
     this.portalSettings = portalSettings;
     this.userInfoHolder = userInfoHolder;
@@ -85,6 +91,7 @@ public class NamespaceService {
     this.instanceService = instanceService;
     this.branchService = branchService;
     this.rolePermissionService = rolePermissionService;
+    this.additionalUserInfoEnrichService = additionalUserInfoEnrichService;
   }
 
 
@@ -244,6 +251,8 @@ public class NamespaceService {
 
     //not Release config items
     List<ItemDTO> items = itemService.findItems(appId, env, clusterName, namespaceName);
+    additionalUserInfoEnrichService
+        .enrichAdditionalUserInfo(items, BaseDtoUserInfoEnrichedAdapter::new);
     int modifiedItemCnt = 0;
     for (ItemDTO itemDTO : items) {
 

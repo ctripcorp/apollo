@@ -297,8 +297,9 @@ DROP TABLE IF EXISTS `Users`;
 
 CREATE TABLE `Users` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增Id',
-  `Username` varchar(64) NOT NULL DEFAULT 'default' COMMENT '用户名',
+  `Username` varchar(64) NOT NULL DEFAULT 'default' COMMENT '用户登录账户',
   `Password` varchar(64) NOT NULL DEFAULT 'default' COMMENT '密码',
+  `UserDisplayName` varchar(512) NOT NULL DEFAULT 'default' COMMENT '用户名称',
   `Email` varchar(64) NOT NULL DEFAULT 'default' COMMENT '邮箱地址',
   `Enabled` tinyint(4) DEFAULT NULL COMMENT '是否有效',
   PRIMARY KEY (`Id`)
@@ -332,9 +333,9 @@ VALUES
     ('apollo.portal.meta.servers', '{}', '各环境Meta Service列表');
 
 
-INSERT INTO `Users` (`Username`, `Password`, `Email`, `Enabled`)
+INSERT INTO `Users` (`Username`, `Password`, `UserDisplayName`, `Email`, `Enabled`)
 VALUES
-	('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo@acme.com', 1);
+	('apollo', '$2a$10$7r20uS.BQ9uBpf3Baj3uQOZvMVvB1RN3PYoKE94gtz2.WAOuiiwXS', 'apollo', 'apollo@acme.com', 1);
 
 INSERT INTO `Authorities` (`Username`, `Authority`) VALUES ('apollo', 'ROLE_user');
 

@@ -33,6 +33,7 @@ public class DefaultUserInfoHolder implements UserInfoHolder {
   public UserInfo getUser() {
     UserInfo userInfo = new UserInfo();
     userInfo.setUserId("apollo");
+    userInfo.setName("apollo");
     return userInfo;
   }
 }

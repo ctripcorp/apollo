@@ -313,7 +313,7 @@ public class NotificationControllerV2IntegrationTest extends AbstractBaseIntegra
     assertNotEquals(ConfigConsts.NOTIFICATION_ID_PLACEHOLDER, messages.get(key).longValue());
   }
 
-  @Test(timeout = 5000L)
+  @Test(timeout = 10000L)
   @Sql(scripts = "/integration-test/test-release.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/integration-test/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testPollNotificationWthMultipleNamespacesAndMultipleNamespacesChanged()
