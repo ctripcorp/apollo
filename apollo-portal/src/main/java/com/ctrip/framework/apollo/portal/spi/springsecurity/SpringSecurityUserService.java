@@ -74,27 +74,37 @@ public class SpringSecurityUserService implements UserService {
 
     UserPO managedUser = userRepository.findByUsername(username);
     managedUser.setEmail(user.getEmail());
+    managedUser.setUserDisplayName(user.getUserDisplayName());
 
     userRepository.save(managedUser);
   }
 
   @Override
   public List<UserInfo> searchUsers(String keyword, int offset, int limit) {
-    List<UserPO> users;
-    if (StringUtils.isEmpty(keyword)) {
-      users = userRepository.findFirst20ByEnabled(1);
-    } else {
-      users = userRepository.findByUsernameLikeAndEnabled("%" + keyword + "%", 1);
-    }
-
-    List<UserInfo> result = Lists.newArrayList();
+    List<UserPO> users = this.findUsers(keyword);
     if (CollectionUtils.isEmpty(users)) {
-      return result;
+      return Collections.emptyList();
     }
+    return users.stream().map(UserPO::toUserInfo)
+        .collect(Collectors.toList());
+  }
 
-    result.addAll(users.stream().map(UserPO::toUserInfo).collect(Collectors.toList()));
-
-    return result;
+  private List<UserPO> findUsers(String keyword) {
+    if (StringUtils.isEmpty(keyword)) {
+      return userRepository.findFirst20ByEnabled(1);
+    }
+    List<UserPO> users = new ArrayList<>();
+    List<UserPO> byUsername = userRepository
+        .findByUsernameLikeAndEnabled("%" + keyword + "%", 1);
+    List<UserPO> byUserDisplayName = userRepository
+        .findByUserDisplayNameLikeAndEnabled("%" + keyword + "%", 1);
+    if (!CollectionUtils.isEmpty(byUsername)) {
+      users.addAll(byUsername);
+    }
+    if (!CollectionUtils.isEmpty(byUserDisplayName)) {
+      users.addAll(byUserDisplayName);
+    }
+    return users;
   }
 
   @Override

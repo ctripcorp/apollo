@@ -41,7 +41,7 @@ public abstract class AbstractConfigService implements ConfigService {
       Release clusterRelease = findRelease(clientAppId, clientIp, configAppId, configClusterName, configNamespace,
           clientMessages);
 
-      if (!Objects.isNull(clusterRelease)) {
+      if (Objects.nonNull(clusterRelease)) {
         return clusterRelease;
       }
     }
@@ -50,7 +50,7 @@ public abstract class AbstractConfigService implements ConfigService {
     if (!Strings.isNullOrEmpty(dataCenter) && !Objects.equals(dataCenter, configClusterName)) {
       Release dataCenterRelease = findRelease(clientAppId, clientIp, configAppId, dataCenter, configNamespace,
           clientMessages);
-      if (!Objects.isNull(dataCenterRelease)) {
+      if (Objects.nonNull(dataCenterRelease)) {
         return dataCenterRelease;
       }
     }

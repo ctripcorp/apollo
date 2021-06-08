@@ -63,6 +63,8 @@ public class NamespaceServiceTest extends AbstractUnitTest {
   private NamespaceBranchService branchService;
   @Mock
   private UserInfoHolder userInfoHolder;
+  @Mock
+  private AdditionalUserInfoEnrichService additionalUserInfoEnrichService;
 
   @InjectMocks
   private NamespaceService namespaceService;

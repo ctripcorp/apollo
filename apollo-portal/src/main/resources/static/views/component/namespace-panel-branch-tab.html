@@ -202,7 +202,7 @@
                                     <span ng-bind="config.item.comment | limitTo: 250"></span>
                                     <span ng-bind="config.item.comment.length > 250 ?'...' : ''"></span>
                                 </td>
-                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
+                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedByDisplayName + '(' + config.item.dataChangeLastModifiedBy + ')'">
                                 </td>
                                 <td width="10%"
                                     ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
@@ -304,7 +304,7 @@
                                     <span ng-bind="config.item.comment | limitTo: 250"></span>
                                     <span ng-bind="config.item.comment.length > 250 ?'...' : ''"></span>
                                 </td>
-                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedBy">
+                                <td width="10%" ng-bind="config.item.dataChangeLastModifiedByDisplayName + '(' + config.item.dataChangeLastModifiedBy + ')'">
                                 </td>
                                 <td width="15%"
                                     ng-bind="config.item.dataChangeLastModifiedTime | date: 'yyyy-MM-dd HH:mm:ss'">
@@ -436,7 +436,7 @@
                     <div class="media-body">
                         <div class="row">
                             <div class="col-md-6 col-sm-6 ">
-                                <h3 class="media-heading" ng-bind="commits.dataChangeCreatedBy"></h3>
+                                <h3 class="media-heading" ng-bind="commits.dataChangeCreatedByDisplayName + '(' + commits.dataChangeCreatedBy + ')'"></h3>
                             </div>
                             <div class="col-md-6 col-sm-6 text-right">
                                 <h5 class="media-heading"

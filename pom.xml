@@ -55,52 +55,6 @@
 		<url>https://github.com/ctripcorp/apollo/issues</url>
 	</issueManagement>
 
-	<developers>
-		<developer>
-			<id>nobodyiam</id>
-			<name>Jason(Shun) Song</name>
-			<email>nobodyiam at gmail.com</email>
-			<organization>Ctrip, Inc.</organization>
-			<organizationUrl>http://www.ctrip.com</organizationUrl>
-			<roles>
-				<role>Project Management Committee Member</role>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>lepdou</id>
-			<name>Le Zhang</name>
-			<email>lepdou at gmail.com</email>
-			<organization>Ctrip, Inc.</organization>
-			<organizationUrl>http://www.ctrip.com</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>yiming187</id>
-			<name>Billy(Yiming) Liu</name>
-			<email>liuyiming.vip at gmail.com</email>
-			<organization>Ctrip, Inc.</organization>
-			<organizationUrl>http://www.ctrip.com</organizationUrl>
-			<roles>
-				<role>Developer(Inactive)</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>kezhenxu94</id>
-			<url>https://github.com/kezhenxu94</url>
-			<name>Zhenxu Ke</name>
-			<email>kezhenxu94 at apache.org</email>
-			<organization>Tetrate.io</organization>
-			<organizationUrl>http://tetrate.io</organizationUrl>
-			<roles>
-				<role>Project Management Committee Member</role>
-				<role>Developer</role>
-			</roles>
-		</developer>
-	</developers>
-
 	<properties>
 		<revision>1.9.0-SNAPSHOT</revision>
 		<java.version>1.8</java.version>

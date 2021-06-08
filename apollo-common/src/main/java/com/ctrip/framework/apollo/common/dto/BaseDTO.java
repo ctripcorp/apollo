@@ -25,6 +25,10 @@ public class BaseDTO {
 
   protected String dataChangeLastModifiedBy;
 
+  protected String dataChangeCreatedByDisplayName;
+
+  protected String dataChangeLastModifiedByDisplayName;
+
   protected Date dataChangeCreatedTime;
 
   protected Date dataChangeLastModifiedTime;
@@ -43,6 +47,22 @@ public class BaseDTO {
 
   public void setDataChangeLastModifiedBy(String dataChangeLastModifiedBy) {
     this.dataChangeLastModifiedBy = dataChangeLastModifiedBy;
+  }
+
+  public String getDataChangeCreatedByDisplayName() {
+    return dataChangeCreatedByDisplayName;
+  }
+
+  public void setDataChangeCreatedByDisplayName(String dataChangeCreatedByDisplayName) {
+    this.dataChangeCreatedByDisplayName = dataChangeCreatedByDisplayName;
+  }
+
+  public String getDataChangeLastModifiedByDisplayName() {
+    return dataChangeLastModifiedByDisplayName;
+  }
+
+  public void setDataChangeLastModifiedByDisplayName(String dataChangeLastModifiedByDisplayName) {
+    this.dataChangeLastModifiedByDisplayName = dataChangeLastModifiedByDisplayName;
   }
 
   public Date getDataChangeCreatedTime() {

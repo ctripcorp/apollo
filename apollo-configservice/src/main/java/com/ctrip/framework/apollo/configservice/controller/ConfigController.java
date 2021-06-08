@@ -115,7 +115,7 @@ public class ConfigController {
     if (!namespaceBelongsToAppId(appId, namespace)) {
       Release publicRelease = this.findPublicConfig(appId, clientIp, clusterName, namespace,
           dataCenter, clientMessages);
-      if (!Objects.isNull(publicRelease)) {
+      if (Objects.nonNull(publicRelease)) {
         releases.add(publicRelease);
       }
     }

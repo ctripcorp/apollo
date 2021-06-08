@@ -17,6 +17,7 @@
 package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.build.ApolloInjector;
+import com.ctrip.framework.apollo.core.utils.DeferredLoggerFactory;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.util.factory.PropertiesFactory;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.ConfigFileChangeListener;
@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
  * @author Jason Song(song_s@ctrip.com)
  */
 public abstract class AbstractConfigFile implements ConfigFile, RepositoryChangeListener {
-  private static final Logger logger = LoggerFactory.getLogger(AbstractConfigFile.class);
+  private static final Logger logger = DeferredLoggerFactory.getLogger(AbstractConfigFile.class);
   private static ExecutorService m_executorService;
   protected final ConfigRepository m_configRepository;
   protected final String m_namespace;

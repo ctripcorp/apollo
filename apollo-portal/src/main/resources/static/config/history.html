@@ -79,7 +79,7 @@
                                releaseHistory.operation == 4 || releaseHistory.operation == 7 || releaseHistory.operation == 8,
                                'release-operation-rollback': releaseHistory.operation == 1 || releaseHistory.operation == 6}">
                         </div>
-                        <h4 class="media-left text-center" ng-bind="releaseHistory.operator">
+                        <h4 class="media-left text-center" ng-bind="releaseHistory.operatorDisplayName + '(' + releaseHistory.operator + ')'">
                         </h4>
                         <div class="media-body">
 

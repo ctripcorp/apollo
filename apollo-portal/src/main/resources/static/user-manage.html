@@ -58,6 +58,15 @@
                         <div class="form-group" valdr-form-group>
                             <label class="col-sm-2 control-label">
                                 <apollorequiredfield></apollorequiredfield>
+                                {{'UserMange.UserDisplayName' | translate }}
+                            </label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" name="userDisplayName" ng-model="user.userDisplayName">
+                            </div>
+                        </div>
+                        <div class="form-group" valdr-form-group>
+                            <label class="col-sm-2 control-label">
+                                <apollorequiredfield></apollorequiredfield>
                                 {{'UserMange.Pwd' | translate }}
                             </label>
                             <div class="col-sm-5">

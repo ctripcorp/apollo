@@ -38,6 +38,7 @@ import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
 import com.ctrip.framework.apollo.portal.spi.oidc.ExcludeClientCredentialsClientRegistrationRepository;
 import com.ctrip.framework.apollo.portal.spi.oidc.OidcAuthenticationSuccessEventListener;
 import com.ctrip.framework.apollo.portal.spi.oidc.OidcLocalUserService;
+import com.ctrip.framework.apollo.portal.spi.oidc.OidcLocalUserServiceImpl;
 import com.ctrip.framework.apollo.portal.spi.oidc.OidcLogoutHandler;
 import com.ctrip.framework.apollo.portal.spi.oidc.OidcUserInfoHolder;
 import com.ctrip.framework.apollo.portal.spi.springsecurity.SpringSecurityUserInfoHolder;
@@ -242,8 +243,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder springSecurityUserInfoHolder() {
-      return new SpringSecurityUserInfoHolder();
+    public UserInfoHolder springSecurityUserInfoHolder(UserService userService) {
+      return new SpringSecurityUserInfoHolder(userService);
     }
 
     @Bean
@@ -335,8 +336,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder springSecurityUserInfoHolder() {
-      return new SpringSecurityUserInfoHolder();
+    public UserInfoHolder springSecurityUserInfoHolder(UserService userService) {
+      return new SpringSecurityUserInfoHolder(userService);
     }
 
     @Bean
@@ -460,8 +461,8 @@ public class AuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(UserInfoHolder.class)
-    public UserInfoHolder oidcUserInfoHolder() {
-      return new OidcUserInfoHolder();
+    public UserInfoHolder oidcUserInfoHolder(UserService userService) {
+      return new OidcUserInfoHolder(userService);
     }
 
     @Bean
@@ -481,7 +482,7 @@ public class AuthConfiguration {
     @ConditionalOnMissingBean(UserService.class)
     public OidcLocalUserService oidcLocalUserService(JdbcUserDetailsManager userDetailsManager,
         UserRepository userRepository) {
-      return new OidcLocalUserService(userDetailsManager, userRepository);
+      return new OidcLocalUserServiceImpl(userDetailsManager, userRepository);
     }
 
     @Bean

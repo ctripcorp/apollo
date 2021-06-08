@@ -60,3 +60,8 @@ ALTER TABLE `ServerConfig`
 ALTER TABLE `UserRole`
     MODIFY COLUMN `DataChange_CreatedBy` VARCHAR(64) NOT NULL DEFAULT 'default' COMMENT '创建人邮箱前缀',
     MODIFY COLUMN `DataChange_LastModifiedBy` VARCHAR(64) DEFAULT '' COMMENT '最后修改人邮箱前缀';
+
+ALTER TABLE `Users`
+    MODIFY COLUMN `Username` varchar(64) NOT NULL DEFAULT 'default' COMMENT '用户登录账户',
+    ADD COLUMN `UserDisplayName` varchar(512) NOT NULL DEFAULT 'default' COMMENT '用户名称' AFTER `Password`;
+UPDATE `Users` SET `UserDisplayName`=`Username` WHERE `UserDisplayName` = 'default';
