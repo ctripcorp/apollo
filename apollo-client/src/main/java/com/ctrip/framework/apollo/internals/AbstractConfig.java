@@ -454,22 +454,21 @@ public abstract class AbstractConfig implements Config {
 
   /**
    * @param changes map's key is config property's key
-   *
    * @return how many listener be fired
    */
   protected int fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
-    int firedListenerCount = 0;
-
     final Set<String> changedKeys = changes.keySet();
-    for (final ConfigChangeListener listener : this.m_listeners) {
+    final List<ConfigChangeListener> listeners = this.findMatchedConfigChangeListeners(changedKeys);
+
+    // notify those listeners
+    for (ConfigChangeListener listener : listeners) {
       Set<String> interestedChangedKeys = resolveInterestedChangedKeys(listener, changedKeys);
       InterestedConfigChangeEvent interestedConfigChangeEvent = new InterestedConfigChangeEvent(
           namespace, changes, interestedChangedKeys);
-      // reuse
-      this.fireConfigChange(interestedConfigChangeEvent);
-      firedListenerCount++;
+      this.notifyAsync(listener, interestedConfigChangeEvent);
     }
-    return firedListenerCount;
+
+    return listeners.size();
   }
 
   /**
@@ -478,16 +477,26 @@ public abstract class AbstractConfig implements Config {
    * @return how many listener be fired
    */
   protected int fireConfigChange(final ConfigChangeEvent changeEvent) {
-    int firedListenerCount = 0;
-    for (final ConfigChangeListener listener : m_listeners) {
-      // check whether the listener is interested in this change event
-      if (!isConfigChangeListenerInterested(listener, changeEvent)) {
-        continue;
-      }
+    final List<ConfigChangeListener> listeners = this
+        .findMatchedConfigChangeListeners(changeEvent.changedKeys());
+
+    // notify those listeners
+    for (ConfigChangeListener listener : listeners) {
       this.notifyAsync(listener, changeEvent);
-      firedListenerCount++;
     }
-    return firedListenerCount;
+
+    return listeners.size();
+  }
+
+  private List<ConfigChangeListener> findMatchedConfigChangeListeners(Set<String> changedKeys) {
+    final List<ConfigChangeListener> configChangeListeners = new ArrayList<>();
+    for (ConfigChangeListener configChangeListener : this.m_listeners) {
+      // check whether the listener is interested in this change event
+      if (this.isConfigChangeListenerInterested(configChangeListener, changedKeys)) {
+        configChangeListeners.add(configChangeListener);
+      }
+    }
+    return configChangeListeners;
   }
 
   private void notifyAsync(final ConfigChangeListener listener, final ConfigChangeEvent changeEvent) {
@@ -510,7 +519,7 @@ public abstract class AbstractConfig implements Config {
     });
   }
 
-  private boolean isConfigChangeListenerInterested(ConfigChangeListener configChangeListener, ConfigChangeEvent configChangeEvent) {
+  private boolean isConfigChangeListenerInterested(ConfigChangeListener configChangeListener, Set<String> changedKeys) {
     Set<String> interestedKeys = m_interestedKeys.get(configChangeListener);
     Set<String> interestedKeyPrefixes = m_interestedKeyPrefixes.get(configChangeListener);
 
@@ -521,7 +530,7 @@ public abstract class AbstractConfig implements Config {
 
     if (interestedKeys != null) {
       for (String interestedKey : interestedKeys) {
-        if (configChangeEvent.isChanged(interestedKey)) {
+        if (changedKeys.contains(interestedKey)) {
           return true;
         }
       }
@@ -529,7 +538,7 @@ public abstract class AbstractConfig implements Config {
 
     if (interestedKeyPrefixes != null) {
       for (String prefix : interestedKeyPrefixes) {
-        for (final String changedKey : configChangeEvent.changedKeys()) {
+        for (final String changedKey : changedKeys) {
           if (changedKey.startsWith(prefix)) {
             return true;
           }
