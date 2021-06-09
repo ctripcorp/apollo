@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package com.ctrip.framework.apollo.model;
+package com.ctrip.framework.apollo.internals;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +22,8 @@ import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.enums.ConfigSourceType;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.internals.AbstractConfig;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Collections;

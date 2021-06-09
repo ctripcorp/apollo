@@ -24,7 +24,6 @@ import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.exceptions.ApolloConfigException;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.model.InterestedConfigChangeEvent;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.tracer.spi.Transaction;
 import com.ctrip.framework.apollo.util.ConfigUtil;

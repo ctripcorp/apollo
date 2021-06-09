@@ -14,10 +14,12 @@
  * limitations under the License.
  *
  */
-package com.ctrip.framework.apollo.model;
+package com.ctrip.framework.apollo.internals;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.model.ConfigChange;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import java.util.Collections;
 import java.util.Map;
@@ -29,7 +31,7 @@ import java.util.Set;
  *
  * @author wxq
  */
-public class InterestedConfigChangeEvent extends ConfigChangeEvent {
+class InterestedConfigChangeEvent extends ConfigChangeEvent {
 
   /**
    * @see Config#addChangeListener(ConfigChangeListener, Set)

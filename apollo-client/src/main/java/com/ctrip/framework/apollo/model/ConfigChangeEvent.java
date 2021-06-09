@@ -47,8 +47,9 @@ public class ConfigChangeEvent {
   }
 
   /**
+   * Maybe subclass override this method.
+   * 
    * @return interested and changed keys
-   * @see InterestedConfigChangeEvent#interestedChangedKeys()
    */
   public Set<String> interestedChangedKeys() {
     return Collections.emptySet();
