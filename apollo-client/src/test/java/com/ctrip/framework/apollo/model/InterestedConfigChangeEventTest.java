@@ -100,8 +100,8 @@ public class InterestedConfigChangeEventTest {
     }
 
     @Override
-    public void fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
-      super.fireConfigChange(namespace, changes);
+    protected int fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
+      return super.fireConfigChange(namespace, changes);
     }
   }
 }
