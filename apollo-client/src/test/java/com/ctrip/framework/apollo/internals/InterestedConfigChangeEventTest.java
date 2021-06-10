@@ -100,10 +100,5 @@ public class InterestedConfigChangeEventTest {
     public ConfigSourceType getSourceType() {
       throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected int fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
-      return super.fireConfigChange(namespace, changes);
-    }
   }
 }

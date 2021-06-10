@@ -16,7 +16,7 @@
  */
 package com.ctrip.framework.apollo.internals;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,9 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -47,23 +47,29 @@ public class AbstractConfigTest {
    * @see AbstractConfig#fireConfigChange(ConfigChangeEvent)
    */
   @Test
-  public void testFireConfigChange_cannot_notify() {
+  public void testFireConfigChange_cannot_notify() throws InterruptedException {
     AbstractConfig abstractConfig = spy(new ErrorConfig());
     final String namespace = "app-namespace-0";
+
     ConfigChangeListener configChangeListener = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
 
       }
     });
-    abstractConfig.addChangeListener(configChangeListener, Collections.singleton("cannot-be-match-key"));
+    abstractConfig
+        .addChangeListener(configChangeListener, Collections.singleton("cannot-be-match-key"));
 
     Map<String, ConfigChange> changes = new HashMap<>();
-    changes.put("key1", new ConfigChange(namespace, "key1", null, "new-value", PropertyChangeType.ADDED));
+    changes.put("key1",
+        new ConfigChange(namespace, "key1", null, "new-value", PropertyChangeType.ADDED));
     ConfigChangeEvent configChangeEvent = new ConfigChangeEvent(namespace, changes);
 
-    assertEquals(0, abstractConfig.fireConfigChange(configChangeEvent));
-    assertEquals(0, abstractConfig.fireConfigChange(namespace, changes));
+    abstractConfig.fireConfigChange(configChangeEvent);
+    abstractConfig.fireConfigChange(namespace, changes);
+
+    // wait a minute for invoking
+    Thread.sleep(100);
 
     verify(configChangeListener, times(0)).onChange(Matchers.<ConfigChangeEvent>any());
   }
@@ -78,15 +84,19 @@ public class AbstractConfigTest {
     final SettableFuture<ConfigChangeEvent> future1 = SettableFuture.create();
     final SettableFuture<ConfigChangeEvent> future2 = SettableFuture.create();
 
+    final AtomicInteger invokeCount = new AtomicInteger();
+
     final ConfigChangeListener configChangeListener1 = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
+        invokeCount.incrementAndGet();
         future1.set(changeEvent);
       }
     });
     final ConfigChangeListener configChangeListener2 = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
+        invokeCount.incrementAndGet();
         future2.set(changeEvent);
       }
     });
@@ -94,13 +104,16 @@ public class AbstractConfigTest {
     abstractConfig.addChangeListener(configChangeListener2, Collections.singleton(key));
 
     Map<String, ConfigChange> changes = new HashMap<>();
-    changes.put(key, new ConfigChange(namespace, key, "old-value", "new-value", PropertyChangeType.MODIFIED));
+    changes.put(key,
+        new ConfigChange(namespace, key, "old-value", "new-value", PropertyChangeType.MODIFIED));
     ConfigChangeEvent configChangeEvent = new ConfigChangeEvent(namespace, changes);
 
-    assertEquals(2, abstractConfig.fireConfigChange(configChangeEvent));
+    abstractConfig.fireConfigChange(configChangeEvent);
 
     assertEquals(configChangeEvent, future1.get(500, TimeUnit.MILLISECONDS));
     assertEquals(configChangeEvent, future2.get(500, TimeUnit.MILLISECONDS));
+
+    assertEquals(2, invokeCount.get());
 
     verify(configChangeListener1, times(1)).onChange(Matchers.eq(configChangeEvent));
     verify(configChangeListener2, times(1)).onChange(Matchers.eq(configChangeEvent));
@@ -116,15 +129,19 @@ public class AbstractConfigTest {
     final SettableFuture<ConfigChangeEvent> future1 = SettableFuture.create();
     final SettableFuture<ConfigChangeEvent> future2 = SettableFuture.create();
 
+    final AtomicInteger invokeCount = new AtomicInteger();
+
     final ConfigChangeListener configChangeListener1 = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
+        invokeCount.incrementAndGet();
         future1.set(changeEvent);
       }
     });
     final ConfigChangeListener configChangeListener2 = spy(new ConfigChangeListener() {
       @Override
       public void onChange(ConfigChangeEvent changeEvent) {
+        invokeCount.incrementAndGet();
         future2.set(changeEvent);
       }
     });
@@ -132,9 +149,15 @@ public class AbstractConfigTest {
     abstractConfig.addChangeListener(configChangeListener2, Collections.singleton(key));
 
     Map<String, ConfigChange> changes = new HashMap<>();
-    changes.put(key, new ConfigChange(namespace, key, "old-value", "new-value", PropertyChangeType.MODIFIED));
+    changes.put(key,
+        new ConfigChange(namespace, key, "old-value", "new-value", PropertyChangeType.MODIFIED));
 
-    assertEquals(2, abstractConfig.fireConfigChange(namespace, changes));
+    abstractConfig.fireConfigChange(namespace, changes);
+
+    assertEquals(Collections.singleton(key), future1.get(500, TimeUnit.MILLISECONDS).changedKeys());
+    assertEquals(Collections.singleton(key), future2.get(500, TimeUnit.MILLISECONDS).changedKeys());
+
+    assertEquals(2, invokeCount.get());
 
     verify(configChangeListener1, times(1)).onChange(Matchers.<ConfigChangeEvent>any());
     verify(configChangeListener2, times(1)).onChange(Matchers.<ConfigChangeEvent>any());

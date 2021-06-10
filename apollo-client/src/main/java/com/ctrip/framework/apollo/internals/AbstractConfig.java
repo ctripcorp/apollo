@@ -453,9 +453,8 @@ public abstract class AbstractConfig implements Config {
 
   /**
    * @param changes map's key is config property's key
-   * @return how many listener be fired
    */
-  protected int fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
+  protected void fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
     final Set<String> changedKeys = changes.keySet();
     final List<ConfigChangeListener> listeners = this.findMatchedConfigChangeListeners(changedKeys);
 
@@ -466,16 +465,12 @@ public abstract class AbstractConfig implements Config {
           namespace, changes, interestedChangedKeys);
       this.notifyAsync(listener, interestedConfigChangeEvent);
     }
-
-    return listeners.size();
   }
 
   /**
    * Fire the listeners by event.
-   *
-   * @return how many listener be fired
    */
-  protected int fireConfigChange(final ConfigChangeEvent changeEvent) {
+  protected void fireConfigChange(final ConfigChangeEvent changeEvent) {
     final List<ConfigChangeListener> listeners = this
         .findMatchedConfigChangeListeners(changeEvent.changedKeys());
 
@@ -483,8 +478,6 @@ public abstract class AbstractConfig implements Config {
     for (ConfigChangeListener listener : listeners) {
       this.notifyAsync(listener, changeEvent);
     }
-
-    return listeners.size();
   }
 
   private List<ConfigChangeListener> findMatchedConfigChangeListeners(Set<String> changedKeys) {
