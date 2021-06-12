@@ -39,18 +39,16 @@ public class AutoUpdateConfigChangeListener implements ConfigChangeListener{
   private static final Logger logger = LoggerFactory.getLogger(AutoUpdateConfigChangeListener.class);
 
   private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;
-  private final Environment environment;
   private final ConfigurableBeanFactory beanFactory;
   private final TypeConverter typeConverter;
   private final PlaceholderHelper placeholderHelper;
   private final SpringValueRegistry springValueRegistry;
   private final Gson gson;
 
-  public AutoUpdateConfigChangeListener(Environment environment, ConfigurableListableBeanFactory beanFactory){
+  public AutoUpdateConfigChangeListener(ConfigurableListableBeanFactory beanFactory){
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
     this.beanFactory = beanFactory;
     this.typeConverter = this.beanFactory.getTypeConverter();
-    this.environment = environment;
     this.placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
     this.springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
     this.gson = new Gson();

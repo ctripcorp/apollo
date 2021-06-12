@@ -134,7 +134,7 @@ public class PropertySourcesProcessor implements BeanFactoryPostProcessor, Envir
     }
 
     AutoUpdateConfigChangeListener autoUpdateConfigChangeListener = new AutoUpdateConfigChangeListener(
-        environment, beanFactory);
+        beanFactory);
 
     List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
     for (ConfigPropertySource configPropertySource : configPropertySources) {
