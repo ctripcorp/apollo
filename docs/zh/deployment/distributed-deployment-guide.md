@@ -441,7 +441,15 @@ mvn clean package -Pgithub,nacos-discovery -DskipTests -pl apollo-configservice,
 2. 分别修改apollo-configservice和apollo-adminservice安装包中config目录下的application-github.properties，配置nacos服务器地址
 ```properties
 nacos.discovery.server-addr=127.0.0.1:8848
+# 更多 nacos 配置
+nacos.discovery.access-key=
+nacos.discovery.username=
+nacos.discovery.password=
+nacos.discovery.secret-key=
+nacos.discovery.namespace=
+nacos.discovery.context-path=
 ```
+
 ##### 2.2.1.2.8 启用外部Consul服务注册中心替换内置eureka
 
 1. 修改build.sh/build.bat，将config-service和admin-service的maven编译命令更改为
