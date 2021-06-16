@@ -151,7 +151,7 @@ Apollo本地开发需要以下组件：
 ![NewConfiguration-Application](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/local-development/NewConfiguration-Application.png)
 
 ### 2.3.3 Main class配置
-`SimpleApolloConfigDemo`
+`com.ctrip.framework.apollo.demo.api.SimpleApolloConfigDemo`
 
 ### 2.3.4 VM options配置
 ![apollo-demo-vm-options](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/local-development/apollo-demo-vm-options.png)
