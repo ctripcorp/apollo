@@ -99,7 +99,7 @@ public class ConsumerRolePermissionService {
     roleIterable.forEach(role -> {
       if (!role.isDeleted()) {
         String roleName = role.getRoleName();
-        String appId = RoleUtils.extractAppIdFromMasterRoleName(roleName);
+        String appId = RoleUtils.extractAppIdFromRoleName(roleName);
         appIds.add(appId);
       }
     });
