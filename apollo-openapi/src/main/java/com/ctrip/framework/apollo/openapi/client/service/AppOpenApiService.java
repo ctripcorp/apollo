@@ -65,7 +65,7 @@ public class AppOpenApiService extends AbstractOpenApiService {
   }
 
   public List<OpenAppDTO> getAuthorizedApps() {
-    String path = "authorized/apps";
+    String path = "apps/authorized";
     try(CloseableHttpResponse response = this.get(path)) {
       return gson.fromJson(EntityUtils.toString(response.getEntity()), OPEN_APP_DTO_LIST_TYPE);
     } catch (Throwable ex) {

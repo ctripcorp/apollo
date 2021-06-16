@@ -19,9 +19,13 @@ package com.ctrip.framework.apollo.openapi.service;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
 import com.ctrip.framework.apollo.portal.entity.po.Permission;
+import com.ctrip.framework.apollo.portal.entity.po.Role;
 import com.ctrip.framework.apollo.portal.entity.po.RolePermission;
 import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
+import com.ctrip.framework.apollo.portal.repository.RoleRepository;
+import com.ctrip.framework.apollo.portal.util.RoleUtils;
+import java.util.HashSet;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,17 +38,21 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ConsumerRolePermissionService {
+
   private final PermissionRepository permissionRepository;
   private final ConsumerRoleRepository consumerRoleRepository;
   private final RolePermissionRepository rolePermissionRepository;
+  private final RoleRepository roleRepository;
 
   public ConsumerRolePermissionService(
       final PermissionRepository permissionRepository,
       final ConsumerRoleRepository consumerRoleRepository,
-      final RolePermissionRepository rolePermissionRepository) {
+      final RolePermissionRepository rolePermissionRepository,
+      final RoleRepository roleRepository) {
     this.permissionRepository = permissionRepository;
     this.consumerRoleRepository = consumerRoleRepository;
     this.rolePermissionRepository = rolePermissionRepository;
+    this.roleRepository = roleRepository;
   }
 
   /**
@@ -76,5 +84,26 @@ public class ConsumerRolePermissionService {
     }
 
     return false;
+  }
+
+  public List<ConsumerRole> findConsumerRolesByConsumerId(long consumerId) {
+    List<ConsumerRole> consumerRoles = this.consumerRoleRepository.findByConsumerId(consumerId);
+    return consumerRoles;
+  }
+
+  public Set<String> findAppIdsByRoleIds(List<Long> roleIds) {
+    Iterable<Role> roleIterable = this.roleRepository.findAllById(roleIds);
+
+    Set<String> appIds = new HashSet<>();
+
+    roleIterable.forEach(role -> {
+      if (!role.isDeleted()) {
+        String roleName = role.getRoleName();
+        String appId = RoleUtils.extractAppIdFromMasterRoleName(roleName);
+        appIds.add(appId);
+      }
+    });
+
+    return appIds;
   }
 }

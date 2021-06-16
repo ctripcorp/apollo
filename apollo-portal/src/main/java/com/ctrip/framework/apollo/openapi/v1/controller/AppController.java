@@ -19,6 +19,9 @@ package com.ctrip.framework.apollo.openapi.v1.controller;
 import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
+import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
+import com.ctrip.framework.apollo.openapi.service.ConsumerRolePermissionService;
+import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenEnvClusterDTO;
@@ -27,6 +30,9 @@ import com.ctrip.framework.apollo.portal.component.PortalSettings;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.google.common.collect.Sets;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,13 +47,19 @@ public class AppController {
   private final PortalSettings portalSettings;
   private final ClusterService clusterService;
   private final AppService appService;
+  private final ConsumerAuthUtil consumerAuthUtil;
+  private final ConsumerRolePermissionService consumerRolePermissionService;
 
   public AppController(final PortalSettings portalSettings,
-                       final ClusterService clusterService,
-                       final AppService appService) {
+      final ClusterService clusterService,
+      final AppService appService,
+      ConsumerAuthUtil consumerAuthUtil,
+      ConsumerRolePermissionService consumerRolePermissionService) {
     this.portalSettings = portalSettings;
     this.clusterService = clusterService;
     this.appService = appService;
+    this.consumerAuthUtil = consumerAuthUtil;
+    this.consumerRolePermissionService = consumerRolePermissionService;
   }
 
   @GetMapping(value = "/apps/{appId}/envclusters")
@@ -80,4 +92,22 @@ public class AppController {
     }
     return OpenApiBeanUtils.transformFromApps(apps);
   }
+
+  /**
+   * @return which apps can be operated by open api
+   */
+  @GetMapping("/apps/authorized")
+  public List<OpenAppDTO> getAuthorizedApps(HttpServletRequest request) {
+    long consumerId = this.consumerAuthUtil.retrieveConsumerId(request);
+    List<ConsumerRole> consumerRoles = this.consumerRolePermissionService.findConsumerRolesByConsumerId(consumerId);
+    List<Long> roleIds = consumerRoles.stream().map(ConsumerRole::getRoleId)
+        .collect(Collectors.toList());
+
+    Set<String> appIds = this.consumerRolePermissionService.findAppIdsByRoleIds(roleIds);
+
+    List<App> apps = this.appService.findByAppIds(appIds);
+    List<OpenAppDTO> openAppDTOS = OpenApiBeanUtils.transformFromApps(apps);
+    return openAppDTOS;
+  }
+
 }
