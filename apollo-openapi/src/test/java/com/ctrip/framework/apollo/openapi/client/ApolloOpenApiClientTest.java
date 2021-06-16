@@ -40,13 +40,4 @@ public class ApolloOpenApiClientTest {
 
     ApolloOpenApiClient.newBuilder().withPortalUrl(someInvalidUrl).withToken(someToken).build();
   }
-
-  @Test
-  public void testGetAuthorizedApps() {
-    ApolloOpenApiClient client = ApolloOpenApiClient.newBuilder().withPortalUrl("http://localhost:8070")
-        .withToken("1f1e821e6af39456bbccc94339c94fbf7ba8adf8")
-        .build();
-    System.out.println(client.getAuthorizedApps());
-
-  }
 }
