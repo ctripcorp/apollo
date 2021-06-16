@@ -97,7 +97,7 @@ public class AppController {
    * @return which apps can be operated by open api
    */
   @GetMapping("/apps/authorized")
-  public List<OpenAppDTO> getAuthorizedApps(HttpServletRequest request) {
+  public List<OpenAppDTO> findAppsAuthorized(HttpServletRequest request) {
     long consumerId = this.consumerAuthUtil.retrieveConsumerId(request);
     List<ConsumerRole> consumerRoles = this.consumerRolePermissionService.findConsumerRolesByConsumerId(consumerId);
     List<Long> roleIds = consumerRoles.stream().map(ConsumerRole::getRoleId)
