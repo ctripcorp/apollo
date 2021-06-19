@@ -15,6 +15,7 @@ Members include Project Management Committee members and committers. The list is
 | JaredTan95 | Jared Tan  | DaoCloud     |
 | kezhenxu94 | Zhenxu Ke  | Tetrate      |
 | nobodyiam  | Jason Song | Ant Group    |
+| zouyx      | Joe Zou    | Shein        |
 
 ### Committer
 | Github ID   | Name          | Organization |
