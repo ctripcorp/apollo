@@ -19,16 +19,23 @@ package com.ctrip.framework.apollo.openapi.v1.controller;
 import static org.junit.Assert.assertEquals;
 
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
+import com.ctrip.framework.apollo.openapi.repository.ConsumerAuditRepository;
+import com.ctrip.framework.apollo.openapi.repository.ConsumerRepository;
 import com.ctrip.framework.apollo.openapi.repository.ConsumerRoleRepository;
-import com.ctrip.framework.apollo.openapi.service.ConsumerRolePermissionService;
+import com.ctrip.framework.apollo.openapi.repository.ConsumerTokenRepository;
+import com.ctrip.framework.apollo.openapi.service.ConsumerService;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
 import com.ctrip.framework.apollo.portal.component.PortalSettings;
+import com.ctrip.framework.apollo.portal.component.config.PortalConfig;
 import com.ctrip.framework.apollo.portal.entity.po.Role;
 import com.ctrip.framework.apollo.portal.repository.PermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RolePermissionRepository;
 import com.ctrip.framework.apollo.portal.repository.RoleRepository;
 import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
+import com.ctrip.framework.apollo.portal.service.RolePermissionService;
+import com.ctrip.framework.apollo.portal.spi.UserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.UserService;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,7 +60,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = AppController.class)
-@Import(ConsumerRolePermissionService.class)
+@Import(ConsumerService.class)
 public class AppControllerTest {
 
   @Autowired
@@ -75,11 +82,24 @@ public class AppControllerTest {
   private PermissionRepository permissionRepository;
 
   @MockBean
-  private ConsumerRoleRepository consumerRoleRepository;
-
-  @MockBean
   private RolePermissionRepository rolePermissionRepository;
 
+  @MockBean
+  private UserInfoHolder userInfoHolder;
+  @MockBean
+  private ConsumerTokenRepository consumerTokenRepository;
+  @MockBean
+  private ConsumerRepository consumerRepository;
+  @MockBean
+  private ConsumerAuditRepository consumerAuditRepository;
+  @MockBean
+  private ConsumerRoleRepository consumerRoleRepository;
+  @MockBean
+  private PortalConfig portalConfig;
+  @MockBean
+  private RolePermissionService rolePermissionService;
+  @MockBean
+  private UserService userService;
   @MockBean
   private RoleRepository roleRepository;
 

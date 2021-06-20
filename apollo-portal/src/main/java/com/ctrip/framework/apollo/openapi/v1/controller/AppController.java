@@ -20,7 +20,7 @@ import com.ctrip.framework.apollo.common.dto.ClusterDTO;
 import com.ctrip.framework.apollo.common.entity.App;
 import com.ctrip.framework.apollo.common.utils.BeanUtils;
 import com.ctrip.framework.apollo.openapi.entity.ConsumerRole;
-import com.ctrip.framework.apollo.openapi.service.ConsumerRolePermissionService;
+import com.ctrip.framework.apollo.openapi.service.ConsumerService;
 import com.ctrip.framework.apollo.openapi.util.ConsumerAuthUtil;
 import com.ctrip.framework.apollo.portal.environment.Env;
 import com.ctrip.framework.apollo.openapi.dto.OpenAppDTO;
@@ -31,7 +31,6 @@ import com.ctrip.framework.apollo.portal.service.AppService;
 import com.ctrip.framework.apollo.portal.service.ClusterService;
 import com.google.common.collect.Sets;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -48,18 +47,18 @@ public class AppController {
   private final ClusterService clusterService;
   private final AppService appService;
   private final ConsumerAuthUtil consumerAuthUtil;
-  private final ConsumerRolePermissionService consumerRolePermissionService;
+  private final ConsumerService consumerService;
 
   public AppController(final PortalSettings portalSettings,
       final ClusterService clusterService,
       final AppService appService,
-      ConsumerAuthUtil consumerAuthUtil,
-      ConsumerRolePermissionService consumerRolePermissionService) {
+      final ConsumerAuthUtil consumerAuthUtil,
+      final ConsumerService consumerService) {
     this.portalSettings = portalSettings;
     this.clusterService = clusterService;
     this.appService = appService;
     this.consumerAuthUtil = consumerAuthUtil;
-    this.consumerRolePermissionService = consumerRolePermissionService;
+    this.consumerService = consumerService;
   }
 
   @GetMapping(value = "/apps/{appId}/envclusters")
@@ -99,11 +98,8 @@ public class AppController {
   @GetMapping("/apps/authorized")
   public List<OpenAppDTO> findAppsAuthorized(HttpServletRequest request) {
     long consumerId = this.consumerAuthUtil.retrieveConsumerId(request);
-    List<ConsumerRole> consumerRoles = this.consumerRolePermissionService.findConsumerRolesByConsumerId(consumerId);
-    List<Long> roleIds = consumerRoles.stream().map(ConsumerRole::getRoleId)
-        .collect(Collectors.toList());
 
-    Set<String> appIds = this.consumerRolePermissionService.findAppIdsByRoleIds(roleIds);
+    Set<String> appIds = this.consumerService.findAppIdsAuthorizedByConsumerId(consumerId);
 
     List<App> apps = this.appService.findByAppIds(appIds);
     List<OpenAppDTO> openAppDTOS = OpenApiBeanUtils.transformFromApps(apps);
