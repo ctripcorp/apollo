@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import com.ctrip.framework.apollo.core.utils.ClassLoaderUtil;
 import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.tracer.Tracer;
 import com.ctrip.framework.apollo.util.ExceptionUtil;
 import com.google.common.collect.ImmutableMap;
@@ -163,7 +162,7 @@ public class DefaultConfig extends AbstractConfig implements RepositoryChangeLis
       return;
     }
 
-    this.fireConfigChange(new ConfigChangeEvent(m_namespace, actualChanges));
+    this.fireConfigChange(m_namespace, actualChanges);
 
     Tracer.logEvent("Apollo.Client.ConfigChanges", m_namespace);
   }

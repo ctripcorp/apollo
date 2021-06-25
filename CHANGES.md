@@ -43,6 +43,9 @@ Apollo 1.9.0
 * [Remove redundant invoke of trySyncFromUpstream](https://github.com/ctripcorp/apollo/pull/3699)
 * [add apollo team introduction and community releated contents](https://github.com/ctripcorp/apollo/pull/3713)
 * [fix oidc sql](https://github.com/ctripcorp/apollo/pull/3720)
+* [feat(apollo-client): add method interestedChangedKeys to ConfigChangeEvent](https://github.com/ctripcorp/apollo/pull/3666)
+* [add More... link for known users](https://github.com/ctripcorp/apollo/pull/3757)
+* [update OIDC documentation](https://github.com/ctripcorp/apollo/pull/3766)
 ------------------
 All issues and pull requests are [here](https://github.com/ctripcorp/apollo/milestone/6?closed=1)
 
