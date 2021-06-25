@@ -38,7 +38,6 @@ import org.springframework.test.context.jdbc.Sql;
 public class AppControllerIntegrationTest extends AbstractIntegrationTest {
 
   @Test
-  @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/com/ctrip/framework/apollo/openapi/service/ConsumerServiceIntegrationTest.testFindAppIdsAuthorizedByConsumerId.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   public void testFindAppsAuthorized() {
