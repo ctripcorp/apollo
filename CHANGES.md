@@ -46,7 +46,7 @@ Apollo 1.9.0
 * [feat(apollo-client): add method interestedChangedKeys to ConfigChangeEvent](https://github.com/ctripcorp/apollo/pull/3666)
 * [add More... link for known users](https://github.com/ctripcorp/apollo/pull/3757)
 * [update OIDC documentation](https://github.com/ctripcorp/apollo/pull/3766)
-* [Use queue#take instead of poll to avoid cs](https://github.com/ctripcorp/apollo/pull/3765)
+* [Use queue#take instead of poll](https://github.com/ctripcorp/apollo/pull/3765)
 ------------------
 All issues and pull requests are [here](https://github.com/ctripcorp/apollo/milestone/6?closed=1)
 
