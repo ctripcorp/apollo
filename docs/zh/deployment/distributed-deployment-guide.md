@@ -1233,6 +1233,7 @@ http://5.5.5.5:8080/eureka/,http://6.6.6.6:8080/eureka/
 namespace.value.length.limit.override = {1:200,3:20}
 ```
 以上配置指定了 ApolloConfigDB.Namespace 表中 id=1 的 namespace 的 value 最大长度限制为 200，id=3 的 namespace 的 value 最大长度限制为 20
+
 ### 3.2.6 admin-service.access.control.enabled - 配置apollo-adminservice是否开启访问控制
 
 > 适用于1.7.1及以上版本
