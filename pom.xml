@@ -85,6 +85,7 @@
 		<module>apollo-buildtools</module>
 		<module>apollo-core</module>
 		<module>apollo-client</module>
+		<module>apollo-client-config-data</module>
 		<module>apollo-common</module>
 		<module>apollo-biz</module>
 		<module>apollo-configservice</module>
@@ -299,6 +300,12 @@
 				<groupId>org.junit.vintage</groupId>
 				<artifactId>junit-vintage-engine</artifactId>
 				<version>5.7.0</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.stefanbirkner</groupId>
+				<artifactId>system-lambda</artifactId>
+				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- declare Spring BOMs in order -->

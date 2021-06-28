@@ -47,6 +47,10 @@ Apollo 1.9.0
 * [add More... link for known users](https://github.com/ctripcorp/apollo/pull/3757)
 * [update OIDC documentation](https://github.com/ctripcorp/apollo/pull/3766)
 * [Improve the item-value length limit configuration document](https://github.com/ctripcorp/apollo/pull/3789)
+* [Use queue#take instead of poll](https://github.com/ctripcorp/apollo/pull/3765)
+* [feature: add Spring Boot 2.4 config data loader support](https://github.com/ctripcorp/apollo/pull/3754)
+* [feat(open-api): get authorized apps](https://github.com/ctripcorp/apollo/pull/3647)
+* [feature: shared session for multi apollo portal](https://github.com/ctripcorp/apollo/pull/3786)
 ------------------
 All issues and pull requests are [here](https://github.com/ctripcorp/apollo/milestone/6?closed=1)
 
