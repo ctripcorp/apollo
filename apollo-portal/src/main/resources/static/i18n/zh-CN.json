@@ -724,7 +724,7 @@
   "Valdr.AppNamespace.Comment.Size": "备注长度不能多于64个字符",
   "Valdr.Item.Key.Size": "Key长度不能多于128个字符",
   "Valdr.Item.Key.Required": "Key不能为空",
-  "Valdr.Item.Comment.Size": "备注长度不能多于64个字符",
+  "Valdr.Item.Comment.Size": "备注长度不能多于1024个字符",
   "Valdr.Release.ReleaseName.Size": "Release Name长度不能多于64个字符",
   "Valdr.Release.ReleaseName.Required": "Release Name不能为空",
   "Valdr.Release.Comment.Size": "备注长度不能多于64个字符",
