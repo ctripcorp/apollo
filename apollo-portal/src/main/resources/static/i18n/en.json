@@ -724,7 +724,7 @@
   "Valdr.AppNamespace.Comment.Size": "Comment length should not exceed 64 characters",
   "Valdr.Item.Key.Size": "Key cannot be longer than 128 characters",
   "Valdr.Item.Key.Required": "Key can't be empty",
-  "Valdr.Item.Comment.Size": "Comment length should not exceed 1024 characters",
+  "Valdr.Item.Comment.Size": "Comment length should not exceed 256 characters",
   "Valdr.Release.ReleaseName.Size": "Release Name cannot be longer than 64 characters",
   "Valdr.Release.ReleaseName.Required": "Release Name cannot be empty",
   "Valdr.Release.Comment.Size": "Comment length should not exceed 64 characters",
