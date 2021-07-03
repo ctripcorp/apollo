@@ -727,7 +727,7 @@
   "Valdr.Item.Comment.Size": "Comment length should not exceed 256 characters",
   "Valdr.Release.ReleaseName.Size": "Release Name cannot be longer than 64 characters",
   "Valdr.Release.ReleaseName.Required": "Release Name cannot be empty",
-  "Valdr.Release.Comment.Size": "Comment length should not exceed 64 characters",
+  "Valdr.Release.Comment.Size": "Comment length should not exceed 256 characters",
   "ApolloConfirmDialog.DefaultConfirmBtnName": "OK",
   "ApolloConfirmDialog.SearchPlaceHolder": "Search items (App Id, App Name)",
   "RulesModal.ChooseInstances": "Select from the list of instances",

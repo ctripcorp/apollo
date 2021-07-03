@@ -111,7 +111,7 @@ application_module.config(function (valdrProvider) {
             },
             'comment': {
                 'size': {
-                    'max': 64,
+                    'max': 256,
                     'message': 'Valdr.Release.Comment.Size'
                 }
             }
