@@ -21,6 +21,7 @@ import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.ApolloClientSystemConsts;
 import com.ctrip.framework.apollo.core.ConfigConsts;
 import com.ctrip.framework.apollo.core.utils.DeferredLogger;
+import com.ctrip.framework.apollo.spring.config.CompositeConfigPropertySource;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
@@ -34,7 +35,6 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
@@ -113,21 +113,26 @@ public class ApolloApplicationContextInitializer implements
    */
   protected void initialize(ConfigurableEnvironment environment) {
 
-    if (environment.getPropertySources().contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+    if (environment.getPropertySources()
+        .contains(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
       //already initialized, replay the logs that were printed before the logging system was initialized
       DeferredLogger.replayTo();
       return;
     }
 
-    String namespaces = environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES, ConfigConsts.NAMESPACE_APPLICATION);
+    String namespaces = environment
+        .getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES,
+            ConfigConsts.NAMESPACE_APPLICATION);
     logger.debug("Apollo bootstrap namespaces: {}", namespaces);
     List<String> namespaceList = NAMESPACE_SPLITTER.splitToList(namespaces);
 
-    CompositePropertySource composite = new CompositePropertySource(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME);
+    CompositeConfigPropertySource composite = new CompositeConfigPropertySource(
+        PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME);
     for (String namespace : namespaceList) {
       Config config = ConfigService.getConfig(namespace);
 
-      composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
+      composite.addPropertySource(
+          configPropertySourceFactory.getConfigPropertySource(namespace, config));
     }
 
     environment.getPropertySources().addFirst(composite);

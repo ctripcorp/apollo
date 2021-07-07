@@ -229,7 +229,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     TestApolloConfigChangeListenerBean1 bean = getBean(TestApolloConfigChangeListenerBean1.class, AppConfig3.class);
 
     //PropertySourcesProcessor add listeners to listen config changed of all namespace
-    assertEquals(4, applicationListeners.size());
+    assertEquals(5, applicationListeners.size());
     assertEquals(1, fxApolloListeners.size());
 
     for (ConfigChangeListener listener : applicationListeners) {
@@ -302,7 +302,7 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     TestApolloChildConfigChangeListener bean = getBean(TestApolloChildConfigChangeListener.class, AppConfig7.class);
 
     //PropertySourcesProcessor add listeners to listen config changed of all namespace
-    assertEquals(5, applicationListeners.size());
+    assertEquals(6, applicationListeners.size());
     assertEquals(1, fxApolloListeners.size());
 
     for (ConfigChangeListener listener : applicationListeners) {
@@ -461,8 +461,10 @@ public class JavaConfigAnnotationTest extends AbstractSpringIntegrationTest {
     // no using
     verify(ignoreConfig, never()).addChangeListener(any(ConfigChangeListener.class));
 
-    // one invocation for spring value auto update and another for the @ApolloConfigChangeListener annotation
-    verify(applicationConfig, times(2)).addChangeListener(any(ConfigChangeListener.class));
+    // one invocation for spring value auto update
+    // one invocation for the @ApolloConfigChangeListener annotation
+    // one invocation for CompositeConfigPropertySource clear cache listener
+    verify(applicationConfig, times(3)).addChangeListener(any(ConfigChangeListener.class));
   }
 
   /**
