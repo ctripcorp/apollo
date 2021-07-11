@@ -16,7 +16,12 @@
  */
 package com.ctrip.framework.apollo.biz.message;
 
+import com.google.common.collect.Maps;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +45,7 @@ import com.google.common.collect.Lists;
  */
 public class ReleaseMessageScanner implements InitializingBean {
   private static final Logger logger = LoggerFactory.getLogger(ReleaseMessageScanner.class);
+  private static final int missingReleaseMessageMaxAge = 10; // hardcoded to 10, could be configured via BizConfig if necessary
   @Autowired
   private BizConfig bizConfig;
   @Autowired
@@ -48,6 +54,7 @@ public class ReleaseMessageScanner implements InitializingBean {
   private List<ReleaseMessageListener> listeners;
   private ScheduledExecutorService executorService;
   private long maxIdScanned;
+  private Map<Long, Integer> missingReleaseMessages; // missing release message id => age counter
 
   public ReleaseMessageScanner() {
     listeners = Lists.newCopyOnWriteArrayList();
@@ -59,10 +66,12 @@ public class ReleaseMessageScanner implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     databaseScanInterval = bizConfig.releaseMessageScanIntervalInMilli();
     maxIdScanned = loadLargestMessageId();
+    missingReleaseMessages = Maps.newHashMap();
     executorService.scheduleWithFixedDelay(() -> {
       Transaction transaction = Tracer.newTransaction("Apollo.ReleaseMessageScanner", "scanMessage");
       try {
         scanMessages();
+        scanMissingMessages();
         transaction.setStatus(Transaction.SUCCESS);
       } catch (Throwable ex) {
         transaction.setStatus(ex);
@@ -108,8 +117,49 @@ public class ReleaseMessageScanner implements InitializingBean {
     }
     fireMessageScanned(releaseMessages);
     int messageScanned = releaseMessages.size();
-    maxIdScanned = releaseMessages.get(messageScanned - 1).getId();
+    long newMaxIdScanned = releaseMessages.get(messageScanned - 1).getId();
+    // check id gaps, possible reasons are release message not committed yet or already rolled back
+    if (newMaxIdScanned - maxIdScanned > messageScanned) {
+      recordMissingReleaseMessageIds(releaseMessages, maxIdScanned);
+    }
+    maxIdScanned = newMaxIdScanned;
     return messageScanned == 500;
+  }
+
+  private void scanMissingMessages() {
+    Set<Long> missingReleaseMessageIds = missingReleaseMessages.keySet();
+    Iterable<ReleaseMessage> releaseMessages = releaseMessageRepository
+        .findAllById(missingReleaseMessageIds);
+    fireMessageScanned(releaseMessages);
+    releaseMessages.forEach(releaseMessage -> {
+      missingReleaseMessageIds.remove(releaseMessage.getId());
+    });
+    growAndCleanMissingMessages();
+  }
+
+  private void growAndCleanMissingMessages() {
+    Iterator<Entry<Long, Integer>> iterator = missingReleaseMessages.entrySet()
+        .iterator();
+    while (iterator.hasNext()) {
+      Entry<Long, Integer> entry = iterator.next();
+      if (entry.getValue() > missingReleaseMessageMaxAge) {
+        iterator.remove();
+      } else {
+        entry.setValue(entry.getValue() + 1);
+      }
+    }
+  }
+
+  private void recordMissingReleaseMessageIds(List<ReleaseMessage> messages, long startId) {
+    for (ReleaseMessage message : messages) {
+      long currentId = message.getId();
+      if (currentId - startId > 1) {
+        for (long i = startId + 1; i < currentId; i++) {
+          missingReleaseMessages.putIfAbsent(i, 1);
+        }
+      }
+      startId = currentId;
+    }
   }
 
   /**
@@ -125,7 +175,7 @@ public class ReleaseMessageScanner implements InitializingBean {
    * Notify listeners with messages loaded
    * @param messages
    */
-  private void fireMessageScanned(List<ReleaseMessage> messages) {
+  private void fireMessageScanned(Iterable<ReleaseMessage> messages) {
     for (ReleaseMessage message : messages) {
       for (ReleaseMessageListener listener : listeners) {
         try {
