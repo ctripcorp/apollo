@@ -56,6 +56,7 @@ Apollo 1.9.0
 * [set default session store-type](https://github.com/ctripcorp/apollo/pull/3812)
 * [speed up the stale issue mark and close phase](https://github.com/ctripcorp/apollo/pull/3808)
 * [feature: add the delegating password encoder for apollo-portal simple auth](https://github.com/ctripcorp/apollo/pull/3804)
+* [support release apollo-client-config-data](https://github.com/ctripcorp/apollo/pull/3822)
 ------------------
 All issues and pull requests are [here](https://github.com/ctripcorp/apollo/milestone/6?closed=1)
 
