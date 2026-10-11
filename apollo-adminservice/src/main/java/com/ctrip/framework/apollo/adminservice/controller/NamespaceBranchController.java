@@ -98,6 +98,11 @@ public class NamespaceBranchController {
     checkBranch(appId, clusterName, namespaceName, branchName);
 
     GrayReleaseRule newRules = BeanUtils.transform(GrayReleaseRule.class, newRuleDto);
+    // Bind the persisted rule identity to the checked path.
+    newRules.setAppId(appId);
+    newRules.setClusterName(clusterName);
+    newRules.setNamespaceName(namespaceName);
+    newRules.setBranchName(branchName);
     newRules
         .setRules(GrayReleaseRuleItemTransformer.batchTransformToJSON(newRuleDto.getRuleItems()));
     newRules.setBranchStatus(NamespaceBranchStatus.ACTIVE);
