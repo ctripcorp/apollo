@@ -509,6 +509,10 @@ public class ReleaseService {
     String clusterName = release.getClusterName();
     String namespaceName = release.getNamespaceName();
 
+    // the target release must belong to the same namespace as the current release, otherwise its
+    // configuration would be used to publish the current namespace (see rollbackChildNamespace)
+    checkSameNamespace(release, toRelease);
+
     List<Release> releases =
         findActiveReleasesBetween(appId, clusterName, namespaceName, toReleaseId, releaseId);
 
@@ -527,6 +531,21 @@ public class ReleaseService {
         Lists.newArrayList(release, toRelease), operator);
 
     return release;
+  }
+
+  /**
+   * The rollback target must belong to the same app, cluster and namespace as the release being
+   * rolled back. Otherwise a caller that is only authorized for one namespace could read another
+   * namespace's configuration, because the target release's configuration is used to publish the
+   * caller's own child namespace.
+   */
+  private void checkSameNamespace(Release release, Release toRelease) {
+    if (!Objects.equals(release.getAppId(), toRelease.getAppId())
+        || !Objects.equals(release.getClusterName(), toRelease.getClusterName())
+        || !Objects.equals(release.getNamespaceName(), toRelease.getNamespaceName())) {
+      throw new BadRequestException(
+          "target release must belong to the same appId, clusterName and namespaceName as the current release");
+    }
   }
 
   private void rollbackChildNamespace(String appId, String clusterName, String namespaceName,

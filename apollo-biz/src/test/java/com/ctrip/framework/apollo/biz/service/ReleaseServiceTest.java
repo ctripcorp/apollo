@@ -40,7 +40,13 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -154,6 +160,80 @@ public class ReleaseServiceTest extends AbstractUnitTest {
     Assert.assertFalse(releaseList.get(2).isAbandoned());
     Assert.assertEquals(user, releaseList.get(0).getDataChangeLastModifiedBy());
     Assert.assertEquals(user, releaseList.get(1).getDataChangeLastModifiedBy());
+  }
+
+  @Test
+  public void testRollbackToRejectsReleaseOfAnotherApp() {
+    Release currentRelease = newRelease(100, appId, clusterName, namespaceName);
+    Release foreignRelease = newRelease(10, "another-app", clusterName, namespaceName);
+    when(releaseRepository.findById(100L)).thenReturn(Optional.of(currentRelease));
+    when(releaseRepository.findById(10L)).thenReturn(Optional.of(foreignRelease));
+
+    BadRequestException exception = Assert.assertThrows(BadRequestException.class,
+        () -> releaseService.rollbackTo(100L, 10L, user));
+
+    Assert.assertNotNull(exception.getMessage());
+    verify(releaseRepository, never()).saveAll(anyList());
+    verify(releaseRepository, never()).save(any(Release.class));
+    verify(releaseHistoryService, never()).createReleaseHistory(anyString(), anyString(),
+        anyString(), anyString(), anyLong(), anyLong(), anyInt(), any(), anyString());
+  }
+
+  @Test
+  public void testRollbackToRejectsReleaseOfAnotherCluster() {
+    Release currentRelease = newRelease(100, appId, clusterName, namespaceName);
+    Release foreignRelease = newRelease(10, appId, "another-cluster", namespaceName);
+    when(releaseRepository.findById(100L)).thenReturn(Optional.of(currentRelease));
+    when(releaseRepository.findById(10L)).thenReturn(Optional.of(foreignRelease));
+
+    Assert.assertThrows(BadRequestException.class,
+        () -> releaseService.rollbackTo(100L, 10L, user));
+
+    verify(releaseRepository, never()).saveAll(anyList());
+  }
+
+  @Test
+  public void testRollbackToRejectsReleaseOfAnotherNamespace() {
+    Release currentRelease = newRelease(100, appId, clusterName, namespaceName);
+    Release foreignRelease = newRelease(10, appId, clusterName, "another-namespace");
+    when(releaseRepository.findById(100L)).thenReturn(Optional.of(currentRelease));
+    when(releaseRepository.findById(10L)).thenReturn(Optional.of(foreignRelease));
+
+    Assert.assertThrows(BadRequestException.class,
+        () -> releaseService.rollbackTo(100L, 10L, user));
+
+    verify(releaseRepository, never()).saveAll(anyList());
+  }
+
+  @Test
+  public void testRollbackToSameNamespaceIsNotAffected() {
+    List<Release> releaseList = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      releaseList.add(newRelease(3 - i, appId, clusterName, namespaceName));
+    }
+    when(releaseRepository.findById(1L)).thenReturn(Optional.of(releaseList.get(2)));
+    when(releaseRepository.findById(3L)).thenReturn(Optional.of(releaseList.get(0)));
+    when(releaseRepository
+        .findByAppIdAndClusterNameAndNamespaceNameAndIsAbandonedFalseAndIdBetweenOrderByIdDesc(
+            appId, clusterName, namespaceName, 1L, 3L))
+        .thenReturn(releaseList);
+
+    releaseService.rollbackTo(3L, 1L, user);
+
+    verify(releaseRepository).saveAll(releaseList);
+    Assert.assertTrue(releaseList.get(0).isAbandoned());
+    Assert.assertTrue(releaseList.get(1).isAbandoned());
+    Assert.assertFalse(releaseList.get(2).isAbandoned());
+  }
+
+  private Release newRelease(long id, String appId, String clusterName, String namespaceName) {
+    Release release = new Release();
+    release.setId(id);
+    release.setAppId(appId);
+    release.setClusterName(clusterName);
+    release.setNamespaceName(namespaceName);
+    release.setAbandoned(false);
+    return release;
   }
 
   @Test
