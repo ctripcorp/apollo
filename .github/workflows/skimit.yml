@@ -31,12 +31,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
           cache: maven
-      - uses: PeterToulouras/skimit@f51bbcc123e56c62ee60a83e7db2528cb9efe2e1 # v0
+      - uses: PeterToulouras/skimit@2588152c09661f7061deba71636c7f11c7493246 # v0
         with:
-          version: 0.1.4
+          version: 0.1.5
           policy: .github/skimit.policy
