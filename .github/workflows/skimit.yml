@@ -38,7 +38,7 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
-      - uses: PeterToulouras/skimit@e6738297e5d44a31f2991c81754db05feb4d21d3 # v0
+      - uses: PeterToulouras/skimit@594495967844bc2176db05d80c78a5fad182b83a # v0
         # Report only: nothing here can fail the pull request.
         continue-on-error: true
         with:
