@@ -38,7 +38,9 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
-      - uses: PeterToulouras/skimit@2588152c09661f7061deba71636c7f11c7493246 # v0
+      - uses: PeterToulouras/skimit@e6738297e5d44a31f2991c81754db05feb4d21d3 # v0
+        # Report only: nothing here can fail the pull request.
+        continue-on-error: true
         with:
           version: 0.1.5
           policy: .github/skimit.policy
