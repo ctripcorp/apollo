@@ -1393,7 +1393,21 @@ If you don't have access to your company's SSO system, you can use the default v
 
 ### 3.1.5 consumer.token.salt - consumer token salt
 
-You can set a token salt if you will use the open platform API, but ignore it if you don't.
+This setting is used to generate access tokens for third-party applications (consumers) using the Open API. You can ignore it if you do not use consumer tokens.
+
+Before generating the first consumer token, set `consumer.token.salt` to a high-entropy random string that is unique to your installation and keep it confidential. The default value `someSalt` in the initialization SQL is a public constant and should be replaced for actual deployments.
+
+For example, run the following command in a trusted local terminal to generate a hexadecimal string containing 32 random bytes:
+
+```bash
+openssl rand -hex 32
+```
+
+Use the command output as the value of the corresponding setting in `ApolloPortalDB.ServerConfig`, or configure it through `Administrator Tools - System Parameters`. Use a different salt for each independent installation and restrict access to this value.
+
+For existing installations, changing the salt only affects newly generated tokens; it does not automatically update or revoke existing tokens. Arrange to reissue or rotate tokens generated with the default value or an exposed salt, update the calling applications, and revoke the old tokens.
+
+A custom salt is a mitigation for the current implementation. Also restrict network access to the Portal to trusted users and systems.
 
 ### 3.1.6 wiki.address
 

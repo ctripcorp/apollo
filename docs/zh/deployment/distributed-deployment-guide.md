@@ -1340,7 +1340,21 @@ Portal中新建的App都需要选择部门，所以需要在这里配置可选�
 
 ### 3.1.5 consumer.token.salt - consumer token salt
 
-如果会使用开放平台API的话，可以设置一个token salt。如果不使用，可以忽略。
+该配置用于生成开放平台第三方应用（Consumer）的访问 Token。如果不使用第三方应用 Token，可以忽略。
+
+使用第三方应用 Token 时，应在首次生成 Token 前，将 `consumer.token.salt` 设置为本部署独有、妥善保密的高熵随机字符串。初始化 SQL 中的默认值 `someSalt` 是公开常量，不应继续用于实际部署。
+
+可以在受信任的本地终端执行以下命令，生成包含 32 字节随机数据的十六进制字符串：
+
+```bash
+openssl rand -hex 32
+```
+
+将命令输出设置到 `ApolloPortalDB.ServerConfig` 中对应的配置项，也可以通过 `管理员工具 - 系统参数` 页面配置。不同的独立部署应使用不同的 salt，并限制该配置值的访问范围。
+
+对于已有部署，修改 salt 只影响后续新生成的 Token，不会自动更新或撤销已生成的 Token。对使用默认值或已泄露 salt 生成的 Token，应安排重新签发或轮换，更新调用方使用的 Token，并撤销旧 Token。
+
+自定义 salt 是当前版本的缓解措施。同时应限制 Portal 的网络访问范围，仅允许受信任的人员和系统访问。
 
 ### 3.1.6 wiki.address
 
