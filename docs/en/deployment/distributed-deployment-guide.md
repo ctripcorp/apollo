@@ -1405,7 +1405,13 @@ openssl rand -hex 32
 
 Use the command output as the value of the corresponding setting in `ApolloPortalDB.ServerConfig`, or configure it through `Administrator Tools - System Parameters`. Use a different salt for each independent installation and restrict access to this value.
 
-For existing installations, changing the salt only affects newly generated tokens; it does not automatically update or revoke existing tokens. Arrange to reissue or rotate tokens generated with the default value or an exposed salt, update the calling applications, and revoke the old tokens.
+If Portal is already running, changes made directly in `ApolloPortalDB.ServerConfig` or through `Administrator Tools - System Parameters` take effect after a periodic refresh, normally within about one minute. Wait for the refresh and confirm that the new salt has taken effect on all Portal instances before generating consumer tokens.
+
+For existing installations, changing the salt only affects newly generated tokens; it does not automatically update or revoke existing tokens.
+
+Consumer Tokens do not have a token-only revocation operation. To invalidate a token generated with the default value or an exposed salt, a super administrator must delete the corresponding Consumer through the Portal consumer-management page. This also removes the Consumer's token and role assignments.
+
+Before deletion, record the Consumer settings and permissions needed for restoration, and arrange a maintenance window for the calling applications. After confirming that the new salt has taken effect, recreate the Consumer to generate a new token, restore the required role assignments, and update the calling applications.
 
 A custom salt is a mitigation for the current implementation. Also restrict network access to the Portal to trusted users and systems.
 
