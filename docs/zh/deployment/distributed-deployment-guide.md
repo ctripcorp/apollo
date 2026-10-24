@@ -1340,27 +1340,15 @@ Portal中新建的App都需要选择部门，所以需要在这里配置可选�
 
 ### 3.1.5 consumer.token.salt - consumer token salt
 
-该配置用于生成开放平台第三方应用（Consumer）的访问 Token。如果不使用第三方应用 Token，可以忽略。
-
-使用第三方应用 Token 时，应在首次生成 Token 前，将 `consumer.token.salt` 设置为本部署独有、妥善保密的高熵随机字符串。初始化 SQL 中的默认值 `someSalt` 是公开常量，不应继续用于实际部署。
-
-可以在受信任的本地终端执行以下命令，生成包含 32 字节随机数据的十六进制字符串：
+使用开放平台第三方应用（Consumer）Token 时，建议将 `consumer.token.salt` 设置为本部署独有的随机字符串，例如：
 
 ```bash
 openssl rand -hex 32
 ```
 
-将命令输出设置到 `ApolloPortalDB.ServerConfig` 中对应的配置项，也可以通过 `管理员工具 - 系统参数` 页面配置。不同的独立部署应使用不同的 salt，并限制该配置值的访问范围。
+将生成的值配置到 `ApolloPortalDB.ServerConfig`，或通过 `管理员工具 - 系统参数` 页面设置。修改后通常约一分钟生效，生成 Token 前请等待配置刷新。不使用第三方应用 Token 时可忽略此项。
 
-如果 Portal 已经运行，直接修改 `ApolloPortalDB.ServerConfig` 或通过 `管理员工具 - 系统参数` 页面修改的配置，需要等待定期刷新后生效，通常约一分钟。生成第三方应用 Token 前，应等待配置刷新，并确认所有 Portal 实例均已使用新的 salt。
-
-对于已有部署，修改 salt 只影响后续新生成的 Token，不会自动更新或撤销已生成的 Token。
-
-Consumer Token 不提供单独撤销 Token 的操作。要使使用默认值或已泄露 salt 生成的 Token 失效，需要由超级管理员通过 Portal 的第三方应用管理页面删除对应的 Consumer。该操作会同时删除 Consumer 的 Token 和授权关联。
-
-删除前应记录恢复时所需的 Consumer 配置及权限，并为调用方安排维护窗口。确认新的 salt 已生效后，重新创建 Consumer 以生成新的 Token，恢复所需授权，并更新调用方使用的 Token。
-
-自定义 salt 是当前版本的缓解措施。同时应限制 Portal 的网络访问范围，仅允许受信任的人员和系统访问。
+修改 salt 不影响已有 Token。如需更换 Token，超级管理员可在 Portal 删除并重建对应的 Consumer。删除会使旧 Token 失效并清除授权关联，请提前记录所需权限，重建后恢复授权并更新调用方的 Token。
 
 ### 3.1.6 wiki.address
 

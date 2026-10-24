@@ -1393,27 +1393,15 @@ If you don't have access to your company's SSO system, you can use the default v
 
 ### 3.1.5 consumer.token.salt - consumer token salt
 
-This setting is used to generate access tokens for third-party applications (consumers) using the Open API. You can ignore it if you do not use consumer tokens.
-
-Before generating the first consumer token, set `consumer.token.salt` to a high-entropy random string that is unique to your installation and keep it confidential. The default value `someSalt` in the initialization SQL is a public constant and should be replaced for actual deployments.
-
-For example, run the following command in a trusted local terminal to generate a hexadecimal string containing 32 random bytes:
+When using Open API consumer tokens, set `consumer.token.salt` to a random string unique to the installation. For example:
 
 ```bash
 openssl rand -hex 32
 ```
 
-Use the command output as the value of the corresponding setting in `ApolloPortalDB.ServerConfig`, or configure it through `Administrator Tools - System Parameters`. Use a different salt for each independent installation and restrict access to this value.
+Configure the generated value in `ApolloPortalDB.ServerConfig` or through `Administrator Tools - System Parameters`. Changes normally take effect in about one minute; wait for the refresh before generating tokens. You can ignore this setting if you do not use consumer tokens.
 
-If Portal is already running, changes made directly in `ApolloPortalDB.ServerConfig` or through `Administrator Tools - System Parameters` take effect after a periodic refresh, normally within about one minute. Wait for the refresh and confirm that the new salt has taken effect on all Portal instances before generating consumer tokens.
-
-For existing installations, changing the salt only affects newly generated tokens; it does not automatically update or revoke existing tokens.
-
-Consumer Tokens do not have a token-only revocation operation. To invalidate a token generated with the default value or an exposed salt, a super administrator must delete the corresponding Consumer through the Portal consumer-management page. This also removes the Consumer's token and role assignments.
-
-Before deletion, record the Consumer settings and permissions needed for restoration, and arrange a maintenance window for the calling applications. After confirming that the new salt has taken effect, recreate the Consumer to generate a new token, restore the required role assignments, and update the calling applications.
-
-A custom salt is a mitigation for the current implementation. Also restrict network access to the Portal to trusted users and systems.
+Changing the salt does not affect existing tokens. To replace a token, a super administrator can delete and recreate its Consumer in Portal. Deletion invalidates the old token and removes the Consumer's role assignments, so record the required permissions beforehand, restore them after recreation, and update the calling applications with the new token.
 
 ### 3.1.6 wiki.address
 
